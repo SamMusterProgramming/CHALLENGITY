@@ -186,7 +186,6 @@ export default function CreateChallenge() {
         aspect: [16, 9],
         quality: 1,
       });
-      console.log(result.assets[0].uri)
       setVideoUri(result.assets[0].uri)
 
     } catch (error) {

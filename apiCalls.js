@@ -1,4 +1,5 @@
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 
 
@@ -11,12 +12,12 @@ import axios from 'axios'
 
 
  
-export const BASE_URL =  baseURL_PRODUCTION
+export const BASE_URL =  baseURL_DEVOLOPMENT
 
 export const setLoadingBarAxios =(loadingRef) => {
-  axios.interceptors.request.use((config) => {
+  axios.interceptors.request.use(async(config) => {
     loadingRef.current.continuousStart();
-  
+   
   }, (error) => {
     loadingRef.current.complete();
 
@@ -31,19 +32,77 @@ export const setLoadingBarAxios =(loadingRef) => {
   });
 }
 
+axios.interceptors.request.use(
+  async (config) => {
+    const token = await getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('jwt_token');
+    return token;
+  } catch (error) {
+    console.error('Error getting token:', error);
+    return null;
+  }
+};
+
+const storeToken = async (token) => {
+  try {
+    await AsyncStorage.setItem('jwt_token', token);
+  } catch (error) {
+    console.error('Error storing token:', error);
+  }
+};
+const removeToken = async (token) => {
+  try {
+    await AsyncStorage.removeItem('jwt_token');
+  } catch (error) {
+    console.error('Error removing token:', error);
+  }
+};
+
 
 
 // *********************************** AUTHENTIFICATION *************************
 
+export const isAuthenticated = async(setUser)=>{
+
+  try {
+    await axios.get(BASE_URL +'/users/isAuthenticated')
+    .then(res => { 
+      console.log(res.data)
+      setUser(res.data)
+              //  if (res.data.auth) {
+              //    storeToken(res.data.token)
+              //    setUser({...res.data.user,isNewUser:false});
+              //  }
+              //  else setMessage(res.data.error)  
+        })
+  } catch (error) {
+     console.log(error)     
+  }
+ 
+}
 export const authLogin = async(credentiels,setUser,setMessage)=>{
 
     try {
       await axios.post(BASE_URL +'/users/login',credentiels)
       .then(res => { 
-                 if (res.data.email && res.data.password) 
-                   setUser({...res.data,isNewUser:false});
+        console.log(res.data)
+                 if (res.data.auth) {
+                   storeToken(res.data.token)
+                   setUser({...res.data.user,isNewUser:false});
+                 }
                  else setMessage(res.data.error)  
-     
           })
     } catch (error) {
        console.log(error)     
@@ -304,7 +363,7 @@ export const getUserChallenges = async( user_id , setChallenges)=>{
    export const removeFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
     try {
       await axios.post( BASE_URL + `/users/friends/cancel/${receiver_id}`, rawBody )
-      .then(res =>  {  console.log(res.data)
+      .then(res =>  {  
         setFriendRequest({...res.data});
         } )
     } catch (error) {
@@ -326,7 +385,7 @@ export const getUserChallenges = async( user_id , setChallenges)=>{
    export const denyFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
     try {
       await axios.post( BASE_URL + `/users/friends/deny/${receiver_id}`, rawBody )
-      .then(res =>  {  console.log(res.data)
+      .then(res =>  { 
         setFriendRequest({...res.data});
         } )
      
@@ -338,7 +397,7 @@ export const getUserChallenges = async( user_id , setChallenges)=>{
    export const acceptFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
     try {
       await axios.post( BASE_URL + `/users/friends/accept/${receiver_id}`, rawBody )
-      .then(res =>  {  console.log(res.data)
+      .then(res =>  {  
         setFriendRequest({...res.data});
         } )
      

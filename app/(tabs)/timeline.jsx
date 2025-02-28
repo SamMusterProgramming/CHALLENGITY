@@ -11,6 +11,8 @@ import ParticipantPost from '../../components/ParticipantPost';
 import { ResizeMode, Video } from 'expo-av';
 import { Camera } from 'expo-camera';
 import { router } from 'expo-router';
+import { getInition } from '../../helper';
+import HeadLineChallenges from '../../components/HeadLineChallenges';
 
 export default function timeline() {
 
@@ -72,12 +74,40 @@ export default function timeline() {
 
         ListHeaderComponent={()=> (
          <>
+         <View
+            className=" w-[100vw] min-h-10 px-4  border-gray-500 
+            flex-row justify-center items-center">
+
+           <View className=" w-[35vw] h-[100%] px-2
+              flex-row justify-start items-end">
+                <Text
+                className="text-blue-400 font-bold text-2xl">Challengify</Text>
+           </View >
+
+           <View className=" w-[65vw] h-[100%] px-4 border-gray-500 border-2  focus:border-secondary-100 rounded-md
+              flex-row justify-center items-center">
+                <TextInput
+                    className=" text-white w-[100%] border-white rounded-2xl  h-full px-3
+                    font-bold text-sm"
+                    placeholder="Search for a challenge "
+                    placeholderTextColor="#7b7b8b"
+                      />
+                
+                  <TouchableOpacity onPress={()=> {}}>
+                      <Image className ="w-6 h-6"
+                      resizeMode='contain'
+                      source={icons.search} />
+                  </TouchableOpacity>                
+          </View >
+
+         </View>
+        
        
           <View className="mt-1 px-4 w-full h-[10vh] flex-row gap-7 items-center justify-start space-y-9"
-             style={{marginTop:Platform.OS == "android" ? 30 : 0 }}>
+             style={{marginTop:Platform.OS == "android" ? 40 : 0 }}>
              <View className="justify-evenly items-start min-h-[100%] flex-col ">
                   <Image 
-                    className="w-[50px] h-[50px] rounded-full "
+                    className="w-[60px] h-[60px] rounded-full "
                     source={{uri : user.profile_img}}
                   />
              </View>
@@ -89,7 +119,7 @@ export default function timeline() {
                         </Text> 
                     </Text>
                     <Text className=" text-2xl text-white font-bold">
-                        JSChallenger
+                        {getInition(user.name)}Challenger
                     </Text>
              </View>
              <View className="justify-center items-center ml-auto min-h-[100%] flex-col ">
@@ -110,41 +140,28 @@ export default function timeline() {
              </View>
           </View>
 
-          <View className="border-2 border-black-100 w-[100vw] min-h-12 px-4 rounded-2xl
-              bg-black-100 focus:border-secondary flex-row justify-center items-center">
+          {/* <View className=" w-[100vw] min-h-14 px-4 border-gray-500 border-2  focus:border-secondary-100 rounded-md
+              flex-row justify-center items-center">
                 <TextInput
-                    className="flex-1 text-white w-[90%] h-full font-pextrabold text-1xl"
+                    className=" text-white w-[100%] border-white rounded-2xl  h-full px-3
+                    font-bold text-xl"
                     placeholder="Search for a challenge "
                     placeholderTextColor="#7b7b8b"
                       />
                 
                   <TouchableOpacity onPress={()=> {}}>
-                      <Image className ="w-5 h-5"
+                      <Image className ="w-7 h-7"
                       resizeMode='contain'
                       source={icons.search} />
                   </TouchableOpacity>                
-          </View >
-          <View className="min-w-[100%] flex-row justify-center mb-4 gap-2 items-center flex-1 h-10 mt-3">
-            <TouchableOpacity onPress={loadTrendingChallenges}
-            className="min-w-[32%] h-[100%] flex-col justify-center items-center rounded-lg bg-gray-700 ">
-              <Text className="text-xs font-bold  text-white"
-              style={{fontSize:10}}>
-                  Trending Challenges
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={loadUserChallenges}
-             className="min-w-[32%] h-[100%] flex-col justify-center items-center rounded-lg bg-blue-900 ">
-              <Text className="text-xs font-bold text-white ">
-                  User's Challenges
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={loadParticipations}
-             className="min-w-[32%] h-[100%] flex-col justify-center items-center rounded-lg bg-gray-700 ">
-              <Text className="text-xs font-bold text-white ">
-                  Track Competition
-              </Text>
-            </TouchableOpacity>
+          </View > */}
+          <View className="bg-white min-w-full min-h-1"></View>
+          <View className="w-[100vw] mt-2 mb-2 h-[250px] ">
+              {trendingChallenges.length > 0 &&  (
+                 <HeadLineChallenges challengeData={trendingChallenges}  />  
+              )} 
           </View>
+          <View className="bg-white min-w-full mb-4 min-h-1"></View>
           
 
       

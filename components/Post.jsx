@@ -1,13 +1,15 @@
-import { View, Text, ImageBackground, Image, TouchableOpacity } from 'react-native'
+import { View, Text, ImageBackground, Image, TouchableOpacity, Platform, Alert } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { icons, images } from '../constants'
 import Ionicons from '@expo/vector-icons/Ionicons';
-// import { Video, ResizeMode } from 'expo-av';
+
 import { useGlobalContext } from '../context/GlobalProvider';
-import { liked, loadLikeVoteData, voted } from '../apiCalls';
+import { acceptFriendRequest, addFollowing, friendRequest, getFollowings, getUserFriendsData, liked, loadLikeVoteData, removeFriendRequest, unFollowings, unfriendRequest, voted } from '../apiCalls';
 import PostFooter from './PostFooter';
-import { ResizeMode, Video } from 'expo-av';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { useEvent } from 'expo';
+import { getInition } from '../helper';
 // import { Video ,ResizeMode } from 'expo-video';
 // import Video from 'expo-av';
 
@@ -15,39 +17,126 @@ import { useFocusEffect } from 'expo-router';
 
 
 
-export default function Post({participant,challenge,isVisible,setFinishPlaying}) {
+export default function Post({participant,challenge,index,isVisible,setFinishPlaying}) {
    
-    const {user,setUser} = useGlobalContext()
+    const {user,setUser,isViewed ,setIsViewed} = useGlobalContext()
     const [isExpired,setIsExpired] = useState(false)
     const [isVoted,setIsVoted] = useState(false)
     const [isLiked,setIsLiked] = useState(false)
     const [autoPlay,setAutoPlay] = useState(isVisible)
     const [isPlaying,setIsPlaying] = useState(false)
 
-    const videoRef = useRef(null);
-
-
+    const [followings,setFollowings] = useState ([])
+    const [isFollowing , setIsFollowing] = useState(false)
   
+    const [addFriendRequest , setAddFriendRequest] = useState(null)
+    const [participantFriendData,setParticipantFriendData] = useState(null)
+    const [userFriendData,setUserFriendData] = useState(null)
+    const[isFriend,setIsFriend]= useState(false)
+    const[isPending,setIsPending]= useState(false)
+    const[isAccept,setIsAccept]= useState(false)
+    
+    const [ownChallenge , setOwnChallenge ] = useState(false)
+    const [ownPost , setOwnPost ] = useState(false)
+
+
+
+    const videoRef = useRef(null);
+    
+    useEffect(() => {
+      challenge.participants.map(participant =>{
+        if(participant.user_id === user._id) {
+            setOwnChallenge(true)
+         } 
+      })
+      participant.user_id == user._id ?  setOwnPost(true) : setOwnPost(false)
+      }, [])
+      
+    //*************************************************************player here function***********************************************
+    const player = useVideoPlayer
+    (
+      participant.video_urll
+    
+      , (player) => {
+      player.loop = false;
+      player.volume = 0.1
+      player.play() ;
+    });
+
+    const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
+
+    useEffect(() => {
+      if(isVisible){
+         player.play()
+         setIsPlaying(true)
+        } else {
+         player.pause()
+         setIsPlaying(false)}
+    }, [isVisible])
+
+    const toggleVideoPlaying = () =>{
+      if(isPlaying){
+        player.pause()
+        setIsPlaying(false)
+      }else {
+        player.play()
+        setIsPlaying(true)
+      }
+      }
+
+      useEffect(() => {
+        console.log(isViewed)
+        // if(isViwed) setIsViewed(!isViwed)
+      }, []);
+    
+      useFocusEffect(
+        useCallback(() => {
+          return () => {
+            if (videoRef.current) {
+              player.pause();
+            }
+          };
+        }, [videoRef])
+      );
+
+      useEffect(() => {
+        const statusSubscription = player?.addListener(
+          'playingChange',
+          ({isPlaying}) => {
+            const finishedThreshold = player.duration;
+            if (
+              player.currentTime >= finishedThreshold &&
+              player.currentTime > 0 
+            ) {
+              player.currentTime = 0
+              setFinishPlaying(true);
+              return;
+            }
+          },
+        );
+        return () => {
+          setFinishPlaying(false)
+          statusSubscription.remove();
+        };
+      }, []);
+
+  //**************************************likes and votes data ************************************** */
     const ids =[ user._id,
         participant._id,
         challenge._id
         ]
     
 
-    
     const [likesVotesData,setLikesVotesData] = useState(null) 
-    // console.log(isVisible) 
     useEffect(() => { 
     loadLikeVoteData(ids,setLikesVotesData,likesVotesData, isExpired)   
      },[] )
 
      const handleLikes = async(e) => {
-        //apiCall.js , when user click like button 
           liked(ids,setLikesVotesData,likesVotesData,setIsExpired)
     }
 
     const handleVotes = async(e)=> {
-        //apiCall.js , when user vote like button
           voted(ids,setLikesVotesData,likesVotesData,setIsExpired)   
      }
     useEffect(() => {
@@ -61,102 +150,284 @@ export default function Post({participant,challenge,isVisible,setFinishPlaying})
         }  
       }, [likesVotesData])
   
+  //********************************** foolowing followers data *****************/
       useEffect(() => {
-        return () => {
-          if(isPlaying && videoRef.current)  videoRef.current.pauseAsync();  
-        };
-      }, [isPlaying]);
-    
-      useFocusEffect(
-        useCallback(() => {
-          return () => {
-            if (videoRef.current) {
-              videoRef.current.pauseAsync();
-            }
-          };
-        }, [videoRef])
-      );
+        getFollowings(user._id ,setFollowings)
+      }, [])
+
+      useEffect(() => {
+        followings.find(following => following.following_id === participant.user_id)?
+        setIsFollowing(true) : setIsFollowing(false)
+      }, [followings])
+
+      const handleFollowing =  ()=> {
+        const rawBody = {
+          following_id : participant.user_id,
+          following_email:participant.email,
+          following_profileimg:participant.profile_img,
+          following_name:participant.name,
+          follower_profileimg:user.profile_img,
+          follower_name:user.name
+       }
+      addFollowing(user._id,rawBody, setFollowings)
+      }
+      
+    const handleUnFollowing =  ()=> {
+        const rawBody = {
+          following_id : participant.user_id,
+          following_email:participant.email,
+          following_profileimg:participant.profile_img,
+          following_name:participant.name,
+          follower_profileimg:user.profile_img,
+          follower_name:user.name
+       }
+       unFollowings(user._id,rawBody, setFollowings)
+      }
+   //********************************** friends data *****************/
+
+  useEffect(() => {
+    getUserFriendsData(user._id,setUserFriendData)
+    getUserFriendsData(participant.user_id,setParticipantFriendData)
+  }, [])
+
+  useEffect(() => {
+    if(participantFriendData){ 
+      if(participantFriendData.friend_request_received)
+      participantFriendData.friend_request_received.find(data => data.sender_id == user._id)
+      ? setIsPending(true) : setIsPending(false)
+      if(participantFriendData.friends)
+        participantFriendData.friends.find(data => data.sender_id === user._id)
+        ? setIsFriend(true) : setIsFriend(false)
+      }
+
+    if( userFriendData){
+      if(userFriendData.friend_request_received) {
+         if(userFriendData.friend_request_received.find(data => data.sender_id == participant.user_id))
+         {
+          setIsAccept(true)
+          setIsPending(false)
+          setIsFriend(false)
+        } 
+        else {setIsAccept(false)
+        
+      }}}
+          
+          }
+  , [participantFriendData,userFriendData])
+   
+  useEffect(() => {
+    getUserFriendsData(user._id,setUserFriendData)
+    getUserFriendsData(participant.user_id,setParticipantFriendData)
+    }, [addFriendRequest])
+
+    const sendFriendRequest = () => {    
+      const rawBody = user;
+      friendRequest(participant.user_id,rawBody,setAddFriendRequest)
+   }   
+   const unfriendFriendRequest = () => {
+    const rawBody = user;
+    unfriendRequest(participant.user_id,rawBody,setAddFriendRequest)
+  }
+  const okFriendRequest = () => {
+    const rawBody ={
+      _id:participant.user_id,
+      name:participant.name,
+      email:participant.email,
+      profile_img:participant.profile_img
+    }
+    acceptFriendRequest(user._id,rawBody,setAddFriendRequest)
+  }
+  const cancelFriendRequest = () => {
+    removeFriendRequest(participant.user_id,user,setAddFriendRequest)
+  }
+  
+  
+  const confirmCancel = () => {
+    Alert.alert(
+      "Confirm Action",
+      "Are you sure you want to cancel friend request",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: cancelFriendRequest }
+      ],
+      { cancelable: false }
+    );
+  };
+  const confirmFriendRequest = () => {
+    Alert.alert(
+      "Confirm Action",
+      "Are you sure you want to send friend request",
+  
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: sendFriendRequest }
+      ],
+      { cancelable: false }
+    );
+  };
+  
+  const confirmAccept = () => {
+    Alert.alert(
+      "Confirm Action",
+      "Are you sure you want to accept friend requestt",
+  
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: okFriendRequest }
+      ],
+      { cancelable: false }
+    );
+  };
+  
+  const confirmUnfriend = () => {
+    Alert.alert(
+      "Confirm Action",
+      "Are you sure you want to remove from your friend list",
+  
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: unfriendFriendRequest }
+      ],
+      { cancelable: false }
+    );
+  };
+
 
   return (
     <View className="w-[100vw] min-h-[88%] flex-col justify-start items-center  ">
         <ImageBackground className=" flex-1   flex-col justify-start items-center"
             source={images.night_bg} >
 
-            <View className="w-full flex-row items-center  px-4 justify-between min-h-[7%]">
-               <Image 
-                 className="w-[35px] h-[35px] rounded-full"
-                 source={{uri:participant.profile_img}} 
-                 />
-                <View className="flex-col justify-center items-center gap-0">
+            <View
+             className="w-full flex-row  items-center  px-4 justify-start min-h-[7%]">
+                <TouchableOpacity 
+                onPress={() => {
+                if(user._id === participant.user_id){
+                  router.push('/profile')
+                }
+                else{
+                 if(isViewed) 
+                  {  console.log("i am here routttterrrrr")
+                     setIsViewed(false) 
+                    router.push({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                  }
+                  else router.replace({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                }
+              } }
+                className="flex-row w-[15%] justify-start items-center gap-0">
+                    <Image 
+                    className="w-[35px] h-[35px] rounded-full"
+                    source={{uri:participant.profile_img}} 
+                    />
+                </TouchableOpacity>
+                <View className="flex-col w-[30%] justify-start items-start gap-0">
                     <Text className="text-white text-xs font-bold"
                        style={{ fontSize:9}}>
                         {participant.name}
                     </Text>
-                    <Text className="text-white text-sm font-bold">
-                       JSChallenger
+                    <Text className="text-white text-xs font-bold">
+                       {getInition(participant.name)}Challenger
                     </Text>
                 </View>
-                <View className="flex-col justify-center items-center gap-0">
+               
+                <View className="flex-col w-[15%] justify-center items-center gap-1">
                     <Image 
-                    className="w-6 h-6"
-                      source={icons.like}
-                    />
-                    <Text className="text-gray-300 text-xs font-bold">
-                       {participant.likes}  Likes
-                    </Text>
-                </View>
-                <View className="flex-col justify-center items-center gap-0">
-                    <Image 
-                    className="w-6 h-6"
+                    className="w-8 h-6"
                       source={icons.heart}
                     />
                     <Text className="text-gray-300 text-xs font-bold">
                        {participant.votes}  Votes
                     </Text>
                 </View>
-               
-                <TouchableOpacity className="flex-col justify-center items-center gap-1">
-                    <Image 
-                    className="w-10 h-10"
-                      source={icons.follow}
-                      resizeMode='contain'
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-col justify-center items-center">
-                    <Image 
-                    className="w-10 h-10"
-                      source={icons.friend}
-                      resizeMode='contain'
-                    />
+          
+                    <TouchableOpacity 
+                    onPress={ownPost?()=>{}:isFollowing? handleUnFollowing : handleFollowing}
+                    className="flex-col w-[20%] justify-center items-center gap-1">
+                        <View className ="flex-row  justify-center items-center">
+                            <Image 
+                            className="w-6 h-6"
+                              source={icons.follow}
+                              resizeMode='contain'
+                            />
+                             {isFollowing && (
+                              <Image 
+                              className="w-6 h-6"
+                              source={icons.check}
+                              resizeMode='contain'
+                            />
+                            )}
+                        </View>
+                         <Text className="text-gray-300 text-xs font-bold">
+                            {isFollowing ? "Unfollow" : "Follow"} 
+                        </Text>
+                    </TouchableOpacity>
+            
+              
+
+
+                <TouchableOpacity
+                   onPress={ownPost?()=>{}:isFriend? confirmUnfriend  : 
+                    isAccept? confirmAccept : isPending?
+                    confirmCancel : confirmFriendRequest  }
+                    className="flex-col w-[20%] justify-center gap-1 items-center">
+                     <View className ="flex-row  justify-center items-center">
+                          <Image 
+                               className="w-6 h-6"
+                               source={icons.friend}
+                               resizeMode='contain'
+                          />
+                          <Image 
+                              className="w-6 h-6"
+                              source={isFriend? icons.check_red : isPending ? icons.pending: isAccept? icons.check_red:""}
+                              resizeMode='contain'
+                          />
+                      </View>    
+                      <Text className="text-gray-300 text-xs font-bold">
+                      {isFriend? "Unfriend": isAccept ? "Accept": isPending ?"Pending": "Add Friend"} 
+                    </Text>
                 </TouchableOpacity>
             </View>
            
-            <View 
-             className="flex-row items-center bg-primary  justify-center min-w-[100%] min-h-[86%] "
+            <TouchableOpacity 
+                // onPress={Platform.OS == "ios" ? toggleVideoPlaying : toggleVideoPlaying 
+              
+                // }
+                onPressOut={toggleVideoPlaying}
+                activeOpacity={1}
+                className="flex-row items-center bg-primary  justify-center min-w-[100%] min-h-[86%] "
               >          
-               <Video
-                ref={videoRef}
-                source={{uri:participant.video_url}}
-                style={{ width:'100%', height:'100%'}}
-                resizeMode='cover'
-                useNativeControls={true}
-                shouldPlay={isVisible}
-                isLooping
-                volume={0.7}
-                isMuted={false}
-                onPlaybackStatusUpdate={(status)=>{
-                  if(status.isPlaying) setIsPlaying(true)
-                    else setIsPlaying(false)
-                  if(status.didJustFinish){
-                    setFinishPlaying(true)
-                  }
-                }}
-              />
-            </View>
+                      <VideoView 
+                        ref={videoRef}
+                        style={{  width:'100%' ,height:'100%',opacity:20}}
+                        player={player}
+                        contentFit='cover'
+                        nativeControls ={false}
+                      />
+                      <TouchableOpacity 
+                        onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) } }
+                        className="flex-col absolute  justify-center items-center">
+                            <Image 
+                            className={isPlaying ? "w-14 h-14 opacity-20":"w-14 h-14 opacity-100"}
+                            source={isPlaying ?   Platform.OS === "android"? icons.pause:"" :icons.play}/>
+                      </TouchableOpacity>
+            </TouchableOpacity>
+           
           
         
             {likesVotesData && (
-                <PostFooter handleLikes={handleLikes} handleVotes={handleVotes} isLiked={isLiked} 
+                <PostFooter handleLikes={handleLikes} index={index} handleVotes={handleVotes} isLiked={isLiked} 
                 isVoted={isVoted} participant={participant} likesVotesData={likesVotesData}/>
             )}
           

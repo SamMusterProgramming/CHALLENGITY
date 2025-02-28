@@ -48,7 +48,6 @@ export default function ChallengeDisplayer() {
 
     const renderItem = ({ item, index }) => {
         const isVisible = viewableItems.some(viewableItem => viewableItem.index === index);
-        // setFinishPlaying(false)
         return  <Player
          isVisible={isVisible}
          setFinishPlaying={setFinishPlaying}
@@ -68,19 +67,16 @@ export default function ChallengeDisplayer() {
         }
       }, [finishPlaying])
 
-    useEffect(() => {
-     challenge && console.log(challenge.participants)
-      }, [challenge])
+
 
 
 
   return (
  
-    <SafeAreaView className="flex-1  bg-primary  ">
-       {/* <View className=""> */}
+    <SafeAreaView className="flex-1 bg-primary  ">
+
        {challenge &&  (
             <SwiperFlatList
-            // style={{width:'100vw' ,height:'100vh'}}
             ref={swiperRef}
             data = {challenge.participants}
             keyExtractor={(item) => item._id}
@@ -91,13 +87,6 @@ export default function ChallengeDisplayer() {
             viewabilityConfig={{
                 itemVisiblePercentThreshold: 70, 
             }}
-            // viewabilityConfig={{itemVisiblePercentThreshold:70}}
-            // contentInset={{y:170}}
-            // ListHeaderComponent={
-            //   <Text className="text-white">
-            //     azulk fellak
-            //   </Text>
-            // }
             scrollEventThrottle={15}
             pagingEnabled
             horizontal
@@ -123,8 +112,7 @@ export default function ChallengeDisplayer() {
              </View> 
         </View>
        )}
-          
-      {/* </View> */}
+
      </SafeAreaView>
    
    

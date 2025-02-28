@@ -1,5 +1,9 @@
 {
   "expo": {
+    
+      "androidNavigationBar": {
+        "visible": "sticky-immersive"
+      }, 
     "name": "Challengify",
     "slug": "Challengify",
     "version": "1.0.0",
@@ -35,7 +39,6 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-       
       ],
       [
         "expo-camera",
@@ -51,13 +54,11 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
-      ]
-     
+      ],
+      "react-native-compressor"
     ],
-    
     "experiments": {
       "typedRoutes": true
     }
   }
-  
 }

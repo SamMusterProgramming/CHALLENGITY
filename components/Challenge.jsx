@@ -53,7 +53,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
 }
 
     const handleDelete = async() => {
-        console.log("mherrre")
+  
        await deleteChallenge(challenge._id,user._id).
         then((res) => { 
               const you = challenge.participants.find(participant => participant.user_id == user._id);

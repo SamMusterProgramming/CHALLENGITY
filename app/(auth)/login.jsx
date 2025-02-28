@@ -1,11 +1,11 @@
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import { Link, router } from 'expo-router'
 
-import { authLogin, getUserChallenges, getUserParticipateChallenges } from '../../apiCalls'
+import { authLogin, getUserChallenges, getUserParticipateChallenges, isAuthenticated } from '../../apiCalls'
 import { GlobalProvider, useGlobalContext } from '../../context/GlobalProvider.js'
 // import AuthContent from '../../context/AuthContent'
 
@@ -31,26 +31,29 @@ export default function login() {
       router.push('/timeline')
     }
   }, [user])
+
+ 
+  useEffect(() => {
+    isAuthenticated(setUser)
+   },[])
+ 
+  
   
   return (
-    <SafeAreaView className="w-full bg-primary h-full">
-       <ScrollView>
-         <View className="w-full justify-start flex-col items-center h-full px-4 py-0">
+    <SafeAreaView className=" flex-1 bg-primary ">
+      <ScrollView className="w-full h-full  bg-primary ">
+       <ImageBackground
+        source={images.night_bg}>
+         <View className="min-w-full justify-start flex-col items-center min-h-[100vh] px-4 py-0">
           
               <View className="w-full justify-center flex-row items-center gap-0 ">
                   <Image 
                     source={images.challenge_logo} 
                     resizeMode='contain' 
-                    className="w-[30%] h-[25vh]"/>
-                     <Image 
-                     source={images.logo} 
-                    resizeMode='contain' 
-                    className="w-[70%] h-[25vh]"/>
-                   
-               
+                    className="w-[70%] h-[25vh]"/>          
               </View>
            
-              <View className='w-full h-20 items-center'>
+              <View className='w-full h-20 mt-10 items-center'>
                 <Text className="text-2xl text-white font-bold">
                    LOGIN
                 </Text>
@@ -67,10 +70,11 @@ export default function login() {
                     title="Password" 
                     value={form.password}
                     placeholder="password"
+                    keyboardType="email-address"
                     handleChangeText={(e)=> setForm({...form,password:e})}
                   />
                    <TouchableOpacity onPress={handleLogin}
-                      className="bg-secondary-100 mt-5 rounded-xl w-[100%] h-16 justify-center items-center">
+                      className="bg-blue-400 mt-5 rounded-xl w-[100%] h-16 justify-center items-center">
                         <Text className="text-primary font-semibold text-lg">Log in</Text>
                     </TouchableOpacity>
 
@@ -78,7 +82,7 @@ export default function login() {
                         <Text className="text-lg text-gray-200 font-semibold">
                           Don't have an account ?
                         </Text>
-                        <Link className=" text-lg text-secondary font-semibold"
+                        <Link className=" text-lg text-blue-600 font-semibold"
                         href="/signup">
                           Sign Up
                         </Link>
@@ -87,7 +91,8 @@ export default function login() {
            
               
          </View>
-       </ScrollView>
+        </ImageBackground>
+        </ScrollView> 
     </SafeAreaView>
   )
 }

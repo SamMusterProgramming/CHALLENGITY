@@ -4,6 +4,7 @@ import { Stack, Tabs } from 'expo-router'
 import {icons} from '../../constants'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 const TabIcon =({color,icon,name,focused,dimension}) =>{
@@ -28,21 +29,32 @@ export default function tabsLayout() {
   return (
     <Tabs
       screenOptions={{
-      tabBarStyle: {
+        tabBarActiveTintColor: 'blue',
+        tabBarInactiveTintColor: 'caramelf',
+        tabBarIconStyle:{
+            
+            color:'yellow'   
+        },
+        // tabBarLabelStyle: { fontSize: 10 },
+          tabBarStyle: {
           backgroundColor: 'white',
           width:'100%',
-          height: 45,
-          borderWidth: 1,
-          borderRadius: 6,
-          borderColor: 'red',
-          borderTopColor: 'yellow',
-          alignItems:'center',
-          // backgroundColor: Colors.white.default,
+          height: 50,
+          // borderWidth: 1,
+          borderRadius: 16,
+          // borderColor: 'red',
+          // borderTopColor: 'yellow',
+          alignItems:'start',
+          justifyContent:"center",
+          // position:'absolute',
+          // marginBottom:0,
+          display:'flex',
+          flexDirection:'row'
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 25,
           fontWeight: "bold",
-          marginBottom: 10,
+          // marginBottom: 10,
           },
       tabBarShowLabel:false
     }}>
@@ -51,14 +63,12 @@ export default function tabsLayout() {
         options={{
           title:"home",
           headerShown:false,
-          tabBarIcon:({color,focused}) => (
-             <TabIcon 
-               icon={icons.home}
-               color={focused ?"green": color}
-               name="home"
-               focused={focused}
-               dimension ="w-6 h-6"
-             />
+          tabBarIcon:({color,focused,size}) => (
+            <Ionicons
+            name={ 'home' }
+            size={size}
+            color={color}
+          />
           )
         }}
        />
@@ -67,14 +77,19 @@ export default function tabsLayout() {
         options={{
           title:"profile",
           headerShown:false,
-          tabBarIcon:({color,focused}) => (
-             <TabIcon 
-               icon={icons.challenge}
-               color={color}
-               name="challenge"
-               focused={focused}
-               dimension ="w-8 h-8"
-             />
+          tabBarIcon:({color,focused,size}) => (
+            //  <TabIcon 
+            //    icon={icons.challenge}
+            //    color={color}
+            //    name="challenge"
+            //    focused={focused}
+            //    dimension ="w-8 h-8"
+            //  />
+            <Ionicons
+            name={ 'home' }
+            size={size}
+            color={color}
+          />
           )
         }}
        />
@@ -83,14 +98,20 @@ export default function tabsLayout() {
         options={{
           title:"notifications",
           headerShown:false,
-          tabBarIcon:({color,focused}) => (
-             <TabIcon 
-               icon={icons.notification}
-               color={color}
-               name="notifications"
-               focused={focused}
-               dimension ="w-8 h-8"
-             />
+          tabBarIcon:({color,focused,size}) => (
+            //  <TabIcon 
+            //    icon={icons.notification}
+            //    color={color}
+            //    name="notifications"
+            //    focused={focused}
+            //    dimension ="w-8 h-8"
+            //  />
+            <Ionicons
+            name={ 'notifications'}
+            size={size}
+            color={color}
+            
+          />
           )
         }}
        />
@@ -99,14 +120,20 @@ export default function tabsLayout() {
         options={{
           title:"profile",
           headerShown:false,
-          tabBarIcon:({color,focused}) => (
-             <TabIcon 
-               icon={icons.profile}
-               color={color}
-               name="profile"
-               focused={focused}
-               dimension ="w-6 h-6"
-             />
+          tabBarIcon:({color,focused,size}) => (
+            //  <TabIcon 
+            //    icon={icons.profile}
+            //    color={color}
+            //    name="profile"
+            //    focused={focused}
+            //    dimension ="w-6 h-6"
+            //  />
+            <Ionicons
+            name={'home'}
+            size={size}
+            color={color}
+            
+          />
           )
         }}
        />

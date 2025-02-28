@@ -7,7 +7,7 @@ export default function rootLayout() {
   return (
     
     <GlobalProvider>
-     <Stack 
+     <Stack
      screenOptions={{ 
      }}>
        <Stack.Screen name='index' options={{ headerShown:false}} />
@@ -16,9 +16,8 @@ export default function rootLayout() {
        <Stack.Screen name='ChallengeDisplayer' options={{ headerShown:false}} />
        <Stack.Screen name='CreateChallenge' options={{ headerShown:false}} />
        <Stack.Screen name='CreateParticipateChallenge' options={{ headerShown:false}} />
-
-
-       <Stack.Screen name='login' options={{ headerShown:false}} />
+       <Stack.Screen name='ViewProfile' options={{ headerShown:false,unmountOnBlur: true}} />
+       {/* <Stack.Screen name='login' options={{ headerShown:false}} /> */}
      </Stack>
      </GlobalProvider>
    

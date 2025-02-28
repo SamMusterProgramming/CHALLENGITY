@@ -27,7 +27,7 @@ export default function ParticipantPost({participants,challenge,isVisibleVertica
     const renderItem = ({ item, index }) => {
       const isVisible = viewableItems.some(viewableItem => viewableItem.index === index);
       // setFinishPlaying(false)
-      return <Post isVisible={isVisible && isVisibleVertical} setFinishPlaying={setFinishPlaying} key={item._id} participant={item} challenge={challenge} />
+      return <Post isVisible={isVisible && isVisibleVertical} setFinishPlaying={setFinishPlaying} key={item._id} index={index} participant={item} challenge={challenge} />
     };
     useEffect(() => {
       if(finishPlaying){

@@ -10,10 +10,11 @@ import challenge  from "../assets/images/challenge.png";
 import sky_bg from "../assets/images/sky-bg.webp";
 import night_bg from "../assets/images/dark.jpeg";
 import gold_bg from "../assets/images/gold-bg.jpg";
+import empty from "../assets/images/empty.png";
 
 
 export default { profile, thumbnail, cards, path, logo, logoSmall,
      guiness,challenge,challenge_logo,sky_bg,night_bg,
-     gold_bg
+     gold_bg,empty
     
  };

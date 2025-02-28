@@ -32,7 +32,8 @@ import share from '../assets/icons/share.png'
 import x from '../assets/icons/x.png'
 import check from '../assets/icons/check.png'
 import pending from '../assets/icons/pending.png'
-
+import rank from '../assets/icons/ranking.png'
+import challengify from '../assets/icons/challengify.png'
 import check_red from '../assets/icons/check-red.png'
 
 
@@ -43,6 +44,8 @@ import check_red from '../assets/icons/check-red.png'
 
 
 export default {
+  challengify,
+  rank,
   check_red,
   priv,
   competition,

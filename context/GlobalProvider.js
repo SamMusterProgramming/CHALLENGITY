@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const GlobalContext = createContext();
 
-export const  useGlobalContext = ()=> useContext(GlobalContext);
+export const  useGlobalContext = () => useContext(GlobalContext);
 
 export const GlobalProvider =({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -12,6 +12,7 @@ export const GlobalProvider =({children}) => {
     const [isLoading ,setIsLoading] = useState(true)
     const [userChallenges,setUserChallenges] = useState([])
     const [ participateChallenges,setParticipateChallenges] = useState(null)
+    const [isViewed ,setIsViewed] = useState(true)
 
     useEffect(() => {
           
@@ -28,7 +29,8 @@ export const GlobalProvider =({children}) => {
             trendingChallenges,
             setTrendingChallenges,
             userChallenges,setUserChallenges,
-            participateChallenges,setParticipateChallenges
+            participateChallenges,setParticipateChallenges,
+            isViewed ,setIsViewed
               }
             } >
             {children}

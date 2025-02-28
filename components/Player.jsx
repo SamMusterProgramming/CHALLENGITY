@@ -9,6 +9,7 @@ import { acceptFriendRequest, addFollowing, friendRequest, getFollowings, getUse
 import PostSideFooter from './PostSideFooter';
 import { useGlobalContext } from '../context/GlobalProvider';
 import { router } from 'expo-router';
+import { getInition } from '../helper';
 
 
     
@@ -18,14 +19,19 @@ import { router } from 'expo-router';
 export default function Player({participant,index,dimension,isVisible,challenge,setFinishPlaying}) {
 
   const videoRef = useRef()
-  const {user,setUser} = useGlobalContext()
+  const {user,setUser,isViewed,setIsViewed} = useGlobalContext()
   const [isExpired,setIsExpired] = useState(false)
   const [videoStatus, setVideoStatus] = useState(null);
   const [isPlaying, setIsPlaying] = useState(isVisible);
   const [isVoted,setIsVoted] = useState(false)
   const [isLiked,setIsLiked] = useState(false)
+
   const [ownChallenge , setOwnChallenge ] = useState(false)
-  const [challengeCreater,setChallengeCreator] = useState(null)
+  const [ownPost , setOwnPost ] = useState(false)
+  const [ hasParticipated , setHasParticipated ] = useState(false)
+
+
+  const [challengeCreater,setChallengeCreator] = useState({name:challenge.name})
   const [followings,setFollowings] = useState ([])
   const [isFollowing , setIsFollowing] = useState(false)
 
@@ -41,23 +47,26 @@ export default function Player({participant,index,dimension,isVisible,challenge,
   useEffect(() => {
     challenge.participants.map(participant =>{
       if(participant.user_id === user._id) {
-          setOwnChallenge( prev => !prev)
+          setHasParticipated(true)
        } 
     })
+    challenge.origin_id == user._id ? setOwnChallenge(true) : setOwnChallenge(false)
+    participant.user_id == user._id ?  setOwnPost(true) : setOwnPost(false)
     }, [])
 
   useEffect(() => {
-    console.log(participant)
       challenge.participants.map(participant => {    
-        if(participant.user_id === challenge.origin_id) {
-            setChallengeCreator(participant)
+        if(participant.user_id === challenge.origin_id) {    
+          setChallengeCreator(participant)
          } 
       })
      }, [])
 
   
   const player = useVideoPlayer
-  (participant.video_url, (player) => {
+  (
+    participant.video_urll
+    , (player) => {
     player.loop = false;
     player.volume = 0.1
     player.play() ;
@@ -199,25 +208,32 @@ useEffect(() => {
         }
   }
 
-const handleFollowing =  ()=> {
+
+  const handleFollowing =  ()=> {
     const rawBody = {
       following_id : participant.user_id,
-      following_email:participant.email
+      following_email:participant.email,
+      following_profileimg:participant.profile_img,
+      following_name:participant.name,
+      follower_profileimg:user.profile_img,
+      follower_name:user.name
    }
   addFollowing(user._id,rawBody, setFollowings)
-  // setFollowings((prevItems) => [...prevItems,rawBody])
   }
   
 const handleUnFollowing =  ()=> {
     const rawBody = {
       following_id : participant.user_id,
-      following_email:participant.email
+      following_email:participant.email,
+      following_profileimg:participant.profile_img,
+      following_name:participant.name,
+      follower_profileimg:user.profile_img,
+      follower_name:user.name
    }
    unFollowings(user._id,rawBody, setFollowings)
   }
 
   const sendFriendRequest = () => {    
-    console.log("send request")
     const rawBody = user;
     friendRequest(participant.user_id,rawBody,setAddFriendRequest)
  }   
@@ -316,120 +332,159 @@ const confirmUnfriend = () => {
                 style={{marginTop:Platform.OS == "android" ? 0 : 0 }}
                 >
                       <VideoView 
-                        // ref={videoRef}
+                        ref={videoRef}
                         style={{  width:'100%' ,height:'100%',opacity:20}}
                         player={player}
                         contentFit='cover'
                         nativeControls ={false}
                       />
+
+
               </TouchableOpacity>
 
             {!isPlaying && (
               <> 
-                 <View className="min-w-full  rounded-md absolute top-0 flex-row items-center justify-start min-h-[5%]"
-                 style={{top:Platform.OS == "android" ? 0 : 0 }} >
-                     <TouchableOpacity
-                       onPress={() => router.back()}
-                       className="min-w-[6%] min-h-[95%] flex-1 flex-col justify-center  items-center">
-                       <Image
-                       className="w-8 h-8 bg-white "
-                       source={icons.x} />
-                     </TouchableOpacity>
-                    <View 
-                    className="min-w-[25%]  min-h-[95%] rounded-md bg-s flex-1 flex-row justify-center  items-end  ">
-                        <Text className="text-white text-xl  font-bold ">
-                          Challenge
-                        </Text>
-                    </View>
-                    
-                    <View className="min-w-[68%] min-h-[95%] border-x-white bg-blue-1000 flex-1 flex-row justify-center  items-end" >
-                        <Text className="text-gray-200 text-sm font-bold">
+                 <View className="min-w-full  rounded-md absolute top-0 flex-col flex-1 items-center justify-start h-[16%]"
+                        style={{top:Platform.OS == "android" ? 0 : 0 }} >
+                    <View className="min-w-full  rounded-md bg-blue-800 flex-row items-center justify-between h-[25%]"
+                         >
+                        <TouchableOpacity
+                          onPress={() => router.back()}
+                          className="min-w-[7%] h-[100%]  flex-col justify-center  items-center">
+                          <Image
+                          className="w-7 h-7 bg-white "
+                          source={icons.x} />
+                        </TouchableOpacity>
+
+                        <View 
+                        className="min-w-[35%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-center  ">
+                            <Text className="text-white text-xl  font-bold ">
+                              Challenge  -
+                            </Text>
+                        </View>
+
+                        <View 
+                        className="min-w-[35%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-center  ">
+                            <Text className="text-white text-sm  font-bold ">
+                              {challenge.type}{' '} -
+                            </Text>
+                        </View>
+
+                        <View 
+                        className="min-w-[20%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-center ">
+                            <Text className="text-secondary text-sm  font-bold ">
+                              {challenge.privacy}
+                            </Text>
+                        </View>
+
+                    </View>  
+
+                    <View className="w-[100vw] h-[25%] bg-gray-400  border-x-3 bg-blue-1000 flex-row justify-center  items-center" >
+                        <Text className="text-primary text-sm font-bold">
                           {challenge.desc}   
                         </Text>
-                    </View>
-
-                  
- 
-             </View>
-
-             {challengeCreater && (
+                   </View>
 
 
-              <View className="w-full absolute top-20 left-0 px-3   flex-row items-center justify-between min-h-[12%]">
-                 <View 
-                      className=" min-h-[95%] rounded-md w-[45%]  flex-col justify-center gap-3 items-center  ">
-                    <Text  className="text-gray-100 font-bold text-sm">
-                        Created by {' '} <Text className="text-white font-bold text-sm">{challenge.name}</Text>
-                    </Text>  
-                    <Image 
-                  className="w-[65px] h-[65px] rounded-full"
-                  source={{uri:challengeCreater.profile_img}} 
-                  />
-                 </View>
+                  {challengeCreater && (
+
+                        <View className="w-full flex-row items-center bg-sky-800 justify-center h-[50%]">
+                         
+                          <View 
+                                className=" min-h-[100%] px-3 rounded-md w-[50%]  flex-col justify-evenly items-start  ">
+
+                              <Text  className="text-gray-300 font-bold text-xs">
+                                  Created by {' '} 
+                              </Text>  
+                              <TouchableOpacity
+                                onPress={() => {
+                                  if(ownChallenge){
+                                    router.push({ pathname: '/profile' })
+                                  }else
+                                  {
+                                  if(isViewed) 
+                                    {  console.log("i am here routttterrrrr")
+                                        setIsViewed(false) 
+                                      router.push({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                                    }
+                                    else router.replace({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                                  }
+                                  }
+                                }
+                                  className="flex-row  justify-start gap-4  items-center">
+                                <Image 
+                                  className="w-[35px] h-[35px]  rounded-full"
+                                  source={{uri:challengeCreater.profile_img}} 
+                                  />
+                                  <Text className="text-secondary font-bold text-xs">{challenge.name}</Text>
+                              </TouchableOpacity>
+                          </View>
 
 
-                 <View 
-                    className=" min-h-[95%] rounded-md w-[45%]  flex-col justify-center gap-3 items-center  ">   
-                  {!ownChallenge? (  
-                <>
-                 <Text  className="text-gray-100 font-bold text-sm">
-                 Click  {' '} <Text className="text-white font-bold text-sm">to participate</Text>
-                </Text>  
-                 <TouchableOpacity
-                      // onPress={()=>router.push({ pathname: '/NewChallenge', params: {challengeData:JSON.stringify(challenge)} })}
-                      className="w-[70px] rounded-full h-[70px] border-pink-500 bg-blue-300  flex-col justify-center  items-center">
-                        
-                        <Text className="text-green-800 text-xl font-bold">
-                          Join    
-                        </Text>     
-                 </TouchableOpacity>          
-                 </>
-                ):(
-                  <>
-                  {challenge.participants.length == 1 ? 
-                    (
-                    <>
-                      <Text  className="text-gray-100 font-bold text-sm">
-                       You Created the Challenge  {' '}
-                     </Text>  
-                      <TouchableOpacity
-                      //  onPress={handleDelete}
-                       className="w-[70px] rounded-full h-[70px] flex-1 flex-col justify-center  bg-violet-300 items-center">
-                        <Text className="text-red-500 text- font-bold ">
-                          Delete
-                        </Text>    
-                      </TouchableOpacity>
-                    </>
-                     ):(
-                      <>
-                      <Text  className="text-gray-100 font-bold text-sm">
-                        You've Participated  {' '}
-                     </Text>  
-                      <TouchableOpacity 
-                      //  onPress={handleQuit}
-                       className="w-[70px] rounded-full h-[70px] flex-col justify-center   bg-pink-200 items-center">
-                        <Text className="text-red-700 text- font-bold ">
-                          Resign
-                        </Text>
-                      </TouchableOpacity>
-                     </> 
-                     )} 
-                 
-                     </>
+                          <View 
+                              className=" min-h-[100%]  w-[50%]  flex-col justify-evenly items-center  ">   
+                            {!hasParticipated? (  
+                          <>
+                          <Text  className="text-blue-400 font-bold text-xs">
+                            Click below to participate
+                          </Text>  
+                          <TouchableOpacity
+                                onPress={()=>router.push({ pathname: '/CreateParticipateChallenge', params:  {challenge_id:challenge._id} })}
+                                className=" border-pink-500 bg-blue-300  flex-col justify-center h-[35px] w-[100px] rounded-md   items-center">
+                                  
+                                  <Text className="text-green-800 text-xl font-bold">
+                                     Join    
+                                  </Text>     
+                          </TouchableOpacity>          
+                          </>
+                          ):(
+                            <>
+                            {challenge.participants.length == 1 ? 
+                              (
+                              <>
+                                <Text  className="text-gray-100 font-bold text-xs">
+                                You Created the Challenge  {' '}
+                              </Text>  
+                                <TouchableOpacity
+                                //  onPress={handleDelete}
+                                className="flex-col justify-center h-[35px] w-[100px] rounded-md  bg-violet-300 items-center">
+                                  <Text className="text-red-400 text- font-bold ">
+                                    Delete
+                                  </Text>    
+                                </TouchableOpacity>
+                              </>
+                              ):(
+                                <>
+                                <Text  className="text-gray-100 font-bold text-xs">
+                                  You've Participated  {' '}
+                              </Text>  
+                                <TouchableOpacity 
+                                //  onPress={handleQuit}
+                                className=" flex-col justify-center h-[35px] w-[100px] rounded-md  bg-pink-200 items-center">
+                                  <Text className="text-red-600 text-sm font-bold ">
+                                    Resign
+                                  </Text>
+                                </TouchableOpacity>
+                              </> 
+                              )} 
+                          
+                              </>
+                              
+                              )}  
+                            </View>
+
+
+                        </View>
+
+)}
+  
                     
-                     )}  
-                  </View>
-
-
              </View>
 
-             )}
               
-         </>
-            
-            )}
            
-              <View  className=" rounded-md absolute bottom-28 h-[20vh] w-[85%] gap-2 left-2 flex-col items-center justify-between">
+
+              <View  className=" rounded-md absolute bottom-28 h-[15vh] w-[85%] gap-2 left-2 flex-col items-center justify-between">
                 
                 <View className="w-full h-[33%] flex-row justify-start px-4 items-center ">
                   <Text className="text-white font-bold text-">
@@ -440,7 +495,7 @@ const confirmUnfriend = () => {
                 <View className="w-full h-[33%]  flex-row justify-start px-4 items-center ">
                     <Text className="text-white font-bold text-xl">
                         {(user._id === participant.user_id)? "You are " : participant.name.split(/ +/)[0] +" is"}  Ranked #  <Text className="text-green-200 font-bold text-xl">{''}{index + 1} {'  '}
-                            </Text> <Text className="text-gray-100 font-bold text-sm">  {index == 0 ?"Leading ":''} </Text> 
+                            </Text> <Text className="text-gray-100 font-bold text-xl">  {index == 0 ?"Leading ":''} </Text> 
                     </Text>
                   </View>  
                 <View className="w-full h-[33%] flex-row justify-start px-4 items-center ">
@@ -454,6 +509,13 @@ const confirmUnfriend = () => {
                 </View>
                
               </View>
+              
+         </>
+            
+            )}
+
+           
+          
 
               <TouchableOpacity 
               onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) } }
@@ -464,40 +526,56 @@ const confirmUnfriend = () => {
               </TouchableOpacity>
 
 
-              <View className="w-[85%] flex-row items-center  absolute bottom-1 left-0 px-4 justify-between min-h-[4%]">
+              <View className="w-[88%]  flex-row items-center  absolute bottom-2 left-0 px-4 justify-between min-h-[4%]">
                 
+                <TouchableOpacity
+                  onPress={() => {
+                    if(user._id === participant.user_id){
+                      router.push({ pathname: '/profile' })
+                    }
+                    else{
+                    if(isViewed) 
+                     {  console.log("i am here routttterrrrr")
+                        setIsViewed(false) 
+                       router.push({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                     }
+                     else router.replace({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                 } 
+                }}
+                 className="flex-col h-[100%] w-[15%]  justify-center items-center gap-0">
                    <Image 
                    className="w-[45px] h-[45px] rounded-full"
                    source={{uri:participant.profile_img}} 
                   />
+                </TouchableOpacity>  
            
-                <View className="flex-col h-[100%] justify-between items-center gap-0">
+                <View className="flex-col h-[100%] w-[35%] justify-center items-center gap-2">
                     <Text className="text-white text-xs font-bold"
-                       style={{ fontSize:13,fontWeight:800}}>
+                       style={{ fontSize:10,fontWeight:800}}>
                         {participant.name.slice(0,13)}
                     </Text>
-                    <Text className="text-white text-sm font-bold">
-                       JSChallenger
+                    <Text className="text-white text-xs font-bold">
+                       {getInition(participant.name)}Challenger
                     </Text>
                 </View>
                 
                
                 <TouchableOpacity 
-                onPress={isFollowing? handleUnFollowing : handleFollowing}
-                className="flex-col h-[100%] justify-between items-center gap-0">      
+                onPress={ownPost?()=>{}:isFollowing? handleUnFollowing : handleFollowing}
+                className="flex-col h-[100%] justify-between w-[25%] items-center gap-0">      
                     <View className ="flex-row ml-4 justify-center items-center">
                         <Image 
                         className="w-6 h-6"
                           source={icons.follow}
                           resizeMode='contain'
                         />
-                        {isFollowing && (
+                       
                           <Image 
                           className="w-6 h-6"
-                          source={icons.check}
+                          source={isFollowing ?icons.check:""}
                           resizeMode='contain'
                         />
-                        )}
+                   
                         
                    </View>
                     <Text className="text-white  text-xs font-bold">
@@ -507,10 +585,10 @@ const confirmUnfriend = () => {
                 </TouchableOpacity>
                 {participantFriendData && (
                          <TouchableOpacity 
-                         onPress={isFriend? confirmUnfriend  : 
+                         onPress={ownPost?()=>{}:isFriend? confirmUnfriend  : 
                            isAccept? confirmAccept : isPending?
                            confirmCancel : confirmFriendRequest  }
-                            className="flex-col h-[100%] justify-between items-center gap-0">
+                            className="flex-col h-[100%] justify-between w-[25%] items-center gap-0">
                             <View className ="flex-row ml-4 justify-center items-center">
                                  <Image 
                                    className="w-6 h-6"

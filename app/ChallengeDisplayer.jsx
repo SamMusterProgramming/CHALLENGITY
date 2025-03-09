@@ -4,8 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useGlobalContext } from '../context/GlobalProvider'
 import { router, useLocalSearchParams } from 'expo-router'
 import SwiperFlatList from 'react-native-swiper-flatlist'
-import Post from '../components/Post'
-import Player from '../components/Player'
+import Player from '../components/challenge/Player'
 import { getChallengeById } from '../apiCalls'
 import { sortChallengeByVotes } from '../helper'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -28,6 +27,7 @@ export default function ChallengeDisplayer() {
 
     useEffect(() => {
         if (challenge_id) {
+          console.log(challenge_id)
           getChallengeById(challenge_id,setChallenge,setIsExpired)
         }
         return () => {

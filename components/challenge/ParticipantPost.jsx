@@ -1,6 +1,5 @@
-import { View, Text, FlatList, ImageBackground } from 'react-native'
+import { View, Text, FlatList, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { images } from '../constants'
 import Post from './Post'
 import SwiperFlatList from 'react-native-swiper-flatlist'
 import { InView } from 'react-native-intersection-observer'
@@ -43,6 +42,7 @@ export default function ParticipantPost({participants,challenge,isVisibleVertica
     
   <SwiperFlatList
   ref={swiperRef}
+  // nestedScrollEnabled={true}
   data={participants}
   keyExtractor={(item) => item._id}
   renderItem={renderItem}
@@ -57,5 +57,6 @@ export default function ParticipantPost({participants,challenge,isVisibleVertica
   // contentInset={{y:170}}
   horizontal
   />
+
   )
 }

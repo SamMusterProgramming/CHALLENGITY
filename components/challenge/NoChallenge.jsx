@@ -1,21 +1,22 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { icons, images } from '../constants'
+// import { icons, images } from '../constants'
 import { router } from 'expo-router'
+import { icons, images } from '../../constants'
 
 export default function NoChallenge() {
   return (
-    <View className=" flex-1 flex-col mt-5 justify-center gap-5 items-center" > 
+    <View className=" w-full h-[25vh] flex-col mt-5 justify-center gap-5 items-center" > 
        <Image
-       className="w-64 h-64"
+       className="w-44 h-44"
        resizeMethod='cover'
        source={images.empty} />
        <TouchableOpacity
        onPress={()=>{ 
         router.push({pathname: '/CreateChallenge', params:{}}) }}
-       className="w-[60%] h-[60px] flex-row rounded-lg bg-blue-500 justify-center gap-4 items-center" >
+       className="w-[60%] h-[50px] flex-row rounded-lg bg-blue-500 justify-center gap-4 items-center" >
           <Image 
-          className="w-12 h-12"
+          className="w-8 h-8"
           resizeMethod='cover'
           source={icons.challenge}/>
           <Text

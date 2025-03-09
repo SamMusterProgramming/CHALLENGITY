@@ -1,15 +1,17 @@
-import { View, Text, ImageBackground, Image, TouchableOpacity, Platform, Alert } from 'react-native'
+import { View, Text, ImageBackground, Image, TouchableOpacity, Platform, Alert, KeyboardAvoidingView } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { icons, images } from '../constants'
+import { icons, images } from '../../constants'
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { useGlobalContext } from '../context/GlobalProvider';
-import { acceptFriendRequest, addFollowing, friendRequest, getFollowings, getUserFriendsData, liked, loadLikeVoteData, removeFriendRequest, unFollowings, unfriendRequest, voted } from '../apiCalls';
-import PostFooter from './PostFooter';
+import { useGlobalContext } from '../../context/GlobalProvider';
+import { acceptFriendRequest, addFollowing, friendRequest, getCommentsByPost, getFollowings, getUserFriendsData, liked, loadLikeVoteData, removeFriendRequest, unFollowings, unfriendRequest, voted } from '../../apiCalls';
+// import PostFooter from './PostFooter';
 import { router, useFocusEffect } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
-import { getInition } from '../helper';
+import { getInition, getTimeLapse } from '../../helper';
+import CommentDisplayer from '../comments/CommentDisplayer';
+import PostFooter from '../footers/PostFooter';
 // import { Video ,ResizeMode } from 'expo-video';
 // import Video from 'expo-av';
 
@@ -19,19 +21,27 @@ import { getInition } from '../helper';
 
 export default function Post({participant,challenge,index,isVisible,setFinishPlaying}) {
    
-    const {user,setUser,isViewed ,setIsViewed} = useGlobalContext()
+    const {user,setUser,isViewed ,setIsViewed,followings,setFollowings
+      ,userFriendData,setUserFriendData
+    } = useGlobalContext()
     const [isExpired,setIsExpired] = useState(false)
     const [isVoted,setIsVoted] = useState(false)
     const [isLiked,setIsLiked] = useState(false)
     const [autoPlay,setAutoPlay] = useState(isVisible)
     const [isPlaying,setIsPlaying] = useState(false)
 
-    const [followings,setFollowings] = useState ([])
+    const [displayComments,setDisplayComments] =useState(false)
+    const [postComments,setPostComments] =useState(null)
+
+    const [commentData, setCommentData] = useState(null);
+
+
+    // const [followings,setFollowings] = useState ([])
     const [isFollowing , setIsFollowing] = useState(false)
   
     const [addFriendRequest , setAddFriendRequest] = useState(null)
     const [participantFriendData,setParticipantFriendData] = useState(null)
-    const [userFriendData,setUserFriendData] = useState(null)
+    // const [userFriendData,setUserFriendData] = useState(null)
     const[isFriend,setIsFriend]= useState(false)
     const[isPending,setIsPending]= useState(false)
     const[isAccept,setIsAccept]= useState(false)
@@ -39,8 +49,8 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
     const [ownChallenge , setOwnChallenge ] = useState(false)
     const [ownPost , setOwnPost ] = useState(false)
 
-
-
+    const [commentCount,setCommentCount] =useState(0)
+   
     const videoRef = useRef(null);
     
     useEffect(() => {
@@ -70,8 +80,11 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
          player.play()
          setIsPlaying(true)
         } else {
+              
          player.pause()
-         setIsPlaying(false)}
+         setIsPlaying(false)
+         
+        }
     }, [isVisible])
 
     const toggleVideoPlaying = () =>{
@@ -85,7 +98,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
       }
 
       useEffect(() => {
-        console.log(isViewed)
+        // console.log(isViewed)
         // if(isViwed) setIsViewed(!isViwed)
       }, []);
     
@@ -94,6 +107,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
           return () => {
             if (videoRef.current) {
               player.pause();
+              // setDisplayComments(false)
             }
           };
         }, [videoRef])
@@ -109,6 +123,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
               player.currentTime > 0 
             ) {
               player.currentTime = 0
+              setDisplayComments(false)
               setFinishPlaying(true);
               return;
             }
@@ -150,7 +165,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
         }  
       }, [likesVotesData])
   
-  //********************************** foolowing followers data *****************/
+  //********************************** following followers data *****************/
       useEffect(() => {
         getFollowings(user._id ,setFollowings)
       }, [])
@@ -161,6 +176,12 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
       }, [followings])
 
       const handleFollowing =  ()=> {
+        if(followings.find(following => following.following_id == participant.user_id))
+          {
+            getFollowings(user._id ,setFollowings)
+            return ; 
+          }
+        console.log("not supposed to be here")
         const rawBody = {
           following_id : participant.user_id,
           following_email:participant.email,
@@ -173,6 +194,11 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
       }
       
     const handleUnFollowing =  ()=> {
+      if(!followings.find(following => following.following_id == participant.user_id))
+        {
+          getFollowings(user._id ,setFollowings)
+          return ; 
+        }
         const rawBody = {
           following_id : participant.user_id,
           following_email:participant.email,
@@ -183,10 +209,10 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
        }
        unFollowings(user._id,rawBody, setFollowings)
       }
-   //********************************** friends data *****************/
+   //********************************** friends data ****************************************/
 
   useEffect(() => {
-    getUserFriendsData(user._id,setUserFriendData)
+    // getUserFriendsData(user._id,setUserFriendData)
     getUserFriendsData(participant.user_id,setParticipantFriendData)
   }, [])
 
@@ -304,14 +330,28 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
     );
   };
 
+  //********************************** comments ****************************************/
+
+  useEffect(() => {
+    getCommentsByPost(participant._id,setCommentData)
+  }, [])
+  
+  
+  useEffect(() => {
+    // if(commentData === "empty") return setCommentCount(0) 
+    setCommentCount(commentCount * 0 + commentData && commentData.content.length || 0)
+  }, [commentData])
 
   return (
+  
+  
+    
     <View className="w-[100vw] min-h-[88%] flex-col justify-start items-center  ">
         <ImageBackground className=" flex-1   flex-col justify-start items-center"
             source={images.night_bg} >
 
             <View
-             className="w-full flex-row  items-center  px-4 justify-start min-h-[7%]">
+             className="w-full flex-row  items-center  px-1 justify-evenly min-h-[7%]">
                 <TouchableOpacity 
                 onPress={() => {
                 if(user._id === participant.user_id){
@@ -326,19 +366,30 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                   else router.replace({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
                 }
               } }
-                className="flex-row w-[15%] justify-start items-center gap-0">
+                className="flex-row w-[10%] justify-center items-center gap-0">
                     <Image 
                     className="w-[35px] h-[35px] rounded-full"
                     source={{uri:participant.profile_img}} 
                     />
                 </TouchableOpacity>
-                <View className="flex-col w-[30%] justify-start items-start gap-0">
+
+                <View className="flex-col w-[27%] justify-center items-center gap-0">
                     <Text className="text-white text-xs font-bold"
                        style={{ fontSize:9}}>
                         {participant.name}
                     </Text>
                     <Text className="text-white text-xs font-bold">
                        {getInition(participant.name)}Challenger
+                    </Text>
+                </View>
+
+                <View className="flex-col w-[15%] justify-center items-center gap-1">
+                  
+                    <Text className="text-blue-300 text-xs font-black">
+                       {getTimeLapse(participant.createdAt)}  
+                    </Text>
+                    <Text className="text-gray-300 text-xs font-bold">
+                      ago
                     </Text>
                 </View>
                
@@ -354,7 +405,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
           
                     <TouchableOpacity 
                     onPress={ownPost?()=>{}:isFollowing? handleUnFollowing : handleFollowing}
-                    className="flex-col w-[20%] justify-center items-center gap-1">
+                    className="flex-col w-[15%] justify-center items-center gap-1">
                         <View className ="flex-row  justify-center items-center">
                             <Image 
                             className="w-6 h-6"
@@ -376,12 +427,12 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
             
               
 
-
+                   
                 <TouchableOpacity
                    onPress={ownPost?()=>{}:isFriend? confirmUnfriend  : 
                     isAccept? confirmAccept : isPending?
                     confirmCancel : confirmFriendRequest  }
-                    className="flex-col w-[20%] justify-center gap-1 items-center">
+                    className="flex-col w-[18%] justify-center gap-1 items-center">
                      <View className ="flex-row  justify-center items-center">
                           <Image 
                                className="w-6 h-6"
@@ -400,6 +451,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                 </TouchableOpacity>
             </View>
            
+         
             <TouchableOpacity 
                 // onPress={Platform.OS == "ios" ? toggleVideoPlaying : toggleVideoPlaying 
               
@@ -416,22 +468,32 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                         nativeControls ={false}
                       />
                       <TouchableOpacity 
-                        onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) } }
+                        hitSlop={Platform.OS === "android" &&{ top: 280, bottom: 280, left: 400, right: 400 }}
+                        onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause(), setIsPlaying(false) ) } }
                         className="flex-col absolute  justify-center items-center">
                             <Image 
-                            className={isPlaying ? "w-14 h-14 opacity-20":"w-14 h-14 opacity-100"}
-                            source={isPlaying ?   Platform.OS === "android"? icons.pause:"" :icons.play}/>
+                            className={isPlaying ? "w-14 h-14 opacity-20":"w-14 h-14 opacity-100" }
+                            source={!isPlaying && icons.play}/>
                       </TouchableOpacity>
+         
             </TouchableOpacity>
-           
-          
-        
+              
+                {displayComments && 
+                      <CommentDisplayer vote_count={participant.votes} like_count={participant.likes} style={{marginTop:60,height:"40%"}} setCommentCount={setCommentCount}
+                      commentData={commentData} setDisplayComments={setDisplayComments} isVisible={isVisible || displayComments} user={user} post={participant} commentCount={commentCount} /> 
+                }
+            
+       
+
+
             {likesVotesData && (
-                <PostFooter handleLikes={handleLikes} index={index} handleVotes={handleVotes} isLiked={isLiked} 
-                isVoted={isVoted} participant={participant} likesVotesData={likesVotesData}/>
+                <PostFooter handleLikes={handleLikes} index={index} handleVotes={handleVotes} isLiked={isLiked} comment_count={commentData && commentCount }
+                isVoted={isVoted} participant={participant} likesVotesData={likesVotesData} setDisplayComments={setDisplayComments}/>
             )}
           
         </ImageBackground>    
     </View>
+    // </KeyboardAvoidingView> 
+
   )
 }

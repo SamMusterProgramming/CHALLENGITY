@@ -2,7 +2,8 @@
   "expo": {
     
       "androidNavigationBar": {
-        "visible": "sticky-immersive"
+        "visible": "sticky-immersive",
+        "softwareKeyboardLayoutMode": "pan"
       }, 
     "name": "Challengify",
     "slug": "Challengify",

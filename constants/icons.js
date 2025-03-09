@@ -35,6 +35,10 @@ import pending from '../assets/icons/pending.png'
 import rank from '../assets/icons/ranking.png'
 import challengify from '../assets/icons/challengify.png'
 import check_red from '../assets/icons/check-red.png'
+import down_arrow from '../assets/icons/downArrow.png'
+import publi from '../assets/icons/public.png'
+
+
 
 
 
@@ -44,6 +48,8 @@ import check_red from '../assets/icons/check-red.png'
 
 
 export default {
+  publi,
+  down_arrow,
   challengify,
   rank,
   check_red,

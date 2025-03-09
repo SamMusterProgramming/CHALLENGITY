@@ -10,9 +10,18 @@ export const GlobalProvider =({children}) => {
     const [user,setUser] =useState(null)
     const [trendingChallenges,setTrendingChallenges] = useState([])
     const [isLoading ,setIsLoading] = useState(true)
-    const [userChallenges,setUserChallenges] = useState([])
-    const [ participateChallenges,setParticipateChallenges] = useState(null)
+    const [userPublicChallenges,setUserPublicChallenges] = useState([])
+    const [userPrivateChallenges,setUserPrivateChallenges] = useState([])
+    const [ publicParticipateChallenges,setPublicParticipateChallenges] = useState(null)
+    const [ privateParticipateChallenges,setPrivateParticipateChallenges] = useState(null)
+
     const [isViewed ,setIsViewed] = useState(true)
+    const [notifications ,setNotifications] = useState([])
+    const [followings,setFollowings] = useState ([])
+    const [userFriendData,setUserFriendData] = useState(null)
+    const [follow , setFollow ] = useState(null)
+
+
 
     useEffect(() => {
           
@@ -28,9 +37,15 @@ export const GlobalProvider =({children}) => {
             setIsLoggedIn,
             trendingChallenges,
             setTrendingChallenges,
-            userChallenges,setUserChallenges,
-            participateChallenges,setParticipateChallenges,
-            isViewed ,setIsViewed
+            userPublicChallenges,setUserPublicChallenges,
+            userPrivateChallenges,setUserPrivateChallenges,
+            publicParticipateChallenges,setPublicParticipateChallenges,
+            privateParticipateChallenges,setPrivateParticipateChallenges,
+            isViewed ,setIsViewed,
+            notifications ,setNotifications,
+            followings,setFollowings,
+            userFriendData,setUserFriendData,
+            follow , setFollow 
               }
             } >
             {children}

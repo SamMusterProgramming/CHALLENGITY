@@ -2,7 +2,7 @@ import { Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, Toucha
 import React, { useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
-import FormField from '../../components/FormField'
+import FormField from '../../components/custom/FormField'
 import { Link, router } from 'expo-router'
 import { authLogin } from '../../apiCalls'
 

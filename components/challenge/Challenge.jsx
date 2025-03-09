@@ -1,35 +1,48 @@
-import { View, Text, FlatList, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, FlatList, ImageBackground, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { images } from '../constants'
-import ParticipantPost from './ParticipantPost'
-import { findTopChallengers } from '../helper'
+import { images } from '../../constants'
+import { findTopChallengers } from '../../helper'
 import { Video } from 'expo-av'
-import { useGlobalContext } from '../context/GlobalProvider'
+import { useGlobalContext } from '../../context/GlobalProvider'
 import { deleteObject, getStorage, ref } from 'firebase/storage'
-import { storage } from '../firebase'
+import { storage } from '../../firebase'
 import { router } from 'expo-router'
-import { deleteChallenge, getUserChallenges, getUserParticipateChallenges, quitChallenge } from '../apiCalls'
+import { deleteChallenge, getUserParticipateChallenges, getUserPrivateChallenges, getUserPrivateParticipateChallenges,
+   getUserPublicChallenges,
+   getUserPublicParticipateChallenges, quitChallenge } from '../../apiCalls'
+import ParticipantPost from './ParticipantPost'
+import SwingingTitle from '../custom/SwingingTitle'
 
 
 export default function Challenge({challenge,isVisibleVertical}) {
 
     const[topChallenger , setTopChallenger] = useState(challenge.participants[0])
     const [ownChallenge , setOwnChallenge ] = useState(false)
-    const {user,SetUser,userChallenges , setUserChallenges,setParticipateChallenges} = useGlobalContext()
+    const {user,SetUser,userPublicChallenges , setUserPublicChallenges,serPrivateChallenges , setUserPrivateChallenges,
+      privateParticipateChallenges,setPrivateParticipateChallenges,
+      setPublicParticipateChallenges,publicParticipateChallenges} = useGlobalContext()
 
+    const[canJoin,setCanJoin] = useState(false)
 
     useEffect(() => {
      const top = findTopChallengers(challenge.participants)
-     setTopChallenger(top)
+     setTopChallenger(top)   
     }, [])
+    
+    useEffect(() => {
+      challenge.privacy === "Public" ? setCanJoin(true):
+      challenge.invited_friends.find(friend=>friend.sender_id === user._id) ?setCanJoin(true) :setCanJoin(false)
+     }, [])
 
     useEffect(() => {
       challenge.participants.map(participant =>{
-        if(participant.user_id === user._id) {
+      if(participant.user_id === user._id) {
             setOwnChallenge( prev => !prev)
          } 
       })
       }, [])
+
+
 
       const handleQuit = async() => {
         await quitChallenge(challenge._id,user._id).
@@ -39,14 +52,16 @@ export default function Challenge({challenge,isVisibleVertical}) {
            deleteObject(fileRef)
             .then(() => {
              console.log("File deleted successfully!");
-             router.push('/timeline')
+             router.replace('/profile')
              })
             .catch((error) => {
             console.error("Error deleting file:", error);
              });  
             //  getTopChallenges(props.user._id,setTopChallenges)
-             getUserParticipateChallenges(user._id,setParticipateChallenges)
-            //  navigate('/home')
+            challenge.privacy == "Public"? getUserPublicParticipateChallenges(user._id,setPublicParticipateChallenges)
+            :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
+            router.push('/profile')
+
    
         })
       
@@ -69,38 +84,57 @@ export default function Challenge({challenge,isVisibleVertical}) {
                 });  
                 if(user._id == challenge.origin_id) 
                  { 
-                  getUserChallenges(user._id , setUserChallenges)
-                  router.push('/profile')
+                  challenge.privacy === "Public"? getUserPublicChallenges(user._id , setUserPublicChallenges)
+                  :getUserPrivateChallenges(user._id , setUserPrivateChallenges)
+                  router.push({ pathname: '/profile',params: {
+                    priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+                    yourChallenges:"true" , yourParticipations:"false"
+                  } }) 
                   }
-                  else getUserParticipateChallenges(user._id,setParticipateChallenges)
-                // router('/timeline')
+                  else {
+                    challenge.privacy === "Public"? getUserPublicChallenges(user._id , setPublicParticipateChallenges)
+                    :getUserPrivateChallenges(user._id , setPrivateParticipateChallenges)
+                    router.push({ pathname: '/profile',params: {
+                      priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+                      yourChallenges:"false" , yourParticipations:"true"
+                    } }) 
+                  }
+               
         })
       
     }
     
   return (
     
-    <View className="justify-start h-[780px] w-[100vw] mt- items-center flex-col gap-0">
+    <View className="justify-start h-[780px] w-[100vw] mt-3 mb-3 items-center flex-col gap-0">
+     
            
-             <View className="min-w-full flex-1 bg-white rounded-md flex-row items-center justify-start min-h-[5%]">
+             <View className="min-w-full flex-1 bg-white rounded-md
+                   flex-row items-center justify-start min-h-[5%]">
                  <TouchableOpacity  
                   onPress={()=> router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
-                 className="min-w-[18%]  min-h-[95%] rounded-md bg-secondary-100 flex-1 flex-col justify-center  items-center  ">
-                    <Text className="text-blue-800 text-sm  font-bold font-pregular ">
+                  className="min-w-[18%]  min-h-[98%]  border-secondary-200 border-2 rounded-lg bg-yellow-400 flex-1 flex-col justify-center  items-center  ">
+                    <Text className="text-gray-900 text-sm  font-bold font-pregular ">
                        Challenge
                     </Text>
                  </TouchableOpacity>
                  
-                 <View className="min-w-[58%] min-h-[97%] border-x-white bg-blue-1000 flex-1 flex-col justify-center gap-1 items-center" >
-                     <Text className="text-black text-xs font-bold  backdrop-opacity-100">
-                       -{challenge.desc}-
-                     </Text>
+                 <View className="w-[62%] min-h-[97%] border-x-white bg-blue-1000  flex-col justify-center gap-1 items-center" >
+                     {/* <Text className="text-black text-xs font-bold  backdrop-opacity-100"> */}
+                     <SwingingTitle text={challenge.desc} color="black" fontSize={13}/>
+                       
+                     {/* </Text> */}
                  </View>
 
                  {!ownChallenge? (          
-                 <TouchableOpacity onPress={()=> router.push({ pathname: '/CreateParticipateChallenge', params: {challenge_id:challenge._id} })}
-                   className="min-w-[20%] rounded-md min-h-[95%] border-pink-500 bg-blue-300 flex-1 flex-col justify-center  items-center">
-                    <Text className="text-green-800 text-xl font-bold font-pregular ">
+                 <TouchableOpacity
+                   onPress={()=> canJoin && router.push({ pathname: '/CreateParticipateChallenge', params: {challenge_id:challenge._id} })}
+                    style={{backgroundColor: !canJoin?"gray" :"lightblue"}}
+                    className="min-w-[20%] rounded-md min-h-[95%] border-blue-300 border-2 flex-1 flex-col justify-center  items-center">
+                    
+                    <Text
+                    style={{color: !canJoin?"black" :""}}
+                    className="text-blue-700 text-sm font-bold font-pregular ">
                        Join 
                     </Text>
                  </TouchableOpacity>
@@ -110,14 +144,15 @@ export default function Challenge({challenge,isVisibleVertical}) {
                   {challenge.participants.length == 1 ? 
                     (
                       <TouchableOpacity onPress={handleDelete}
-                       className="min-w-[20%] min-h-[95%] flex-1 flex-col justify-center  bg-violet-300 items-center">
+                       className="min-w-[20%] min-h-[95%] flex-1 flex-col justify-center 
+                        border-violet-600 border-2 bg-violet-300 items-center">
                         <Text className="text-red-500 text- font-bold ">
-                          Delete
+                          Delete      
                         </Text>    
                       </TouchableOpacity>
                      ):(
                       <TouchableOpacity  onPress={handleQuit}
-                       className="w-[20%] min-h-[95%] flex-col justify-center  bg-pink-200 items-center">
+                       className="w-[20%] min-h-[95%] flex-col justify-center  border-pink-400 border-2 bg-pink-200 items-center">
                         <Text className="text-red-700 text- font-bold ">
                           Resign
                         </Text>
@@ -153,10 +188,15 @@ export default function Challenge({challenge,isVisibleVertical}) {
                  </View>
       
             </View>
-            <View  className="min-w-full min-h-5 bg-black"/>
-          </View>
+          
+            
+      </View>
+
+
+
         
   )
+  
 }
 
 const styles = StyleSheet.create({

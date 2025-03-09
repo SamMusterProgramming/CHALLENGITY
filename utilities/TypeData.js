@@ -1,13 +1,14 @@
 export const challengeType =[
   
-    "Sport" ,
+   
    "Adventure" ,
+   "Dance" , 
    "Eating" ,
-   "Science" ,
    "Fitness",
    "Magic" , 
-   "Dance" , 
-   "Music" 
+   "Music" ,
+   "Science" ,
+   "Sport" ,
      
 ]
 

@@ -11,7 +11,7 @@ import { BASE_URL, getChallengeById, getUserChallenges, getUserParticipateChalle
 import axios from 'axios'
 import * as ImagePicker from 'expo-image-picker';
 import { challengeType  , privacyData } from '../../utilities/TypeData'
-import ChallengeTypeSelector from '../../components/ChallengeTypeSelector'
+import ChallengeTypeSelector from '../../components/challenge/ChallengeTypeSelector'
 // import privacyData from '../../components/ChallengeTypeSelector'
 
 export default function NewChallenge() {

@@ -18,6 +18,9 @@ export default function FriendDisplayer({friendList}) {
         data={friendList}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        // autoplay	
+        // autoplayLoop={true}
+        // autoplayLoopKeepAnimation={true
       />
     </View>
   )

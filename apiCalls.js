@@ -12,7 +12,7 @@ import axios from 'axios'
 
 
  
-export const BASE_URL =  baseURL_DEVOLOPMENT
+export const BASE_URL =  baseURL_PRODUCTION
 
 export const setLoadingBarAxios =(loadingRef) => {
   axios.interceptors.request.use(async(config) => {
@@ -79,7 +79,6 @@ export const isAuthenticated = async(setUser)=>{
   try {
     await axios.get(BASE_URL +'/users/isAuthenticated')
     .then(res => { 
-      console.log(res.data)
       setUser(res.data)
               //  if (res.data.auth) {
               //    storeToken(res.data.token)
@@ -97,7 +96,6 @@ export const authLogin = async(credentiels,setUser,setMessage)=>{
     try {
       await axios.post(BASE_URL +'/users/login',credentiels)
       .then(res => { 
-        console.log(res.data)
                  if (res.data.auth) {
                    storeToken(res.data.token)
                    setUser({...res.data.user,isNewUser:false});
@@ -119,7 +117,7 @@ export const authRegister= async(credentiels,setUser)=>{
      }
 		})
 }
-
+  
 export const getUserById = async(user_id,setUserProfile) =>{
     try {
         await axios.get(BASE_URL+`/users/user/${user_id}`)
@@ -162,12 +160,38 @@ export const getChallengeById = async(id,setChallenge,setIsExpired)=>{
 
 // *********************************** new Challenge /top challenger *************************
 
-export const getUserChallenges = async( user_id , setChallenges)=>{
+
+export const getUserAllChallenges = async( user_id , setChallenges)=>{
+ 
+  try {
+      await axios.get( BASE_URL + `/challenges/all/${user_id}`)
+      .then(res => {
+          setChallenges(res.data) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
+export const getUserPublicChallenges = async( user_id , setChallenges)=>{
  
     try {
-        await axios.get( BASE_URL + `/challenges/original/${user_id}`)
+        await axios.get( BASE_URL + `/challenges/original/public/${user_id}`)
         .then(res => {
-            setChallenges(res.data) 
+            setChallenges([...res.data]) 
+        }
+         )
+    } catch (error) {
+        console.log(error)
+    }
+  }  
+  export const getUserPrivateChallenges = async( user_id , setChallenges)=>{
+ 
+    try {
+        await axios.get( BASE_URL + `/challenges/original/private/${user_id}`)
+        .then(res => {
+            setChallenges([...res.data]) 
         }
          )
     } catch (error) {
@@ -175,9 +199,9 @@ export const getUserChallenges = async( user_id , setChallenges)=>{
     }
   }  
 
-  export const getUserParticipateChallenges = async( user_id , setChallenges)=>{
+  export const getUserPublicParticipateChallenges = async( user_id , setChallenges)=>{
      try {
-         await axios.get( BASE_URL + `/challenges/participate/${user_id}`)
+         await axios.get( BASE_URL + `/challenges/participate/public/${user_id}`)
          .then(res => {
              setChallenges(res.data) 
          }
@@ -187,6 +211,17 @@ export const getUserChallenges = async( user_id , setChallenges)=>{
      }
    }  
 
+   export const getUserPrivateParticipateChallenges = async( user_id , setChallenges)=>{
+    try {
+        await axios.get( BASE_URL + `/challenges/participate/private/${user_id}`)
+        .then(res => {
+            setChallenges(res.data) 
+        }
+         )
+    } catch (error) {
+        console.log(error)
+    }
+  }  
   //top challenges 
 
   export const getTopChallenges = async( user_id , setChallenges)=>{
@@ -443,4 +478,37 @@ export const getUserChallenges = async( user_id , setChallenges)=>{
     }
    }
    
-  // export const getNotificationById = async()
+// *********************************** comments *************************
+
+export const getCommentsByPost = async(post_id,setComments) =>{
+  try {
+    await axios.get( BASE_URL + `/challenges/posts/${post_id}` )
+    .then(res =>  { 
+         setComments(res.data)
+      } )
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const addCommentsByPost = async(post_id,body,setComments) =>{
+  try {
+    await axios.post( BASE_URL + `/challenges/posts/${post_id}`,body)
+    .then(res =>  { 
+         setComments({...res.data})
+      } )
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const deleteCommentsById = async(post_id,body,setComments) =>{
+  try {
+    await axios.patch( BASE_URL + `/challenges/posts/comment/${post_id}`,body )
+    .then(res =>  {
+         setComments(res.data)
+      } )
+  } catch (error) {
+    console.log(error)
+  }
+ }

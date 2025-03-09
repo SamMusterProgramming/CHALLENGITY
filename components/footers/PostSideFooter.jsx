@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { icons } from '../constants'
+import { icons } from '../../constants'
+import { Ionicons } from '@expo/vector-icons'
 
 export default function PostSideFooter(props) {
   return (
@@ -32,16 +33,18 @@ export default function PostSideFooter(props) {
                     {props.likesVotesData.vote_count}
                 </Text>
         </View>
-        <TouchableOpacity className="flex-col justify-center min-h-[8%] items-center gap-1">
-            <Image 
-            className="w-10 h-10"
-            source={icons.follow}
-            resizeMode='contain'
-            />
-             <Text className="text-white mt-auto text-xs font-bold">
-                    Follow
+        <TouchableOpacity
+         onPress={() => props.setDisplayComments(prev => !prev)}
+         className="flex-col justify-center gap-1 min-h-[8%] items-center">
+            <Ionicons name="chatbubble" size={25} color="white"/>
+            <Text className="text-white mt-auto text-sm font-bold">
+                   {props.comment_count}
+            </Text>
+            <Text className="text-white mt-auto text-xs font-bold">
+                    Comments
             </Text>
         </TouchableOpacity>
+
         <TouchableOpacity
             className="flex-col justify-center gap-1 min-h-[8%] items-center">
             <Image 

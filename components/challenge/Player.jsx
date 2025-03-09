@@ -1,16 +1,17 @@
-import { View, Text, Image, TouchableOpacity, Platform, Alert } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Platform, Alert, KeyboardAvoidingView, Pressable, Animated, Easing } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Video ,ResizeMode } from 'expo-av'
 import { Dimensions } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent, useEventListener } from 'expo';
-import { icons } from '../constants';
-import { acceptFriendRequest, addFollowing, friendRequest, getFollowings, getUserFriendsData, liked, loadLikeVoteData, removeFriendRequest, unFollowings, unfriendRequest, voted } from '../apiCalls';
-import PostSideFooter from './PostSideFooter';
-import { useGlobalContext } from '../context/GlobalProvider';
+import { icons } from '../../constants';
+import { acceptFriendRequest, addFollowing, friendRequest, getCommentsByPost, getFollowings, getUserFriendsData, liked, loadLikeVoteData, removeFriendRequest, unFollowings, unfriendRequest, voted } from '../../apiCalls';
+import { useGlobalContext } from '../../context/GlobalProvider';
 import { router } from 'expo-router';
-import { getInition } from '../helper';
-
+import { getInition } from '../../helper';
+import CommentDisplayer from '../comments/CommentDisplayer';
+import PostSideFooter from "../footers/PostSideFooter"
+import SwingingTitle from '../custom/SwingingTitle';
 
     
 
@@ -19,7 +20,7 @@ import { getInition } from '../helper';
 export default function Player({participant,index,dimension,isVisible,challenge,setFinishPlaying}) {
 
   const videoRef = useRef()
-  const {user,setUser,isViewed,setIsViewed} = useGlobalContext()
+  const {user,setUser,isViewed,setIsViewed,followings,setFollowings,userFriendData,setUserFriendData} = useGlobalContext()
   const [isExpired,setIsExpired] = useState(false)
   const [videoStatus, setVideoStatus] = useState(null);
   const [isPlaying, setIsPlaying] = useState(isVisible);
@@ -32,15 +33,22 @@ export default function Player({participant,index,dimension,isVisible,challenge,
 
 
   const [challengeCreater,setChallengeCreator] = useState({name:challenge.name})
-  const [followings,setFollowings] = useState ([])
+  // const [followings,setFollowings] = useState ([])
   const [isFollowing , setIsFollowing] = useState(false)
 
   const [addFriendRequest , setAddFriendRequest] = useState(null)
   const [participantFriendData,setParticipantFriendData] = useState(null)
-  const [userFriendData,setUserFriendData] = useState(null)
+  // const [userFriendData,setUserFriendData] = useState(null)
   const[isFriend,setIsFriend]= useState(false)
   const[isPending,setIsPending]= useState(false)
   const[isAccept,setIsAccept]= useState(false)
+
+  const [displayComments,setDisplayComments] =useState(false)
+  const [postComments,setPostComments] =useState(null)
+  const [commentData, setCommentData] = useState(null);
+  const [commentCount,setCommentCount] =useState(0)
+
+  
 
 
 
@@ -65,7 +73,7 @@ export default function Player({participant,index,dimension,isVisible,challenge,
   
   const player = useVideoPlayer
   (
-    participant.video_urll
+    participant.video_url
     , (player) => {
     player.loop = false;
     player.volume = 0.1
@@ -318,35 +326,67 @@ const confirmUnfriend = () => {
 };
 
 
+  //********************************** comments ****************************************/
+
+  useEffect(() => {
+    getCommentsByPost(participant._id,setCommentData)
+  }, [])
+  
+  useEffect(() => {
+    // if(commentData === "empty") return setCommentCount(0) 
+    setCommentCount(commentCount * 0 + commentData && commentData.content.length || 0)
+  }, [commentData])
 
 
   return (
-    <View className="flex-1  justify-center items-center">
-      {/* <Text className="text-white">{participant.video_url}</Text> */}
-      {/* <View className="flex-row items-center   justify-center min-w-[100%] min-h-[100%] ">   */}
-             
-              <TouchableOpacity 
-                onPress={Platform.OS == "ios" ? toggleVideoPlaying :()=>{}}
-                activeOpacity={1}
-                className={isPlaying? "w-[100vw] h-[100vh] opacity-100":"w-[100vw] h-[100vh] opacity-50"}
-                style={{marginTop:Platform.OS == "android" ? 0 : 0 }}
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+  >
+    <View
+     className="flex-1  justify-center items-center">    
+               <TouchableOpacity
+            
+                  onPress={toggleVideoPlaying }
+                  activeOpacity={1}
+                  className={isPlaying? "w-[100vw] h-[100vh]  opacity-100":"w-[100vw] h-[100vh] opacity-50"}
+ 
                 >
                       <VideoView 
                         ref={videoRef}
-                        style={{  width:'100%' ,height:'100%',opacity:20}}
+                        style={{ width:'100%' ,height:'100%',opacity:100}}
                         player={player}
                         contentFit='cover'
                         nativeControls ={false}
+                        pointerEvents='box-only'
                       />
-
+ 
 
               </TouchableOpacity>
 
-            {!isPlaying && (
+              <TouchableOpacity 
+               hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
+               onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) } }
+               className={!displayComments?"flex-col absolute  justify-center items-center":
+                                          "flex-col absolute top-32 justify-center items-center"
+                    }>
+                  <Image 
+                   className="w-14 h-14 opacity-30"
+                   source={!isPlaying && icons.play}/>
+              </TouchableOpacity>
+
+
+             {displayComments && 
+                      <CommentDisplayer user={user} vote_count={participant.votes} like_count={participant.likes} style={{top:0,maxHeight:"60%"}}
+                       post={participant} setDisplayComments={setDisplayComments} isVisible={isVisible} setCommentCount={setCommentCount} commentCount={commentCount} /> 
+               }
+
+            {!isPlaying && !displayComments  && (
               <> 
-                 <View className="min-w-full  rounded-md absolute top-0 flex-col flex-1 items-center justify-start h-[16%]"
+                 <View className="min-w-full  rounded-md absolute top-0 flex-col flex-1 items-center justify-start h-[18%]"
                         style={{top:Platform.OS == "android" ? 0 : 0 }} >
-                    <View className="min-w-full  rounded-md bg-blue-800 flex-row items-center justify-between h-[25%]"
+                    <View className="min-w-full  rounded-md bg-bl-800 flex-row items-center justify-between h-[25%]"
                          >
                         <TouchableOpacity
                           onPress={() => router.back()}
@@ -357,72 +397,44 @@ const confirmUnfriend = () => {
                         </TouchableOpacity>
 
                         <View 
-                        className="min-w-[35%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-center  ">
+                        className="min-w-[35%]  h-[100%] rounded-md bg-s  flex-row justify-center  items-end  ">
                             <Text className="text-white text-xl  font-bold ">
                               Challenge  -
                             </Text>
                         </View>
 
                         <View 
-                        className="min-w-[35%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-center  ">
+                        className="min-w-[35%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-end  ">
                             <Text className="text-white text-sm  font-bold ">
                               {challenge.type}{' '} -
                             </Text>
                         </View>
 
+               
                         <View 
-                        className="min-w-[20%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-center ">
+                        className="min-w-[20%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-end ">
                             <Text className="text-secondary text-sm  font-bold ">
-                              {challenge.privacy}
+                               {challenge.privacy}
                             </Text>
                         </View>
+          
 
                     </View>  
 
-                    <View className="w-[100vw] h-[25%] bg-gray-400  border-x-3 bg-blue-1000 flex-row justify-center  items-center" >
-                        <Text className="text-primary text-sm font-bold">
-                          {challenge.desc}   
-                        </Text>
+                    <View className="w-[100vw] h-[25%]   border-x-3 bg-blue-1000 flex-row justify-center  items-center" >
+                        {/* <Text className="text-primary text-sm font-bold"> */}
+                           <SwingingTitle text={challenge.desc} fonstSize={17} color="white" /> 
+                        {/* </Text> */}
                    </View>
 
 
                   {challengeCreater && (
 
-                        <View className="w-full flex-row items-center bg-sky-800 justify-center h-[50%]">
-                         
-                          <View 
-                                className=" min-h-[100%] px-3 rounded-md w-[50%]  flex-col justify-evenly items-start  ">
-
-                              <Text  className="text-gray-300 font-bold text-xs">
-                                  Created by {' '} 
-                              </Text>  
-                              <TouchableOpacity
-                                onPress={() => {
-                                  if(ownChallenge){
-                                    router.push({ pathname: '/profile' })
-                                  }else
-                                  {
-                                  if(isViewed) 
-                                    {  console.log("i am here routttterrrrr")
-                                        setIsViewed(false) 
-                                      router.push({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
-                                    }
-                                    else router.replace({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
-                                  }
-                                  }
-                                }
-                                  className="flex-row  justify-start gap-4  items-center">
-                                <Image 
-                                  className="w-[35px] h-[35px]  rounded-full"
-                                  source={{uri:challengeCreater.profile_img}} 
-                                  />
-                                  <Text className="text-secondary font-bold text-xs">{challenge.name}</Text>
-                              </TouchableOpacity>
-                          </View>
+                        <View className="w-full flex-col items-center mt-0 justify-center h-[100%]">
 
 
                           <View 
-                              className=" min-h-[100%]  w-[50%]  flex-col justify-evenly items-center  ">   
+                              className=" min-h-[60%]  w-[100%]  flex-col justify-evenly items-center  ">   
                             {!hasParticipated? (  
                           <>
                           <Text  className="text-blue-400 font-bold text-xs">
@@ -473,10 +485,41 @@ const confirmUnfriend = () => {
                               )}  
                             </View>
 
+                             <View  className=" min-h-[40%] px-3 rounded-md w-[50%]  flex-col justify-center items-center  ">
+
+                              <Text  className="text-gray-300 font-bold text-xs">
+                                  Created by {' '} 
+                              </Text>  
+                              <TouchableOpacity
+                                onPress={() => {
+                                  if(ownChallenge){
+                                    router.push({ pathname: '/profile' })
+                                  }else
+                                  {
+                                  if(isViewed) 
+                                    {  
+                                        setIsViewed(false) 
+                                      router.push({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                                    }
+                                    else router.replace({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })
+                                  }
+                                  }
+                                }
+                                  className="flex-col  justify-start gap-1 mt-2  items-center">
+                                
+                                  <Image 
+                                  className="w-[45px] h-[45px]  rounded-full"
+                                  source={{uri:challengeCreater.profile_img}} 
+                                  />
+                                  <Text className="text-secondary font-bold text-sm">{challenge.name}</Text>
+                              </TouchableOpacity>
+                          </View>
+
 
                         </View>
 
-)}
+
+                     )}
   
                     
              </View>
@@ -514,19 +557,8 @@ const confirmUnfriend = () => {
             
             )}
 
-           
           
-
-              <TouchableOpacity 
-              onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) } }
-              className="flex-col absolute  justify-center items-center">
-                  <Image 
-                   className="w-14 h-14 opacity-30"
-                   source={isPlaying ?   Platform.OS === "android"? icons.pause:"" :icons.play}/>
-              </TouchableOpacity>
-
-
-              <View className="w-[88%]  flex-row items-center  absolute bottom-2 left-0 px-4 justify-between min-h-[4%]">
+          {(!displayComments || displayComments)&& ( <View className="w-[88%]  flex-row items-center  absolute bottom-2 left-0 px-4 justify-between min-h-[4%]">
                 
                 <TouchableOpacity
                   onPress={() => {
@@ -611,14 +643,16 @@ const confirmUnfriend = () => {
                     )}
              
             </View>
-      
+
+           ) }
               
-            {likesVotesData && (
-                <PostSideFooter handleLikes={handleLikes} handleVotes={handleVotes} isLiked={isLiked} 
-                isVoted={isVoted} participant={participant} likesVotesData={likesVotesData}/>
+            {likesVotesData &&  (
+                <PostSideFooter handleLikes={handleLikes} handleVotes={handleVotes} isLiked={isLiked} comment_count={commentData && commentCount}
+                isVoted={isVoted} participant={participant} likesVotesData={likesVotesData} setDisplayComments={setDisplayComments}/>
             )}
 
       </View>  
+      </KeyboardAvoidingView> 
     // </View>
      
 

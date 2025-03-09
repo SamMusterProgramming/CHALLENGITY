@@ -1,37 +1,46 @@
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { icons } from '../constants'
-import { acceptFriendRequest, addFollowing, friendRequest, getFollowData, getFollowings, getUserFriendsData, removeFriendRequest, unFollowings, unfriendRequest } from '../apiCalls'
+import { icons } from '../../constants'
+import { acceptFriendRequest, addFollowing, friendRequest, getFollowData, getFollowings, getUserFriendsData, removeFriendRequest, unFollowings, unfriendRequest } from '../../apiCalls'
 import { router } from 'expo-router'
-import { useGlobalContext } from '../context/GlobalProvider'
+import { useGlobalContext } from '../../context/GlobalProvider'
 
-export default function ProfileHeader({challenger}) {
-    const {user,isViewed,setIsViewed} = useGlobalContext()
-    const [challengerFollow , setChallengerFollow ] = useState(null)
-    const [challengerFriends, setChallengerFriends ] = useState(null)
+export default function ProfileHeader({challenger,friends,follow}) {
 
-    const [followings,setFollowings] = useState ([])
+
+    const {user,isViewed,setIsViewed,userFriendData,setUserFriendData,
+      followings,setFollowings
+    } = useGlobalContext()
+
+    const [challengerFriends ,setChallengerFriends] = useState(null)
+    // const [followings,setFollowings] = useState ([])
     const [isFollowing , setIsFollowing] = useState(false)
 
     const [addFriendRequest , setAddFriendRequest] = useState(null)
     const [participantFriendData,setParticipantFriendData] = useState(null)
-    const [userFriendData,setUserFriendData] = useState(null)
+    // const [userFriendData,setUserFriendData] = useState(null)
     const[isFriend,setIsFriend]= useState(false)
     const[isPending,setIsPending]= useState(false)
     const[isAccept,setIsAccept]= useState(false)
 
-    useEffect ( () => {     
-        getUserFriendsData(challenger._id , setChallengerFriends)
+
+    useEffect ( () => {   
+        getUserFriendsData(challenger._id , setParticipantFriendData)
       } , [] ) 
-    useEffect ( () => {     
-        getFollowData(challenger._id,setChallengerFollow)
-      } , [] )  
+
+
+
+    // useEffect ( () => {     
+    //     getFollowData(challenger._id,setChallengerFollow)
+    //   } , [] )  
     
 
-    //********************************** foolowing followers data *****************/
-    useEffect(() => {
-        getFollowings(user._id ,setFollowings)
-      }, [])
+    //********************************** following followers data *****************/
+    // useEffect(() => {
+    //     getFollowings(user._id ,setFollowings)
+    //   }, [])
+
+
 
     useEffect(() => {
         followings.find(following => following.following_id === challenger._id)?
@@ -65,9 +74,10 @@ export default function ProfileHeader({challenger}) {
      //********************************** friends data *****************/
 
   useEffect(() => {
-    getUserFriendsData(user._id,setUserFriendData)
-    getUserFriendsData(challenger._id,setParticipantFriendData)
+    // getUserFriendsData(user._id,setUserFriendData)
+    // getUserFriendsData(challenger._id,setParticipantFriendData)
   }, [])
+
 
   useEffect(() => {
     if(participantFriendData){ 
@@ -267,7 +277,9 @@ export default function ProfileHeader({challenger}) {
                 source={isFollowing ? icons.check:" "} 
                 />
           </View>
-    </TouchableOpacity>
+    </TouchableOpacity> 
+
+
 
 
     <View className=" w-[100vw] flex-col mt-[50] justify-start items-center h-[100]">
@@ -287,7 +299,7 @@ export default function ProfileHeader({challenger}) {
                 </Text>
                 <Text
                  className="text-white font-bold  text-xs">
-                    {challengerFollow && challengerFollow.followers_count}
+                    {follow.followers_count}
                 </Text>
               </View>
               <View
@@ -299,7 +311,7 @@ export default function ProfileHeader({challenger}) {
                 </Text>
                 <Text
                  className="text-white font-bold  text-xs">
-                    {challengerFollow && challengerFollow.followings_count}
+                    {follow.followings_count}
                 </Text>
               </View>
               <View
@@ -311,7 +323,7 @@ export default function ProfileHeader({challenger}) {
                 </Text>
                 <Text
                  className="text-white font-bold  text-xs">
-                    {challengerFriends && challengerFriends.friends_count}
+                    {friends.friends_count}
                 </Text>
               </View>
          </View>

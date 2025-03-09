@@ -2,17 +2,20 @@ import { Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, Toucha
 import React, { useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
-import FormField from '../../components/FormField'
+import FormField from '../../components/custom/FormField'
 import { Link, router } from 'expo-router'
 
-import { authLogin, getUserChallenges, getUserParticipateChallenges, isAuthenticated } from '../../apiCalls'
+import { authLogin, getFollowData, getFollowings, getNotificationByUser,
+   getUserFriendsData,  getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, isAuthenticated } from '../../apiCalls'
 import { GlobalProvider, useGlobalContext } from '../../context/GlobalProvider.js'
 // import AuthContent from '../../context/AuthContent'
 
 
 export default function login() {
   
-  const {user,setUser,userChallenges, setUserChallenges,setParticipateChallenges} = useGlobalContext()
+  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges
+    ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData
+  } = useGlobalContext()
   // const [user,setUser] = useState(null)
   const [form, setForm] = useState({
     email:"samirhaddadi@gmail.com",
@@ -26,9 +29,18 @@ export default function login() {
 
   useEffect(() => {
     if(user) {
-      getUserChallenges(user._id,setUserChallenges)
-      getUserParticipateChallenges(user._id ,setParticipateChallenges)
-      router.push('/timeline')
+      getUserPublicChallenges(user._id,setUserPublicChallenges)
+      getUserPrivateChallenges(user._id,setUserPrivateChallenges)
+      getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
+      getUserPrivateParticipateChallenges(user._id ,setPrivateParticipateChallenges)
+      getNotificationByUser(user._id , setNotifications)
+      getFollowings(user._id,setFollowings)
+      getUserFriendsData(user._id,setUserFriendData)
+      getFollowData(user._id,setFollow)
+      setTimeout(() => {
+        router.push('/timeline')
+      }, 1000);
+     
     }
   }, [user])
 
@@ -41,7 +53,9 @@ export default function login() {
   
   return (
     <SafeAreaView className=" flex-1 bg-primary ">
-      <ScrollView className="w-full h-full  bg-primary ">
+      <ScrollView
+      
+       className="w-full h-full  bg-primary ">
        <ImageBackground
         source={images.night_bg}>
          <View className="min-w-full justify-start flex-col items-center min-h-[100vh] px-4 py-0">

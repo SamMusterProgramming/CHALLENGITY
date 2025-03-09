@@ -121,13 +121,7 @@ export default function tabsLayout() {
           title:"profile",
           headerShown:false,
           tabBarIcon:({color,focused,size}) => (
-            //  <TabIcon 
-            //    icon={icons.profile}
-            //    color={color}
-            //    name="profile"
-            //    focused={focused}
-            //    dimension ="w-6 h-6"
-            //  />
+          
             <Ionicons
             name={'home'}
             size={size}

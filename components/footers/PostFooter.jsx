@@ -1,10 +1,12 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { icons } from '../constants'
+// import { icons } from '../constants'
+import { Ionicons } from '@expo/vector-icons'
+import { icons } from '../../constants'
 
 export default function PostFooter(props) {
   return (
-    <View className="min-w-full flex-row items-center px-4 justify-between min-h-[7%]">
+    <View className="min-w-full flex-row items-center px-1 justify-between min-h-[7%]">
              
         <View className="flex-row w-[25%]  justify-start items-center gap-2">
                 <TouchableOpacity onPress={props.handleLikes}
@@ -44,12 +46,12 @@ export default function PostFooter(props) {
             </Text>
         </TouchableOpacity>
         <TouchableOpacity
-            className="flex-col w-[25%]  justify-center items-center">
-            <Image 
-            className="w-8 h-8"
-            source={icons.share}
-            resizeMode='cover'
-            />
+        onPress={() => props.setDisplayComments(prev => !prev)}
+            className="flex-row w-[25%] gap-2 justify-center items-center">
+            <Ionicons name="chatbubble" size={25} color="white"/>
+            <Text className="text-white mt-4 text-sm font-bold">
+                    {props.comment_count}
+            </Text>
         </TouchableOpacity>
     </View>
   )

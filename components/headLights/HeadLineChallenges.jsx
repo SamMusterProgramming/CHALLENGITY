@@ -19,9 +19,9 @@ const renderItem = ({ item, index }) => {
             data = { challengeData  }
             keyExtractor={(item) => item._id}
             renderItem={renderItem}
-            // scrollEventThrottle={15}
-            pagingEnabled
-            horizontal
+            scrollEventThrottle={15}
+            pagingEnabled={false}
+            // horizontal
         />
     </View>
   )

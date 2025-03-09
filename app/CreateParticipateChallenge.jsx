@@ -1,4 +1,4 @@
-import { View, Text, Button, TouchableOpacity, Image, StyleSheet, TextInput, Platform } from 'react-native'
+import { View, Text, Button, TouchableOpacity, Image, StyleSheet, TextInput, Platform, FlatList } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import  {CameraView, CameraType, useCameraPermissions, useMicrophonePermissions, Camera}   from 'expo-camera'
@@ -7,19 +7,20 @@ import { Video } from 'expo-av'
 import { _uploadVideoAsync} from '../firebase'
 import { useGlobalContext } from '../context/GlobalProvider'
 import { Redirect, router, useFocusEffect, useLocalSearchParams } from 'expo-router'
-import { BASE_URL, getChallengeById, getUserChallenges, getUserParticipateChallenges } from '../apiCalls'
+import { BASE_URL, getChallengeById,  getUserPrivateChallenges,  getUserPrivateParticipateChallenges,  getUserPublicParticipateChallenges } from '../apiCalls'
 import axios from 'axios'
 import * as ImagePicker from 'expo-image-picker';
 import { challengeType  , privacyData } from '../utilities/TypeData'
-import ChallengeTypeSelector from '../components/ChallengeTypeSelector'
+// import ChallengeTypeSelector from '../components/ChallengeTypeSelector'
 import SwiperFlatList from 'react-native-swiper-flatlist'
-import Post from '../components/Post'
-import Player from '../components/Player'
+import Post from '../components/challenge/Post'
+import Player from '../components/challenge/Player'
+import SwingingTitle from '../components/custom/SwingingTitle'
 // import privacyData from '../../components/ChallengeTypeSelector'
 
 
 export default function CreateParticipateChallenge() {
-  const{user,setParticipateChallenges,setUserChallenges} = useGlobalContext()
+  const{user,setPublicParticipateChallenges,setPrivateParticipateChallenges} = useGlobalContext()
   const [permission, requestPermission] = useCameraPermissions()
   const [audioPermission, requestAudioPermission] = useMicrophonePermissions();
 
@@ -40,6 +41,7 @@ export default function CreateParticipateChallenge() {
   const [finishPlaying ,setFinishPlaying] =useState(false)
   const {challenge_id} = useLocalSearchParams();
 
+  const [autoPlay,setAutoPlay] = useState(false)
 
 
   const requestMediaPermissions = async () => {
@@ -168,17 +170,25 @@ export default function CreateParticipateChallenge() {
         
           console.log("here join challenge")
            axios.post(BASE_URL +`/challenges/uploads/${challenge._id}`,challengeBody)
-          .then(   res =>  {
-            router.push('/profile')
+          .then(   
+            res =>  {
+            challenge.privacy=="Public"? getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
+            :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
+            router.push({ pathname: '/profile',params: {
+              priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+              yourChallenges:"false" , yourParticipations:"true"
+            } }) 
             setTimeout(() => {
-              getUserParticipateChallenges(user._id ,setParticipateChallenges)
+            
               router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:res.data._id} })
-            }, 500);
+            }, 1000);
           }
              
               )
      
           })   
+
+          // router.push('/profile')  
         
       }
     }
@@ -202,7 +212,11 @@ export default function CreateParticipateChallenge() {
 
   }    
 
-  
+  const handleNextItem = () => {
+      setTimeout(() => {
+        swiperRef.current?.scrollToIndex({index:0, animated: true });
+      }, 0);
+  };
   
   return (
   
@@ -211,18 +225,22 @@ export default function CreateParticipateChallenge() {
  
                {challenge && (
 
-                 <SwiperFlatList 
+                 <FlatList 
                  ref={swiperRef}
                  data={challenge.participants || []}
                  keyExtractor={(item) => item._id}
+                //  autoplay={autoPlay}
+                 index={0}
+                 pagingEnabled
+                 vertical={true}
                  renderItem={
-               
+                 
                   
                     ({ item, index }) => {
                         const isVisible = viewableItems.some(viewableItem => viewableItem.index === index);
                         // setFinishPlaying(false)
                         return  <Player
-                            isVisible={false}
+                            isVisible={isVisible}
                             setFinishPlaying={setFinishPlaying}
                             key={item._id} 
                             index={index}
@@ -290,29 +308,39 @@ export default function CreateParticipateChallenge() {
                       </TouchableOpacity>
             
 
-                    {!play && <View className="min-w-full  rounded-md absolute top-0 flex-row items-center justify-start min-h-[5%]"
-                                    style={{top:Platform.OS == "android" ? 0 : 0 }} >
-                                        <TouchableOpacity
-                                        onPress={() => router.back()}
-                                        className="min-w-[8%] min-h-[95%] flex-1 flex-col justify-center  items-center">
-                                        <Image
-                                        className="w-8 h-8 bg-white "
-                                        source={icons.x} />
-                                        </TouchableOpacity>
-                                        <View 
-                                        className="min-w-[30%]  min-h-[95%] rounded-md bg-s flex-1 flex-row justify-center  items-end  ">
-                                            <Text className="text-white text-1xl  font-bold ">
-                                            Response Challenge
-                                            </Text>
-                                        </View>
-                                        
-                                        <View className="min-w-[62%] min-h-[95%] border-x-white bg-blue-1000 flex-1 flex-row justify-center  items-end" >
-                                            <Text className="text-gray-200 text-sm font-bold">
-                                            {challenge.desc}   
-                                            </Text>
-                                        </View>
-                                </View>
-                                }
+                    {!play && (<>
+                            <View className="min-w-full absolute top-0  rounded-md bg-bl-800 flex-row items-center justify-between h-[4%]"
+                              >
+                              <TouchableOpacity
+                                onPress={() => router.back()}
+                                className="min-w-[7%] h-[100%]  flex-col justify-center  items-center">
+                                <Image 
+                                className="w-7 h-7 bg-white"
+                                source={icons.x} />
+                              </TouchableOpacity>
+
+                              <View 
+                              className="min-w-[45%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-end  ">
+                                  <Text className="text-white  font-bold">
+                                    Response to Challenge 
+                                  </Text>
+                              </View>
+
+                              <View 
+                                className="min-w-[40%]  h-[100%] rounded-md gap-2 flex-row justify-center  items-end  ">
+                                  <Text className="text-white text-sm  font-bold ">
+                                    {challenge.type}{'   '} 
+                                  </Text>
+                                  <Text className="text-secondary text-sm  font-bold ">
+                                    {challenge.privacy}
+                                  </Text>
+                              </View>
+                          </View>  
+                          <View className="w-[100vw] h-[3%] absolute top-10  border-x-3 bg-blue-1000 flex-row justify-center  items-center" >
+                                    <SwingingTitle text={challenge.desc} fonstSize={17} color="green" /> 
+                          </View>
+                          </>
+                            )}
               </View>
                 ):
                 (       
@@ -322,48 +350,80 @@ export default function CreateParticipateChallenge() {
                        facing={facing}
                        style={{width:'100%',height:'100%'}}   
                          >   
-                       <View className="min-w-full py-2 flex-1 flex-col justify-start gap-2 items-center ">
+                       <View className="min-w-full h-full flex-col justify-start gap-2 items-center ">
                              
                          {!isRecording && challenge  ? (
                            <>
-                                <View className="min-w-full  rounded-md absolute top-0 flex-row items-center justify-start min-h-[5%]"
-                                    style={{top:Platform.OS == "android" ? 0 : 0 }} >
+
+                                <View className="min-w-full   rounded-md bg-bl-800 flex-row items-center justify-between h-[4%]"
+                                    >
+                                    <TouchableOpacity
+                                      onPress={() => router.back()}
+                                      className="min-w-[7%] h-[100%]  flex-col justify-center  items-center">
+                                      <Image
+                                      className="w-7 h-7 bg-white "
+                                      source={icons.x} />
+                                    </TouchableOpacity>
+
+                                    <View 
+                                    className="min-w-[45%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-end  ">
+                                        <Text className="text-white  font-bold">
+                                          Response to Challenge 
+                                        </Text>
+                                    </View>
+
+                                    <View 
+                                      className="min-w-[40%]  h-[100%] rounded-md gap-2 flex-row justify-center  items-end  ">
+                                        <Text className="text-white text-sm  font-bold ">
+                                          {challenge.type}{'   '} 
+                                        </Text>
+                                        <Text className="text-secondary text-sm  font-bold ">
+                                          {challenge.privacy}
+                                        </Text>
+                                    </View>
+                                </View>  
+
+                                <View className="w-[100vw] h-[3%]   border-x-3 bg-blue-1000 flex-row justify-center  items-center" >
+                                    <SwingingTitle text={challenge.desc} fonstSize={17} color="green" /> 
+                                </View>
+
+                                <View className="min-w-full  rounded-md gap-2  flex-col items-center justify-start h-[15%]"
+                                    >
+                                       
+                                        <Text  className="text-gray-100 font-bold text-sm">
+                                            Created by 
+                                        </Text>                  
+                                        <Text className="text-white font-bold text-sm">{challenge.name}</Text>
+                                        <Image 
+                                          className="w-[45px] h-[45px]  rounded-full"
+                                          source={challenge.profile_img?{uri:challenge.profile_img}:images.gold_bg} 
+                                          />
+                                       
+                                </View>
+
+                                <View 
+                                        className=" min-h-[5%] rounded-md w-[100%]  flex-col justify-center gap-3 items-center  ">
+                                        <Text  className="text-gray-100 font-bold text-sm">
+                                           Record or Upload  <Text className="text-white font-bold text-sm">Your response</Text>
+                                        </Text>  
+                                       
+                                </View>
+
+                                <View 
+                                        className=" min-h-[5%] rounded-md w-[70%] mt-80  flex-row justify-center  items-center  ">
+                                        <Text  className="text-blue-400 font-black text-xl">
+                                          View Challenge
+                                        </Text> 
                                         <TouchableOpacity
-                                        onPress={() => router.back()}
-                                        className="min-w-[8%] min-h-[95%] flex-1 flex-col justify-center  items-center">
-                                        <Image
-                                        className="w-8 h-8 bg-white "
-                                        source={icons.x} />
-                                        </TouchableOpacity>
-                                        <View 
-                                        className="min-w-[30%]  min-h-[95%] rounded-md bg-s flex-1 flex-row justify-center  items-end  ">
-                                            <Text className="text-white text-1xl  font-bold ">
-                                            Response Challenge
-                                            </Text>
-                                        </View>
-                                        
-                                        <View className="min-w-[62%] min-h-[95%] border-x-white bg-blue-1000 flex-1 flex-row justify-center  items-end" >
-                                            <Text className="text-gray-200 text-sm font-bold">
-                                            {challenge.desc}   
-                                            </Text>
-                                        </View>
+                                          className="flex-1"
+                                          onPress={handleNextItem}>
+                                            <Image 
+                                            className="w-[45px] h-[45px] ml-auto rounded-full"
+                                            source={icons.rightArrow} 
+                                             /> 
+                                        </TouchableOpacity>          
                                 </View>
-                                <View className="w-full absolute top-20 left-0 px-3   flex-row items-center justify-between min-h-[12%]">
-                                    <View 
-                                        className=" min-h-[95%] rounded-md w-[50%]  flex-col justify-center gap-3 items-center  ">
-                                        <Text  className="text-gray-100 font-bold text-sm">
-                                            Created by {'                        '} <Text className="text-white font-bold text-sm">{challenge.name}</Text>
-                                        </Text>  
-                                       
-                                    </View>
-                                    <View 
-                                        className=" min-h-[95%] rounded-md w-[50%]  flex-col justify-center gap-3 items-center  ">
-                                        <Text  className="text-gray-100 font-bold text-sm">
-                                           Record or Upload {' '} <Text className="text-white font-bold text-sm">Your response</Text>
-                                        </Text>  
-                                       
-                                    </View>
-                                </View>
+                              
                            </>
                          ):
                          (

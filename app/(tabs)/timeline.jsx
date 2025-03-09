@@ -1,18 +1,18 @@
-import { FlatList, Image, ImageBackground, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { FlatList, Image, ImageBackground, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { images } from '../../constants'
 import RNPickerSelect from 'react-native-picker-select';
 import { getTopChallenges, getUserChallenges, getUserParticipateChallenges } from '../../apiCalls';
 import {icons} from '../../constants'
 import { TextInput } from 'react-native';
-import Challenge from '../../components/Challenge';
-import ParticipantPost from '../../components/ParticipantPost';
+import Challenge from '../../components/challenge/Challenge';
+import ParticipantPost from '../../components/challenge/ParticipantPost';
 import { ResizeMode, Video } from 'expo-av';
 import { Camera } from 'expo-camera';
 import { router } from 'expo-router';
 import { getInition } from '../../helper';
-import HeadLineChallenges from '../../components/HeadLineChallenges';
+import HeadLineChallenges from '../../components/headLights/HeadLineChallenges';
 
 export default function timeline() {
 
@@ -53,28 +53,10 @@ export default function timeline() {
     return  <Challenge key={item._id} isVisibleVertical={isVisibleVertical} challenge={item}/>
   };
 
-
-  const handleRefresh = () => {
-    getTopChallenges(user._id,setTrendingChallenges)
-    setRefresh(!refresh);
-  };
    
-  return (
-    <SafeAreaView className="min-w-full bg-primary min-h-full">
-    
-        <FlatList 
-    
-        data={ trendingChallenges}
-        keyExtractor={(item)=> item._id}
-        renderItem={renderItem}   
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{
-              itemVisiblePercentThreshold: 70, // Adjust as needed
-        }}
-
-        ListHeaderComponent={()=> (
-         <>
-         <View
+  const renderHeader = useMemo(() => ( 
+    <>
+        <View
             className=" w-[100vw] min-h-10 px-4  border-gray-500 
             flex-row justify-center items-center">
 
@@ -104,7 +86,7 @@ export default function timeline() {
         
        
           <View className="mt-1 px-4 w-full h-[10vh] flex-row gap-7 items-center justify-start space-y-9"
-             style={{marginTop:Platform.OS == "android" ? 40 : 0 }}>
+             style={{marginTop:Platform.OS == "android" ? 20 : 0 ,marginBottom:Platform.OS == "android" ? 20 : 0 }}>
              <View className="justify-evenly items-start min-h-[100%] flex-col ">
                   <Image 
                     className="w-[60px] h-[60px] rounded-full "
@@ -114,7 +96,7 @@ export default function timeline() {
              <View className="justify-center gap-3 items-start min-h-[100%] flex-col ">
                     <Text className="font-pmedium text-sm text-gray-100">
                         Welcome {' '}
-                         <Text className="font-semibold text-sm text-white">
+                         <Text className="font-bold text-sm text-white">
                             {user.name}
                         </Text> 
                     </Text>
@@ -139,39 +121,58 @@ export default function timeline() {
                 </TouchableOpacity> 
              </View>
           </View>
-
-          {/* <View className=" w-[100vw] min-h-14 px-4 border-gray-500 border-2  focus:border-secondary-100 rounded-md
-              flex-row justify-center items-center">
-                <TextInput
-                    className=" text-white w-[100%] border-white rounded-2xl  h-full px-3
-                    font-bold text-xl"
-                    placeholder="Search for a challenge "
-                    placeholderTextColor="#7b7b8b"
-                      />
-                
-                  <TouchableOpacity onPress={()=> {}}>
-                      <Image className ="w-7 h-7"
-                      resizeMode='contain'
-                      source={icons.search} />
-                  </TouchableOpacity>                
-          </View > */}
+          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-2 mb-2 h-[40px]" >
+                  <Text className="font-bold text-xl text-blue-100">
+                        Friend's Challenges Pool
+                  </Text>    
+          </View>
           <View className="bg-white min-w-full min-h-1"></View>
-          <View className="w-[100vw] mt-2 mb-2 h-[250px] ">
+         
+          <View className="w-[100vw] mt-2 mb-2 h-[200px] bg-gray-700 ">
               {trendingChallenges.length > 0 &&  (
                  <HeadLineChallenges challengeData={trendingChallenges}  />  
               )} 
           </View>
           <View className="bg-white min-w-full mb-4 min-h-1"></View>
+          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-2 mb-1 h-[40px]" >
+                  <Text className="font-bold text-xl text-blue-100">
+                        Trending Challenges 
+                  </Text>    
+          </View>
           
+    </>
+  ),[trendingChallenges]);
 
-      
-       </>
-        )}
+
+
+
+  const handleRefresh = () => {
+    getTopChallenges(user._id,setTrendingChallenges)
+    setRefresh(!refresh);
+  };
+   
+  return (
+    <SafeAreaView className="min-w-full bg-primary min-h-full">
+       
+      <View
+          style={{ flex: 1 }}
+>
+        <FlatList 
+        data={ trendingChallenges}
+        keyExtractor={(item)=> item._id}
+        renderItem={renderItem}   
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={{
+              itemVisiblePercentThreshold: 70, // Adjust as needed
+        }}
+
+        ListHeaderComponent={renderHeader}
         onRefresh={handleRefresh}
         refreshing={false}
         extraData={refresh}
         />
-          
+        </View>
+  
     </SafeAreaView>
   )
 }

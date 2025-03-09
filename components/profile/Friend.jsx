@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { useGlobalContext } from '../context/GlobalProvider'
+import { useGlobalContext } from '../../context/GlobalProvider'
 import { router } from 'expo-router'
 
 export default function Friend({friend}) {

@@ -10,6 +10,10 @@ import { sortChallengeByVotes } from '../helper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'react-native'
 import { icons } from '../constants'
+import ChallengeExpired from '../components/challenge/ChallengeExpired'
+
+
+
 
 export default function ChallengeDisplayer() {
 
@@ -94,23 +98,7 @@ export default function ChallengeDisplayer() {
        )}  
 
        {isExpired && (
-        <View className="w-[100%] h-[100%] bg-primary flex-col justify-center items-center">
-             <View className=" bg-primary flex-row gap-4 justify-center items-center">
-               <Text className="text-white text-xl">
-                 Challenge Expired
-               </Text>
-         
-               <TouchableOpacity
-                  onPress={()=> {router.back()}}
-                  className="w-14 h-14" > 
-                   <Image 
-                     source={icons.back}
-                     className="w-14 h-14"
-                     resizeMethod='contain'
-                   />
-               </TouchableOpacity>
-             </View> 
-        </View>
+          <ChallengeExpired challenge_id={challenge_id}/>
        )}
 
      </SafeAreaView>

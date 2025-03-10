@@ -16,6 +16,7 @@ import SwiperFlatList from 'react-native-swiper-flatlist'
 import Post from '../components/challenge/Post'
 import Player from '../components/challenge/Player'
 import SwingingTitle from '../components/custom/SwingingTitle'
+import ChallengeExpired from '../components/challenge/ChallengeExpired'
 // import privacyData from '../../components/ChallengeTypeSelector'
 
 
@@ -40,7 +41,7 @@ export default function CreateParticipateChallenge() {
   const [viewableItems, setViewableItems] = useState([]);
   const [finishPlaying ,setFinishPlaying] =useState(false)
   const {challenge_id} = useLocalSearchParams();
-
+  const [isExpired,setIsExpired] = useState(false)
   const [autoPlay,setAutoPlay] = useState(false)
 
 
@@ -65,7 +66,7 @@ export default function CreateParticipateChallenge() {
   }, [videoUri])
 
   useEffect(() => {
-    getChallengeById(challenge_id,setChallenge)
+    getChallengeById(challenge_id,setChallenge,setIsExpired)
     return () => {
       setChallenge(null)
     };
@@ -168,10 +169,10 @@ export default function CreateParticipateChallenge() {
           email:user.email,
         }
         
-          console.log("here join challenge")
            axios.post(BASE_URL +`/challenges/uploads/${challenge._id}`,challengeBody)
           .then(   
             res =>  {
+            if(res.data === "challenge expired") return setIsExpired(true)
             challenge.privacy=="Public"? getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
             :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
             router.push({ pathname: '/profile',params: {
@@ -217,6 +218,11 @@ export default function CreateParticipateChallenge() {
         swiperRef.current?.scrollToIndex({index:0, animated: true });
       }, 0);
   };
+  
+
+ 
+    if(isExpired) return <ChallengeExpired challenge_id={challenge_id}/>
+  
   
   return (
   

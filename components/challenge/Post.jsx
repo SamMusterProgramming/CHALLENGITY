@@ -9,9 +9,10 @@ import { acceptFriendRequest, addFollowing, friendRequest, getCommentsByPost, ge
 import { router, useFocusEffect } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
-import { getInition, getTimeLapse } from '../../helper';
+import { formatTime, getInition, getTimeLapse } from '../../helper';
 import CommentDisplayer from '../comments/CommentDisplayer';
 import PostFooter from '../footers/PostFooter';
+import ProgresssBarVideo from '../custom/ProgresssBarVideo';
 // import { Video ,ResizeMode } from 'expo-video';
 // import Video from 'expo-av';
 
@@ -71,6 +72,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
       player.loop = false;
       player.volume = 0.1
       player.play() ;
+      player.timeUpdateEventInterval = 0.1;
     });
 
     const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
@@ -346,7 +348,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
   
   
     
-    <View className="w-[100vw] min-h-[88%] flex-col justify-start items-center  ">
+    <View className="w-[100vw] min-h-[87%] flex-col justify-start items-center  ">
         <ImageBackground className=" flex-1   flex-col justify-start items-center"
             source={images.night_bg} >
 
@@ -467,8 +469,16 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                         contentFit='cover'
                         nativeControls ={false}
                       />
+                      {/* {isPlaying && ( */}
+                            {/* <View className="absolute bottom-2"> */}
+                                <ProgresssBarVideo player={player} visible={isPlaying} bottom={8} />
+                              {/* </View> */}
+                      {/* )} */}
+                  
+                      
+                      
                       <TouchableOpacity 
-                        hitSlop={Platform.OS === "android" &&{ top: 280, bottom: 280, left: 400, right: 400 }}
+                        hitSlop={Platform.OS === "android" &&{ top: 250, bottom: 250, left: 400, right: 400 }}
                         onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause(), setIsPlaying(false) ) } }
                         className="flex-col absolute  justify-center items-center">
                             <Image 

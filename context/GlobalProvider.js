@@ -20,6 +20,7 @@ export const GlobalProvider =({children}) => {
     const [followings,setFollowings] = useState ([])
     const [userFriendData,setUserFriendData] = useState(null)
     const [follow , setFollow ] = useState(null)
+    const [favouriteChallenge , setFavouriteChallenge] = useState(null)
 
 
 
@@ -29,7 +30,8 @@ export const GlobalProvider =({children}) => {
     
     return (
         <GlobalContext.Provider
-            value= { {
+            value= { 
+                {
             isLoading
             ,setIsLoading
             ,user,setUser,
@@ -45,8 +47,9 @@ export const GlobalProvider =({children}) => {
             notifications ,setNotifications,
             followings,setFollowings,
             userFriendData,setUserFriendData,
-            follow , setFollow 
-              }
+            follow , setFollow ,
+            favouriteChallenge , setFavouriteChallenge
+            }
             } >
             {children}
         </GlobalContext.Provider>

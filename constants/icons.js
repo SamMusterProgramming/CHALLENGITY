@@ -37,6 +37,7 @@ import challengify from '../assets/icons/challengify.png'
 import check_red from '../assets/icons/check-red.png'
 import down_arrow from '../assets/icons/downArrow.png'
 import publi from '../assets/icons/public.png'
+import favourite from '../assets/icons/favourite.webp'
 
 
 
@@ -48,6 +49,7 @@ import publi from '../assets/icons/public.png'
 
 
 export default {
+  favourite,
   publi,
   down_arrow,
   challengify,

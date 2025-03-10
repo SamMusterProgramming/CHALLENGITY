@@ -33,7 +33,7 @@ export default function profile() {
   const [isFollowingClicked ,setIsFollowingClicked] = useState(false)
 
   const {publ,priv,yourChallenges,yourParticipations} =  useLocalSearchParams();
-  const [isLoaded, setIsLoaded] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const flatListRef= useRef()
 
 
@@ -67,7 +67,7 @@ export default function profile() {
      setPartiButton(yourParticipations === "true")
      setPublicSelect(publ=== "true")
      setPrivateSelect(priv === "true")
-     setIsLoaded(false)
+     setIsLoaded(true)
     //  setTimeout(() => {
     //      onRefresh()
     //  }, 500);
@@ -86,13 +86,13 @@ export default function profile() {
   const loadUserPublicChallenges =()=>{
     // setUserButton(true); setPartiButton(false);
     setChallengeData(userPublicChallenges)
-
+    setIsLoaded(true)
   }
 
   const loadUserPrivateChallenges =()=>{
     // setUserButton(true); setPartiButton(false);
     setChallengeData(userPrivateChallenges)
-
+    setIsLoaded(true)
   }
 
 
@@ -101,6 +101,7 @@ export default function profile() {
     // getUserParticipateChallenges(user._id , setChallengeData)
     // setPartiButton(true) ; setUserButton(false);
     setChallengeData(publicParticipateChallenges)
+    setIsLoaded(true)
 
   }
 
@@ -108,6 +109,7 @@ export default function profile() {
     // getUserParticipateChallenges(user._id , setChallengeData)
     // setPartiButton(true) ; setUserButton(false);
     setChallengeData(privateParticipateChallenges)
+    setIsLoaded(true)
 
   }
 
@@ -150,7 +152,7 @@ export default function profile() {
               setUser(null)
               setTrendingChallenges([])
               setUserChallenges([])
-              setParticipateChallenges(null)
+              setPublicParticipateChallenges(null)
               setIsViewed(true)
               setNotifications([])
               setFollowings([])
@@ -173,6 +175,20 @@ export default function profile() {
                    <Text
                   className="text-white font-bold  text-xs">
                   Logout
+                </Text>
+           </TouchableOpacity>
+
+           <TouchableOpacity
+              onPress={()=>{router.push('favouriteChallenges')}}
+               className="  absolute top-44 left-6 h-16 flex-col rounded-sm justify-center items-center ">
+                  <Image 
+                  className="w-14 h-8"
+                 resizeMode='contain'
+                 source={icons.favourite} 
+                 />
+                   <Text
+                  className="text-white font-bold  text-xs">
+                     Favourites
                 </Text>
            </TouchableOpacity>
 
@@ -408,19 +424,19 @@ export default function profile() {
 }, []);
 
 useEffect(() => {
-  setChallengeData(userPublicChallenges)
+ isLoaded && setChallengeData(userPublicChallenges)
 }, [userPublicChallenges])
 
 useEffect(() => {
-  setChallengeData(userPrivateChallenges)
+  isLoaded &&  setChallengeData(userPrivateChallenges)
 }, [userPrivateChallenges])
 
 useEffect(() => {
-  setChallengeData(publicParticipateChallenges)
+  isLoaded &&  setChallengeData(publicParticipateChallenges)
 }, [publicParticipateChallenges])
 
 useEffect(() => {
-  setChallengeData(privateParticipateChallenges)
+  isLoaded &&  setChallengeData(privateParticipateChallenges)
 }, [privateParticipateChallenges])
 
 

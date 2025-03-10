@@ -5,7 +5,7 @@ import { images } from '../../constants'
 import FormField from '../../components/custom/FormField'
 import { Link, router } from 'expo-router'
 
-import { authLogin, getFollowData, getFollowings, getNotificationByUser,
+import { authLogin, getFavouriteChallenges, getFollowData, getFollowings, getNotificationByUser,
    getUserFriendsData,  getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, isAuthenticated } from '../../apiCalls'
 import { GlobalProvider, useGlobalContext } from '../../context/GlobalProvider.js'
 // import AuthContent from '../../context/AuthContent'
@@ -13,7 +13,7 @@ import { GlobalProvider, useGlobalContext } from '../../context/GlobalProvider.j
 
 export default function login() {
   
-  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges
+  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge
     ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData
   } = useGlobalContext()
   // const [user,setUser] = useState(null)
@@ -37,6 +37,7 @@ export default function login() {
       getFollowings(user._id,setFollowings)
       getUserFriendsData(user._id,setUserFriendData)
       getFollowData(user._id,setFollow)
+      getFavouriteChallenges(user._id,setFavouriteChallenge)
       setTimeout(() => {
         router.push('/timeline')
       }, 1000);

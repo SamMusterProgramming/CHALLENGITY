@@ -71,3 +71,15 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
       return `${years} Y`;
     }
   }
+
+  export function formatTime(milliseconds) {
+    let seconds = Math.floor((milliseconds / 1000) % 60);
+    let minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
+    let hours = Math.floor((milliseconds / (1000 * 60 * 60)));
+  
+    const formattedHours = hours.toString().padStart(2, '0');
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = seconds.toString().padStart(2, '0');
+  
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }

@@ -82,7 +82,7 @@ export default function timeline() {
                   </TouchableOpacity>                
           </View >
 
-         </View>
+       </View>
         
        
           <View className="mt-1 px-4 w-full h-[10vh] flex-row gap-7 items-center justify-start space-y-9"
@@ -147,8 +147,12 @@ export default function timeline() {
 
 
   const handleRefresh = () => {
+    setRefresh(true)
     getTopChallenges(user._id,setTrendingChallenges)
-    setRefresh(!refresh);
+    setTimeout(() => {
+      setRefresh(false);
+    }, 600);
+   
   };
    
   return (
@@ -168,7 +172,7 @@ export default function timeline() {
 
         ListHeaderComponent={renderHeader}
         onRefresh={handleRefresh}
-        refreshing={false}
+        refreshing={refresh}
         extraData={refresh}
         />
         </View>

@@ -222,6 +222,7 @@ export const getUserPublicChallenges = async( user_id , setChallenges)=>{
         console.log(error)
     }
   }  
+
   //top challenges 
 
   export const getTopChallenges = async( user_id , setChallenges)=>{
@@ -252,6 +253,48 @@ export const getUserPublicChallenges = async( user_id , setChallenges)=>{
        console.log(error)
     }
 }
+
+export const addChallengeToFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
+ 
+  try {
+      await axios.post( BASE_URL + `/challenges/favourite/${user_id}`,body)
+      .then(res => {
+         if(res.data === "challenge expired") return setIsExpired(true)
+          setChallenges(res.data) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
+export const removeChallengeFromFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
+ 
+  try {
+      await axios.patch( BASE_URL + `/challenges/favourite/${user_id}`,body)
+      .then(res => {
+          if(res.data === "challenge expired") return setIsExpired(true)
+          setChallenges(res.data) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
+export const getFavouriteChallenges = async(user_id ,setChallenges)=>{
+ 
+  try {
+      await axios.get( BASE_URL + `/challenges/favourite/${user_id}`)
+      .then(res => { 
+          setChallenges(res.data) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
 
 
    // *********************************** likes and votes data *************************

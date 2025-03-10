@@ -17,6 +17,8 @@ export default function rootLayout() {
        <Stack.Screen name='CreateChallenge' options={{ headerShown:false}} />
        <Stack.Screen name='CreateParticipateChallenge' options={{ headerShown:false}} />
        <Stack.Screen name='ViewProfile' options={{ headerShown:false,unmountOnBlur: true}} />
+       <Stack.Screen name='favouriteChallenges' options={{ headerShown:false,unmountOnBlur: true}} />
+
        {/* <Stack.Screen name='login' options={{ headerShown:false}} /> */}
      </Stack>
      </GlobalProvider>

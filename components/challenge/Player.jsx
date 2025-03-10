@@ -12,6 +12,7 @@ import { getInition } from '../../helper';
 import CommentDisplayer from '../comments/CommentDisplayer';
 import PostSideFooter from "../footers/PostSideFooter"
 import SwingingTitle from '../custom/SwingingTitle';
+import ProgresssBarVideo from '../custom/ProgresssBarVideo';
 
     
 
@@ -78,6 +79,7 @@ export default function Player({participant,index,dimension,isVisible,challenge,
     player.loop = false;
     player.volume = 0.1
     player.play() ;
+    player.timeUpdateEventInterval = 0.1;
   });
  
   const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
@@ -364,6 +366,9 @@ const confirmUnfriend = () => {
  
 
               </TouchableOpacity>
+
+
+              <ProgresssBarVideo player={player} visible={!isPlaying} bottom={72} />
 
               <TouchableOpacity 
                hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}

@@ -14,6 +14,7 @@ import { challengeType  , privacyData } from '../utilities/TypeData'
 import ChallengeTypeSelector from '../components/challenge/ChallengeTypeSelector'
 import { getInition } from '../helper'
 import SwingingTitle from '../components/custom/SwingingTitle'
+import CustomAlert from '../components/custom/CustomAlert'
 
 
 // import privacyData from '../../components/ChallengeTypeSelector'
@@ -39,8 +40,11 @@ export default function CreateChallenge() {
   const [friendData ,setFriendData] = useState(null)
   const [selectedFriends ,setSelectedFriends] = useState([])
   const [selectAll,setSelectAll] = useState(false)
+  const videoRef = useRef();
 
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [action, setAction] = useState("");
+  const [text,setText] = useState()
 
   useEffect(() => {
     getUserFriendsData(user._id,setFriendList)
@@ -85,9 +89,10 @@ export default function CreateChallenge() {
   useEffect(
        () => {
       return () => {
+        // videoRef && videoRef.currentAsynch()
         setChallenge(null)
-        setSelectedType('')
-        setSelectedPrivacy('')
+        setSelectedType('Adventure')
+        setSelectedPrivacy('Public')
       };
     },[]
   );
@@ -173,10 +178,9 @@ export default function CreateChallenge() {
   const handleSumitChallenge =  () => {
 
     if(description == "") return confirmDescription()
-    if(videoUri ){ 
+    if(videoUri ) { 
       _uploadVideoAsync(videoUri , user.email,user.name)
       .then((url) => {
-    
         let challengeBody = {
           origin_id : user._id ,
           description: description,
@@ -231,33 +235,18 @@ export default function CreateChallenge() {
       }
 
   const confirmDescription = () => {
-        Alert.alert(
-          "Attention",
-          "Add Description to The Challenge",
-      
-          [
-            {
-              text: "OK",
-              style: "cancel"
-            }
-          ],
-          { cancelable: false }
-        );
+    setIsModalVisible(true)
+    setAction("OK")
+    setText("Add a Description to your challenge to continue")
+       
       };
 
   const confirmPrivacy = () => {
-        Alert.alert(
-          "Attention !! Private Challenge",
-          "Select atteast one Friend to continue",
-      
-          [
-            {
-              text: "OK",
-              style: "cancel"
-            }
-          ],
-          { cancelable: false }
-        );
+
+    setIsModalVisible(true)
+    setAction("OK")
+    setText("You select private challenge , please select at least one friend to Continue")
+       
       };
         
       
@@ -290,6 +279,7 @@ export default function CreateChallenge() {
                 {videoUri ? (
                <View className="flex-1 flex-column  justify-start  items-center ">
                  <Video
+                   ref={videoRef}
                    className={play ? "opacity-100":"opacity-10"}
                    style={{minWidth:'100%',minHeight:'100%',position:'relative'}}
                    source={{uri:videoUri}}
@@ -373,24 +363,7 @@ export default function CreateChallenge() {
                                                         Friend
                                             </Text>
                                     </View>
-                                    {/* <TouchableOpacity
-                                      onPress={()=> {
-                                        let f = [...selectedFriends] 
-                                        f.find(friend=>friend.sender_id === item.sender_id)?
-                                        f = f.filter(friend =>friend.sender_id !== item.sender_id):
-                                        f.push(item)   
-                                        setSelectedFriends(f)
-                                      }}
-                                      className="w-[25px] h-[25px] border-2 ml-auto justify-center items-center border-gray-400">
-                                      {selectedFriends.length > 0 && selectedFriends.find(friend => friend.sender_id === item.sender_id) &&
-                             
-                                     <Image
-                                       className="w-4 h-4"
-                                      source={icons.check} />
-      
-                                      } 
-                                        
-                                    </TouchableOpacity> */}
+                                    
                                    
                                 </View>
                       
@@ -490,8 +463,9 @@ export default function CreateChallenge() {
 
                          <View className="flex-row w-full border-white justify-center items-center  opacity gap-5  h-[7vh]">
                          <TextInput
+                            className="bg-gray-900"
                             style={{ minHeight: 50,width:'95%', borderColor: 'white',fontWeight:'900', borderWidth: 2,
-                              color:'white',textAlign:'center',fontSize:15,borderRadius:10
+                              color:'white',textAlign:'center',fontSize:15,borderRadius:5
                             }}   
                             onChangeText={text => setDescription(text)}
                             value={description}
@@ -504,7 +478,7 @@ export default function CreateChallenge() {
                         </View>   
 
 
-                        <View className="flex-row w-full mt-4 justify-center items-center   opacity-100 gap-5  h-[7vh]">
+                        <View className="flex-row w-full mt-2 justify-center items-center   opacity-100 gap-5  h-[7vh]">
                           <ChallengeTypeSelector data={challengeType} setSelected={setSelectedType} />
                           <ChallengeTypeSelector data={privacyData} setSelected={setSelectedPrivacy} /> 
                         </View>  
@@ -543,7 +517,7 @@ export default function CreateChallenge() {
 
                           <View 
                              className=" w-[70%]  px-2 py-2   bg-blue-200  
-                             rounded-lg  min-h-[150px] max-h-[320px]"
+                             rounded-lg  min-h-[50px] max-h-[320px]"
                              >
                             <FlatList 
                             scrollEnabled={true}
@@ -612,7 +586,7 @@ export default function CreateChallenge() {
                                     rounded-lg  min-h-[50px] max-h-[320px]">
                                 <Text
                                   className="text-black font-black text-sm">
-                                   Note * : <Text className="text-primary font-pthin text-xs">
+                                   Note * : <Text className="text-primary font-pmedium text-xs">
                                         Only Selected friends can Participate in your challenge
                                         when Private is Selected
                                    </Text>
@@ -622,20 +596,7 @@ export default function CreateChallenge() {
                       ) }
 
                         
-                        {/* <View className="flex-row w-full border-white justify-center items-center  opacity gap-5  h-[7vh]">
-                         <TextInput
-                            style={{ minHeight: 50,width:'95%', borderColor: 'white',fontWeight:'900', borderWidth: 2,
-                              color:'white',textAlign:'center',fontSize:15,borderRadius:10
-                            }}   
-                            onChangeText={text => setDescription(text)}
-                            value={description}
-                            placeholder={currentPlaceholder}
-                            onFocus={()=>{setCurrentPlaceholder("")}}
-                            onBlur={()=>{if(description === "" ) setCurrentPlaceholder("Add a description to your challenge")}}
-                            placeholderTextColor='white'
-                            keyboardType ="email-address"
-                          />
-                        </View>   */}
+                      
                         </>
 
 
@@ -692,6 +653,11 @@ export default function CreateChallenge() {
               
                 )
               }
+
+               {isModalVisible && (
+                      <CustomAlert text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
+               )}
+
               </SafeAreaView>
             
  

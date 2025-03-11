@@ -49,22 +49,22 @@ export default function ChallengeTypeSelector({data,setSelected}) {
 
 const styles = StyleSheet.create({
     dropdownButtonStyle: {
-      width: '45%',
-      height: 40,
+      width: '35%',
+      height: 50,
       backgroundColor: '#E9ECEF',
       borderRadius: 8,
       flexDirection: 'row',
       justifyContent: 'between',
       alignItems: 'center',
-      paddingHorizontal: 12,
-      opacity:60
+      paddingHorizontal: 15,
+      opacity:100
     },
     dropdownButtonTxtStyle: {
       flex: 1,
-      fontSize: 12,
-      fontWeight: '800',
+      fontSize: 15,
+      fontWeight: '900',
       color: 'black',
-      fontWeight:'bold'
+      // fontWeight:'bold'
     },
     dropdownButtonArrowStyle: {
       fontSize: 28,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     dropdownItemTxtStyle: {
       flex: 1,
       fontSize: 14,
-      fontWeight: '600',
+      fontWeight: '800',
       color: 'black',
     },
     dropdownItemIconStyle: {

@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import NoChallenge from '../../components/challenge/NoChallenge'
 // import { SafeAreaView } from 'react-native-safe-area-context'
 import FriendDisplayer from '../../components/profile/FriendDisplayer'
+import CustomAlert from '../../components/custom/CustomAlert'
 
 export default function profile() {
   const {user,setUser,userPublicChallenges,setUserPublicChallenges,followings,setFollowings,follow , setFollow,
@@ -125,6 +126,7 @@ export default function profile() {
 
   const renderHeader = useMemo(() => ( 
       <>
+     
            <View className="bg- w-[100vw] flex-col justify-start items-center "> 
            <View className="bg- w-[100vw] flex-col justify-start items-center h-[150]">
                  <Image 
@@ -133,7 +135,7 @@ export default function profile() {
                  resizeMode='stretch'
                  source={{uri:user.cover_img}} 
                  />
-           </View> 
+           </View>     
            <View className="bg- w-[85] absolute mt-32 bg-blue-400 flex-col rounded-full justify-center items-center h-[85]">
                  <Image 
                  minWidth={83}
@@ -306,8 +308,7 @@ export default function profile() {
                        </Text>
                      </TouchableOpacity>
 
-                   
-
+              
                 </View>
             </View>
           </View>

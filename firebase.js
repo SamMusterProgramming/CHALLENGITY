@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
+import { generateRandomString, getRandomInt } from "./helper";
 
 
 const firebaseConfig = {
@@ -54,7 +55,7 @@ export const  _uploadVideoAsync = async(uri , email,name)=> {
   })
   console.log('Blob created', blob)
   console.log( 'random is herrrrre '  , name)
-  const fileRef = ref(storage, generateUserFolder(email)+ name + Date.now.toString)
+  const fileRef = ref(storage, generateUserFolder(email) + getRandomInt(1000,100000).toString()+ generateRandomString(5) )
   console.log('File reference created', fileRef)
 
   const result = await uploadBytes(fileRef, blob)

@@ -13,6 +13,7 @@ import { formatTime, getInition, getTimeLapse } from '../../helper';
 import CommentDisplayer from '../comments/CommentDisplayer';
 import PostFooter from '../footers/PostFooter';
 import ProgresssBarVideo from '../custom/ProgresssBarVideo';
+import CustomAlert from '../custom/CustomAlert';
 // import { Video ,ResizeMode } from 'expo-video';
 // import Video from 'expo-av';
 
@@ -52,6 +53,13 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
 
     const [commentCount,setCommentCount] =useState(0)
    
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [action, setAction] = useState("");
+    const [text,setText] = useState()
+
+    
+
+
     const videoRef = useRef(null);
     
     useEffect(() => {
@@ -248,15 +256,20 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
     getUserFriendsData(participant.user_id,setParticipantFriendData)
     }, [addFriendRequest])
 
-    const sendFriendRequest = () => {    
+    const sendFriendRequest = () => {   
+      setIsModalVisible(false) 
       const rawBody = user;
       friendRequest(participant.user_id,rawBody,setAddFriendRequest)
    }   
+
    const unfriendFriendRequest = () => {
+    setIsModalVisible(false)
+
     const rawBody = user;
     unfriendRequest(participant.user_id,rawBody,setAddFriendRequest)
   }
   const okFriendRequest = () => {
+    setIsModalVisible(false)
     const rawBody ={
       _id:participant.user_id,
       name:participant.name,
@@ -266,70 +279,36 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
     acceptFriendRequest(user._id,rawBody,setAddFriendRequest)
   }
   const cancelFriendRequest = () => {
+    setIsModalVisible(false)
     removeFriendRequest(participant.user_id,user,setAddFriendRequest)
   }
   
   
   const confirmCancel = () => {
-    Alert.alert(
-      "Confirm Action",
-      "Are you sure you want to cancel friend request",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { text: "OK", onPress: cancelFriendRequest }
-      ],
-      { cancelable: false }
-    );
+    setIsModalVisible(true)
+    setAction("CR")
+    setText("Are you sure you want to cancel friend request")
   };
+
   const confirmFriendRequest = () => {
-    Alert.alert(
-      "Confirm Action",
-      "Are you sure you want to send friend request",
+
+    setIsModalVisible(true)
+    setAction("FR")
+    setText("Are you sure you want to send friend request")
   
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { text: "OK", onPress: sendFriendRequest }
-      ],
-      { cancelable: false }
-    );
   };
   
   const confirmAccept = () => {
-    Alert.alert(
-      "Confirm Action",
-      "Are you sure you want to accept friend requestt",
-  
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { text: "OK", onPress: okFriendRequest }
-      ],
-      { cancelable: false }
-    );
+    setIsModalVisible(true)
+    setAction("AC")
+    setText("Are you sure you want to accept friend request")
+ 
   };
   
   const confirmUnfriend = () => {
-    Alert.alert(
-      "Confirm Action",
-      "Are you sure you want to remove from your friend list",
-  
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { text: "OK", onPress: unfriendFriendRequest }
-      ],
-      { cancelable: false }
-    );
+    setIsModalVisible(true)
+    setAction("UN")
+    setText("Are you sure you want to remove the friend")
   };
 
   //********************************** comments ****************************************/
@@ -344,14 +323,19 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
     setCommentCount(commentCount * 0 + commentData && commentData.content.length || 0)
   }, [commentData])
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
   return (
   
-  
+  <>
     
     <View className="w-[100vw] min-h-[87%] flex-col justify-start items-center  ">
+      
+
         <ImageBackground className=" flex-1   flex-col justify-start items-center"
             source={images.night_bg} >
-
             <View
              className="w-full flex-row  items-center  px-1 justify-evenly min-h-[7%]">
                 <TouchableOpacity 
@@ -426,10 +410,10 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                             {isFollowing ? "Unfollow" : "Follow"} 
                         </Text>
                     </TouchableOpacity>
-            
-              
-
+          
                    
+                  
+
                 <TouchableOpacity
                    onPress={ownPost?()=>{}:isFriend? confirmUnfriend  : 
                     isAccept? confirmAccept : isPending?
@@ -452,6 +436,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                     </Text>
                 </TouchableOpacity>
             </View>
+
            
          
             <TouchableOpacity 
@@ -493,8 +478,6 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                       commentData={commentData} setDisplayComments={setDisplayComments} isVisible={isVisible || displayComments} user={user} post={participant} commentCount={commentCount} /> 
                 }
             
-       
-
 
             {likesVotesData && (
                 <PostFooter handleLikes={handleLikes} index={index} handleVotes={handleVotes} isLiked={isLiked} comment_count={commentData && commentCount }
@@ -503,7 +486,14 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
           
         </ImageBackground>    
     </View>
-    // </KeyboardAvoidingView> 
+
+      {isModalVisible && (
+        <CustomAlert text={text} action={action} isModalVisible={isModalVisible} unfriendFriendRequest={unfriendFriendRequest}
+        okFriendRequest={okFriendRequest} cancelFriendRequest={cancelFriendRequest} sendFriendRequest={sendFriendRequest}
+         setIsModalVisible={setIsModalVisible}/>
+      )}
+   </>
+
 
   )
 }

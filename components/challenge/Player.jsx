@@ -501,26 +501,26 @@ const confirmUnfriend = () => {
                         style={{top:Platform.OS == "android" ? 0 : 0 }} >
 
 
-                    <View className="min-w-full  rounded-md bg-bl-800 flex-row items-center justify-between h-[15%]"
+                    <View className="min-w-full  rounded-md bg-bl-800 flex-row items-center justify-between h-[10%]"
                          >
                         <TouchableOpacity
                           onPress={() => router.back()}
-                          className="min-w-[7%] h-[100%]  flex-col justify-center  items-center">
+                          className="min-w-[7%] h-[100%]  flex-col justify-center  items-end">
                           <Image
-                          className="w-10 h-10 bg-white "
+                          className="w-7 h-7 bg-white "
                           source={icons.x} />
                         </TouchableOpacity>
 
                         <View 
                         className="min-w-[35%]  h-[100%] rounded-md bg-s  flex-row justify-center  items-end  ">
-                            <Text className="text-white text-xl  font-bold ">
+                            <Text className="text-white text-sm  font-bold ">
                               Challenge  -
                             </Text>
                         </View>
 
                         <View 
                         className="min-w-[35%]  h-[100%] rounded-md bg-s flex-1 flex-row justify-center  items-end  ">
-                            <Text className="text-white text-xl  font-bold ">
+                            <Text className="text-white text-sm font-bold ">
                               {challenge.type}{' '} -
                             </Text>
                         </View>
@@ -528,7 +528,7 @@ const confirmUnfriend = () => {
                
                         <View 
                         className="min-w-[20%]  h-[100%] rounded-md bg- flex-1 flex-row justify-center  items-end ">
-                            <Text className="text-secondary text-xl  font-bold ">
+                            <Text className="text-secondary text-sm  font-bold ">
                                {challenge.privacy}
                             </Text>
                         </View>
@@ -536,20 +536,20 @@ const confirmUnfriend = () => {
 
                     </View>  
 
-                    <View className="w-[100vw] h-[10%] bg-wh  border-x-3 bg-blue-1000 flex-row justify-center  items-center" >
+                    <View className="w-[100vw] h-[6%] bg-wh  border-x-3 bg-blue-1000 flex-row justify-center  items-center" >
                         {/* <Text className="text-primary text-sm font-bold"> */}
-                           <SwingingTitle text={challenge.desc} fonstSize={24} color="white" /> 
+                           <SwingingTitle text={challenge.desc} fonstSize={18} color="white" /> 
                         {/* </Text> */}
                     </View>
 
 
                    {challengeCreater && (
 
-                    <View className="w-full flex-col items-center mt-0 justify-center h-[25%]">
+                    <View className="w-full flex-col items-center mt-0 justify-center h-[23%]">
 
 
                             <View 
-                                  className=" h-[100%]  w-[100%]  flex-col justify-evenly items-center  ">   
+                                  className=" min-h-[100%]  w-[100%]  flex-col justify-center gap-2 items-center  ">   
                            {!hasParticipated? (  
                               <>
                               <Text  className="text-blue-400 font-bold text-sm">
@@ -604,7 +604,7 @@ const confirmUnfriend = () => {
                      </View>
 
                      )}
-                     <View className=" h-[30%] px-3 rounded-md w-[50%]  flex-col justify-center items-center  ">
+                     <View className=" h-[33%] px-3 rounded-md w-[50%]  flex-col justify-center gap-1 items-center  ">
 
                           <Text  className="text-gray-300 font-bold text-xs">
                               Created by {' '} 
@@ -624,7 +624,7 @@ const confirmUnfriend = () => {
                               }
                               }
                             }
-                              className="flex-col  justify-start gap-2 mt-2  items-center">
+                              className="flex-col  justify-start gap-1  items-center">
                             
                               <Image 
                               className="w-[45px] h-[45px]  rounded-full"
@@ -637,10 +637,8 @@ const confirmUnfriend = () => {
                       <View className=" h-[20%] px-3 rounded-md w-[50%]  flex-col justify-center items-center  ">
 
                           <TouchableOpacity
-                            onPress={!isFavourite?confirmAddToFavourite:confirmRemoveFromFavourite}
-                            
-                              className="flex-col  justify-start gap-2 mt-2  items-center">
-                            
+                              onPress={!isFavourite?confirmAddToFavourite:confirmRemoveFromFavourite}                         
+                              className="flex-col  justify-start gap-1 mt-1  items-center">                           
                               <Ionicons name='heart' size={48} color={isFavourite?"red":"pink"} />
                               <Text className= {isFavourite?"text-pink-600 font-black  text-sm":"text-pink-200 font-bold text-sm"} 
                               >

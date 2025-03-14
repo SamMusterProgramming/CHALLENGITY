@@ -14,6 +14,7 @@ import CommentDisplayer from '../comments/CommentDisplayer';
 import PostFooter from '../footers/PostFooter';
 import ProgresssBarVideo from '../custom/ProgresssBarVideo';
 import CustomAlert from '../custom/CustomAlert';
+import DisplayChallengers from './DisplayChallengers';
 // import { Video ,ResizeMode } from 'expo-video';
 // import Video from 'expo-av';
 
@@ -331,13 +332,13 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
   
   <>
     
-    <View className="w-[100vw] min-h-[87%] flex-col justify-start items-center  ">
+    <View className="w-[100vw] min-h-[85%] flex-col justify-start items-center  ">
       
 
         <ImageBackground className=" flex-1   flex-col justify-start items-center"
             source={images.night_bg} >
             <View
-             className="w-full flex-row  items-center  px-1 justify-evenly min-h-[7%]">
+             className="w-full flex-row  items-center  px-1 justify-evenly min-h-[8%]">
                 <TouchableOpacity 
                 onPress={() => {
                 if(user._id === participant.user_id){
@@ -359,7 +360,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                     />
                 </TouchableOpacity>
 
-                <View className="flex-col w-[27%] justify-center items-center gap-0">
+                <View className="flex-col w-[30%] justify-center items-center gap-1">
                     <Text className="text-white text-xs font-bold"
                        style={{ fontSize:9}}>
                         {participant.name}
@@ -379,7 +380,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                     </Text>
                 </View>
                
-                <View className="flex-col w-[15%] justify-center items-center gap-1">
+                {/* <View className="flex-col w-[15%] justify-center items-center gap-1">
                     <Image 
                     className="w-8 h-6"
                       source={icons.heart}
@@ -387,11 +388,11 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                     <Text className="text-gray-300 text-xs font-bold">
                        {participant.votes}  Votes
                     </Text>
-                </View>
+                </View> */}
           
                     <TouchableOpacity 
                     onPress={ownPost?()=>{}:isFollowing? handleUnFollowing : handleFollowing}
-                    className="flex-col w-[15%] justify-center items-center gap-1">
+                    className="flex-col w-[22%] justify-center items-center gap-1">
                         <View className ="flex-row  justify-center items-center">
                             <Image 
                             className="w-6 h-6"
@@ -418,7 +419,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                    onPress={ownPost?()=>{}:isFriend? confirmUnfriend  : 
                     isAccept? confirmAccept : isPending?
                     confirmCancel : confirmFriendRequest  }
-                    className="flex-col w-[18%] justify-center gap-1 items-center">
+                    className="flex-col w-[22%] justify-center gap-1 items-center">
                      <View className ="flex-row  justify-center items-center">
                           <Image 
                                className="w-6 h-6"
@@ -445,7 +446,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                 // }
                 onPressOut={toggleVideoPlaying}
                 activeOpacity={1}
-                className="flex-row items-center bg-primary  justify-center min-w-[100%] min-h-[86%] "
+                className="flex-row items-center bg-primary  justify-center min-w-[100%] min-h-[85%] "
               >          
                       <VideoView 
                         ref={videoRef}
@@ -456,7 +457,7 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                       />
                       {/* {isPlaying && ( */}
                             {/* <View className="absolute bottom-2"> */}
-                                <ProgresssBarVideo player={player} visible={isPlaying} bottom={8} />
+                                <ProgresssBarVideo player={player} visible={!isPlaying} bottom={8} />
                               {/* </View> */}
                       {/* )} */}
                   
@@ -470,14 +471,24 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                             className={isPlaying ? "w-14 h-14 opacity-20":"w-14 h-14 opacity-100" }
                             source={!isPlaying && icons.play}/>
                       </TouchableOpacity>
-         
-            </TouchableOpacity>
+                    { ! isPlaying && (index === 0) && (
+                      <View 
+                      className="absolute top-3 flex-row w-[150ox]  justify-center gap-2 left-3 items-center">
+                        <Text
+                        style={{fontSize:10}}
+                         className="text-gray-400 text-xm font-black ">{challenge.participants.length}</Text>
+                         <Text 
+                             style={{fontSize:9}}
+                             className="text-gray-200 text-xm font-bold  "> Participants </Text>
+                      </View>
+                    )}
+                </TouchableOpacity>
               
                 {displayComments && 
                       <CommentDisplayer vote_count={participant.votes} like_count={participant.likes} style={{marginTop:60,height:"40%"}} setCommentCount={setCommentCount}
                       commentData={commentData} setDisplayComments={setDisplayComments} isVisible={isVisible || displayComments} user={user} post={participant} commentCount={commentCount} /> 
                 }
-            
+              
 
             {likesVotesData && (
                 <PostFooter handleLikes={handleLikes} index={index} handleVotes={handleVotes} isLiked={isLiked} comment_count={commentData && commentCount }

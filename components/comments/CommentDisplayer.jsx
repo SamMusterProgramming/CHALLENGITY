@@ -83,7 +83,7 @@ const scrollToLastItem = () =>{
 
     <View 
         style={style}
-        className="absolute  w-[99%] min-h-[20%]  flex-col justify-center items-center rounded-2xl border-4 border-gray-400
+        className="absolute  w-[99%] min-h-[30%]  flex-col justify-center items-center rounded-2xl border-4 border-gray-400
          bg-green-50">    
               <View 
                      className="flex-row justify-between w-full h-14 rounded-lg border-pink-300 border-2 bg-blue-200 mb-1 px-2 items-center">

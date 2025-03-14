@@ -17,6 +17,7 @@ import Post from '../components/challenge/Post'
 import Player from '../components/challenge/Player'
 import SwingingTitle from '../components/custom/SwingingTitle'
 import ChallengeExpired from '../components/challenge/ChallengeExpired'
+import LoadModel from '../components/custom/LoadModal'
 // import privacyData from '../../components/ChallengeTypeSelector'
 
 
@@ -43,6 +44,7 @@ export default function CreateParticipateChallenge() {
   const {challenge_id} = useLocalSearchParams();
   const [isExpired,setIsExpired] = useState(false)
   const [autoPlay,setAutoPlay] = useState(false)
+  const [visible, setVisible] = useState(false);
 
 
   const requestMediaPermissions = async () => {
@@ -96,25 +98,13 @@ export default function CreateParticipateChallenge() {
     },[]);
 
 
-  if (!permission) {
-    // Camera permissions are still loading.
-    return <View />;
-  }
-  if (!audioPermission) {
-    // Camera permissions are still loading.
-    return <View />;
-  }
-   
-  if (!permission.granted || !audioPermission.granted) {
-    // Camera permissions are not granted yet.
-    return (
-      <View className="flex-1 bg-primary">
-        <Text className="bg-yellow-600">We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-        <Button onPress={requestAudioPermission} title="grant audio permission" />
-      </View>
-    );
-  }
+
+  useEffect(() => {
+    // if (!permission.granted || !audioPermission.granted){
+    requestPermission()
+    requestAudioPermission()
+    // }
+  }, [])
 
   function toggleCameraFacing() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
@@ -154,7 +144,15 @@ export default function CreateParticipateChallenge() {
   
   
   const handleSumitChallenge =  () => {
-    if(videoUri ){ 
+    if(videoUri ){
+      setVisible(true)
+      setTimeout(() => {
+        router.push({ pathname: '/profile',params: {
+        priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+        yourChallenges:"false" , yourParticipations:"true"
+        } }) 
+        setVisible(false)
+      }, 2000); 
       _uploadVideoAsync(videoUri , user.email,user.name)
       .then((url) => {
         let challengeBody = {
@@ -175,10 +173,6 @@ export default function CreateParticipateChallenge() {
             if(res.data === "challenge expired") return setIsExpired(true)
             challenge.privacy=="Public"? getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
             :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
-            router.push({ pathname: '/profile',params: {
-              priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-              yourChallenges:"false" , yourParticipations:"true"
-            } }) 
             setTimeout(() => {
             
               router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:res.data._id} })
@@ -478,7 +472,12 @@ export default function CreateParticipateChallenge() {
                            </View>
                         </View>
                      </CameraView>
+                     
                      </View>  )}
+                     {visible && (
+                          <LoadModel visible={visible} setVisible={setVisible}
+                           />
+                         )}
                 </>
                }
 

@@ -15,6 +15,7 @@ import ChallengeTypeSelector from '../components/challenge/ChallengeTypeSelector
 import { getInition } from '../helper'
 import SwingingTitle from '../components/custom/SwingingTitle'
 import CustomAlert from '../components/custom/CustomAlert'
+import LoadModel from '../components/custom/LoadModal'
 
 
 // import privacyData from '../../components/ChallengeTypeSelector'
@@ -43,8 +44,13 @@ export default function CreateChallenge() {
   const videoRef = useRef();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
+
   const [action, setAction] = useState("");
   const [text,setText] = useState()
+  const [bgTypeColor ,setBgTypeColor] = useState("red")
+  const [bgPrivacyColor ,setBgPrivacyColor] = useState("blue")
+
 
   useEffect(() => {
     getUserFriendsData(user._id,setFriendList)
@@ -98,45 +104,56 @@ export default function CreateChallenge() {
   );
 
 
-  if (!permission) {
-    // Camera permissions are still loading.
-    return <View />;
-  }
-  if (!audioPermission) {
-    // Camera permissions are still loading.
-    return <View />;
-  }
-   
-  if (!permission.granted || !audioPermission.granted) {
-    // Camera permissions are not granted yet.
-    {   Alert.alert(
-      "Confirm Action",
-      "Allow Challengify use Camera",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { text: "OK", onPress: requestPermission }
-      ],
-      { cancelable: false }
-    );
-  }
-  {   Alert.alert(
-    "Confirm Action",
-    "Allow Challengify use Camera",
-    [
-      {
-        text: "Cancel",
-        style: "cancel"
-      },
-      { text: "OK", onPress: requestAudioPermission }
-    ],
-    { cancelable: false }
-  );
-}
- 
-  }
+  useEffect(() => {
+    requestPermission()
+    requestAudioPermission()
+    // }
+  }, [])
+  
+  
+  useEffect(() => {
+    switch(selectedPrivacy) {
+      case "Public":
+         setBgPrivacyColor("#074beb")
+        break;
+      case "Private":
+        setBgPrivacyColor("#c21555")
+        break;
+      default:
+        setBgPrivacyColor("gray")
+    }
+  }, [selectedPrivacy])
+
+  useEffect(() => {
+    switch(selectedType) {
+      case "Adventure":
+         setBgTypeColor("#c27d15")
+        break;
+      case "Dance":
+        setBgTypeColor("#c25515")
+        break;
+      case "Eating":
+          setBgTypeColor("#15c252")
+         break;
+      case "Fitness":
+         setBgTypeColor("#c21515")
+         break;
+      case "Magic":
+          setBgTypeColor("#450575")
+          break;
+      case "Music":
+            setBgTypeColor("#052c75")
+           break;
+      case "Science":
+           setBgTypeColor("#274a04")
+           break;
+      case "Sport":
+           setBgTypeColor("#04194a")
+           break;
+      default:
+        setBgPrivacyColor("gray")
+    }
+  }, [selectedType])
 
   function toggleCameraFacing() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
@@ -174,11 +191,22 @@ export default function CreateChallenge() {
   }
 
   
+
   
   const handleSumitChallenge =  () => {
 
     if(description == "") return confirmDescription()
     if(videoUri ) { 
+      setVisible(true)
+     
+      setTimeout(() => {
+        router.push({ pathname: '/profile',params: {
+        priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+        yourChallenges:"true" , yourParticipations:"false"   
+                  } }) 
+        setVisible(false)
+      }, 2000);
+
       _uploadVideoAsync(videoUri , user.email,user.name)
       .then((url) => {
         let challengeBody = {
@@ -203,15 +231,15 @@ export default function CreateChallenge() {
             name:user.name
           }
          axios.post( BASE_URL + '/challenges/uploads', challengeBody).then( // when user challenge another user , we will insert his change to an existing challenge by challenge_id
-            res =>  {
-              
-              // getUserPublicChallenges(user._id ,setUserPublicChallenges)
+            res =>  {          
+                // selectedPrivacy == "Public"? getUserPublicChallenges(user._id ,setUserPublicChallenges):
+                // getUserPrivateChallenges(user._id ,setUserPrivateChallenges)
+                // router.push({ pathname: '/profile',params: {
+                // priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+                // yourChallenges:"true" , yourParticipations:"false"   
+                // } }) 
               selectedPrivacy == "Public"? getUserPublicChallenges(user._id ,setUserPublicChallenges):
               getUserPrivateChallenges(user._id ,setUserPrivateChallenges)
-              router.push({ pathname: '/profile',params: {
-                priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-                yourChallenges:"true" , yourParticipations:"false"
-              } }) 
               setTimeout(() => {
       
                     router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:res.data._id} })
@@ -222,15 +250,7 @@ export default function CreateChallenge() {
       
          
           })   
-          // getUserPublicChallenges(user._id ,setUserPublicChallenges)
-          // selectedPrivacy == "Public"? getUserPublicChallenges(user._id ,setUserPublicChallenges):
-          // getUserPrivateChallenges(user._id ,setUserPrivateChallenges)
-          // router.push({ pathname: '/profile',params: {
-          //      priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-          //      yourChallenges:"true" , yourParticipations:"false"
-          //     } }) 
-
-          // router.push('/profile')
+        
         }; 
       }
 
@@ -435,7 +455,7 @@ export default function CreateChallenge() {
                 style={{width:'100%',height:'100%'}}
                 // className="flex-1 w-full bg-primary"    
                 >
-                  <View className="min-w-full py-2 flex-1 flex-col justify-start gap-6 items-center ">
+                  <View className="min-w-full py- flex-1 flex-col justify-start gap-6 items-center ">
 
                               
     
@@ -447,68 +467,68 @@ export default function CreateChallenge() {
                           <View className="min-w-full  rounded-md  flex-row items-center justify-between h-[5vh]"
                                     >
                                         <TouchableOpacity
-                                        onPress={() => router.back()}
-                                        className="w-[10%] h-[95%]  flex-col justify-center  items-center">
-                                        <Image
-                                        className="w-10 h-10 bg-white "
-                                        source={icons.x} />
+                                              onPress={() => router.back()}
+                                              className="w-[10%] h-[95%]  flex-col justify-center  items-center">
+                                              <Image
+                                              className="w-7 h-7 bg-white "
+                                              source={icons.x} />
                                         </TouchableOpacity>
                                         <View 
                                           className="w-[90%]  min-h-[95%] rounded-md bg-s  flex-row justify-center  items-end  ">
-                                            <Text className="text-white text-2xl  font-bold ">
+                                            <Text className="text-white text-md  font-bold ">
                                             New Challenge
                                             </Text>
                                         </View> 
                          </View>
 
-                         <View className="flex-row w-full border-white justify-center items-center  opacity gap-5  h-[7vh]">
-                         <TextInput
-                            className="bg-gray-900"
-                            style={{ minHeight: 50,width:'95%', borderColor: 'white',fontWeight:'900', borderWidth: 2,
-                              color:'white',textAlign:'center',fontSize:15,borderRadius:5
-                            }}   
-                            onChangeText={text => setDescription(text)}
-                            value={description}
-                            placeholder={currentPlaceholder}
-                            onFocus={()=>{setCurrentPlaceholder("")}}
-                            onBlur={()=>{if(description === "" ) setCurrentPlaceholder("Add a description to your challenge")}}
-                            placeholderTextColor='white'
-                            keyboardType ="email-address"
-                          />
+                         <View className="flex-row w-full border-blue-300 justify-center items-center  opacity gap-5  h-[5vh]">
+                            <TextInput
+                                className="bg-blue-500"
+                                style={{ minHeight: 40,width:'95%', borderColor: 'transparent',fontWeight:'700', borderWidth: 2,
+                                  color:'white',textAlign:'center',fontSize:12,borderRadius:5
+                                }}   
+                                onChangeText={text => setDescription(text)}
+                                value={description}
+                                placeholder={currentPlaceholder}
+                                onFocus={()=>{setCurrentPlaceholder("")}}
+                                onBlur={()=>{if(description === "" ) setCurrentPlaceholder("Add a description to your challenge")}}
+                                placeholderTextColor='white'
+                                keyboardType ="email-address"
+                              />
                         </View>   
 
 
                         <View className="flex-row w-full mt-2 justify-center items-center   opacity-100 gap-5  h-[7vh]">
-                          <ChallengeTypeSelector data={challengeType} setSelected={setSelectedType} />
-                          <ChallengeTypeSelector data={privacyData} setSelected={setSelectedPrivacy} /> 
+                          <ChallengeTypeSelector data={challengeType} bgColor={bgTypeColor} setSelected={setSelectedType} />
+                          <ChallengeTypeSelector data={privacyData} bgColor={bgPrivacyColor} setSelected={setSelectedPrivacy} /> 
                         </View>  
 
 
 
-                        {selectedPrivacy == "Private" && 
+                        {selectedPrivacy !== "ivate" && 
                         (
                          <>
                           <View className="">
                                 <Text
-                                  className="text-blue-400 font-black text-xl">
-                                  Challenge Friends 
+                                  className="text-blue-400 font-bold text-sm">
+                                  {selectedPrivacy == "Private"?"Challenge Friends":"Invite Friends "}
                                 </Text>                             
                           </View>
 
                           <View 
-                           className="w-[70%] h-4 flex-row mt-7 justify-start gap-2 items-end">
+                           className="w-[80%] h-4 flex-row mt-3 justify-start gap-2 items-end">
                                 <Text
-                                  className="text-white font-black text-sm">
+                                  className="text-white font-black text-xs">
                                     Select All 
                                 </Text>   
                                 <TouchableOpacity
                                       onPress={()=> {
                                         setSelectAll(prev => !prev)                
                                       }}
-                                      className="w-[25px] h-[25px] border-4  justify-center gap=2 items-center bg-gray-400 border-white">
+                                      className="w-[25px] h-[25px] border-4  justify-center gap-2 items-center bg-white border-yellow-500">
                                       {selectAll &&
                                      <Image
-                                       className="w-4 h-4"
+                                       className="w-6 h-4"
                                       source={icons.check} />
                                       } 
                                         
@@ -516,7 +536,7 @@ export default function CreateChallenge() {
                           </View>
 
                           <View 
-                             className=" w-[70%]  px-2 py-2   bg-blue-200  
+                             className=" w-[80%]  px-2 py-2   bg-blue-200  
                              rounded-lg  min-h-[50px] max-h-[320px]"
                              >
                             <FlatList 
@@ -529,7 +549,7 @@ export default function CreateChallenge() {
                                 <View 
                                    key={index}
                                    style={{ backgroundColor :selectedFriends.length > 0 && selectedFriends.find(friend => friend.sender_id === item.sender_id)?"lightgreen":"white"}}
-                                   className="px-2 py-2 mt-1 mb-1 w-[100%] h-[40px] bg-white rounded-lg flex-row justify-start gap-7 items-center" >
+                                   className="px-2 py-2 mt-1 mb-1 w-[100%] h-[40px] bg-white rounded-lg flex-row justify-start gap-4 items-center" >
                                     <Image 
                                     className="w-[35px] h-[35px] rounded-full"
                                     source={{uri:item.profile_img}}
@@ -537,8 +557,8 @@ export default function CreateChallenge() {
                                     />
                                     <View className=" justify-center gap-0 items-start min-h-[40px] flex-col ">
                                             <Text
-                                             style={{fontSize:7}}
-                                             className="font-black text-xs text-black">
+                                             style={{fontSize:9}}
+                                             className="font-black text-black">
                                                 {item.name}
                                             </Text>
                                             <Text
@@ -582,16 +602,20 @@ export default function CreateChallenge() {
                             />
                           </View> 
 
-                          <View  className=" w-[70%]  px-2 py-2   bg-white 
-                                    rounded-lg  min-h-[50px] max-h-[320px]">
+                   {selectedPrivacy == "Private" &&  (
+                            <View  className=" w-[80%]  px-2 py-2 mt-auto  bg-white 
+                               rounded-lg  min-h-[50px] max-h-[320px]">
                                 <Text
                                   className="text-black font-black text-sm">
-                                   Note * : <Text className="text-primary font-pmedium text-xs">
+                                  Note * : <Text className="text-primary font-pmedium text-xs">
                                         Only Selected friends can Participate in your challenge
                                         when Private is Selected
-                                   </Text>
+                                  </Text>
                                 </Text>                             
                             </View>
+                     )}
+
+                        
                        </>
                       ) }
 
@@ -656,6 +680,12 @@ export default function CreateChallenge() {
 
                {isModalVisible && (
                       <CustomAlert text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
+               )}
+
+
+               {visible && (
+                      <LoadModel visible={visible} setVisible={setVisible}
+                     />
                )}
 
               </SafeAreaView>

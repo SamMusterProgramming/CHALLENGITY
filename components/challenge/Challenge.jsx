@@ -16,6 +16,9 @@ import SwingingTitle from '../custom/SwingingTitle'
 import { Ionicons } from '@expo/vector-icons'
 import ChallengeExpired from './ChallengeExpired'
 import CustomAlert from '../custom/CustomAlert'
+import LoadModel from '../custom/LoadModal'
+import DisplayChallengers from './DisplayChallengers'
+import DisplayInvites from './DisplayInvites'
 
 
 export default function Challenge({challenge,isVisibleVertical}) {
@@ -31,8 +34,13 @@ export default function Challenge({challenge,isVisibleVertical}) {
     const[isExpired ,setIsExpired] = useState(false)
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
+
     const [action, setAction] = useState("");
     const [text,setText] = useState()
+
+    const [isListVisible,setIsListVisible] = useState(false)
+    const [isInviteListVisible,setIsInviteListVisible] = useState(false)
 
 
     useEffect(() => {
@@ -93,34 +101,59 @@ export default function Challenge({challenge,isVisibleVertical}) {
     }
 
     const resignChallenge = async() => {
+      setIsModalVisible(false)
       await quitChallenge(challenge._id,user._id).
       then(res => {
+        setVisible(true)
+        challenge.privacy == "Public"? getUserPublicParticipateChallenges(user._id,setPublicParticipateChallenges)
+        :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
+        setTimeout(() => {
+          setVisible(false)
+        }, 1500);
         const you = challenge.participants.find(participant => participant.user_id == user._id)
          const fileRef = ref(storage,you.video_url); 
          deleteObject(fileRef)
           .then(() => {
            console.log("File deleted successfully!");
-           router.replace('/profile')
+    
            })
           .catch((error) => {
           console.error("Error deleting file:", error);
            });  
-          //  getTopChallenges(props.user._id,setTopChallenges)
-          challenge.privacy == "Public"? getUserPublicParticipateChallenges(user._id,setPublicParticipateChallenges)
-          :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
-          router.push('/profile')
 
  
       })
     }
 
     const removeChallenge = async() => {
-  
+      setIsModalVisible(false)
       await deleteChallenge(challenge._id,user._id).
        then((res) => { 
-             const you = challenge.participants.find(participant => participant.user_id == user._id);
-             const fileRef = ref(storage,you.video_url); 
-         
+            setVisible(true)
+            const you = challenge.participants.find(participant => participant.user_id == user._id);
+            const fileRef = ref(storage,you.video_url); 
+            if(user._id == challenge.origin_id) 
+              { 
+               challenge.privacy === "Public"? getUserPublicChallenges(user._id , setUserPublicChallenges)
+               :getUserPrivateChallenges(user._id , setUserPrivateChallenges)
+               router.push({ pathname: '/profile',params: {
+                 priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+                 yourChallenges:"true" , yourParticipations:"false"
+               } }) 
+               }
+              
+            else {
+                 challenge.privacy === "Public"? getUserPublicChallenges(user._id , setPublicParticipateChallenges)
+                 :getUserPrivateChallenges(user._id , setPrivateParticipateChallenges)
+                 router.push({ pathname: '/profile',params: {
+                   priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
+                   yourChallenges:"false" , yourParticipations:"true"
+                 } }) 
+               }
+            setTimeout(() => {
+                  setVisible(false)
+            }, 3500);
+
              deleteObject(fileRef)
                .then(() => {
                  console.log("File deleted successfully!");
@@ -129,23 +162,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
                .catch((error) => {
                  console.error("Error deleting file:", error);
                });  
-               if(user._id == challenge.origin_id) 
-                { 
-                 challenge.privacy === "Public"? getUserPublicChallenges(user._id , setUserPublicChallenges)
-                 :getUserPrivateChallenges(user._id , setUserPrivateChallenges)
-                 router.push({ pathname: '/profile',params: {
-                   priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-                   yourChallenges:"true" , yourParticipations:"false"
-                 } }) 
-                 }
-                 else {
-                   challenge.privacy === "Public"? getUserPublicChallenges(user._id , setPublicParticipateChallenges)
-                   :getUserPrivateChallenges(user._id , setPrivateParticipateChallenges)
-                   router.push({ pathname: '/profile',params: {
-                     priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-                     yourChallenges:"false" , yourParticipations:"true"
-                   } }) 
-                 }
+             
               
        })
      
@@ -174,7 +191,17 @@ export default function Challenge({challenge,isVisibleVertical}) {
     }
     
     
+  useEffect(() => {
+    !isVisibleVertical && (setIsListVisible(false),setIsInviteListVisible(false))
+  }, [isVisibleVertical])
+  
+  useEffect(() => {
+    isListVisible && (setIsInviteListVisible(false))
+  }, [isListVisible])
 
+  useEffect(() => {
+    isInviteListVisible && (setIsListVisible(false))
+  }, [isInviteListVisible])
 
    if(isExpired) return <ChallengeExpired challenge_id={challenge._id}/>
 
@@ -182,71 +209,30 @@ export default function Challenge({challenge,isVisibleVertical}) {
   return (
     <>
     <View className="justify-start h-[740px] w-[100vw] mt-3 mb-3 items-center flex-col gap-0">
-     
-             <View className="min-w-full flex-1 border-t-2 border-gray-700 border-l-2 border-r-2 rounded-tl-lg rounded-tr-lg
-                   flex-row items-center justify-start min-h-[4%]">
+             <View className="min-w-full flex-1   border-t-2 border-gray-700 border-l-2 border-r-2
+                  rounded-tl-lg rounded-tr-lg flex-row items-center justify-start min-h-[5%]">
                  <TouchableOpacity  
                   onPress={()=> router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
-                  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  "
-                  >
-                    <Text className="text-gray-50 text-sm  font-black font-pregular "
-                      style={{fontSize:9}}>
-                       CHALLENGE 
-                    </Text>
-                 </TouchableOpacity>
-
-                 <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
-                    <Text className="text-gray-50 text-sm  font-black font-pregular "
-                       style={{fontSize:9}}>
-                       Posted {getTimeLapse(challenge.createdAt)} ago
-                    </Text>
-                 </View>
-                 <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
-                    <Text className="text-gray-50 text-sm  font-black font-pregular "
-                       style={{fontSize:9}}>
-                        {challenge.participants.length}{'   '}Participants
-                    </Text>
-                 </View>
-                
-                 <TouchableOpacity  
-                  onPress={!isFavourite?confirmAddToFavourite:confirmRemoveFromFavourite}
-                  className="min-w-[25%]  h-[98%]  border-2 rounded-lg flex-row justify-center gap-3  items-center  "
-                  >
-                    <Text className="text-blue-400 text-sm  font-black font-pregular "
-                    style={{fontSize:11}}>
-                     {isFavourite?"FAV":"ADD"} 
-                    </Text>
-                    <Ionicons name='heart' size={18} color={isFavourite?"red":"pink"} />
-                 </TouchableOpacity>
-
- 
-             </View>
-
-             <View className="min-w-full flex-1  rounded-  border-gray-700 border-l-2 border-r-2
-                   flex-row items-center justify-start min-h-[4%]">
-                 <TouchableOpacity  
-                  onPress={()=> router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
-                  className="min-w-[18%]  min-h-[98%] ml-1 border-secondary-200 border-2 rounded-lg bg-yellow-400 flex-1 flex-col justify-center  items-center  ">
+                  className="min-w-[18%]  min-h-[80%] ml-1 border-secondary-200 border-2 rounded-lg bg-yellow-400 flex-1 flex-col justify-center  items-center  ">
                     <Text className="text-gray-900 text-sm  font-bold font-pregular ">
                        View
                     </Text>
                  </TouchableOpacity>
                  
                  <View className="w-[60%] min-h-[97%] border-x-white bg-blue-1000  flex-col justify-center gap-1 items-center" >
-                     {/* <Text className="text-black text-xs font-bold  backdrop-opacity-100"> */}
+             
                      <SwingingTitle text={challenge.desc} color="white" fontSize={11}/>
                        
-                     {/* </Text> */}
+             
                  </View>
 
                  {!ownChallenge? (          
                  <TouchableOpacity
                    onPress={
                     confirmJoinChallenge
-                    // ()=> canJoin && router.push({ pathname: '/CreateParticipateChallenge', params: {challenge_id:challenge._id} })
                   }
                     style={{backgroundColor: !canJoin?"gray" :"lightblue"}}
-                    className="min-w-[18%] rounded-md min-h-[95%] mr-1  border-blue-300 border-2 flex-1 flex-col justify-center  items-center">
+                    className="min-w-[18%] rounded-md h-[80%] mr-1  border-blue-300 border-2 flex-1 flex-col justify-center  items-center">
                     
                     <Text
                     style={{color: !canJoin?"black" :""}}
@@ -278,42 +264,112 @@ export default function Challenge({challenge,isVisibleVertical}) {
                      )}  
  
              </View>
+             <View className="min-w-full flex-1  border-gray-700 border-l-2 border-r-2 
+                   flex-row items-center justify-start min-h-[5%]">
+                 <TouchableOpacity  
+                  onPress={()=> router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
+                  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  "
+                  >
+                    <Text className="text-gray-50 text-sm  font-black font-pregular "
+                      style={{fontSize:9}}>
+                       CHALLENGE 
+                    </Text>
+                 </TouchableOpacity>
 
-            
+                 <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
+                    <Text className="text-gray-50 text-sm  font-bold font-pregular "
+                       style={{fontSize:9}}>
+                        {challenge.type.toUpperCase()}
+                    </Text>
+                 </View>
+                 <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
+                    <Text className={challenge.privacy == "Public"?"text-blue-500 text-sm  font-black font-pregular ":
+                                                          "text-red-500  font-black font-pregular "
+                    }
+                       style={{fontSize:9}}>
+                        {challenge.privacy.toUpperCase()}
+                     
+                    </Text>
+                 </View>
+                
+                 <TouchableOpacity  
+                  onPress={!isFavourite?confirmAddToFavourite:confirmRemoveFromFavourite}
+                  className="min-w-[25%]  h-[98%]  border-2 rounded-lg flex-row justify-center gap-3  items-center  "
+                  >
+                    <Text className="text-blue-400 text-sm  font-black font-pregular "
+                    style={{fontSize:11}}>
+                     {isFavourite?"FAV":"ADD"} 
+                    </Text>
+                    <Ionicons name='heart' size={18} color={isFavourite?"red":"pink"} />
+                 </TouchableOpacity>
+
+ 
+             </View>          
             
              <ParticipantPost  participants={challenge.participants} isVisibleVertical={isVisibleVertical} challenge={challenge} />
              
         
-            <View className="min-w-full flex-1 bg-gray-800 flex-row items-center justify-center min-h-[5%]
+            <View className="min-w-full flex-1 bg-gray-800 flex-row items-center justify-center min-h-[5%] px-1
             border-b-2 border-gray-700 border-l-2 border-r-2 rounded-bl-lg rounded-br-lg">
-            
-                 <View className="min-w-[25%] min-h-[100%] flex-1 flex-col justify-center  items-center" >
-                     <Text className=" text-gray-200 text-xs font-bold  ">Created By</Text>
-                     <Text className="text-secondary-200 text-xs font-bold  ">{challenge.name.slice(0,13)}</Text>
+                 
+                 <TouchableOpacity
+                   onPress={() =>{setIsInviteListVisible(!isInviteListVisible)}}
+                   className="min-w-[24%]  flex-1 h-[90%] border-2 border-red-400 bg-red-800 rounded-md
+                   flex-col justify-center  items-center" >
+                     <Text className="text-white text-xs font-black"> Invites </Text>
+                 </TouchableOpacity>
+
+                 <View className="min-w-[29%] min-h-[100%] flex-1 flex-col justify-center  items-center" >
+                     <Text className="text-white text-xs font-bold ">
+                        By   {''}
+                        <Text
+                        style={{fontSize:10}}
+                         className="text-white text-xs font-bold ">
+                          {challenge.name.slice(0,13)}
+                        </Text>
+                     </Text>
                  </View>
-                 <View className="min-w-[25%] min-h-[100%] flex-1 flex-col justify-center items-center" >
-                     <Text className="text-gray-200 text-xs font-bold  ">Type</Text>
-                     <Text className="text-secondary-100 text-xs font-bold  ">{challenge.type.toLowerCase()}</Text>
+
+                 <View className="min-w-[18%] min-h-[100%] flex-1 flex-col justify-center items-center" >
+                     <Text className="text-gray-200 text-xs font-black  ">
+                       {getTimeLapse(challenge.createdAt)} 
+                       <Text
+                        style={{fontSize:10}}
+                         className="text-white text-xs font-bold ">
+                          {''} ago
+                        </Text>
+                     </Text>
                  </View>
-                 <View className="min-w-[30%] min-h-[100%] flex-1 flex-col justify-center items-center" >
-                    <Text className="text-gray-200 text-xs font-bold  ">Privacy</Text>
-                    <Text className="text-secondary-200 text-xs font-bold  ">{challenge.privacy}</Text>
-                 </View>
-                 <View className="min-w-[20%] min-h-[100%] flex-1 flex-col justify-center  items-center" >
-                     <Text className="text-gray-200 text-xs font-bold  "> Participants </Text>
-                     <Text className="text-secondary text-xs font-bold ">{challenge.participants.length}</Text>
-                 </View>
+                
+                 <TouchableOpacity
+                   onPress={() =>{setIsListVisible(!isListVisible)}}
+                   className="min-w-[24%]  flex-1 h-[90%] border-2 border-blue-400 bg-blue-800 rounded-md
+                   flex-col justify-center  items-center" >
+                     <Text className="text-white text-xs font-black"> Challengers </Text>
+                 </TouchableOpacity>
       
             </View>
 
             
       </View>
+         {isListVisible && (
+            <DisplayChallengers friendList={challenge.participants} user = {user}  setIsListVisible={setIsListVisible} />
+           )}
+         
+         {isInviteListVisible && (
+            <DisplayInvites inviteList={challenge.privacy =="Private"? challenge.invited_friends:[{sender_id:user._id,name:user.name,profile_img:user.profile_img}]} 
+                            participantList ={challenge.participants} challenge={challenge}
+                            isParticipant={challenge.participants.find(participant => participant.user_id == user._id)} user= {user}  />
+           )}
 
       
         {isModalVisible && (
           <CustomAlert text={text} action={action} isModalVisible={isModalVisible} removeFromFavourite={removeFromFavourite}
                        setIsModalVisible={setIsModalVisible} addToFavourite={addToFavourite} joinChallenge ={joinChallenge }
                        resignChallenge={resignChallenge} removeChallenge={removeChallenge}/>
+        )}
+          {visible && (
+          <LoadModel visible={visible} setVisible={setVisible}/>
         )}
 
     </>

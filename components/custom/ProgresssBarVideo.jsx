@@ -33,7 +33,7 @@ export default function ProgresssBarVideo({player,visible,bottom}) {
   return (
    <>
       {!visible && (<Slider
-            style={{width: 260, height: 40  ,position:"absolute" ,bottom:bottom}}
+            style={{width: 200, height: 40  ,position:"absolute" ,bottom:bottom}}
             minimumValue={0}
             maximumValue={1}
             value={progress}

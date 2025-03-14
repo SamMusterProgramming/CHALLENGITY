@@ -27,11 +27,11 @@ export default function favouriteChallenges() {
 
   const renderHeader = useMemo(()=> {
     return (
-        <View className=" w-[100vw] h-[12vh] mb-5
+        <View className=" w-[100vw] h-[19vh] mb-10
                     flex-row justify-start items-center">
 
             <View
-                className=" w-[40vw] h-[100%] 
+                className=" w-[40vw] min-h-[100%] 
                 flex-col justify-start items-start">
 
                 <TouchableOpacity
@@ -48,7 +48,7 @@ export default function favouriteChallenges() {
                         </Text>
                 </TouchableOpacity>
 
-                <View className=" w-[100%] h-[60%] px- gap-5
+                <View className=" w-[100%] h-[60%] px- gap-5 mt-auto
                    flex-row justify-center items-end">
                       <Image 
                          className="w-[40px] h-[40px] rounded-full "

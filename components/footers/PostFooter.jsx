@@ -12,7 +12,7 @@ export default function PostFooter(props) {
                 <TouchableOpacity onPress={props.handleLikes}
                   className="flex-col justify-center items-center w-12 h-12 ">
                     <Image 
-                    className={props.isLiked ? "w-9 h-9" : "w-11 h-11"}
+                    className={props.isLiked ? "w-8 h-8" : "w-10 h-10"}
                     source={props.isLiked ? icons.like : icons.white_like}
                     resizeMode='contain'
                     />
@@ -24,11 +24,12 @@ export default function PostFooter(props) {
         <View className="flex-row w-[25%]  justify-start items-center gap-2">
             <TouchableOpacity onPress={props.handleVotes}
                 className="flex-col justify-center items-center w-12 h-12  ">
-                    <Image 
+                    {/* <Image 
                     className={props.isVoted ? "w-12 h-12" : "w-8 h-8"}
                     source= {props.isVoted ? icons.heart : icons.white_heart}
                     resizeMode='contain'
-                    />
+                    /> */}
+                    <Ionicons name="heart" size={22} color={props.isVoted ? "red" : "white"}/>
                 </TouchableOpacity>
                 <Text className="text-white mt-4 text-sm font-bold">
                     {props.likesVotesData.vote_count}
@@ -36,7 +37,7 @@ export default function PostFooter(props) {
         </View>
         <TouchableOpacity className="flex-row w-[25%]  justify-center items-center gap-2">
             <Image 
-            className="w-8 h-8"
+            className="w-7 h-7"
             source={icons.rank}
             resizeMode='contain'
             />

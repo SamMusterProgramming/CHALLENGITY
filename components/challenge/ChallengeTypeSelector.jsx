@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { icons } from '../../constants';
 
 
-export default function ChallengeTypeSelector({data,setSelected}) {
+export default function ChallengeTypeSelector({data,setSelected,bgColor}) {
   return (
 
     <SelectDropdown
@@ -18,7 +18,9 @@ export default function ChallengeTypeSelector({data,setSelected}) {
         renderButton={(selectedItem, isOpened) => {
         return (
            
-          <View style={styles.dropdownButtonStyle}>
+          <View 
+          className="w-[40%] h-[40px] flex-row justify-between items-center rounded-lg "
+          style={{backgroundColor:bgColor ,   paddingHorizontal: 15 }}>
             <Text style={styles.dropdownButtonTxtStyle}>
                 {(selectedItem && selectedItem || data[0])}
             </Text>
@@ -49,9 +51,8 @@ export default function ChallengeTypeSelector({data,setSelected}) {
 
 const styles = StyleSheet.create({
     dropdownButtonStyle: {
-      width: '35%',
-      height: 50,
-      backgroundColor: '#E9ECEF',
+      width: '40%',
+      height: 40,
       borderRadius: 8,
       flexDirection: 'row',
       justifyContent: 'between',
@@ -61,9 +62,9 @@ const styles = StyleSheet.create({
     },
     dropdownButtonTxtStyle: {
       flex: 1,
-      fontSize: 15,
+      fontSize: 12,
       fontWeight: '900',
-      color: 'black',
+      color: 'white'
       // fontWeight:'bold'
     },
     dropdownButtonArrowStyle: {
@@ -88,8 +89,8 @@ const styles = StyleSheet.create({
     },
     dropdownItemTxtStyle: {
       flex: 1,
-      fontSize: 14,
-      fontWeight: '800',
+      fontSize: 12,
+      fontWeight: '600',
       color: 'black',
     },
     dropdownItemIconStyle: {

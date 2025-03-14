@@ -92,7 +92,7 @@ export default function CustomAlert({text,action,isModalVisible, setIsModalVisib
     },
     modalContent: {
      
-      position:"absolute",
+      // position:"absolute",
       left:50,
       backgroundColor: 'lightblue',
       borderRadius:14,

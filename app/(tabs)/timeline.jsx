@@ -13,12 +13,16 @@ import { Camera } from 'expo-camera';
 import { router } from 'expo-router';
 import { getInition } from '../../helper';
 import HeadLineChallenges from '../../components/headLights/HeadLineChallenges';
+import SelectButton from '../../components/custom/SelectButton';
 
 export default function timeline() {
 
-  const {user,setUser,trendingChallenges,setTrendingChallenges,userChallenges,setUserChallenges} = useGlobalContext()
+  const {user,setUser,trendingChallenges,setTrendingChallenges,userChallenges,setUserChallenges,userFriendData} = useGlobalContext()
   const [viewableItems, setViewableItems] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [selectedPrivacy,setSelectedPrivacy] = useState("All")
+  const [challengeData, setChallengeData] = useState(trendingChallenges);
+
 
 
   useEffect(() => {
@@ -27,21 +31,34 @@ export default function timeline() {
    }
   }, [user])
   
+  const handleAll = ()=> {
+    setChallengeData(trendingChallenges)
+    setSelectedPrivacy("All")
+  }
+  const handlePublic = ()=> {
+    let challenges = []
+    challenges = trendingChallenges.filter(challenge => challenge.privacy == "Public")
+    setChallengeData(challenges)
+    setSelectedPrivacy("Public")
+  }
   
-  const loadUserChallenges =()=>{
-    // getUserChallenges(user._id,setTrendingChallenges)
+  const handlePrivate = ()=> {
+    let challenges = []
+    challenges = trendingChallenges.filter(challenge => challenge.privacy == "Private")
+    setChallengeData(challenges)
+    setSelectedPrivacy("Private")
   }
 
-  const loadTrendingChallenges =()=>{
-    // getTopChallenges(user._id,setTrendingChallenges)
+  const handleFriend = ()=> {
+    const friends = userFriendData.friends;
+
+    setSelectedPrivacy("Friend")
   }
 
-  const loadParticipations =()=> {
-    // getUserParticipateChallenges(user._id,setTrendingChallenges)
-  }
 
+  
   useEffect(() => {
-    // console.log(trendingChallenges)
+    setChallengeData(trendingChallenges)
    }, [trendingChallenges])
 
    const onViewableItemsChanged = ({ viewableItems }) => {
@@ -56,55 +73,61 @@ export default function timeline() {
    
   const renderHeader = useMemo(() => ( 
     <>
-        <View
-            className=" w-[100vw] min-h-10 px-4  border-gray-500 
-            flex-row justify-center items-center">
+      <View
+                className=" w-[100vw]  
+                flex-col justify-center items-center">
+      
+          <View
+                className=" w-[100vw] h-10 px-4  border-gray-500 
+                flex-row justify-center items-center">
 
-           <View className=" w-[35vw] h-[100%] px-2
-              flex-row justify-start items-end">
-                <Text
-                className="text-blue-400 font-bold text-2xl">Challengify</Text>
-           </View >
+        
+                    <Text
+                    className="text-blue-400 font-bold text-xl">Challengify</Text>
+             
+          </View>
 
-           <View className=" w-[65vw] h-[100%] px-4 border-gray-500 border-2  focus:border-secondary-100 rounded-md
-              flex-row justify-center items-center">
-                <TextInput
-                    className=" text-white w-[100%] border-white rounded-2xl  h-full px-3
-                    font-bold text-sm"
-                    placeholder="Search for a challenge "
-                    placeholderTextColor="#7b7b8b"
-                      />
-                
-                  <TouchableOpacity onPress={()=> {}}>
-                      <Image className ="w-6 h-6"
-                      resizeMode='contain'
-                      source={icons.search} />
-                  </TouchableOpacity>                
-          </View >
-
-       </View>
+          <View className=" w-[100vw] h-12 px-4 mt-4  border-gray-500 
+                flex-row justify-center items-center">
+                 <View className=" w-[96%] h-[100%] px-4 border-gray-200 border-2  focus:border-secondary-100 rounded-xl
+                     flex-row justify-center items-center">
+                    <TextInput
+                        className=" text-white w-[100%]   h-full px-3
+                        font-bold text-sm"
+                        placeholder="Search for a challenge "
+                        placeholderTextColor="#7b7b8b"
+                          />
+                    
+                      <TouchableOpacity onPress={()=> {}}>
+                          <Image className ="w-6 h-6"
+                          resizeMode='contain'
+                          source={icons.search} />
+                      </TouchableOpacity>                
+                 </View >
+          </View>
         
        
-          <View className="mt-1 px-4 w-full h-[10vh] flex-row gap-7 items-center justify-start space-y-9"
+          <View className="mt-6  w-full h-[14vh] flex-row  items-center justify-start "
              style={{marginTop:Platform.OS == "android" ? 20 : 0 ,marginBottom:Platform.OS == "android" ? 20 : 0 }}>
-             <View className="justify-evenly items-start min-h-[100%] flex-col ">
+             <View className="justify-evenly   w-[15%] items-start min-h-[100%] flex-col ">
                   <Image 
-                    className="w-[60px] h-[60px] rounded-full "
+                    className="w-[50px] h-[50px] rounded-full "
                     source={{uri : user.profile_img}}
                   />
              </View>
-             <View className="justify-center gap-3 items-start min-h-[100%] flex-col ">
+             <View className="justify-center gap-3  w-[55%]      items-center min-h-[100%] flex-col ">
                     <Text className="font-pmedium text-sm text-gray-100">
-                        Welcome {' '}
+                         Welcome {' '}
                          <Text className="font-bold text-sm text-white">
-                            {user.name}
+                            {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
                         </Text> 
                     </Text>
-                    <Text className=" text-2xl text-white font-bold">
+                    <Text className=" text-sm text-white font-black">
                         {getInition(user.name)}Challenger
                     </Text>
              </View>
-             <View className="justify-center items-center ml-auto min-h-[100%] flex-col ">
+
+             <View className="justify-center items-center  w-[30%]  min-h-[100%] flex-col ">
                 <TouchableOpacity onPress={()=>{ 
                  router.push({pathname: '/CreateChallenge', params:{}}); 
                 }}
@@ -120,9 +143,14 @@ export default function timeline() {
                   </Text>    
                 </TouchableOpacity> 
              </View>
+
           </View>
-          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-2 mb-2 h-[40px]" >
-                  <Text className="font-bold text-xl text-blue-100">
+
+      </View>
+          
+
+          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-2 mb-1 h-[40px]" >
+                  <Text className="font-bold text-sm text-blue-100">
                         Friend's Challenges Pool
                   </Text>    
           </View>
@@ -133,15 +161,22 @@ export default function timeline() {
                  <HeadLineChallenges challengeData={trendingChallenges}  />  
               )} 
           </View>
-          <View className="bg-white min-w-full mb-4 min-h-1"></View>
-          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-2 mb-1 h-[40px]" >
-                  <Text className="font-bold text-xl text-blue-100">
+          <View className="bg-white min-w-full mb-3 mt-1 min-h-1"></View>
+          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-5 mb-0 " >
+                  <Text className="font-bold text-sm text-blue-100">
                         Trending Challenges 
                   </Text>    
           </View>
+
+          <View className = "w-full h-[50px] mt-3 flex-row justify-evenly items-center gap-3 ">
+              <SelectButton color="white" bgColor={selectedPrivacy == "All"?"#241413":"black"} title ="All" action={handleAll}/>
+              <SelectButton color="white" bgColor={selectedPrivacy == "Public"?"#241413":"black"} title ="Public" action={handlePublic}/>
+              <SelectButton color="white" bgColor={selectedPrivacy == "Private"?"#241413":"black"} title ="Private" action={handlePrivate} />
+              <SelectButton color="white" bgColor={selectedPrivacy == "Friend"?"#241413":"black"} title ="Friends" action={handleFriend}/>
+          </View>
           
     </>
-  ),[trendingChallenges]);
+  ),[trendingChallenges,selectedPrivacy]);
 
 
 
@@ -162,13 +197,15 @@ export default function timeline() {
           style={{ flex: 1 }}
 >
         <FlatList 
-        data={ trendingChallenges}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        data={challengeData}
         keyExtractor={(item)=> item._id}
         renderItem={renderItem}   
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
               itemVisiblePercentThreshold: 70, // Adjust as needed
-        }}
+        }}   
 
         ListHeaderComponent={renderHeader}
         onRefresh={handleRefresh}

@@ -12,6 +12,10 @@ export default function ParticipantPost({participants,challenge,isVisibleVertica
 
     const [viewableItems, setViewableItems] = useState([]);
     const [finishPlaying ,setFinishPlaying] =useState(false)
+    const [index,setIndex] =useState(1)
+    const [displayData ,setDisplayData] =useState(participants.slice(0,1))
+
+
     const swiperRef = useRef(null);
 
 
@@ -37,15 +41,24 @@ export default function ParticipantPost({participants,challenge,isVisibleVertica
       }
     }, [finishPlaying])
     
+    const loadMoreData = () => {
+      const newData = participants.slice(index, index + 1);
+      setDisplayData([...displayData, ...newData]);
+      setIndex(index + 1);
+    };
+  
+
+
   return (
 
     
   <SwiperFlatList
   ref={swiperRef}
   // nestedScrollEnabled={true}
-  data={participants}
+  data={displayData}
   keyExtractor={(item) => item._id}
   renderItem={renderItem}
+  onEndReached={loadMoreData}
   // autoplay
   // autoplayDelay={5}
   // autoplayLoop

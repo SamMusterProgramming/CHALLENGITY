@@ -26,12 +26,13 @@ export default function ChallengeDisplayer() {
     const swiperRef = useRef('')
     const [viewableItems, setViewableItems] = useState([]);
     const [finishPlaying ,setFinishPlaying] = useState(false)
+    const [index,setIndex] = useState(1)
+    const [displayData, setDisplayData] = useState([])
 
 
 
     useEffect(() => {
         if (challenge_id) {
-          console.log(challenge_id)
           getChallengeById(challenge_id,setChallenge,setIsExpired)
         }
         return () => {
@@ -41,12 +42,13 @@ export default function ChallengeDisplayer() {
     
     useEffect(() => {
        challenge && sortChallengeByVotes(challenge.participants)
+       challenge && setDisplayData(challenge.participants.slice(0,1))
       }, [challenge])
 
     const onViewableItemsChanged = ({ viewableItems }) => {
         setViewableItems(viewableItems);
       };
-      useEffect(() => {
+      useEffect(() =>{
          setFinishPlaying(false)
       }, [viewableItems])
 
@@ -72,7 +74,12 @@ export default function ChallengeDisplayer() {
       }, [finishPlaying])
 
 
-
+      const loadMoreData = () => {
+        console.log("here swipe")
+        const newData = challenge.participants.slice(index, index + 1);
+        setDisplayData([...displayData, ...newData]);
+        setIndex(index + 1);
+      };
 
 
   return (
@@ -80,11 +87,12 @@ export default function ChallengeDisplayer() {
     <SafeAreaView className="flex-1 bg-primary  ">
 
        {challenge &&  (
-            <SwiperFlatList
+            <FlatList
             ref={swiperRef}
             data = {challenge.participants}
             keyExtractor={(item) => item._id}
             renderItem={renderItem}
+            onEndReached={loadMoreData}
             // autoplayDelay={5}
             // autoplayLoop
             onViewableItemsChanged={onViewableItemsChanged}

@@ -19,7 +19,7 @@ export default function ChallengeTypeSelector({data,setSelected,bgColor}) {
         return (
            
           <View 
-          className="w-[40%] h-[40px] flex-row justify-between items-center rounded-lg "
+          className="w-[120px] h-[35px] flex-row justify-between items-center rounded-lg "
           style={{backgroundColor:bgColor ,   paddingHorizontal: 15 }}>
             <Text style={styles.dropdownButtonTxtStyle}>
                 {(selectedItem && selectedItem || data[0])}
@@ -51,7 +51,7 @@ export default function ChallengeTypeSelector({data,setSelected,bgColor}) {
 
 const styles = StyleSheet.create({
     dropdownButtonStyle: {
-      width: '40%',
+      width: '30%',
       height: 40,
       borderRadius: 8,
       flexDirection: 'row',
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     },
     dropdownButtonTxtStyle: {
       flex: 1,
-      fontSize: 12,
+      fontSize: 11,
       fontWeight: '900',
       color: 'white'
       // fontWeight:'bold'

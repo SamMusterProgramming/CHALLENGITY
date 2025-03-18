@@ -16,3 +16,9 @@ export const privacyData =[
   "Public",
   "Private"
 ]
+
+export const Audience =[ 
+  "Open",
+  "Restricted",
+  "Strict"
+]

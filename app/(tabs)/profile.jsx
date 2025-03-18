@@ -12,6 +12,8 @@ import NoChallenge from '../../components/challenge/NoChallenge'
 // import { SafeAreaView } from 'react-native-safe-area-context'
 import FriendDisplayer from '../../components/profile/FriendDisplayer'
 import CustomAlert from '../../components/custom/CustomAlert'
+import SelectButton from '../../components/custom/SelectButton'
+import UserSelectButton from '../../components/custom/UserSelectButton'
 
 export default function profile() {
   const {user,setUser,userPublicChallenges,setUserPublicChallenges,followings,setFollowings,follow , setFollow,
@@ -34,9 +36,12 @@ export default function profile() {
   const [isFollowingClicked ,setIsFollowingClicked] = useState(false)
   const [title , setTitle] = useState("New Challenge")
 
-  const {publ,priv,yourChallenges,yourParticipations} =  useLocalSearchParams();
+  const {publ,priv,participate,invited ,strict} =  useLocalSearchParams();
   const [isLoaded, setIsLoaded] = useState(false);
   const flatListRef= useRef()
+
+  const [selectedPrivacy,setSelectedPrivacy] = useState("Public")
+
 
 
   const navigation = useNavigation();
@@ -63,66 +68,93 @@ export default function profile() {
 
 
   useEffect ( () => {    
-    if(yourChallenges =="true" || yourParticipations=="true" || publ =="true"|| priv=="true") {
-      console.log("iam in")
-     setUserButton(yourChallenges === "true")
-     setPartiButton(yourParticipations === "true")
-     setPublicSelect(publ=== "true")
-     setPrivateSelect(priv === "true")
+    console.log(invited + participate + publ + priv + strict)
+    if(invited =="true" || participate =="true" || publ =="true"|| priv =="true" || strict =="true") {
+     console.log("here to confirm dsfdsfsdfsdfsdf")
+     invited =="true" && setSelectedPrivacy("Invited")
+     publ =="true" && setSelectedPrivacy("Public")
+     priv =="true" && setSelectedPrivacy("Private")
+     participate =="true" && setSelectedPrivacy("Participate")
+     strict =="true" && setSelectedPrivacy("Strict")
      setIsLoaded(true)
-    //  setTimeout(() => {
-    //      onRefresh()
-    //  }, 500);
     }
  
   } , [] ) 
 
   
-  useEffect ( () => {    
-     userButton && setTitle("New Challenge")
-     partiButton && setTitle ("Find Challenge")
-  } , [userButton,partiButton] ) 
-  
-
-  const loadUserPublicChallenges =()=>{
-    // setUserButton(true); setPartiButton(false);
-    setChallengeData(userPublicChallenges)
-    setIsLoaded(true)
-  }
-
-  const loadUserPrivateChallenges =()=>{
-    // setUserButton(true); setPartiButton(false);
-    setChallengeData(userPrivateChallenges)
-    setIsLoaded(true)
-  }
-
-
-
-  const loadPublicParticipations =()=> {
-    // getUserParticipateChallenges(user._id , setChallengeData)
-    // setPartiButton(true) ; setUserButton(false);
-    setChallengeData(publicParticipateChallenges)
-    setIsLoaded(true)
-
-  }
-
-  const loadPrivateParticipations =()=> {
-    // getUserParticipateChallenges(user._id , setChallengeData)
-    // setPartiButton(true) ; setUserButton(false);
-    setChallengeData(privateParticipateChallenges)
-    setIsLoaded(true)
-
-  }
-
   const onViewableItemsChanged = ({ viewableItems }) => {
     setViewableItems(viewableItems);
    
   };
+
+
   const renderItem = ({ item, index }) => {  
     if(challengeData.length == 0 && userButton) return  <NoChallenge />
     const isVisibleVertical = viewableItems.some(viewableItem => viewableItem.index === index);
     return  <Challenge key={item._id} isVisibleVertical={isVisibleVertical} challenge={item}/>
   };
+
+
+   
+  //****************************** you challenges ******************** */
+
+  const handlePublic = ()=> {
+    setChallengeData(userPublicChallenges)
+ }
+ 
+ const handlePrivate = ()=> {
+   setChallengeData(userPrivateChallenges)
+ }
+ const handleParticipate = ()=> {
+  setChallengeData(publicParticipateChallenges)
+}
+const handleInvited = ()=> {
+  const challenge = privateParticipateChallenges.filter(challenge => challenge.audience !== "Strict")
+  setChallengeData(challenge)
+}
+
+const handleStrict = ()=> {
+  const challenge = privateParticipateChallenges.filter(challenge => challenge.audience === "Strict")
+  setChallengeData(challenge)
+}
+
+ const handleFriend = ()=> {
+   const friends = userFriendData.friends;
+   let challenges = []
+   challenges = trendingChallenges.filter(challenge => 
+                  (friends.find(friend => (friend.sender_id == challenge.origin_id)&& challenge.privacy == "Public")
+                  || (friends.find(friend => (friend.sender_id == challenge.origin_id))&& challenge.privacy == "Private"  
+                     && !challenge.audience == "Strict" && !challenge.invited_friend(friend => friend.sender_id == user._id))
+                   // ||      challenge.participants.find(participant=>participant.user_id == friend.sender_id)
+
+                 ))
+                 setChallengeData(challenges)
+                //  setSelectedPrivacy("Friend")
+ }
+   
+
+ useEffect(() => {
+   switch (selectedPrivacy) {
+     case "Public":
+        handlePublic();
+       break;
+    case "Private":
+        handlePrivate()
+        break;
+    case "Participate":
+        handleParticipate()
+        break;
+    case "Invited":
+        handleInvited()
+        break;
+    case "Strict":
+        handleStrict()
+        break;
+     default:
+       break;
+   }
+ }, [selectedPrivacy])
+
 
   const renderHeader = useMemo(() => ( 
       <>
@@ -321,162 +353,115 @@ export default function profile() {
           
           <View className="bg-white min-w-full min-h-1"></View>
 
+  
 
-          <View className="min-w-[100%] flex-row justify-evenly mb-1 gap-1 items-center flex-1 h-[80px] mt-5">
-           
-            <TouchableOpacity 
-                 onPress={publicSelect?loadUserPublicChallenges:loadUserPrivateChallenges}
-                 onPressOut={()=> {setUserButton(true), setPartiButton(false)} }
-                 className={!userButton ? "w-[50%] h-[100%]  flex-row justify-evenly items-center   bg-yellow-300 rounded-lg ":
-                   "w-[50%] h-[100%]   flex-row justify-evenly items-center border-4 border-orange-800 rounded-lg  bg-yellow-500"
-                 }
-                >
-                  <View className={userButton?"w-[45%] h-[85%] flex-col  bg-blue-300 rounded-lg justify-center items-center gap-1"
-                                              :"w-[45%] h-[85%] flex-col  bg-blue-300  rounded-lg justify-center items-center gap-1"}>
-                      <Text className={userButton? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}
-                          style={{fontSize:9}}>
-                          Your 
-                      </Text>
-                      <Image
-                        source={icons.challenge}
-                        className="w-6 h-6 "
-                        resizeMode='cover' />
-                      <Text className={userButton? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}
-                          style={{fontSize:9}}>
-                         Challenges
-                      </Text>
-                  </View>
-          
-                  <View className="w-[45%] h-[85%] flex-col  bg-blue-300 rounded-lg justify-center items-center  ">
-                       {userButton &&  (
-                        <>
-                      <View className=" flex-col justify-center  items-center w-[100%] h-[50%] ">     
-                         <TouchableOpacity 
-                           onPress={userButton? loadUserPublicChallenges:loadPublicParticipations}
-                           onPressOut={()=> (setPrivateSelect(false) , setPublicSelect(true) )}
-                           className={publicSelect ? 
-                             "w-[90%] h-[75%]  gap-2 mt-1 flex-row justify-evenly items-center rounded-lg bg-yellow-400 color-white ":
-                           "w-[90%] h-[75%]  gap-2 mt-1 flex-row justify-evenly items-center rounded-lg bg-white"}>
-                           <Image
-                             source={icons.publi}
-                             className="w-5 h-5 "
-                             resizeMode='cover' />
-                           <Text className={publicSelect? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}>
-                               Public
-                           </Text>
-                         </TouchableOpacity>
-                       {/* {publicSelect && (<View className="w-[60px] min-h-1 bg-white"></View>)}  */}
-                     </View>
+          <View className="min-w-[100vw] h-[50px] flex-row justify-center items-center text-center">
+              <Text style={{fontSize:14}}
+                    className="font-black text-white text-xs">
+                     Your challenges
+              </Text>
+          </View>
 
-                     <View className=" flex-col justify-center  items-center w-[100%] h-[50%] ">
-                         <TouchableOpacity 
-                           onPress={userButton?loadUserPrivateChallenges:loadPrivateParticipations}
-                           onPressOut={()=> (setPrivateSelect(true) , setPublicSelect(false))}
-                           className={privateSelect ? 
-                             "w-[90%] h-[75%] mb-1 gap-2 flex-row justify-center items-center rounded-lg bg-yellow-400 color-white ":
-                             "w-[90%] h-[75%] mb-1 gap-2 flex-row justify-center items-center rounded-lg bg-white"}>
-                           <Image
-                             source={icons.priv}
-                             className="w-6 h-6"
-                             resizeMode='cover'/>
-                           <Text className={privateSelect? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}>
-                               Private 
-                           </Text>
-                         </TouchableOpacity>
-        
-                     </View>
-                     </>
-                       )}
-                  </View>
-                 
-            </TouchableOpacity>
-
-            <TouchableOpacity
-               onPress={publicSelect?loadPublicParticipations:loadPrivateParticipations}
-               onPressOut={()=> (setPartiButton(true) , setUserButton(false))}
-                 className={!partiButton ? "w-[48%] h-[100%]  flex-row justify-evenly gap- items-center  bg-yellow-300 rounded-lg  ":
-                   "w-[48%] h-[100%]   flex-row justify-evenly gap- items-center border-4 border-orange-800 rounded-lg  bg-yellow-500"}>
-                  
-                  <View className="w-[45%] h-[85%]  bg-blue-300 rounded-lg flex-col justify-center items-center gap-1  ">
-                        <Text className={partiButton? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}
-                            style={{fontSize:9}}>
-                            Your 
+          <View className = "w-full h-[120px] mt-0 flex-row justify-start items-center  ">
+              {/* <UserSelectButton color="white" bgColor={selectedPrivacy == "All"?"#241413":"black"} setSelectedPrivacy={setSelectedPrivacy} title ="All" action={handlePublic}/> */}
+              
+           <View className = "w-[50%] h-[100px]  flex-col justify-between items-center ">
+              <TouchableOpacity
+                  onPress={()=> selectedPrivacy !== "Public" && setSelectedPrivacy("Public")}
+                  className ="rounded-lg w-[70%] h-[35%] flex-col justify-center items-center "
+                  style= {{backgroundColor:selectedPrivacy == "Puublic"?"#0345fc":"#2e2b22"}}>
+                  <Text 
+                   style={{fontSize:9}}
+                   className="font-black text-white ">
+                      All Challenges
+                  </Text>
+              </TouchableOpacity >   
+              <View className = "w-[100%] h-[50%] px-2 flex-row justify-between items-center ">
+                    <TouchableOpacity
+                        onPress={()=> selectedPrivacy !== "Public" && setSelectedPrivacy("Public")}
+                        className ="rounded-lg w-[46%] h-[70%] flex-col justify-center items-center "
+                        style= {{backgroundColor:selectedPrivacy == "Public"?"#0345fc":"#2e2b22"}}>
+                        <Text 
+                        style={{fontSize:9}}
+                        className="font-black text-white text-xs">
+                            Public
                         </Text>
-                        <Image
-                        source={icons.competition}
-                        className="w-5 h-5 "
-                        resizeMode='cover' />
-                        <Text className={partiButton? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}
-                            style={{fontSize:9}}>
-                             Participations
+                    </TouchableOpacity >   
+                    <TouchableOpacity
+                        onPress={()=>selectedPrivacy !== "Private" && setSelectedPrivacy("Private")}
+                        className ="rounded-lg w-[46%] h-[70%] flex-col justify-center items-center "
+                        style= {{backgroundColor:selectedPrivacy == "Private"?"#0345fc":"#2e2b22"}}>
+                        <Text 
+                        style={{fontSize:9}}
+                        className="font-black text-white text-xs">
+                            Private
                         </Text>
-                  </View>
-                
-                  <View className="w-[45%] h-[85%] flex-col  bg-blue-300 rounded-lg justify-center items-center  ">
-                        
-                        {partiButton && (
-                          <>
-                           <View className=" flex-col justify-center  items-center w-[100%] h-[50%] ">     
-                              <TouchableOpacity 
-                                 onPress={userButton? loadUserPublicChallenges:loadPublicParticipations}
-                                 onPressOut={()=> (setPrivateSelect(false) , setPublicSelect(true) )}
-                                 className={publicSelect ? 
-                                  "w-[90%] h-[75%]  gap-2 mt-1 flex-row justify-evenly items-center rounded-lg bg-yellow-400 color-white ":
-                                "w-[90%] h-[75%]  gap-2 mt-1 flex-row justify-evenly items-center rounded-lg bg-white"}>
-                                <Image
-                                  source={icons.publi}
-                                  className="w-5 h-5 "
-                                  resizeMode='cover' />
-                                <Text className={publicSelect? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}>
-                                    Public
-                                </Text>
-                              </TouchableOpacity>
-                            {/* {publicSelect && (<View className="w-[60px] min-h-1 bg-white"></View>)}  */}
-                          </View>
+                    </TouchableOpacity >   
+              </View>
+  
+           </View>
 
-                          <View className=" flex-col justify-center  items-center w-[100%] h-[50%] ">
-                              <TouchableOpacity 
-                                 onPress={userButton?loadUserPrivateChallenges:loadPrivateParticipations}
-                                 onPressOut={()=> (setPrivateSelect(true) , setPublicSelect(false))}
-                                 className={privateSelect ? 
-                                  "w-[90%] h-[75%] mb-1 gap-2 flex-row justify-center items-center rounded-lg bg-yellow-400 color-white ":
-                                  "w-[90%] h-[75%] mb-1 gap-2 flex-row justify-center items-center rounded-lg bg-white"}>
-                                <Image
-                                  source={icons.priv}
-                                  className="w-6 h-6"
-                                  resizeMode='cover'/>
-                                <Text className={privateSelect? "text-xs font-black text-black-200":"text-xs font-bold text-black-200"}>
-                                    Private 
-                                </Text>
-                              </TouchableOpacity>
-                              {/* {privateSelect && (<View className="w-[60px] min-h-1 bg-white"></View>)}         */}
-                          </View>
-                          </>
-                        )}
-                       
 
-                  </View>
-            </TouchableOpacity>
+           <View className = "w-[50%] h-[100px]  flex-col justify-between items-center ">
+              <TouchableOpacity
+                  onPress={()=> selectedPrivacy !== "Participate" && setSelectedPrivacy("Participate")}
+                  className ="rounded-lg w-[70%] h-[35%]  flex-col justify-center items-center "
+                  style= {{backgroundColor:selectedPrivacy == "Participate"?"#0345fc":"#2e2b22"}}>
+                  <Text 
+                  style={{fontSize:9}}
+                  className="font-black text-white text-xs">
+                      Participations
+                  </Text>
+              </TouchableOpacity >   
+              <View className = "w-[100%] h-[50%] px-2  flex-row justify-between items-center ">
+                  <TouchableOpacity
+                      onPress={()=>selectedPrivacy !== "Invited" && setSelectedPrivacy("Invited")}
+                      className ="rounded-lg w-[46%] h-[70%] flex-col justify-center items-center "
+                      style= {{backgroundColor:selectedPrivacy == "Invited"?"#0345fc":"#2e2b22"}}>
+                      <Text 
+                      style={{fontSize:9}}
+                      className="font-black text-white text-xs">
+                          Invited
+                      </Text>
+                  </TouchableOpacity >   
+                  <TouchableOpacity
+                      onPress={()=>selectedPrivacy !== "Strict" && setSelectedPrivacy("Strict")}
+                      className ="rounded-lg w-[46%] h-[70%] flex-col justify-center items-center "
+                      style= {{backgroundColor:selectedPrivacy == "Strict"?"#0345fc":"#2e2b22"}}>
+                      <Text 
+                      style={{fontSize:9}}
+                      className="font-black text-white text-xs">
+                          Strict
+                      </Text>
+                  </TouchableOpacity >   
+              </View>
+  
+           </View>
+             
           </View>
 
 
-          {challengeData.length == 0 && (userButton || partiButton) && (
+
+
+
+          {/* {challengeData.length == 0 && (userButton || partiButton) && (
                <NoChallenge title={title} />
-             ) }
+             ) } */}
      </>
   ),[userFriendData,follow,followings,isFollowerClicked,isFriendClicked,isFollowingClicked,friendList,
-    userButton,partiButton,privateSelect,publicSelect,loadFollowers,loadFriends]);
+    userButton,partiButton,privateSelect,publicSelect,loadFollowers,loadFriends,
+    selectedPrivacy]);
 
 
   const onRefresh = useCallback(() =>  {
     console.log("refreshing")
     setRefreshing(true);
-    // if(userButton) publicSelect?setChallengeData([...userPublicChallenges]):
-    //                             setChallengeData([...userPrivateChallenges])
-    // if(partiButton) publicSelect? setChallengeData([...userPublicChallenges]):
-    //                              setChallengeData([...userPublicChallenges])
-    // setChallengeData(userPublicChallenges)
     getUserFriendsData(user._id , setUserFriendData)
+    selectedPrivacy == "Public" && getUserPublicChallenges(user._id,setUserPublicChallenges)
+    selectedPrivacy == "Privare" && getUserPrivateChallenges(user._id,setUserPrivateChallenges)
+    (selectedPrivacy == "Participate" ) && getUserPublicParticipateChallenges(user._id,setPublicParticipateChallenges)
+    (selectedPrivacy == "Invited" || selectedPrivacy == "Strict" )  && getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
+    setIsLoaded(true)
     getFollowData(user._id,setFollow)
     setTimeout(() => {
         setRefreshing(false)
@@ -484,21 +469,22 @@ export default function profile() {
      
 }, []);
 
-useEffect(() => {
- isLoaded && setChallengeData(userPublicChallenges)
-}, [userPublicChallenges])
 
-useEffect(() => {
-  isLoaded &&  setChallengeData(userPrivateChallenges)
-}, [userPrivateChallenges])
+  useEffect(() => {
+  isLoaded && setChallengeData(userPublicChallenges)
+  }, [userPublicChallenges])
 
-useEffect(() => {
-  isLoaded &&  setChallengeData(publicParticipateChallenges)
-}, [publicParticipateChallenges])
+  useEffect(() => {
+    isLoaded &&  setChallengeData(userPrivateChallenges)
+  }, [userPrivateChallenges])
 
-useEffect(() => {
-  isLoaded &&  setChallengeData(privateParticipateChallenges)
-}, [privateParticipateChallenges])
+  useEffect(() => {
+    isLoaded &&  setChallengeData(publicParticipateChallenges)
+  }, [publicParticipateChallenges])
+
+  useEffect(() => {
+    isLoaded &&  setChallengeData(privateParticipateChallenges)
+  }, [privateParticipateChallenges])
 
 
 const logout = async()=> {
@@ -517,22 +503,6 @@ const logout = async()=> {
         router.replace('/login')
       }, 10000);
 }
-
-const confirmCancel = () => {
-  Alert.alert(
-    "Confirm Action",
-    "Are you sure you want to log out",
-    [
-      {
-        text: "Cancel",
-        style: "cancel"
-      },
-      { text: "OK", onPress: logout }
-    ],
-    { cancelable: false }
-  );
-};
-
 
   const loadFollowings = ()=> {
     const data = []
@@ -573,6 +543,9 @@ const confirmCancel = () => {
     }) 
     setFriendList(data)
    }
+
+  
+  
 
   return (
     <SafeAreaView className="bg-primary min-h-full min-w-full ">

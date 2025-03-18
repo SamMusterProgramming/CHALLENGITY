@@ -12,10 +12,20 @@ export default function favouriteChallenges() {
   const {user,favouriteChallenge} = useGlobalContext()
   const [favouriteList , setFavouriteList] = useState(null)
   const [viewableItems, setViewableItems] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [displayData, setDisplayData] = useState([]);
+  const [index, setIndex] = useState(2);
+
   
+  // useEffect(() => {
+  //   setFavouriteList(favouriteChallenge)
+  //   setIsLoaded(true)
+  // }, [favouriteChallenge])
+
+ 
   useEffect(() => {
-    setFavouriteList(favouriteChallenge)
-  }, [favouriteChallenge])
+    setDisplayData(favouriteChallenge.favourites.slice(0,2))
+  }, [] )
 
   const onViewableItemsChanged = ({ viewableItems }) => {
     setViewableItems(viewableItems);
@@ -83,25 +93,16 @@ export default function favouriteChallenges() {
                     </View>  
             </View>
 
-            {/* <View>
-                <TouchableOpacity
-                    onPress={()=>{router.push('favouriteChallenges')}}
-                    className=" flex-col rounded-sm justify-center items-center ">
-                    <Image 
-                    className="w-14 h-8"
-                    resizeMode='contain'
-                    source={icons.favourite} 
-                    />
-                    <Text
-                    className="text-white font-bold  text-xs">
-                        Favourites
-                    </Text>
-                </TouchableOpacity>
-            </View> */}
-
+            
         </View>
     )
   },[])
+
+  const loadMoreData = () => {
+    const newData = favouriteChallenge.favourites.slice(index, index + 2);
+    setDisplayData([...displayData, ...newData]);
+    setIndex(index + 2);
+  };
   return (
     <SafeAreaView className="min-w-full flex-1 bg-primary min-h-full">
        
@@ -109,14 +110,14 @@ export default function favouriteChallenges() {
           style={{ flex: 1 }}
 >
         <FlatList 
-        data={ favouriteList && favouriteList.favourites}
+        data= { displayData && displayData}
         keyExtractor={(item)=> item._id}
         renderItem={renderItem}   
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
               itemVisiblePercentThreshold: 70, // Adjust as needed
         }}
-
+        onEndReached={loadMoreData}
         ListHeaderComponent={renderHeader}
         // onRefresh={handleRefresh}
         // refreshing={false}

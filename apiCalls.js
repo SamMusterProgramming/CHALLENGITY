@@ -295,6 +295,18 @@ export const getFavouriteChallenges = async(user_id ,setChallenges)=>{
   }
 }  
 
+export const updateChallengeMode = async(challenge_id , body ,setChallenges)=>{
+ 
+  try {
+      await axios.patch( BASE_URL + `/challenges/mode/${challenge_id}`,body)
+      .then(res => { 
+          setChallenges(res.data) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
 
 
    // *********************************** likes and votes data *************************

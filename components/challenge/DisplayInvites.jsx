@@ -58,8 +58,7 @@ const {isViewed ,setIsViewed
                     <>
                       <Text
                         style={{fontSize:8}}
-                        className=" text-sm text-green  mt-0 font-black">
-                        
+                        className=" text-sm text-green  mt-0 font-black">    
                              No Reply
                       </Text>
                       <TouchableOpacity
@@ -104,7 +103,8 @@ const {isViewed ,setIsViewed
   );
 
 return (
-    <View className ="w-[280px]  max-h-[450px]  rounded-lg  absolute bg-gray-400  left-1 bottom-16">
+    <View className ="w-[280px]  max-h-[450px] rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-3xl
+    rounded-lg  absolute bg-gray-400  left-1 bottom-16">
     
     
     <FlatList
@@ -114,7 +114,8 @@ return (
     //   extraData={hoveredIndex}
       ListHeaderComponent={
         <>
-            <View className="flex-1 flex-row w-[100%] h-[30px] mb-2 justify-center rounded-tl-lg rounded-tr-lg rounded-bl-3xl rounded-br-3xl bg-blue-950 items-center">
+            <View className="flex-1 flex-row w-[100%] h-[30px] mb-2 justify-center 
+            rounded-tl-3xl rounded-tr-3xl bg-blue-950 items-center">
                 <Text className="text-white text-sm font-black"
                 style={{fontSize:9}}>
                     {challenge.privacy == "Public" ? "this is a Public chanllenge, open to public":
@@ -193,23 +194,120 @@ return (
         </>
       }
     ListFooterComponent={
-        <View className="flex-1 flex-col w-[100%] h-[40px]  justify-center rounded-tl-3xl rounded-tr-3xl bg-red-800 items-center">
-            {/* <Text className="text-blue-100 text-xs font-black"
-                  style={{fontSize:9}}>
-                 { friendList[0].name + "  " }
-                 <Text  className="text-white text-xs font-bold"
-                        style={{fontSize:8}}
-                 >
-                     is leading the challenge
-                 </Text>
-            </Text> */}
-            <Text className="text-blue-100 text-xs font-black"
-              style={{fontSize:9}}>
-                  Watch the Challenge and cast your vote
-                 <Text>
-                     
-                 </Text>
-            </Text>
+        <View className="flex-1 flex-col w-[100%] h-[30px]  justify-center rounded-bl-3xl rounded-br-3xl bg-red-800 items-center">
+          
+            {user._id == challenge.origin_id ?(
+                isParticipant ? (
+                 <View 
+                  className="w-full h-[100%] px-4 flex-row justify-center items-center"> 
+                      <Text className="text-blue-100 text-xs font-bold"
+                        style={{fontSize:9}}>
+                          You own the Challenge ,
+                          <Text
+                           style={{fontSize:8}}
+                           className="text-blue-100 text-xs font-black">
+                            {' '} Invite more 
+                          </Text>
+                      </Text>
+                      <TouchableOpacity
+                        className=" w-[50px] h-[20px] justify-center ml-auto items-center bg-orange-500 rounded-lg">
+                        <Text className="text-blue-900 text-xs font-black"
+                          style={{fontSize:9}}>
+                            invite
+                        </Text>
+                      </TouchableOpacity>
+                 </View>
+                ): (
+                  <View 
+                   className="w-full h-[100%] px-4 flex-row justify-center items-center"> 
+                      <Text className="text-blue-100 text-xs font-bold"
+                        style={{fontSize:9}}>
+                          You own the Challenge , but Resigned 
+                          <Text
+                           style={{fontSize:8}}
+                           className="text-blue-100 text-xs font-black">
+                            {' '} Invite more 
+                          </Text>
+                      </Text>
+                      <TouchableOpacity
+                        className=" w-[50px] h-[20px] justify-center ml-auto items-center bg-orange-500 rounded-lg">
+                        <Text className="text-green-400 text-xs font-black"
+                          style={{fontSize:9}}>
+                            Join
+                        </Text>
+                      </TouchableOpacity>
+                 </View>
+                )
+            ):  (
+              participantList.find( participant => participant.user_id == user._id)?
+                (
+                  <View 
+                    className="w-full h-[100%] px-4 flex-row justify-center items-center"> 
+                      <Text className="text-blue-100 text-xs font-bold"
+                        style={{fontSize:9}}>
+                            as a participant
+                          <Text
+                           style={{fontSize:8}}
+                           className="text-blue-100 text-xs font-black">
+                            {' '} you can Invite friends
+                          </Text>
+                      </Text>
+                      <TouchableOpacity
+                        className=" w-[50px] h-[20px] justify-center ml-auto items-center bg-orange-500 rounded-lg">
+                        <Text className="text-blue-900 text-xs font-black"
+                          style={{fontSize:9}}>
+                             invite
+                        </Text>
+                      </TouchableOpacity>
+                 </View>
+                ):(
+                   inviteList.find(friend => friend.sender_id === user._id)?
+                      (
+                        <View 
+                        className="w-full h-[100%] px-4 flex-row justify-center items-center"> 
+                           <Text className="text-blue-100 text-xs font-bold"
+                             style={{fontSize:9}}>
+                               You are invited to participate 
+                               <Text
+                                style={{fontSize:8}}
+                                className="text-blue-100 text-xs font-black">
+                                 {' '} Click here to  
+                               </Text>
+                           </Text>
+                           <TouchableOpacity
+                             className=" w-[50px] h-[20px] justify-center ml-auto items-center bg-orange-500 rounded-lg">
+                             <Text className="text-white text-xs font-black"
+                               style={{fontSize:9}}>
+                                 Join
+                             </Text>
+                           </TouchableOpacity>
+                      </View>
+                      ):(
+                        <View 
+                          className="w-full h-[100%] px-4 flex-row justify-center items-center"> 
+                            <Text className="text-blue-100 text-xs font-bold"
+                              style={{fontSize:9}}>
+                                  not invited ,
+                                <Text
+                                style={{fontSize:8}}
+                                className="text-blue-100 text-xs font-black">
+                                  {' '}to participate request access 
+                                </Text>
+                            </Text>
+                            <TouchableOpacity
+                              className=" w-[50px] h-[20px] justify-center ml-auto items-center bg-orange-500 rounded-lg">
+                              <Text className="text-blue-900 text-xs font-black"
+                                style={{fontSize:9}}>
+                                    access
+                              </Text>
+                            </TouchableOpacity>
+                      </View>
+                      )
+                )
+            )
+            
+            }
+           
         </View>
     }
     />

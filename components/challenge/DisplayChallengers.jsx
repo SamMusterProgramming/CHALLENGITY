@@ -8,31 +8,29 @@ import { icons } from '../../constants';
 
 
 
-export default function DisplayChallengers({friendList,user, setIsListVisible}) {
+export default function DisplayChallengers({friendList,user, setIsListVisible }) {
 
  const {isViewed ,setIsViewed
       } = useGlobalContext()
 
 const [hoveredIndex, setHoveredIndex] = useState(null);
 
-
-
 const renderItem = ({ item ,index}) => (
   <View className="flex-1 flex-row w-[100%] h-[100%] mb-1 justify-center items-center">
         <TouchableOpacity 
         key={index} 
         onPress={() => {
-            if(user._id === item.user_id){
-              router.push('/profile')
+          if(user._id === item.user_id){
+            router.push('/profile')
+          }
+          else{
+           if(isViewed) 
+            {  console.log("i am here routttterrrrr")
+               setIsViewed(false) 
+              router.push({ pathname: '/ViewProfile', params: {user_id:item.user_id} })
             }
-            else{
-             if(isViewed) 
-              {  console.log("i am here routttterrrrr")
-                 setIsViewed(false) 
-                router.push({ pathname: '/ViewProfile', params: {user_id:item.user_id} })
-              }
-              else router.replace({ pathname: '/ViewProfile', params: {user_id:item.user_id} })
-            }
+            else router.replace({ pathname: '/ViewProfile', params: {user_id:item.user_id} })
+          }
           } }
         className="px-2 py-2  mb-1 w-[90%] h-[30px] bg-white rounded-lg flex-row justify-start gap-3 items-center"
         >
@@ -83,7 +81,8 @@ useFocusEffect(
     }, [])
   );
   return (
-    <View className ="w-[230px]  max-h-[450px]  rounded-lg  absolute bg-gray-400  right-1 bottom-16">
+    <View className ="w-[230px]  max-h-[450px]  rounded-tl-3xl rounded-tr-3xl rounded-bl-3xl rounded-br-3xl
+     absolute bg-gray-400  right-1 bottom-16">
     
     
         <FlatList
@@ -92,7 +91,8 @@ useFocusEffect(
           keyExtractor={(item) => item.user_id}
           extraData={hoveredIndex}
           ListHeaderComponent={
-            <View className="flex-1 flex-row w-[100%] h-[30px] mb-2 justify-center rounded-tl-lg rounded-tr-lg rounded-bl-3xl rounded-br-3xl bg-blue-950 items-center">
+            <View className="flex-1 flex-row w-[100%] h-[30px] mb-2 justify-center 
+            rounded-tl-3xl rounded-tr-3xl bg-blue-950 items-center">
                 <Text className="text-white text-xs font-black"
                  style={{fontSize:8}}>
                    {friendList.length} PARTICIPANTS IN the CHALLENGE
@@ -100,7 +100,7 @@ useFocusEffect(
             </View>
           }
         ListFooterComponent={
-            <View className="flex-1 flex-col w-[100%] h-[40px]  justify-center rounded-tl-3xl rounded-tr-3xl bg-blue-800 items-center">
+            <View className="flex-1 flex-col w-[100%] h-[40px]  justify-center rounded-bl-3xl rounded-br-3xl bg-blue-800 items-center">
                 <Text className="text-blue-100 text-xs font-black"
                       style={{fontSize:9}}>
                      { friendList[0].name + "  " }

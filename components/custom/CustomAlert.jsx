@@ -35,7 +35,7 @@ export default function CustomAlert({text,action,isModalVisible, setIsModalVisib
                 backdropOpacity={0.0}
                 useNativeDriverForBackdrop={true}
                 hideModalContentWhileAnimating={true}
-                animationType="slide"
+                animationType="none"
                 useNativeDriver={true}
                 // className="h-[100%] w-[100%]"
                 isVisible={isModalVisible} onBackdropPress={()=>{setIsModalVisible(false)}}

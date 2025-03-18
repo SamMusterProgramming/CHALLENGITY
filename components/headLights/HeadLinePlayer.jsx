@@ -56,10 +56,10 @@ export default function HeadLinePlayer({challenge,index}) {
          hitSlop={Platform.OS === "android" &&{ top: 100, bottom: 100, left: 40, right: 40 }}
          onPress={()=>router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
          className="absolute  flex-col   opacity-100  h-[60px] w-[60px]  rounded-full justify-center items-center  ">
-          <Image 
+          {/* <Image 
           source={icons.play}
           className="w-8 h-8"
-          />
+          /> */}
         </TouchableOpacity>
              
       {/* </TouchableOpacity> */}

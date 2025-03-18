@@ -115,11 +115,11 @@ export default function CreateParticipateChallenge() {
     setVideoUri(null)
    
   try {
-    console.log("mmm herrrre")
+   
     setIsRecording(true)
    
     let options ={
-      maxDuration: 10,
+      maxDuration: 120,
     }
      await cameraRef.current.recordAsync(options)
     .then((video)=>{
@@ -148,8 +148,11 @@ export default function CreateParticipateChallenge() {
       setVisible(true)
       setTimeout(() => {
         router.push({ pathname: '/profile',params: {
-        priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-        yourChallenges:"false" , yourParticipations:"true"
+         publ:selectedPrivacy === "Public"? "false":"false",
+         priv:selectedPrivacy == "Private"?"false":"false",
+         participate:selectedPrivacy === "Public"?"true":"false" , 
+         invited:selectedPrivacy === "Private" && challenge.audience !== "Strict"  ?"true":"false" , 
+         strict :selectedPrivacy === "Private" && challenge.audience === "Strict"  ?"true":"false" , 
         } }) 
         setVisible(false)
       }, 2000); 
@@ -165,7 +168,7 @@ export default function CreateParticipateChallenge() {
           name:user.name,
           video_url : url,
           email:user.email,
-        }
+            }
         
            axios.post(BASE_URL +`/challenges/uploads/${challenge._id}`,challengeBody)
           .then(   
@@ -173,8 +176,8 @@ export default function CreateParticipateChallenge() {
             if(res.data === "challenge expired") return setIsExpired(true)
             challenge.privacy=="Public"? getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
             :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
+
             setTimeout(() => {
-            
               router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:res.data._id} })
             }, 1000);
           }

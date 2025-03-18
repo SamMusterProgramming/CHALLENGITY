@@ -10,7 +10,7 @@ import { Redirect, router, useFocusEffect, useLocalSearchParams } from 'expo-rou
 import { BASE_URL, getChallengeById, getUserChallenges, getUserFriendsData, getUserParticipateChallenges, getUserPrivateChallenges, getUserPublicChallenges } from '../apiCalls'
 import axios from 'axios'
 import * as ImagePicker from 'expo-image-picker';
-import { challengeType  , privacyData } from '../utilities/TypeData'
+import { Audience, challengeType  , privacyData } from '../utilities/TypeData'
 import ChallengeTypeSelector from '../components/challenge/ChallengeTypeSelector'
 import { getInition } from '../helper'
 import SwingingTitle from '../components/custom/SwingingTitle'
@@ -50,6 +50,7 @@ export default function CreateChallenge() {
   const [text,setText] = useState()
   const [bgTypeColor ,setBgTypeColor] = useState("red")
   const [bgPrivacyColor ,setBgPrivacyColor] = useState("blue")
+  const [selectedAudience, setSelectedAudience] = useState("Open");
 
 
   useEffect(() => {
@@ -202,7 +203,7 @@ export default function CreateChallenge() {
       setTimeout(() => {
         router.push({ pathname: '/profile',params: {
         priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-        yourChallenges:"true" , yourParticipations:"false"   
+        participate :"false", invited :"false" , strict:"false"
                   } }) 
         setVisible(false)
       }, 2000);
@@ -226,18 +227,13 @@ export default function CreateChallenge() {
             type:selectedType,
             // category:selectedCategory,
             privacy:selectedPrivacy,
-            // audience:selectedAudience,
+            audience:selectedAudience,
             challengers:"everybody",
             name:user.name
           }
          axios.post( BASE_URL + '/challenges/uploads', challengeBody).then( // when user challenge another user , we will insert his change to an existing challenge by challenge_id
             res =>  {          
-                // selectedPrivacy == "Public"? getUserPublicChallenges(user._id ,setUserPublicChallenges):
-                // getUserPrivateChallenges(user._id ,setUserPrivateChallenges)
-                // router.push({ pathname: '/profile',params: {
-                // priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
-                // yourChallenges:"true" , yourParticipations:"false"   
-                // } }) 
+               
               selectedPrivacy == "Public"? getUserPublicChallenges(user._id ,setUserPublicChallenges):
               getUserPrivateChallenges(user._id ,setUserPrivateChallenges)
               setTimeout(() => {
@@ -455,7 +451,7 @@ export default function CreateChallenge() {
                 style={{width:'100%',height:'100%'}}
                 // className="flex-1 w-full bg-primary"    
                 >
-                  <View className="min-w-full py- flex-1 flex-col justify-start gap-6 items-center ">
+                  <View className="min-w-full h-[90%] py- flex-1 flex-col justify-start gap-3 items-center ">
 
                               
     
@@ -497,21 +493,28 @@ export default function CreateChallenge() {
                               />
                         </View>   
 
-
-                        <View className="flex-row w-full mt-2 justify-center items-center   opacity-100 gap-5  h-[7vh]">
+                        <View className="">
+                                <Text
+                                  style={{fontSize:12}}
+                                  className="text-white font-bold text-xl">
+                                    Select Privacy 
+                                </Text>                             
+                          </View>
+                        <View className="flex-row w-full mt-0 justify-center items-center   opacity-100 gap-5  h-[4vh]">
                           <ChallengeTypeSelector data={challengeType} bgColor={bgTypeColor} setSelected={setSelectedType} />
                           <ChallengeTypeSelector data={privacyData} bgColor={bgPrivacyColor} setSelected={setSelectedPrivacy} /> 
                         </View>  
 
 
 
-                        {selectedPrivacy !== "ivate" && 
+                        {selectedPrivacy == "Private" && 
                         (
                          <>
                           <View className="">
                                 <Text
-                                  className="text-blue-400 font-bold text-sm">
-                                  {selectedPrivacy == "Private"?"Challenge Friends":"Invite Friends "}
+                                  style={{fontSize:12}}
+                                  className="text-white font-bold text-xl">
+                                    Invite Friends 
                                 </Text>                             
                           </View>
 
@@ -537,7 +540,7 @@ export default function CreateChallenge() {
 
                           <View 
                              className=" w-[80%]  px-2 py-2   bg-blue-200  
-                             rounded-lg  min-h-[50px] max-h-[320px]"
+                             rounded-lg  min-h-[50px] max-h-[220px]"
                              >
                             <FlatList 
                             scrollEnabled={true}
@@ -603,16 +606,46 @@ export default function CreateChallenge() {
                           </View> 
 
                    {selectedPrivacy == "Private" &&  (
-                            <View  className=" w-[80%]  px-2 py-2 mt-auto  bg-white 
-                               rounded-lg  min-h-[50px] max-h-[320px]">
+                    <>
+                          <View  className=" w-[80%]  px-2 py-2   bg-white flex-col justify-center items-start
+                               rounded-lg  min-h-[40px] max-h-[320px]">
                                 <Text
-                                  className="text-black font-black text-sm">
-                                  Note * : <Text className="text-primary font-pmedium text-xs">
+                                  className="text-black font-bold text-"
+                                  style={{fontSize:9}}>
+                                  Note * : Private Challenge
+                                   
+                                </Text>      
+                                <Text className="text-primary font-pbold text-xs"
+                                                 style={{fontSize:8}}>
                                         Only Selected friends can Participate in your challenge
                                         when Private is Selected
-                                  </Text>
-                                </Text>                             
-                            </View>
+                                   </Text>                       
+                          </View>
+
+                          <View  className=" w-[80%] mt-auto  flex-col justify-start gap-4 items-center
+                            rounded-lg  min-h-[50px] max-h-[320px]">
+                            <Text
+                              className="text-white font-bold  "
+                              style={{fontSize:12}}>
+                              Select Audience
+                            </Text>  
+                            <ChallengeTypeSelector data={Audience} bgColor={bgTypeColor} setSelected={setSelectedAudience} />
+                          </View>
+
+                          <View  className=" w-[80%]  px-2 py-2   bg-white flex-col justify-center items-start
+                               rounded-lg  min-h-[50px] max-h-[320px]">
+                                <Text
+                                  className="text-black font-bold text-sm"
+                                  style={{fontSize:10}}>
+                                  Note * : {selectedAudience}
+                                </Text>   
+                                <Text className="text-primary font-pmedium text-xs">
+                                    {selectedAudience === "Open"?"Everyone can see , like and vote in you challenge"
+                                    :selectedAudience === "Restricted"?"Only your friends can see your challeng "
+                                    :"only Invited friends to you challenge can see your challenge"}                           
+                                  </Text>                          
+                          </View>
+                    </>
                      )}
 
                         

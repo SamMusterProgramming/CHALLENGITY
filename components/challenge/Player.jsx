@@ -447,7 +447,7 @@ const confirmUnfriend = () => {
     keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
   >
     <View
-     className="flex-1  justify-center items-center">    
+     className="flex-1 w-[100vw]  justify-center items-center">    
                <TouchableOpacity
             
                   onPress={toggleVideoPlaying }

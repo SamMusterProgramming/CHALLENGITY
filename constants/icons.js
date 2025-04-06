@@ -21,7 +21,7 @@ import follow from "../assets/icons/follow.png";
 import friend from "../assets/icons/friend.png";
 import flip from "../assets/icons/flip.png"
 import camera from "../assets/icons/camera.png"
-import camera_recording from "../assets/icons/camera-recording.png"
+import camera_recording from "../assets/icons/camera_recording.png"
 import pause from "../assets/icons/pause.png"
 import submit from "../assets/icons/submit.png"
 import cancel from "../assets/icons/cancel.png"
@@ -39,17 +39,36 @@ import down_arrow from '../assets/icons/downArrow.png'
 import publi from '../assets/icons/public.png'
 import favourite from '../assets/icons/favourite.webp'
 import rank1 from '../assets/icons/rank1.avif'
-
-
-
-
-
-
-
+import sport from '../assets/icons/sport.png'
+import adventure from '../assets/icons/adventure.png'
+import dance from '../assets/icons/dance.png'
+import fitness from '../assets/icons/fitness.png'
+import magic from '../assets/icons/magic.png'
+import music from '../assets/icons/music.png'
+import eating from '../assets/icons/eating.png'
+import science from '../assets/icons/science.png'
+import game from '../assets/icons/game.png'
+import diet from '../assets/icons/diet.png'
+import open from '../assets/icons/open.png'
+import restricted from '../assets/icons/restricted.png'
+import strict from '../assets/icons/strict.png'
 
 
 
 export default {
+  adventure,
+  dance,
+  fitness,
+  sport,
+  music,
+  magic,
+  eating,
+  science,
+  game,
+  diet,
+  open,
+  restricted,
+  strict,
   rank1,
   favourite,
   publi,

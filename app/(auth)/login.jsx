@@ -42,7 +42,7 @@ export default function login() {
       getTopChallenges(user._id,setTrendingChallenges)
 
       setTimeout(() => {
-        router.push('/timeline')
+        router.replace('/timeline')
       }, 1000);
      
     }

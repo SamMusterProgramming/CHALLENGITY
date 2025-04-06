@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '24')
         compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '35')
         targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '34')
-        kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.24'
+        kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.25'
 
         ndkVersion = "26.1.10909125"
     }
@@ -38,11 +38,4 @@ allprojects {
         mavenCentral()
         maven { url 'https://www.jitpack.io' }
     }
-}
-react {
-project.ext.vectoricons = [
-      iconFontNames: ['MaterialCommunityIcons.ttf', 'FontAwesome.ttf', 'AntDesign.ttf'] // Add other font files as needed
-]
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
-
 }

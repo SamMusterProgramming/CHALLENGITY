@@ -6,7 +6,7 @@ export default function SelectButton({color,title,bgColor,action}) {
   return (
    <TouchableOpacity
         onPressIn={action}
-        className ="rounded-lg w-[18%] h-[30px] flex-col justify-center items-center "
+        className ="rounded-lg w-[22%] h-[40px] flex-col justify-center items-center "
         style= {{backgroundColor:bgColor}}>
         <Text 
         style={{fontSize:9}}

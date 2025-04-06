@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ImageBackground, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, FlatList, ImageBackground, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, AppState } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { images } from '../../constants'
 import { findTopChallengers, getTimeLapse } from '../../helper'
@@ -22,6 +22,7 @@ import DisplayChallengers from './DisplayChallengers'
 import DisplayInvites from './DisplayInvites'
 import * as NavigationBar from 'expo-navigation-bar';
 import DisplayMode from './DisplayMode'
+import ViewDetail from './ViewDetail'
 
 
 
@@ -46,6 +47,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
 
     const [isListVisible,setIsListVisible] = useState(false)
     const [isInviteListVisible,setIsInviteListVisible] = useState(false)
+    const [displayDetail,setDisplayDetail] = useState(false)
 
     const [modeDatae,setModeData] = useState(
                                    [
@@ -59,7 +61,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
 
     const isYourChallenge = challenge.origin_id == user._id
 
-
+    const [isOwner,setIsOwner] = useState (user._id == challenge.origin_id) 
 
     useEffect(() => {
      const top = findTopChallengers(challenge.participants)
@@ -232,19 +234,34 @@ export default function Challenge({challenge,isVisibleVertical}) {
     
     
   useEffect(() => {
-    !isVisibleVertical && (setIsListVisible(false),setIsInviteListVisible(false))
+    !isVisibleVertical && (setIsListVisible(false),setIsInviteListVisible(false),setIsModeVisible(false),setDisplayDetail(false))
   }, [isVisibleVertical])
   
   useEffect(() => {
      isListVisible && hideNavigationBar
     isListVisible && (setIsInviteListVisible(false))
+    isListVisible && setIsModeVisible(false)
+    isListVisible && setDisplayDetail(false)
+
   }, [isListVisible])
 
   useEffect(() => {
     isInviteListVisible && (setIsListVisible(false))
+    isInviteListVisible && setIsModeVisible(false)
+    isInviteListVisible && setDisplayDetail(false)
   }, [isInviteListVisible])
 
+  useEffect(() => {
+    isModeVisible && (setIsListVisible(false))
+    isModeVisible && setIsInviteListVisible(false)
+    isModeVisible && setDisplayDetail(false)
+  }, [isModeVisible])
 
+  useEffect(() => {
+    displayDetail && (setIsListVisible(false))
+    displayDetail && setIsInviteListVisible(false)
+    displayDetail && setIsModeVisible(false)
+  }, [displayDetail])
 
   const handleModeChange = ()=> {
    updateChallenge && updateChallenge.audience !== selectedMode && 
@@ -261,13 +278,36 @@ export default function Challenge({challenge,isVisibleVertical}) {
    if(isExpired) return <ChallengeExpired challenge_id={challenge._id}/>
 
 
+
+  
+
+  //  const setNavigationBarStyle = () => {
+  //   NavigationBar.setVisibilityAsync('sticky-immersive');
+  // };
+
+  // useEffect(() => {
+  //   setNavigationBarStyle();
+  //   const subscription = AppState.addEventListener('change', state => {
+  //     if (state === 'active') {
+  //         setNavigationBarStyle();
+  //     }
+  //     });
+
+  //   return () => {
+  //     subscription.remove();
+  //    };
+  // }, [isModalVisible]);
+
+
+
+
   return (
     <>
     <View className="justify-start h-[740px] w-[100vw] mt-3 mb-3 items-center flex-col gap-0">
              <View className="min-w-full flex-1   border-t-2 border-gray-700 border-l-2 border-r-2
                   rounded-tl-lg rounded-tr-lg flex-row items-center justify-start min-h-[5%]">
                  <TouchableOpacity  
-                  onPress={()=> router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
+                  onPress={()=> router.navigate({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
                   className="w-[18%]  min-h-[90%] ml-0 border-2 rounded-lg bg-yellow-400  flex-col justify-center  items-center  ">
                     <Text className="text-gray-900 text-sm  font-bold font-pregular ">
                        View
@@ -276,7 +316,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
                  
                  <View className="w-[62%] min-h-[97%] border-x-white bg-blue-1000  flex-col justify-center gap-1 items-center" >
              
-                     <SwingingTitle text={challenge.desc} color="white" fontSize={11}/>
+                     <SwingingTitle text={challenge.desc} color="white" fontSize={10}/>
                        
              
                  </View>
@@ -400,8 +440,8 @@ export default function Challenge({challenge,isVisibleVertical}) {
                          </Text>
                     </TouchableOpacity>
                    ):(
-                    <View
-                         
+                    <TouchableOpacity
+                          onPress={() =>{setIsModeVisible(!isModeVisible)}}
                           className="min-w-[21%] min-h-[90%] flex-1 flex-row  border-2 rounded-sm
                                               gap-1 px-2 justify-center  items-center" >
                           <Text
@@ -410,11 +450,13 @@ export default function Challenge({challenge,isVisibleVertical}) {
                             className="text-gray-200 text-xs  font-black ">
                               {challenge.audience}
                           </Text>
-                    </View>
+                    </TouchableOpacity>
                    )}
                 
                  
-                 <TouchableOpacity className="min-w-[21%] min-h-[90%] flex-1 flex-row  border-2 rounded-sm
+                 <TouchableOpacity 
+                    onPress={() =>{setDisplayDetail(!displayDetail)}}
+                    className="min-w-[21%] min-h-[90%] flex-1 flex-row  border-2 rounded-sm
                                           gap-1 px-2 justify-center  items-center" >
                         <Text
                           style={{fontSize:9}}
@@ -434,18 +476,26 @@ export default function Challenge({challenge,isVisibleVertical}) {
                  </TouchableOpacity>
       
             </View>
+
+           
+  
             
       </View>
+
+
          {isListVisible && (
-            <DisplayChallengers friendList={challenge.participants} user = {user}  setIsListVisible={setIsListVisible} />
+            <DisplayChallengers friendList={challenge.participants} user = {user}   setIsListVisible={setIsListVisible} />
            )}
 
-         {isModalVisible && (  
-          <CustomAlert text={text} action={action} isModalVisible={isModalVisible} removeFromFavourite={removeFromFavourite}
+          {displayDetail && (
+            <ViewDetail challenge ={challenge} />
+           )}
+
+          {isModalVisible && (  
+                <CustomAlert text={text} action={action} isModalVisible={isModalVisible} removeFromFavourite={removeFromFavourite}
                        setIsModalVisible={setIsModalVisible} addToFavourite={addToFavourite} joinChallenge ={joinChallenge }
                        resignChallenge={resignChallenge} removeChallenge={removeChallenge}/>
             )}
-  
          
          {isInviteListVisible && (
             <DisplayInvites inviteList={challenge.privacy =="Private"? challenge.invited_friends:[{sender_id:user._id,name:user.name,profile_img:user.profile_img}]} 
@@ -455,7 +505,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
 
           {isModeVisible && (
             <DisplayMode  modeData={modeDatae} setIsModeVisible={setIsModeVisible} selectedMode={selectedMode}
-                          setSelectedMode ={setSelectedMode} action ={handleModeChange} />
+                          setSelectedMode ={setSelectedMode} isOwner={isOwner} action ={handleModeChange} />
            )}
         
           {visible && (

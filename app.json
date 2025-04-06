@@ -1,37 +1,58 @@
 {
   "expo": {
-    
-      "androidNavigationBar": {
-        "visible": "sticky-immersive",
-        "softwareKeyboardLayoutMode": "pan"
-      }, 
     "name": "Challengify",
     "slug": "Challengify",
+    "runtimeVersion": "1.0.0",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/challenge-logo.png",
-    "scheme": "Challengify",
+    "scheme": "challengify",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "androidNavigationBar": {
+      "visible": "sticky-immersive"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Challengify"
+      "bundleIdentifier":"com.anonymous.Challengify",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/challenge-logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.Challengify"
+      "package": "com.anonymous.Challengify",
+      "permissions": [
+        "camera",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/challenge-logo.png"
+      "output": "static"
     },
     "plugins": [
-      "expo-camera",
       "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to let you ...",
+          "imagePickerPermission": "Allow $(PRODUCT_NAME) to access your photos to let you ..."
+        }
+      ],
+      [
+        "expo-navigation-bar",
+        {
+          "position": "absolute",
+          "visibility": "hidden",
+          "behavior": "overlay-swipe",
+          "backgroundColor": "#00000080"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -56,10 +77,23 @@
           "supportsPictureInPicture": true
         }
       ],
-      "react-native-compressor"
+      "react-native-compressor",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "owner": "samirhaddadi2025",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "cae0cce5-9b26-41f9-a1b3-66ca72625219"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/cae0cce5-9b26-41f9-a1b3-66ca72625219"
     }
   }
 }

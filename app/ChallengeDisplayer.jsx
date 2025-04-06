@@ -36,7 +36,10 @@ export default function ChallengeDisplayer() {
           getChallengeById(challenge_id,setChallenge,setIsExpired)
         }
         return () => {
+          console.log("cleaning up displayer")
           setChallenge(null)
+          setDisplayData([])
+          setViewableItems([])
         };
       }, [])
     

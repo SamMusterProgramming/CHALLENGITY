@@ -1,4 +1,4 @@
-import { View, Text,  ScrollView, Image,RefreshControl, FlatList, TouchableOpacity, Alert, SafeAreaView } from 'react-native'
+import { View, Text,  ScrollView, Image,RefreshControl, FlatList, TouchableOpacity, Alert} from 'react-native'
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { getFollowData, getUserFriendsData, getUserParticipateChallenges, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges } from '../../apiCalls'
@@ -14,11 +14,13 @@ import FriendDisplayer from '../../components/profile/FriendDisplayer'
 import CustomAlert from '../../components/custom/CustomAlert'
 import SelectButton from '../../components/custom/SelectButton'
 import UserSelectButton from '../../components/custom/UserSelectButton'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { clearLocalStorage } from '../../videoFiles'
 
 export default function profile() {
-  const {user,setUser,userPublicChallenges,setUserPublicChallenges,followings,setFollowings,follow , setFollow,
+  const {user,setUser,userPublicChallenges,setUserPublicChallenges,followings,setFollowings,follow ,setTrendingChallenges, setFollow,
     publicParticipateChallenges,setPublicParticipateChallenges,privateParticipateChallenges,setPrivateParticipateChallenges,userFriendData,
-    setUserFriendData,userPrivateChallenges,setUserPrivateChallenges } = useGlobalContext()
+    setUserFriendData,userPrivateChallenges,setUserPrivateChallenges,setIsViewed,setNotifications } = useGlobalContext()
   // const [follow , setFollow ] = useState(null)
   // const [friends, setFriends ] = useState(null)
   const [viewableItems, setViewableItems] = useState([]);
@@ -39,17 +41,27 @@ export default function profile() {
   const {publ,priv,participate,invited ,strict} =  useLocalSearchParams();
   const [isLoaded, setIsLoaded] = useState(false);
   const flatListRef= useRef()
-
   const [selectedPrivacy,setSelectedPrivacy] = useState("Public")
 
-
+   const [index,setIndex] = useState(2)
+   const [displayData,setDisplayData] = useState([])
 
   const navigation = useNavigation();
 
   useEffect ( () => {     
     getUserFriendsData(user._id , setUserFriendData)
+   
   } , []) 
 
+ 
+  useEffect(()=>{
+    return () => {
+      setChallengeData([])
+      setDisplayData([])
+      setViewableItems([])
+      setSelectedPrivacy("Public")
+    };
+   },[])
 
   useEffect ( () => {     
   
@@ -68,9 +80,7 @@ export default function profile() {
 
 
   useEffect ( () => {    
-    console.log(invited + participate + publ + priv + strict)
     if(invited =="true" || participate =="true" || publ =="true"|| priv =="true" || strict =="true") {
-     console.log("here to confirm dsfdsfsdfsdfsdf")
      invited =="true" && setSelectedPrivacy("Invited")
      publ =="true" && setSelectedPrivacy("Public")
      priv =="true" && setSelectedPrivacy("Private")
@@ -182,19 +192,20 @@ const handleStrict = ()=> {
            onPress={
             async()=> {
               await AsyncStorage.removeItem("jwt_token")
-              router.replace('/login')
-              setUser(null)
-              setTrendingChallenges([])
-              setUserChallenges([])
-              setPublicParticipateChallenges(null)
-              setIsViewed(true)
-              setNotifications([])
-              setFollowings([])
-              setUserFriendData(null)
-              setFollow(null)
+              // router.replace('/login')
               setTimeout(() => {
+                clearLocalStorage() 
+                setUser(null)
+                setTrendingChallenges([])
+                // setUserChallenges([])
+                setPublicParticipateChallenges(null)
+                setIsViewed(true)
+                setNotifications([])
+                setFollowings([])
+                setUserFriendData(null)
+                setFollow(null)
                 router.replace('/login')
-              }, 10000);
+              }, 1000);
             
             
         }
@@ -213,7 +224,7 @@ const handleStrict = ()=> {
            </TouchableOpacity>
 
            <TouchableOpacity
-              onPress={()=>{router.push('favouriteChallenges')}}
+              onPress={()=>{router.navigate('favouriteChallenges')}}
                className="  absolute top-44 left-6 h-16 flex-col rounded-sm justify-center items-center ">
                   <Image 
                   className="w-14 h-8"
@@ -453,6 +464,16 @@ const handleStrict = ()=> {
     selectedPrivacy]);
 
 
+  const renderFooter= ({ item , index }) => {  
+      return (
+      <View
+         className="w-[100%] min-h-[60] bg-primary ">
+          
+      </View>) 
+  
+  };
+
+
   const onRefresh = useCallback(() =>  {
     console.log("refreshing")
     setRefreshing(true);
@@ -545,16 +566,28 @@ const logout = async()=> {
    }
 
   
+   const loadMoreData = () => {
+    const newData = challengeData.slice(index, index + 2);
+    setDisplayData([...displayData, ...newData]);
+    setIndex(index + 2);
+  };
   
+  useEffect ( () => {     
+    // challengeData.length >= 2 ? setDisplayData(challengeData.slice(0,2)) : setDisplayData(challengeData)
+    setDisplayData(challengeData.slice(0,2))
+    setIndex(2)
+ } , [challengeData]) 
+
 
   return (
     <SafeAreaView className="bg-primary min-h-full min-w-full ">
       <FlatList 
       ref={flatListRef}
-      data={challengeData }
+      data={displayData}
       keyExtractor={(item)=> item._id}
       renderItem={renderItem }
       onViewableItemsChanged={onViewableItemsChanged}
+      onEndReached={loadMoreData}
       viewabilityConfig={{
             itemVisiblePercentThreshold: 70, // Adjust as needed
       }}
@@ -563,6 +596,7 @@ const logout = async()=> {
       extraData={refreshing}
     
       ListHeaderComponent={ renderHeader }
+      ListFooterComponent={renderFooter}
     />
   
     </SafeAreaView>

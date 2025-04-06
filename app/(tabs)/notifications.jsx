@@ -1,4 +1,4 @@
-import { Image, Platform, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { router } from 'expo-router';
 import { useGlobalContext } from '../../context/GlobalProvider';
@@ -6,6 +6,7 @@ import { getInition } from '../../helper';
 import { icons } from '../../constants';
 import DisplayNotification from '../../components/notification/DisplayNotification';
 import { getNotificationByUser } from '../../apiCalls';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function notifications() {
   const {user,notifications,setNotifications} = useGlobalContext()

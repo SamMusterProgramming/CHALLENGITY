@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import  {CameraView, CameraType, useCameraPermissions, useMicrophonePermissions, Camera}   from 'expo-camera'
 import { icons,images } from '../constants'
 import { Video } from 'expo-av'
-import { _uploadVideoAsync} from '../firebase'
+import { _uploadVideoAsync, compressVideo, uploadThumbnail} from '../firebase'
 import { useGlobalContext } from '../context/GlobalProvider'
 import { Redirect, router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { BASE_URL, getChallengeById,  getUserPrivateChallenges,  getUserPrivateParticipateChallenges,  getUserPublicParticipateChallenges } from '../apiCalls'
@@ -18,6 +18,7 @@ import Player from '../components/challenge/Player'
 import SwingingTitle from '../components/custom/SwingingTitle'
 import ChallengeExpired from '../components/challenge/ChallengeExpired'
 import LoadModel from '../components/custom/LoadModal'
+import { generateThumbnail } from '../videoFiles'
 // import privacyData from '../../components/ChallengeTypeSelector'
 
 
@@ -45,6 +46,7 @@ export default function CreateParticipateChallenge() {
   const [isExpired,setIsExpired] = useState(false)
   const [autoPlay,setAutoPlay] = useState(false)
   const [visible, setVisible] = useState(false);
+  const [thumbNailURL,setThumbNailURL] = useState(null)
 
 
   const requestMediaPermissions = async () => {
@@ -69,9 +71,7 @@ export default function CreateParticipateChallenge() {
 
   useEffect(() => {
     getChallengeById(challenge_id,setChallenge,setIsExpired)
-    return () => {
-      setChallenge(null)
-    };
+  
   }, [])
 
   useEffect(() => {
@@ -80,11 +80,6 @@ export default function CreateParticipateChallenge() {
     setSelectedPrivacy(challenge.privacy)
     setDescription(challenge.desc)
   }
-  return () => {
-    setSelectedType('')
-    setSelectedPrivacy('')
-    setDescription('')
-  };
   }, [challenge])
 
 
@@ -94,6 +89,8 @@ export default function CreateParticipateChallenge() {
         setChallenge(null)
         setSelectedType('')
         setSelectedPrivacy('')
+        cameraRef.current = null ; 
+        swiperRef.current = null ;
       };
     },[]);
 
@@ -141,8 +138,18 @@ export default function CreateParticipateChallenge() {
      setVideoUri(null)
   }
 
+  useEffect(() => {
+    const makeThumbNail = async () => {
+     if(videoUri)
+       {
+        const imageUrl = await generateThumbnail(videoUri)
+        setThumbNailURL(imageUrl.uri)
+       }
+    }
+    makeThumbNail()
+  }, [videoUri])
   
-  
+
   const handleSumitChallenge =  () => {
     if(videoUri ){
       setVisible(true)
@@ -156,7 +163,8 @@ export default function CreateParticipateChallenge() {
         } }) 
         setVisible(false)
       }, 2000); 
-      _uploadVideoAsync(videoUri , user.email,user.name)
+      Promise.all([compressVideo(videoUri),uploadThumbnail(thumbNailURL, user.email)]).then(results => { 
+      _uploadVideoAsync(results[0], user.email,user.name)
       .then((url) => {
         let challengeBody = {
           origin_id : user._id ,
@@ -168,6 +176,7 @@ export default function CreateParticipateChallenge() {
           name:user.name,
           video_url : url,
           email:user.email,
+          thumbNail:results[1]
             }
         
            axios.post(BASE_URL +`/challenges/uploads/${challenge._id}`,challengeBody)
@@ -183,13 +192,13 @@ export default function CreateParticipateChallenge() {
           }
              
               )
-     
-          })   
+              FileSystem.deleteAsync(results[0], { idempotent: true }).then(res=> console.log("file deleted ayhoo"));
 
-          // router.push('/profile')  
-        
+          })   
+        })   
       }
     }
+
 
   const uploadVideo =async()=>{
     try {
@@ -201,7 +210,6 @@ export default function CreateParticipateChallenge() {
         aspect: [16, 9],
         quality: 1,
       });
-      console.log(result.assets[0].uri)
       setVideoUri(result.assets[0].uri)
 
     } catch (error) {
@@ -357,7 +365,6 @@ export default function CreateParticipateChallenge() {
                              
                          {!isRecording && challenge  ? (
                            <>
-
                                 <View className="min-w-full   rounded-md bg-bl-800 flex-row items-center justify-between h-[4%]"
                                     >
                                     <TouchableOpacity

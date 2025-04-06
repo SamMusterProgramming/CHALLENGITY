@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { getFavouriteChallenges } from '../apiCalls'
@@ -7,6 +7,7 @@ import Challenge from '../components/challenge/Challenge'
 import { icons } from '../constants'
 import { router } from 'expo-router'
 import { getInition } from '../helper'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function favouriteChallenges() {
   const {user,favouriteChallenge} = useGlobalContext()
@@ -25,6 +26,11 @@ export default function favouriteChallenges() {
  
   useEffect(() => {
     setDisplayData(favouriteChallenge.favourites.slice(0,2))
+    return () => {
+      console.log("cleaning up favourites")
+      setDisplayData([])
+      setViewableItems([])
+    };
   }, [] )
 
   const onViewableItemsChanged = ({ viewableItems }) => {
@@ -103,6 +109,9 @@ export default function favouriteChallenges() {
     setDisplayData([...displayData, ...newData]);
     setIndex(index + 2);
   };
+
+
+
   return (
     <SafeAreaView className="min-w-full flex-1 bg-primary min-h-full">
        

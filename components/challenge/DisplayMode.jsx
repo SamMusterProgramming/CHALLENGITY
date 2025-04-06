@@ -4,7 +4,7 @@ import { getInition } from '../../helper';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { icons } from '../../constants';
 
-export default function DisplayMode({modeData,selectedMode,setSelectedMode,setIsModeVisible,action}) {
+export default function DisplayMode({modeData,selectedMode,setSelectedMode,setIsModeVisible,isOwner}) {
 
     const {isViewed ,setIsViewed, user
     } = useGlobalContext()
@@ -37,31 +37,57 @@ export default function DisplayMode({modeData,selectedMode,setSelectedMode,setIs
       );
 
   return (
-    <View className ="w-[130px]  min-h-[140px] max-h-[200px] rounded-lg
-            absolute bg-gray-400  left-28 bottom-16">
+    // <View className ="w-[130px]  min-h-[140px] max-h-[200px] rounded-lg
+    //         absolute bg-gray-400  left-28 bottom-16">
+       <>
+       {
+        isOwner? (
+          <View className ="w-[130px]  min-h-[140px] max-h-[200px] rounded-lg
+          absolute bg-gray-400  left-28 bottom-16">
+                <FlatList
+                data={modeData}
+                renderItem={ renderItem}
+                keyExtractor={(item) => item.id}
+                ListHeaderComponent={
+                  <View 
+                    className="w-[100%] px-2 py-2 min-h-[30px] bg-gray-300 max-h-[200px] mb-2 rounded-t-lg" >
+                      <Text 
+                          style={{fontSize:7}}
+                          className="text-black font-black">
+                          {selectedMode == "Open"? "Open mode : everyone can see , vote,comment the challenge ":
+                          selectedMode == "Restricted"?"Restricted mode : Only Friends can see the challenge":
+                          "Strict Mode:Only invited friends can see  the challenge"}
+                      </Text> 
+                  </View>
+                }
+                />
+          </View>  
+             ) : (
+              <View       
+                className ="w-[135px]  h-[55px] px-2 py-2 rounded-lg
+                absolute bg-gray-100  left-28 bottom-16">
+                    <Text 
+                        style={{fontSize:8 , color:selectedMode == "Open"?"green":selectedMode == "Restricted"?"violet":"red" }}
+                        className="text-green-400 font-black">
+                        {selectedMode == "Open"? "Open mode :" :
+                        selectedMode == "Restricted"?"Restricted mode :":
+                        "Strict Mode:"}
+                      <Text
+                        style={{fontSize:8  }}
+                        className="text-black font-bold"
+                      >
+                       {selectedMode == "Open"? "\neveryone can see , vote,comment the challenge" :
+                        selectedMode == "Restricted"?" \nOnly Friends can see , vote and comment the challenge":
+                        "\nOnly invited friends can see , vote and comment the challenge"}
+                      </Text>
+                    </Text> 
+              </View>
+        )
+       }
    
-   
-       <FlatList
-         data={modeData}
-         renderItem={renderItem}
-         keyExtractor={(item) => item.id}
-         ListHeaderComponent={
-           <View 
-           
-           className="w-[100%] px-2 py-2 min-h-[30px] bg-gray-300 max-h-[200px] mb-2 rounded-t-lg" >
-            <Text 
-                style={{fontSize:7}}
-                className="text-black font-black">
-                {selectedMode == "Open"? "Open mode : everyone can see , vote,comment the challenge ":
-                selectedMode == "Restricted"?"Restricted mode : Only Friends can see the challenge":
-                "Strict Mode:Only invited friends can see  the challenge"}
-            </Text> 
-        
-           </View>
-         }
-         />
-   
+       
+   </>
 
-    </View>
+    // </View>
   )
 }

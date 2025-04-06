@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View,  ActivityIndicator, Text, Button, StyleSheet } from 'react-native';
 import Modal from 'react-native-modal';
+import { SafeAreaView } from 'react-native-safe-area-context';
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -18,8 +19,8 @@ export default function LoadModel({visible,setVisible}) {
  }, [visible])
  
   return (
-    // <View 
-    //    className="flex-1 flex-col justify-center items-center "  >
+    <SafeAreaView
+       className=" "  >
 
       <Modal 
        visible={visible} 
@@ -41,7 +42,7 @@ export default function LoadModel({visible,setVisible}) {
           </View>
         </View>
       </Modal>
-    // </View>
+     </SafeAreaView>
   )
 }
 

@@ -79,6 +79,7 @@ export const isAuthenticated = async(setUser)=>{
   try {
     await axios.get(BASE_URL +'/users/isAuthenticated')
     .then(res => { 
+      // res.data.profile_img = "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68"
       setUser(res.data)
               //  if (res.data.auth) {
               //    storeToken(res.data.token)
@@ -123,6 +124,7 @@ export const getUserById = async(user_id,setUserProfile) =>{
         await axios.get(BASE_URL+`/users/user/${user_id}`)
         .then(res => 
           { 
+            // res.data.profile_img = "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68"
             setUserProfile({...res.data})
           } )
     } catch (error) {
@@ -150,7 +152,9 @@ export const getChallengeById = async(id,setChallenge,setIsExpired)=>{
     .then(res =>
        {
         if(res.data === "post expired") setIsExpired(true)
-          else setChallenge(res.data)
+          else {
+         setChallenge(res.data)
+        }
       } )
    } catch (error) {
       console.log(error)
@@ -307,6 +311,20 @@ export const updateChallengeMode = async(challenge_id , body ,setChallenges)=>{
       console.log(error)
   }
 }  
+export const updateThumbNail = async(challenge_id , body ,setThumb)=>{
+ 
+  try {
+      await axios.patch( BASE_URL + `/challenges/update/${challenge_id}`,body)
+      .then(res => { 
+        console.log(res.data)
+          setThumb(res.data.thumbNail_URL) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
 
 
    // *********************************** likes and votes data *************************

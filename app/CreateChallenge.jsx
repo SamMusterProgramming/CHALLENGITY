@@ -1,10 +1,10 @@
-import { View, Text, Button, TouchableOpacity, Image, StyleSheet, TextInput, Alert, FlatList, Platform } from 'react-native'
+import { View, Text, Button, TouchableOpacity, Image, StyleSheet, TextInput, Alert, FlatList, Platform, KeyboardAvoidingView, ScrollView } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import  {CameraView, CameraType, useCameraPermissions, useMicrophonePermissions, Camera}   from 'expo-camera'
 import { icons,images } from '../constants'
 import { Video } from 'expo-av'
-import { _uploadVideoAsync} from '../firebase'
+import { _uploadVideoAsync, compressVideo} from '../firebase'
 import { useGlobalContext } from '../context/GlobalProvider'
 import { Redirect, router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { BASE_URL, getChallengeById, getUserChallenges, getUserFriendsData, getUserParticipateChallenges, getUserPrivateChallenges, getUserPublicChallenges } from '../apiCalls'
@@ -16,6 +16,9 @@ import { getInition } from '../helper'
 import SwingingTitle from '../components/custom/SwingingTitle'
 import CustomAlert from '../components/custom/CustomAlert'
 import LoadModel from '../components/custom/LoadModal'
+import { useKeepAwake } from 'expo-keep-awake';
+import * as FileSystem from 'expo-file-system';
+import { saveVideoLocally } from '../videoFiles'
 
 
 // import privacyData from '../../components/ChallengeTypeSelector'
@@ -49,9 +52,14 @@ export default function CreateChallenge() {
   const [action, setAction] = useState("");
   const [text,setText] = useState()
   const [bgTypeColor ,setBgTypeColor] = useState("red")
+  const [bgModeColor ,setBgModeColor] = useState("green")
+
   const [bgPrivacyColor ,setBgPrivacyColor] = useState("blue")
   const [selectedAudience, setSelectedAudience] = useState("Open");
 
+  let intervalId = useRef(null);
+  const [timer, setTimer] = useState(0);
+  useKeepAwake();
 
   useEffect(() => {
     getUserFriendsData(user._id,setFriendList)
@@ -96,7 +104,16 @@ export default function CreateChallenge() {
   useEffect(
        () => {
       return () => {
-        // videoRef && videoRef.currentAsynch()
+        console.log("cleaning up")
+        if (videoRef.current) {
+          videoRef.current.stopAsync().then(() => {
+            videoRef.current.unloadAsync();
+          });}
+        if (cameraRef.current) {
+          cameraRef.current.pausePreview();
+        }
+        videoUri && deleteVideo(videoUri)
+        setVideoUri(null)
         setChallenge(null)
         setSelectedType('Adventure')
         setSelectedPrivacy('Public')
@@ -104,6 +121,16 @@ export default function CreateChallenge() {
     },[]
   );
 
+  async function deleteVideo(videoUri) {
+    try {
+        await FileSystem.deleteAsync(videoUri, {
+            permanent: true,
+        });
+        console.log('Video file deleted successfully');
+    } catch (error) {
+        console.error('Error deleting video file:', error);
+    }
+}
 
   useEffect(() => {
     requestPermission()
@@ -124,6 +151,22 @@ export default function CreateChallenge() {
         setBgPrivacyColor("gray")
     }
   }, [selectedPrivacy])
+
+  useEffect(() => {
+    switch(selectedAudience) {
+      case "Open":
+         setBgModeColor("green")
+        break;
+      case "Restricted":
+        setBgModeColor("#eb34cf")
+        break;
+      case "Strict":
+        setBgModeColor("red")
+        break;  
+      default:
+        setBgModeColor("gray")
+    }
+  }, [selectedAudience])
 
   useEffect(() => {
     switch(selectedType) {
@@ -165,11 +208,9 @@ export default function CreateChallenge() {
     setVideoUri(null)
    
   try {
-    console.log("mmm herrrre")
     setIsRecording(true)
-   
     let options ={
-      maxDuration: 100,
+      maxDuration: 150,
     }
      await cameraRef.current.recordAsync(options)
     .then((video)=>{
@@ -187,9 +228,18 @@ export default function CreateChallenge() {
     setIsRecording(false)
    }
 
-  const goBack = ()=> {
-     setVideoUri(null)
-  }
+  useEffect(() => {
+    if(timer == 149000)
+    {
+      setIsRecording(false)
+    }
+
+  }, [timer])
+  
+
+  // const goBack = ()=> {
+  //    setVideoUri(null)
+  // }
 
   
 
@@ -199,17 +249,20 @@ export default function CreateChallenge() {
     if(description == "") return confirmDescription()
     if(videoUri ) { 
       setVisible(true)
-     
       setTimeout(() => {
-        router.push({ pathname: '/profile',params: {
+        router.replace({ pathname: '/profile',params: {
         priv:selectedPrivacy == "Private"?"true":"false", publ:selectedPrivacy === "Public"? "true":"false",
         participate :"false", invited :"false" , strict:"false"
                   } }) 
         setVisible(false)
       }, 2000);
-
-      _uploadVideoAsync(videoUri , user.email,user.name)
-      .then((url) => {
+      
+     compressVideo(videoUri).then((compressedVideoUrl) => {
+       
+      _uploadVideoAsync(compressedVideoUrl , user.email,user.name)
+      .then(async(url) => {
+        await saveVideoLocally(url)
+        videoUri && await deleteVideo(videoUri)
         let challengeBody = {
           origin_id : user._id ,
           description: description,
@@ -225,7 +278,6 @@ export default function CreateChallenge() {
         
           challengeBody = {...challengeBody,
             type:selectedType,
-            // category:selectedCategory,
             privacy:selectedPrivacy,
             audience:selectedAudience,
             challengers:"everybody",
@@ -238,7 +290,7 @@ export default function CreateChallenge() {
               getUserPrivateChallenges(user._id ,setUserPrivateChallenges)
               setTimeout(() => {
       
-                    router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:res.data._id} })
+                    router.navigate({ pathname: '/ChallengeDisplayer', params: {challenge_id:res.data._id} })
               }, 1000);
             }
              
@@ -246,6 +298,13 @@ export default function CreateChallenge() {
       
          
           })   
+         FileSystem.deleteAsync(compressedVideoUrl, { idempotent: true }).then(res=> console.log("file deleted ayhoo"));
+
+
+     })
+
+
+
         
         }; 
       }
@@ -277,6 +336,7 @@ export default function CreateChallenge() {
         aspect: [16, 9],
         quality: 1,
       });
+
       setVideoUri(result.assets[0].uri)
 
     } catch (error) {
@@ -285,111 +345,164 @@ export default function CreateChallenge() {
 
   }    
 
-  
+
+
+  useEffect(() => {
+    if (isRecording) {
+      intervalId.current = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+    } else {
+      clearInterval(intervalId.current);
+      setTimer(0);
+    }
+    return () => clearInterval(intervalId.current);
+  }, [isRecording]);
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60).toString().padStart(2, '0');
+    const seconds = (time % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  };
+
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // console.log("cleaning up")
+        // if (cameraRef.current) {
+        //   cameraRef.current.pausePreview();
+        // }
+        // if (videoRef.current) {
+        //   videoRef.current.stopAsync().then(() => {
+        //     videoRef.current.unloadAsync();
+        //   });
+        //   cameraRef.current = null;
+        //   videoRef.current =null;
+        // }
+      //  videoUri && deleteVideo(videoUri)
+      };
+    }, [])
+  );
   
   return (
   
            
            <SafeAreaView
-                className="w-full flex-1 h-[100vh] bg-primary">           
+                className="flex-1 bg-primary">           
                 {videoUri ? (
-               <View className="flex-1 flex-column  justify-start  items-center ">
+               <View className=" min-w-full min-h-full flex-column bg-black justify-start  items-center ">
                  <Video
                    ref={videoRef}
-                   className={play ? "opacity-100":"opacity-10"}
+                   className={ play ? "opacity-100":"opacity-10 bg-black" }
                    style={{minWidth:'100%',minHeight:'100%',position:'relative'}}
-                   source={{uri:videoUri}}
+                   source={{uri: play ? videoUri : "https://www.istockphoto.com/video/awards-golden-stage-3d-animation-gm1489425945-514339698"}}
                    shouldPlay={play}
                    isMuted={false}
                    useNativeControls={false}
                    isLooping
                    resizeMode='cover'
+            
                    />
+
+
 
                   {!play && (
                       <>
-                      <View className="min-w-full h-[7vh] absolute top-0  flex-row   justify-start  items-end ">
-                                    <TouchableOpacity
-                                          onPress={() => router.back()}
-                                          className="w-[10%] h-[95%]  flex-col justify-center  items-center">
-                                          <Image
-                                          className="w-10 h-10 bg-white "
-                                          source={icons.x} />
-                                    </TouchableOpacity>
+
+                    <View className="min-w-full min-h-full absolute top-0 bg-black flex-col  justify-start gap-2 items-center  ">
+                        <View className="min-w-full h-[7vh]   flex-row   justify-start  items-end ">
+                                        <TouchableOpacity
+                                              onPress={() => router.back()}
+                                              className="w-[10%] h-[95%]  flex-col justify-center  items-center">
+                                              <Image
+                                              className="w-10 h-10 bg-white "
+                                              source={icons.x} />
+                                        </TouchableOpacity>
+                                        <View 
+                                            className="w-[90%]  min-h-[95%] rounded-md bg-s  flex-row justify-evenly  items-end  ">
+                                              <Text className="text-white text-xl  font-bold ">
+                                                  New Challenge
+                                              </Text>
+                                              <Text className="text-white text-xl  font-bold ">
+                                                  {selectedType}
+                                              </Text>
+                                              <Text className="text-secondary-200 text-xl  font-bold ">
+                                                  {selectedPrivacy}
+                                              </Text>
+                                      </View>          
+                          </View>
+
+                          <View className="min-w-full h-[4vh]   flex-row    ">
+                              <SwingingTitle color="white" fontSize={15} text={description} />
+                          </View>
+
+                          {selectedPrivacy == "Private" && (
+                              <View 
+                                className=" w-[70%]     bg-grayhg-400  
+                                rounded-lg  min-h-[100px] max-h-[180px] flex-col justify-start items-center"
+                                  >
+                                <FlatList 
+                                nestedScrollEnabled={true}
+                                scrollEnabled={true}
+                                pagingEnabled={false}
+                                data={selectedFriends}
+                                keyExtractor ={item => item.sender_id}
+                                renderItem={({item,index})=> {
+                                  return (
                                     <View 
-                                        className="w-[90%]  min-h-[95%] rounded-md bg-s  flex-row justify-evenly  items-end  ">
-                                          <Text className="text-white text-xl  font-bold ">
-                                              New Challenge
-                                          </Text>
-                                          <Text className="text-white text-xl  font-bold ">
-                                              {selectedType}
-                                          </Text>
-                                          <Text className="text-secondary-200 text-xl  font-bold ">
-                                              {selectedPrivacy}
-                                          </Text>
-                                  </View>          
-                      </View>
-
-                      <View className="min-w-full h-[7vh] absolute top-40  flex-row    ">
-                          <SwingingTitle color="white" fontSize={18} text={description} />
-                      </View>
-                      <View className="w-full h-[7vh] absolute bottom-96 flex-row   justify-center items-center    ">
-                             <Text className="text-blue-200 text-xl  font-black ">
-                                   Who can Challenge you
-                             </Text>
-                     
-                      </View>
-
-                      <View 
-                          className=" w-[70%] absolute bottom-48 px-2 py-2   bg-gray-400  
-                          rounded-lg  min-h-[150px] max-h-[320px]"
-                             >
-                            <FlatList 
-                            nestedScrollEnabled={true}
-                            scrollEnabled={true}
-                            pagingEnabled={false}
-                            data={selectedFriends}
-                            keyExtractor ={item => item.sender_id}
-                            renderItem={({item,index})=> {
-                              return (
-                                <View 
-                                   key={index}
-                                   className="px-2 py-2 mt-1 mb-1 w-[100%] h-[40px] bg-white rounded-lg flex-row justify-start gap-7 items-center" >
-                                    <Image 
-                                    className="w-[35px] h-[35px] rounded-full"
-                                    source={{uri:item.profile_img}}
-                                    resizeMethod='contain'
-                                    />
-                                    <View className=" justify-center gap-0 items-start min-h-[40px] flex-col ">
-                                            <Text
-                                             style={{fontSize:7}}
-                                             className="font-black text-xs text-black">
-                                                {item.name}
-                                            </Text>
-                                            <Text
-                                               style={{fontSize:8}}
-                                               className=" text-xs text-blue-600 font-bold">
-                                                {getInition(item.name)}Challenger
-                                            </Text>
+                                        key={index}
+                                        className="px-2  mb-1 w-[100%] h-[30px] bg-blue-200 rounded-lg flex-row justify-start gap-7 items-center" >
+                                        <Image 
+                                        className="w-[25px] h-[25px] rounded-full"
+                                        source={{uri:item.profile_img}}
+                                        resizeMethod='contain'
+                                        />
+                                        <View className=" justify-center gap-0 items-start min-h-[30px] flex-col ">
+                                                <Text
+                                                  style={{fontSize:7}}
+                                                  className="font-black text-xs text-black">
+                                                    {item.name}
+                                                </Text>
+                                                <Text
+                                                    style={{fontSize:8}}
+                                                    className=" text-xs text-blue-600 font-bold">
+                                                    {getInition(item.name)}Challenger
+                                                </Text>
+                                        </View>
+                                        <View className=" justify-center ml-auto items-end min-h-[25px] flex-row ">
+                                                <Text
+                                                    style={{fontSize:9}}
+                                                    className=" text-red-500 text-xs font-black">
+                                                            Friend
+                                                </Text>
+                                        </View>
+                                        
+                                        
                                     </View>
-                                    <View className=" justify-center ml-auto items-end min-h-[25px] flex-row ">
-                                            <Text
-                                                style={{fontSize:11}}
-                                                className=" text-red-500 font-black">
-                                                        Friend
-                                            </Text>
-                                    </View>
-                                    
-                                   
-                                </View>
-                      
-                                )
-                              }}
-                            
-                              />
-                            </View> 
+                          
+                                    )
+                                  }}
+                                  ListHeaderComponent={ () =>{
+                                    return (
+                                      <View 
+                                       className="w-[100%] h-[30px]  rounded-lg flex-row justify-center gap-7 items-center" >
+                                          <Text 
+                                          className="text-white text-sm font-black">
+                                              Invited Friends
+                                          </Text>
+                                      </View>
+                                    )
+                                  }
 
-                      
+                                  }
+                                
+                                  />
+
+                            </View>
+                            )} 
+                  
+                       </View>
                       </>
                   )}
 
@@ -407,7 +520,7 @@ export default function CreateChallenge() {
 
                      <TouchableOpacity
                           className="absolute bottom-2 -right-0 flex-col justify-center gap-2 items-center h-14 w-[20%] "
-                          onPress={goBack}
+                          // onPress={goBack}
                             >
                           <Image      
                           className="w-10 h-10 "
@@ -443,15 +556,21 @@ export default function CreateChallenge() {
                             
               </View>
                 ):
+
                 (
-            <View className="flex-1   justify-center  items-center ">       
-             <CameraView ref={cameraRef} videoQuality="720p"
-                mode='video'
-                facing={facing}
-                style={{width:'100%',height:'100%'}}
-                // className="flex-1 w-full bg-primary"    
+           <KeyboardAvoidingView
+                className = "w-full h-full"
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>          
+             <CameraView ref={cameraRef} videoQuality="720p"  
+                mode='video'    
+                facing={facing}    
+                style={{minWidth:'100%',minHeight:'100%'}}
+        
                 >
-                  <View className="min-w-full h-[90%] py- flex-1 flex-col justify-start gap-3 items-center ">
+                 
+                  <View className={!isRecording ?"w-full  bg-black h-[100%] flex-col justify-between  items-center ":
+                                                "w-full   h-[100%] flex-col justify-between  items-center "
+                  }>
 
                               
     
@@ -460,7 +579,7 @@ export default function CreateChallenge() {
                           <>
 
 
-                          <View className="min-w-full  rounded-md  flex-row items-center justify-between h-[5vh]"
+                          <View className="min-w-full  rounded-md opacity-100  flex-row items-center justify-between h-[5vh]"
                                     >
                                         <TouchableOpacity
                                               onPress={() => router.back()}
@@ -475,51 +594,80 @@ export default function CreateChallenge() {
                                             New Challenge
                                             </Text>
                                         </View> 
-                         </View>
+                         </View>  
 
-                         <View className="flex-row w-full border-blue-300 justify-center items-center  opacity gap-5  h-[5vh]">
-                            <TextInput
-                                className="bg-blue-500"
-                                style={{ minHeight: 40,width:'95%', borderColor: 'transparent',fontWeight:'700', borderWidth: 2,
-                                  color:'white',textAlign:'center',fontSize:12,borderRadius:5
-                                }}   
-                                onChangeText={text => setDescription(text)}
-                                value={description}
-                                placeholder={currentPlaceholder}
-                                onFocus={()=>{setCurrentPlaceholder("")}}
-                                onBlur={()=>{if(description === "" ) setCurrentPlaceholder("Add a description to your challenge")}}
-                                placeholderTextColor='white'
-                                keyboardType ="email-address"
-                              />
-                        </View>   
+                        
 
-                        <View className="">
-                                <Text
-                                  style={{fontSize:12}}
-                                  className="text-white font-bold text-xl">
-                                    Select Privacy 
-                                </Text>                             
-                          </View>
-                        <View className="flex-row w-full mt-0 justify-center items-center   opacity-100 gap-5  h-[4vh]">
-                          <ChallengeTypeSelector data={challengeType} bgColor={bgTypeColor} setSelected={setSelectedType} />
-                          <ChallengeTypeSelector data={privacyData} bgColor={bgPrivacyColor} setSelected={setSelectedPrivacy} /> 
-                        </View>  
+                    
+                        
+                        
 
+                        <View className="flex-row w-full mt-0 justify-evenly items-start   opacity-100  h-[7vh]">
+                            <View className="flex-col w-[25%] mt-0 justify-center items-center  opacity-100 gap-1  min-h-[100%]">
+                                    <View className="w-[100%] h-[3vh] ">
+                                        <Text
+                                          style={{fontSize:9}}
+                                          className="text-gray-300 font-black text-xl">
+                                            Select Privacy
+                                        </Text>                             
+                                  </View>
+                                  <View className="flex-row w-[100%] mt-0 justify-start items-start   opacity-100   h-[4vh]">
+                                    <ChallengeTypeSelector data={privacyData} bgColor={bgPrivacyColor} selected={selectedPrivacy} setSelected={setSelectedPrivacy} title="Select Type" /> 
+                                  </View>  
+                            </View>
+                            <View className="flex-col w-[43%] mt-0 justify-center items-center  border-2  opacity-100  min-h-[100%]">
+                                <View  className=" w-[100%] min-h-[100%] px-2 py-2   bg-white flex-col justify-center items-start
+                                  rounded-lg   max-h-[320px]">
+                                    <Text
+                                      className="text-black font-bold text-"
+                                      style={{fontSize:9}}>
+                                      Note * : {selectedPrivacy == "Private" ? "Private Challenge":"Public Challenge"} 
+                                      
+                                    </Text>      
+                                    <Text className="text-primary font-bold text-xs"
+                                                    style={{fontSize:8}}>
+                                          {selectedPrivacy == "Private" ? 
+                                          " Only Invited friends can Participate in your challenge ":
+                                           "Everyone can Participate in your challenge Public is Selected"} 
+                                           
+                                      </Text>                       
+                               </View>
+                              
+                            </View>
+                            <View className="flex-col w-[25%] mt-0 justify-center items-center  opacity-100 gap-1  h-[100%]">
+                                  <View className="w-[100%] h-[3vh] ">
+                                        <Text
+                                          style={{fontSize:9}}
+                                          className="text-gray-300 font-black text-xl">
+                                            Select Type
+                                        </Text>                             
+                                  </View>
+                                <View className="flex-row w-[100%] mt-0 justify-center items-start   opacity-100   h-[4vh]">
+                                  <ChallengeTypeSelector data={challengeType} bgColor={bgTypeColor} selected={selectedType} setSelected={setSelectedType} title="Select Type" />
+                                </View>  
+                             </View>
+                           
+                        </View>
+                      
+                       
 
 
                         {selectedPrivacy == "Private" && 
                         (
                          <>
-                          <View className="">
+                    
+
+                       <View className="flex-row w-full  justify-evenly items-end   opacity-100  h-[5vh]">
+                          <View className="flex-row w-[25%] mt-0 justify-start items-end text-end   h-[60%]">
                                 <Text
-                                  style={{fontSize:12}}
-                                  className="text-white font-bold text-xl">
+                                  style={{fontSize:10}}
+                                  className="text-gray-400 font-black text-xl">
                                     Invite Friends 
                                 </Text>                             
                           </View>
 
                           <View 
-                           className="w-[80%] h-4 flex-row mt-3 justify-start gap-2 items-end">
+                           className="w-[42%] h-[100%] flex-row mt-3 justify-end gap-2 items-end">
                                 <Text
                                   className="text-white font-black text-xs">
                                     Select All 
@@ -528,19 +676,29 @@ export default function CreateChallenge() {
                                       onPress={()=> {
                                         setSelectAll(prev => !prev)                
                                       }}
-                                      className="w-[25px] h-[25px] border-4  justify-center gap-2 items-center bg-white border-yellow-500">
+                                      className="w-[20px] h-[20px] border-2 rounded-lg justify-center gap-2 items-center bg-white border-yellow-500">
                                       {selectAll &&
                                      <Image
-                                       className="w-6 h-4"
+                                       className="w-3 h-3"
                                       source={icons.check} />
                                       } 
                                         
                                     </TouchableOpacity>
                           </View>
 
+                          <View className="flex-row w-[25%] mt-0 justify-start items-end text-end   h-[60%]">
+                                            
+                          </View>
+                       </View>
+
+
+                         
+                      <View
+                       className=" w-[96%]     
+                       rounded-lg  min-h-[50px] max-h-[120px]">
                           <View 
-                             className=" w-[80%]  px-2 py-2   bg-blue-200  
-                             rounded-lg  min-h-[50px] max-h-[220px]"
+                             className=" w-[72%]  py-2  px-2  bg-blue-200  
+                             rounded-lg  min-h-[50px] max-h-[120px]"
                              >
                             <FlatList 
                             scrollEnabled={true}
@@ -552,15 +710,15 @@ export default function CreateChallenge() {
                                 <View 
                                    key={index}
                                    style={{ backgroundColor :selectedFriends.length > 0 && selectedFriends.find(friend => friend.sender_id === item.sender_id)?"lightgreen":"white"}}
-                                   className="px-2 py-2 mt-1 mb-1 w-[100%] h-[40px] bg-white rounded-lg flex-row justify-start gap-4 items-center" >
+                                   className="px-2 py-3 mt-1 mb-1 w-[100%] h-[30px] bg-white rounded-md flex-row justify-start gap-3 items-center" >
                                     <Image 
-                                    className="w-[35px] h-[35px] rounded-full"
+                                    className="w-[27px] h-[27px] rounded-full"
                                     source={{uri:item.profile_img}}
                                     resizeMethod='contain'
                                     />
-                                    <View className=" justify-center gap-0 items-start min-h-[40px] flex-col ">
+                                    <View className=" justify-center w-[40%] gap-0 items-start h-[30px] flex-col ">
                                             <Text
-                                             style={{fontSize:9}}
+                                             style={{fontSize:8}}
                                              className="font-black text-black">
                                                 {item.name}
                                             </Text>
@@ -570,9 +728,9 @@ export default function CreateChallenge() {
                                                 {getInition(item.name)}Challenger
                                             </Text>
                                     </View>
-                                    <View className=" justify-center  items-end min-h-[25px] flex-row ">
+                                    <View className=" justify-center ml-auto  items-end min-h-[25px] flex-row ">
                                             <Text
-                                                style={{fontSize:11}}
+                                                style={{fontSize:9}}
                                                 className=" text-red-500 font-black">
                                                         Friend
                                             </Text>
@@ -585,11 +743,11 @@ export default function CreateChallenge() {
                                         f.push(item)   
                                         setSelectedFriends(f)
                                       }}
-                                      className="w-[25px] h-[25px] border-2 ml-auto justify-center items-center border-gray-400">
+                                      className="w-[20px] h-[20px] border-2 ml-auto border-orange-300 justify-center items-center rounded-md ">
                                       {selectedFriends.length > 0 && selectedFriends.find(friend => friend.sender_id === item.sender_id) &&
                              
                                      <Image
-                                       className="w-4 h-4"
+                                       className="w-3 h-3"
                                       source={icons.check} />
       
                                       } 
@@ -604,65 +762,145 @@ export default function CreateChallenge() {
                           
                             />
                           </View> 
+                        </View>   
+
+                        
+                        {/* <View className="flex-row w-full  justify-evenly items-center rounded-xl  opacity-100 gap-  h-[5vh]">  
+                         <TextInput
+                                 className="border-2 border-gray-100  opacity-100"
+                                 style={{ minHeight: "100%",width:'70%', borderColor: 'gray',fontWeight:'700', borderWidth: 2,
+                                   color:'white',textAlign:'center',fontSize:11,borderRadius:5
+                                 }}   
+                                 onChangeText={text => setDescription(text)}
+                                 value={description}
+                                 placeholder={currentPlaceholder}
+                                 onFocus={()=>{setCurrentPlaceholder("")}}
+                                 onBlur={()=>{if(description === "" ) setCurrentPlaceholder("Add a description ")}}
+                                 placeholderTextColor='white'
+                                 keyboardType ="email-address"
+                           />
+                         <View className="flex-row w-[25%] mt-0 justify-center items-start   opacity-100   h-[5vh]">
+                             <ChallengeTypeSelector data={challengeType} bgColor={bgTypeColor} selected={selectedType} setSelected={setSelectedType} title="Select Type" />
+                         </View>  
+                       </View>    */}
 
                    {selectedPrivacy == "Private" &&  (
                     <>
-                          <View  className=" w-[80%]  px-2 py-2   bg-white flex-col justify-center items-start
-                               rounded-lg  min-h-[40px] max-h-[320px]">
-                                <Text
-                                  className="text-black font-bold text-"
-                                  style={{fontSize:9}}>
-                                  Note * : Private Challenge
+
+                      
+
+
+                        <View className="flex-row w-full mt-0 justify-evenly items-start   opacity-100  h-[7vh]">
+                            <View className="flex-col w-[25%] mt-0 justify-end items-center  opacity-100 gap-1  h-[100%]">
+                                    <View className="w-[100%] h-[3vh] ">
+                                        <Text
+                                          style={{fontSize:9}}
+                                          className="text-gray-300 font-black text-xl">
+                                            Select Audience
+                                        </Text>                             
+                                  </View>
+                                  <View className="flex-row w-[100%] mt-0 justify-start items-start   opacity-100   h-[4vh]">
+                                     <ChallengeTypeSelector data={Audience} bgColor={bgModeColor} selected={selectedAudience} setSelected={setSelectedAudience} title="Select Mode"  />
+                                  </View>  
+                            </View>
+                            <View className="flex-col w-[43%] mt-0 justify-center items-center  border-2  opacity-100 gap-1  h-[100%]">
+                                <View  className=" w-[100%] h-[100%] px-2 py-2   bg-white flex-col justify-center items-start
+                                  rounded-lg  min-h-[40px] max-h-[320px]">
+                                    <Text
+                                      className="text-gray-500 font-bold text-"
+                                      style={{fontSize:9}}>
+                                      Note * : {selectedAudience} {''} Mode
+                                      
+                                    </Text>      
+                                    <Text className="text-primary font-bold text-xs"
+                                                    style={{fontSize:8}}>
+                                          {selectedAudience === "Open"?"Everyone can see , like and vote  your challenge"
+                                          :selectedAudience === "Restricted"?"Only your friends can see your challenge "
+                                          :"only Invited friends to you challenge can see, like and vote in  your challenge"}  
+                                      </Text>                       
+                               </View>
+                            </View>
+
+                            <View className="flex-col w-[25%] mt-0 justify-center items-center  opacity-100 gap-1  h-[100%]">
                                    
-                                </Text>      
-                                <Text className="text-primary font-pbold text-xs"
-                                                 style={{fontSize:8}}>
-                                        Only Selected friends can Participate in your challenge
-                                        when Private is Selected
-                                   </Text>                       
-                          </View>
-
-                          <View  className=" w-[80%] mt-auto  flex-col justify-start gap-4 items-center
-                            rounded-lg  min-h-[50px] max-h-[320px]">
-                            <Text
-                              className="text-white font-bold  "
-                              style={{fontSize:12}}>
-                              Select Audience
-                            </Text>  
-                            <ChallengeTypeSelector data={Audience} bgColor={bgTypeColor} setSelected={setSelectedAudience} />
-                          </View>
-
-                          <View  className=" w-[80%]  px-2 py-2   bg-white flex-col justify-center items-start
-                               rounded-lg  min-h-[50px] max-h-[320px]">
-                                <Text
-                                  className="text-black font-bold text-sm"
-                                  style={{fontSize:10}}>
-                                  Note * : {selectedAudience}
-                                </Text>   
-                                <Text className="text-primary font-pmedium text-xs">
-                                    {selectedAudience === "Open"?"Everyone can see , like and vote in you challenge"
-                                    :selectedAudience === "Restricted"?"Only your friends can see your challeng "
-                                    :"only Invited friends to you challenge can see your challenge"}                           
-                                  </Text>                          
-                          </View>
+                            </View>
+                        </View>
+                      
                     </>
                      )}
+
+
+                
+
 
                         
                        </>
                       ) }
 
-                        
-                      
+               
+
+                              
                         </>
 
 
                           )}
                   
-                   
-                 
-                   
-                    <View className="flex-row min-w-full mt-auto  justify-between items-end  opacity-85  h-[10vh]">
+                    {isRecording && (
+                      <Text className="text-white text-xl">{formatTime(timer)}</Text>
+                    )} 
+
+                    {selectedPrivacy == "Public" &&  (
+                        <View className=" w-[95%]  justify-start items-center   opacity-100 gap-1  min-h-[30vh]">
+                           
+                        </View>
+                    )}
+
+                    <View className=" w-[95%]  justify-start items-center   opacity-100 gap-1  min-h-[4vh]">
+                           
+                    </View>
+                    {!isRecording && (
+                      <>
+                       <View className="flex-row w-full  justify-evenly items-center rounded-xl  opacity-100 gap-  h-[5vh]">  
+                          <TextInput
+                                  className="border-2 border-gray-100  opacity-100"
+                                  style={{ minHeight: "100%",width:'70%', borderColor: 'gray',fontWeight:'700', borderWidth: 2,
+                                    color:'white',textAlign:'center',fontSize:11,borderRadius:5
+                                  }}   
+                                  onChangeText={text => setDescription(text)}
+                                  value={description}
+                                  placeholder={currentPlaceholder}
+                                  onFocus={()=>{setCurrentPlaceholder("")}}
+                                  onBlur={()=>{if(description === "" ) setCurrentPlaceholder("Add a description ")}}
+                                  placeholderTextColor='white'
+                                  keyboardType ="email-address"
+                            />
+                      </View>   
+                     
+                      <View  className=" w-[100%] py-2  flex-row justify-center items-center   bg-gray-700 rounded-lg opacity-100  max-h-[15vh]">
+                          <ScrollView  className=" max-w-[95%] max-h-[95%]   rounded-lg opacity-100  ">
+                                          <Text
+                                            className="text-gray-300 font-bold "
+                                            style={{fontSize:9}}>
+                                            Note * : agrrements
+                                            
+                                          </Text>      
+                                          <Text className="text-white font-black "
+                                                          style={{fontSize:9}}>
+                                                the video you are posting must be created by you, Do not upload videos from other sources or use copyrighted material.
+                                                Keep the content fun, lighthearted, and respectful. Avoid any graphic, offensive, or inappropriate material. Your video
+                                                should contribute to a positive and enjoyable experience for everyone.
+                                                Videos containing violent, explicit, or harmful content are not allowed. This includes graphic imagery, hate speech,
+                                                or anything that could be considered offensive or inappropriate.
+                                          </Text>    
+                          </ScrollView>
+                      </View>  
+                     </>
+                    )} 
+
+
+                  
+      
+                    <View className="flex-row min-w-full  bg-gray-600  justify-between items-end  opacity-85  h-[10vh]">
                     
                       <TouchableOpacity
                           className="flex-col justify-center gap-2 items-center h-full w-[20%] "
@@ -703,13 +941,19 @@ export default function CreateChallenge() {
                           <Text className="text-white text-xs font-bold">Flip</Text> 
                       </TouchableOpacity>
                     </View>
+
                  </View>
+
+
               </CameraView>
-              </View>
+        
+            </KeyboardAvoidingView>  
                
               
                 )
               }
+
+
 
                {isModalVisible && (
                       <CustomAlert text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
@@ -720,6 +964,7 @@ export default function CreateChallenge() {
                       <LoadModel visible={visible} setVisible={setVisible}
                      />
                )}
+
 
               </SafeAreaView>
             

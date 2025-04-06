@@ -91,7 +91,7 @@ export default function Player({participant,index,dimension,isVisible,challenge,
   
   const player = useVideoPlayer
   (
-    participant.video_urll
+    participant.video_url
     , (player) => {
     player.loop = false;
     player.volume = 0.6
@@ -131,7 +131,6 @@ const handleVotes = async(e)=> {
     }, 200);
     router.back()
   }
-  
 }, [isExpired])
 
 
@@ -145,8 +144,6 @@ useEffect(() => {
          : setIsVoted(false)  
     }  
   }, [likesVotesData])
-
-
 
   useEffect(() => {
     const statusSubscription = player?.addListener(

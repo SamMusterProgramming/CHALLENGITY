@@ -1,10 +1,10 @@
-import { View, Text, ImageBackground, Image, TouchableOpacity, Platform, Alert, KeyboardAvoidingView } from 'react-native'
+import { View, Text, ImageBackground, Image, TouchableOpacity, Platform, Alert, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { icons, images } from '../../constants'
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { acceptFriendRequest, addFollowing, friendRequest, getCommentsByPost, getFollowings, getUserFriendsData, liked, loadLikeVoteData, removeFriendRequest, unFollowings, unfriendRequest, voted } from '../../apiCalls';
+import { acceptFriendRequest, addFollowing, friendRequest, getCommentsByPost, getFollowings, getUserFriendsData, liked, loadLikeVoteData, removeFriendRequest, unFollowings, unfriendRequest, updateThumbNail, voted } from '../../apiCalls';
 // import PostFooter from './PostFooter';
 import { router, useFocusEffect } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
@@ -15,6 +15,9 @@ import PostFooter from '../footers/PostFooter';
 import ProgresssBarVideo from '../custom/ProgresssBarVideo';
 import CustomAlert from '../custom/CustomAlert';
 import DisplayChallengers from './DisplayChallengers';
+import { generateThumbnail, getVideo } from '../../videoFiles';
+import { uploadThumbnail } from '../../firebase';
+
 // import { Video ,ResizeMode } from 'expo-video';
 // import Video from 'expo-av';
 
@@ -22,7 +25,7 @@ import DisplayChallengers from './DisplayChallengers';
 
 
 
-export default function Post({participant,challenge,index,isVisible,setFinishPlaying}) {
+export default function Post({participant,challenge,index,isVisible,setViewableItems,videoPath,setFinishPlaying}) {
    
     const {user,setUser,isViewed ,setIsViewed,followings,setFollowings
       ,userFriendData,setUserFriendData
@@ -37,7 +40,6 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
     const [postComments,setPostComments] =useState(null)
 
     const [commentData, setCommentData] = useState(null);
-
 
     // const [followings,setFollowings] = useState ([])
     const [isFollowing , setIsFollowing] = useState(false)
@@ -58,10 +60,23 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
     const [action, setAction] = useState("");
     const [text,setText] = useState()
 
-    
-
-
+    const [videoUri ,setVideoUri] = useState(null)
+    const [thumbNailURL,setThumbNailURL] = useState(participant.thumbNail_URL || null)
     const videoRef = useRef(null);
+
+    const player =  useVideoPlayer
+    (
+      // participant.video_urll
+      videoUri
+      , (player) => {
+      player.loop = false;
+      player.volume = 0.5
+      player.play() ;
+      player.timeUpdateEventInterval = 0.1;
+    });
+    
+    const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
+
     
     useEffect(() => {
       challenge.participants.map(participant =>{
@@ -72,31 +87,60 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
       participant.user_id == user._id ?  setOwnPost(true) : setOwnPost(false)
       }, [])
       
-    //*************************************************************player here function***********************************************
-    const player = useVideoPlayer
-    (
-      participant.video_urll
-    
-      , (player) => {
-      player.loop = false;
-      player.volume = 0.1
-      player.play() ;
-      player.timeUpdateEventInterval = 0.1;
-    });
+    const [chall , setChall] = useState(null)  
+    useEffect(() => {
+        const loadVideo = async () => {
+              await getVideo(participant.video_url).then(path =>{
+              setTimeout(() => {
+                isVisible && !videoUri && setVideoUri(path)
+              }, 1000);   
+              });
 
-    const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
+              // if(!thumbNailURL && isVisible){
+              //   await generateThumbnail(participant.video_url).then(url => {
+              //       console.log(url)
+              //       uploadThumbnail(url.uri , user.email).then(downloadedURL => { 
+              //       updateThumbNail(challenge._id,{user_id:participant.user_id,thumbNail_URL:downloadedURL},setThumbNailURL)
+              //     })
+              //   })   
+        
+              //  }
+        };
+       !videoUri && loadVideo();
+
+       
+    }, [participant.video_url , isVisible ,isPlaying]);
+
+
+    useEffect(() => { 
+      //  if(videoUri && player) player.loadAsync({ uri: videoUri });
+    }, [videoUri,player])
+    
+    //*************************************************************player here function***********************************************
+ 
 
     useEffect(() => {
-      if(isVisible){
+      if(isVisible && videoUri){
          player.play()
          setIsPlaying(true)
-        } else {
-              
+        } else {        
          player.pause()
-         setIsPlaying(false)
-         
-        }
-    }, [isVisible])
+         setIsPlaying(false)    
+        } 
+      
+    }, [isVisible,videoUri])
+
+ 
+    useEffect(() => {
+      if(isPlaying){
+         isVisible && player.play()
+
+        } else {        
+         player.pause()
+        } 
+    }, [isPlaying])
+
+
 
     const toggleVideoPlaying = () =>{
       if(isPlaying){
@@ -108,30 +152,36 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
       }
       }
 
-      useEffect(() => {
-        // console.log(isViewed)
-        // if(isViwed) setIsViewed(!isViwed)
-      }, []);
-    
       useFocusEffect(
         useCallback(() => {
-          return () => {
+          return async() => {
             if (videoRef.current) {
-              player.pause();
-              // setDisplayComments(false)
+               setIsPlaying(false)
             }
           };
         }, [videoRef])
       );
+    
+     
+      // useEffect(
+      //   () => {
+      //     return async() => {
+      //       console.log("clean up here")
+      //       await player.unloadAsync();
+      //     }
+      //  }, [videoUri] )
+      
+
+      
 
       useEffect(() => {
         const statusSubscription = player?.addListener(
           'playingChange',
-          ({isPlaying}) => {
-            const finishedThreshold = player.duration;
+          ({isPlaying }) => {
+            const finishedThreshold = player.duration-1;
             if (
               player.currentTime >= finishedThreshold &&
-              player.currentTime > 0 
+              player.currentTime > 0 && videoUri
             ) {
               player.currentTime = 0
               setDisplayComments(false)
@@ -140,11 +190,12 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
             }
           },
         );
+
         return () => {
           setFinishPlaying(false)
           statusSubscription.remove();
         };
-      }, []);
+      }, [videoUri]);
 
   //**************************************likes and votes data ************************************** */
     const ids =[ user._id,
@@ -292,7 +343,6 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
   };
 
   const confirmFriendRequest = () => {
-
     setIsModalVisible(true)
     setAction("FR")
     setText("Are you sure you want to send friend request")
@@ -447,30 +497,46 @@ export default function Post({participant,challenge,index,isVisible,setFinishPla
                 onPressOut={toggleVideoPlaying}
                 activeOpacity={1}
                 className="flex-row items-center bg-primary  justify-center min-w-[100%] min-h-[85%] "
-              >          
+              >       
+                    {videoUri ?
+                     (
                       <VideoView 
-                        ref={videoRef}
-                        style={{  width:'100%' ,height:'100%',opacity:20}}
-                        player={player}
-                        contentFit='cover'
-                        nativeControls ={false}
-                      />
-                      {/* {isPlaying && ( */}
-                            {/* <View className="absolute bottom-2"> */}
-                                <ProgresssBarVideo player={player} visible={!isPlaying} bottom={8} />
-                              {/* </View> */}
-                      {/* )} */}
+                      ref={videoRef}
+                      style={{ width:'100%' ,height:'100%',opacity:20}}
+                      player={player}
+                      contentFit='cover'
+                      nativeControls ={false}
+                    />
+                     ): 
+                      (
+                       <Image 
+                       style={{ width:'100%' ,height:'100%',opacity:20}}
+                       source={{uri:thumbNailURL}}
+                       resizeMethod='cover'
+                       /> 
+                      )
+                    }
+                      
+                   
+
+
+                       {videoUri && ( <ProgresssBarVideo player={player} visible={!isPlaying} bottom={8} />)} 
+                            
                   
                       
                       
-                      <TouchableOpacity 
+                    <TouchableOpacity 
                         hitSlop={Platform.OS === "android" &&{ top: 250, bottom: 250, left: 400, right: 400 }}
                         onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause(), setIsPlaying(false) ) } }
                         className="flex-col absolute  justify-center items-center">
+                          {isVisible && !videoUri &&  (
+                            <ActivityIndicator size="large" color="#0000ff" />
+                          )}
                             <Image 
-                            className={isPlaying ? "w-14 h-14 opacity-20":"w-14 h-14 opacity-100" }
-                            source={!isPlaying && icons.play}/>
-                      </TouchableOpacity>
+                            className={isPlaying && videoUri ? "w-14 h-14 opacity-20":"w-14 h-14 opacity-100" }
+                            source={!isPlaying  && videoUri && icons.play}/>
+                   </TouchableOpacity>
+
                     { ! isPlaying && (index === 0) && (
                       <View 
                       className="absolute top-3 flex-row w-[150ox]  justify-center gap-2 left-3 items-center">

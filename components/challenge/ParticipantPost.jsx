@@ -2,7 +2,8 @@ import { View, Text, FlatList, ImageBackground, KeyboardAvoidingView, Platform }
 import React, { useEffect, useRef, useState } from 'react'
 import Post from './Post'
 import SwiperFlatList from 'react-native-swiper-flatlist'
-import { InView } from 'react-native-intersection-observer'
+import { getVideo } from '../../videoFiles';
+
 
 
 
@@ -29,11 +30,11 @@ export default function ParticipantPost({participants,challenge,isVisibleVertica
 
     const renderItem = ({ item, index }) => {
       const isVisible = viewableItems.some(viewableItem => viewableItem.index === index);
-      // setFinishPlaying(false)
-      return <Post isVisible={isVisible && isVisibleVertical} setFinishPlaying={setFinishPlaying} key={item._id} index={index} participant={item} challenge={challenge} />
+      return <Post isVisible={isVisible && isVisibleVertical} setViewableItems={setViewableItems} setFinishPlaying={setFinishPlaying} key={item._id} index={index} participant={item} challenge={challenge} />
     };
+
     useEffect(() => {
-      if(finishPlaying){
+      if(finishPlaying){                
         if (swiperRef.current) {
           const currentIndex = swiperRef.current.getCurrentIndex();
           swiperRef.current.scrollToIndex({ index: ((currentIndex + 1) % participants.length) });

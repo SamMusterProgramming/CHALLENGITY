@@ -1,0 +1,43 @@
+{
+  "cli": {
+    "version": ">= 15.0.15",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SERVER_URL": "https://capstone-wgt-server.onrender.com",
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyB12LtMOPw2OPeiUS3DB4wtlpQKtTQ-FU8",
+        "EXPO_PUBLIC_messagingSenderId": "373653845536",
+        "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45"
+      },
+      "ios": {
+        "simulator": true
+      },
+      "channel": "development"
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SERVER_URL": "https://capstone-wgt-server.onrender.com",
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyB12LtMOPw2OPeiUS3DB4wtlpQKtTQ-FU8",
+        "EXPO_PUBLIC_messagingSenderId": "373653845536",
+        "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45"
+      },
+      "ios": {
+        "simulator": true
+      },
+      "android": {
+        "resourceClass": "medium"
+      },
+    "channel": "preview"
+    },
+
+
+    "production": {
+      "channel": "production"
+    }
+  }
+}

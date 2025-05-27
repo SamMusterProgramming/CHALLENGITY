@@ -28,7 +28,7 @@ export default function ChallengeDisplayer() {
     const [finishPlaying ,setFinishPlaying] = useState(false)
     const [index,setIndex] = useState(1)
     const [displayData, setDisplayData] = useState([])
-
+    const [currentIndex,setCurrentIndex] = useState(0)
 
 
     useEffect(() => {
@@ -53,6 +53,12 @@ export default function ChallengeDisplayer() {
       };
       useEffect(() =>{
          setFinishPlaying(false)
+        if (challenge) for(let i=0 ; i < challenge.participants.length ; i++) {
+          if( viewableItems.some(viewableItem => viewableItem.index === i)) {
+             setCurrentIndex(i);
+             break;
+          }
+         }
       }, [viewableItems])
 
     const renderItem = ({ item, index }) => {
@@ -70,8 +76,9 @@ export default function ChallengeDisplayer() {
     useEffect(() => {
         if(finishPlaying){
           if (swiperRef.current) {
-            const currentIndex = swiperRef.current.getCurrentIndex();
-            swiperRef.current.scrollToIndex({ index: ((currentIndex + 1) % challenge.participants.length) });
+            // const currentIndex = swiperRef.current?.
+          //  if(currentIndex !== challenge.participants.length)
+             swiperRef.current?.scrollToIndex({ index: ((currentIndex + 1) % challenge.participants.length) });
           }
         }
       }, [finishPlaying])

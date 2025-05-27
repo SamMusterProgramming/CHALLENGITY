@@ -1,6 +1,6 @@
-import { Image, Platform, StyleSheet, Text, View } from 'react-native'
+import { Image, Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React from 'react'
-import { Stack, Tabs } from 'expo-router'
+import { Stack, Tabs, useSegments } from 'expo-router'
 import {icons} from '../../constants'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,6 +11,11 @@ import { useGlobalContext } from '../../context/GlobalProvider'
 
 export default function tabsLayout() {
   const {user} = useGlobalContext()
+  const { width, height } = useWindowDimensions();
+
+  const segments = useSegments();
+  const hideTabBar = segments.length > 1;
+
   const TabIcon =({color,icon,name,focused,dimension}) =>{
     return (
       <View 
@@ -41,22 +46,24 @@ export default function tabsLayout() {
           
         // },
           tabBarStyle: {
-          position:'absolute',
-          marginLeft:"5%",
-          bottom:Platform.OS =="ios" ? 20:2,
-          backgroundColor: 'black',
-          width:'90%',
-          height: 55,
-          borderRadius: 35,
+            // display: hideTabBar ? 'none' : 'none',
+          // marginLeft:"5%",
+          bottom:Platform.OS =="ios" ? 0:0,
+          backgroundColor: '#fcba03',
+          width:'100%',
+          height: width/7,
+          borderRadius: 0,
           alignItems:'start',
           justifyContent:"center",
           display:'flex',
-          elevation: 0,
+          flexWrap:"wrap",
+          elevation: 2,
           shadowOpacity: 10,
           borderTopWidth: 0,
           flexDirection:'row'
         },
         tabBarLabelStyle: {
+          
           fontSize: 1,
           fontWeight: "800",
           },
@@ -71,31 +78,31 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => (
             <View
             className ="rounded-full justify-center items-center "
-            style={{width:size+20 ,height:size+20,marginTop:17 , backgroundColor: focused?"white": "transparent"}}
+            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "#1d1f21"}}
           >
               <Image
                 source={focused ? icons.home : icons.home}
-                style={{ width: size+10, height:size+10, tintColor: "none"}}
+                style={{ width: size+width/30-10, height:size+width/30-10, tintColor: "none"}}
               />
           </View>
           )
         }}
        />
       <Tabs.Screen 
-        name='NewChallenge'
+        name='UserChallenges'
         options={{
           tabBarLabel: '',
           unmountOnBlur: true,
-          title:"New Challenge",
+          title:"User Challenges",
           headerShown:false,
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full justify-center items-center "
-              style={{width:size+20 ,height:size+20,marginTop:17 , backgroundColor: focused?"white": "transparent"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "#1d1f21"}}
             >
                 <Image
                   source={focused ? icons.challenge : icons.challenge}
-                  style={{ width: size+10, height:size+10, tintColor: "none"}}
+                  style={{ width: size+width/30-10, height:size+width/30-10, tintColor: "none"}}
                 />
             </View>
           
@@ -111,11 +118,11 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => (
             <View
             className ="rounded-full justify-center items-center "
-            style={{width:size+20 ,height:size+20,marginTop:17 , backgroundColor: focused?"white": "transparent"}}
+            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "#1d1f21"}}
              >
               <Image
               source={focused ? icons.notification : icons.notification}
-              style={{ width: size+10, height:10+size, tintColor: "none"}}
+              style={{ width: size+width/30-10, height:size+width/30-3-10, tintColor: "none"}}
               />
         </View>
           )
@@ -131,12 +138,33 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full justify-center items-center "
-              style={{width:size+20 ,height:size+20,marginTop:15 , backgroundColor: focused?"white": "transparent"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "#1d1f21"}}
             >
               <Image
               source={{ uri :focused ? user.profile_img: user.profile_img }}
               className ="rounded-full w-15 h-15"
-              style={{ width: size+10, height: size+10, tintColor: "none"}}
+              style={{ width: size+width/30-10, height: size+width/30-10, tintColor: "none"}}
+              />
+            </View>
+          )
+        }}
+       />
+       <Tabs.Screen 
+        name='Settings'
+        options={{
+          tabBarLabel: '',
+          unmountOnBlur: true,
+          title:"settings",
+          headerShown:false,
+          tabBarIcon:({color,focused,size}) => ( 
+            <View
+              className ="rounded-full justify-center items-center "
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "#1d1f21"}}
+            >
+              <Image
+              source={icons.setting}
+              className ="rounded-full w-15 h-15"
+              style={{ width: size+width/30-10, height: size+width/30-10, tintColor: "none"}}
               />
             </View>
           )

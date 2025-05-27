@@ -52,25 +52,26 @@ export default function ParticipantPost({participants,challenge,isVisibleVertica
 
   return (
 
-    
-  <SwiperFlatList
-  ref={swiperRef}
-  // nestedScrollEnabled={true}
-  data={displayData}
-  keyExtractor={(item) => item._id}
-  renderItem={renderItem}
-  onEndReached={loadMoreData}
-  // autoplay
-  // autoplayDelay={5}
-  // autoplayLoop
-  onViewableItemsChanged={onViewableItemsChanged}
-  viewabilityConfig={{
-    itemVisiblePercentThreshold: 70, 
-  }}
-  // viewabilityConfig={{itemVisiblePercentThreshold:70}}
-  // contentInset={{y:170}}
-  horizontal
-  />
+
+      <SwiperFlatList
+      ref={swiperRef}
+      // nestedScrollEnabled={true}
+      data={displayData}
+      keyExtractor={(item) => item._id}
+      renderItem={renderItem}
+      onEndReached={loadMoreData}
+      // autoplay
+      // autoplayDelay={5}
+      // autoplayLoop
+      onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={{
+        itemVisiblePercentThreshold: 70, 
+      }}
+      // viewabilityConfig={{itemVisiblePercentThreshold:70}}
+      // contentInset={{y:170}}
+      horizontal
+      />
+ 
 
   )
 }

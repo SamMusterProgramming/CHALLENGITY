@@ -1,7 +1,10 @@
+import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View,  ActivityIndicator, Text, Button, StyleSheet } from 'react-native';
-import Modal from 'react-native-modal';
+import { View,  ActivityIndicator, Text, Button, StyleSheet, Modal, Platform } from 'react-native';
+// import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as NavigationBar from 'expo-navigation-bar';
+
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -12,17 +15,32 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function LoadModel({visible,setVisible}) {
+
+ const [isLoaded , setIsLoaded] = useState(false)
+
  useEffect(() => {
 //    setTimeout(() => {
 //     visible && setVisible(false)
 //    }, 5000);
  }, [visible])
+
+
+ useEffect(() => {
+  if(Platform.OS == "android"){
+  NavigationBar.setPositionAsync("absolute");
+  NavigationBar.setBackgroundColorAsync("#00000000");
+  NavigationBar.setVisibilityAsync('sticky-immersive');
+  }
+  setIsLoaded(true)
+ }, []);
  
   return (
+    <>
+    {isLoaded && (
     <SafeAreaView
        className=" "  >
 
-      <Modal 
+      < Modal 
        visible={visible} 
        transparent={true}
     //    animationType="fade"
@@ -42,7 +60,10 @@ export default function LoadModel({visible,setVisible}) {
           </View>
         </View>
       </Modal>
+  
      </SafeAreaView>
+              )}
+    </>
   )
 }
 

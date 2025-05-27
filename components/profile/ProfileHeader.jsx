@@ -4,6 +4,7 @@ import { icons } from '../../constants'
 import { acceptFriendRequest, addFollowing, friendRequest, getFollowData, getFollowings, getUserFriendsData, removeFriendRequest, unFollowings, unfriendRequest } from '../../apiCalls'
 import { router } from 'expo-router'
 import { useGlobalContext } from '../../context/GlobalProvider'
+import InfosProfile from './InfosProfile'
 
 export default function ProfileHeader({challenger,friends,follow}) {
 
@@ -197,23 +198,26 @@ export default function ProfileHeader({challenger,friends,follow}) {
 
   return (
     <View className="bg- w-[100vw] flex-col justify-start items-center "> 
-    <View className="bg- w-[100vw] flex-col justify-start items-center h-[150]">
-          <Image 
-          minWidth='100%'
-          height={150}
-          resizeMode='stretch'
-          source={{uri:challenger.cover_img}} 
-          />
-    </View> 
-    <View className="bg- w-[85] absolute mt-32 bg-blue-400 flex-col rounded-full justify-center items-center h-[85]">
-          <Image 
-          minWidth={83}
-          height={83}
-          borderRadius={50}
-          resizeMode='cover'
-          source={{uri:challenger.profile_img}} 
-          />
-    </View>
+        <View className="bg- w-[100vw] flex-col justify-start items-center h-[150]">
+              <Image 
+              minWidth='100%'
+              height={150}
+              resizeMode='stretch'
+              source={{uri:challenger.cover_img}} 
+              />
+        </View> 
+        <View className=" w-[100vw] flex-row justify-start items-center h-[60]">
+            <InfosProfile city={challenger.city} state={challenger.state} country={challenger.country} heigh={30} />
+        </View> 
+        <View className="bg- w-[85] absolute mt-32 bg-blue-400 flex-col rounded-full justify-center items-center h-[85]">
+              <Image 
+              minWidth={83}
+              height={83}
+              borderRadius={50}
+              resizeMode='cover'
+              source={{uri:challenger.profile_img}} 
+              />
+        </View>
 
     <TouchableOpacity 
        onPress={()=>{
@@ -233,62 +237,89 @@ export default function ProfileHeader({challenger,friends,follow}) {
 
 
 
-    <TouchableOpacity
-        onPress={isFriend? confirmUnfriend  : 
-            isAccept? confirmAccept : isPending?
-            confirmCancel : confirmFriendRequest  }
-        className="  absolute bottom-32 left-0 w-[36%] gap-2 flex-row rounded-sm justify-start h-[35px] items-end">
-          <Image    
-           className="w-8 h-[100%]"
-          resizeMode='contain'
-          source={icons.friend} 
-          />
-          <Text className={isFriend?"text-secondary-100  text-xs font-bold":"text-gray-400  text-xs font-bold"}>
-            {isFriend? "Unfriend": isAccept ? "Accept": isPending ?"Pending": "Add Friend"} 
-          </Text>
-          <View
-                className="flex-col items-end justify-end ml-auto w-8 min-h-[100%]">
-                <Image    
-                className={isFriend?  "w-6 h-6   rounded-xl" :
-                          isPending ?  "w-6 h-6  rounded-xl": 
-                          isAccept?  "w-6 h-6 rounded-xl":""}
-                resizeMode='contain'
-                source={isFriend? icons.check_red : isPending ? icons.pending: isAccept? icons.check_red:""}
-                />
-          </View>
-    </TouchableOpacity>
-
-    <TouchableOpacity
-       onPress={isFollowing? handleUnFollowing : handleFollowing}
-       className="  absolute bottom-32 right-0 w-[36%] gap-2 flex-row rounded-sm justify-start h-[35px] items-end">
-          <Image    
-           className="w-8 h-[100%]"
-          resizeMode='contain'
-          source={icons.follow} 
-          />
-          <Text className= {isFollowing ? " text-blue-500  text-xs font-bold" : " text-white  text-xs font-bold"}>
-             {isFollowing ? "Following" : "Not Following"}
-          </Text>
-          <View
-                className="flex-col items-end justify-end ml-auto w-8 min-h-[100%]">
-                <Image    
-                className={isFollowing?"w-6 h-6 bg-pink-300  rounded-xl":""}
-                resizeMode='contain'
-                source={isFollowing ? icons.check:" "} 
-                />
-          </View>
-    </TouchableOpacity> 
+    
 
 
 
 
-    <View className=" w-[100vw] flex-col mt-[50] justify-start items-center h-[100]">
-         <Text
-           className="text-white font-bold py-3 text-xl">
-           {challenger.name}
-         </Text>
+    <View className=" w-[100vw] flex-col mt-[20] justify-start gap-5 items-center h-[120]">
+        
+        <View
+         className=" w-[100vw] flex-row h-8 justify-center  items-end ">
+                  <TouchableOpacity
+                            onPress={isFriend? confirmUnfriend  : 
+                            isAccept? confirmAccept : isPending?
+                            confirmCancel : confirmFriendRequest  }
+                            className=" w-[30%]  gap-2 flex-row  justify-center h-[100%] items-center">
+                           
+                          <View
+                            className="flex-row items-end justify-center  h-[100%]">
+                                 <Image    
+                                    className="w-7 h-7"
+                                    resizeMode='fill'
+                                    source={icons.friend} 
+                                  />
+                          </View>
+                          <View
+                          className="flex-row  justify-center  items-end h-[120%]">
+                                <Text className={isFriend?"text-blue-400  text-xs font-bold":"text-gray-200  text-xs font-bold"}>
+                                 {isFriend? "Friend": isAccept ? "Accept": isPending ?"Pending": "Add "} 
+                                </Text>
+                          </View>
+                         
+                          <View
+                                className="flex-row items-end justify-center  h-[120%]">
+                                <Image    
+                                className={isFriend?  "w-6 h-6   rounded-xl" :
+                                          isPending ?  "w-6 h-6  rounded-xl": 
+                                          isAccept?  "w-6 h-6 rounded-xl":""}
+                                resizeMode='contain'
+                                source={isFriend? icons.check : isPending ? icons.pending: isAccept? icons.check_red:""}
+                                />
+                          </View>
+                 </TouchableOpacity>
+
+                 <View
+                 className=" w-[40%]  gap-2 flex-row rounded-sm justify-center h-[100%] items-end">
+                      <Text
+                      style={{fontSize:12}}
+                          className="text-white font-bold  text-xl">
+                          {challenger.name}
+                      </Text>
+                 </View>
+                
+                 <TouchableOpacity
+                      onPress={isFollowing? handleUnFollowing : handleFollowing}
+                      className=" w-[30%]  gap-1 flex-row justify-center h-[100%] items-center">
+                        
+                          <View
+                            className="flex-row items-end justify-center mt-2  h-[100%]">
+                                   <Image    
+                                    className="w-6 h-6 mt-2"
+                                    resizeMode='fill'
+                                    source={icons.follow} 
+                                    />
+                          </View>
+                          <View
+                            className="flex-row items-end justify-center mt-1 h-[120%]">
+                                 <Text className= {isFollowing ? " text-blue-500  text-xs font-bold" : " text-white  text-xs font-bold"}>
+                                    {isFollowing ? "Following" : "Follow"}
+                                 </Text>
+                          </View>
+                          <View
+                                className="flex-row items-end justify-center mt-1 h-[120%]">
+                                <Image    
+                                className={isFollowing?"w-6 h-6  rounded-xl":""}
+                                resizeMode='contain'
+                                source={isFollowing ? icons.check:" "} 
+                                />
+                          </View>
+                </TouchableOpacity> 
+        </View>
+
+        
        
-         <View className="flex-row w-full gap-3 justify-center items-center"
+         <View className="flex-row w-full gap-4 justify-center items-center"
          >
               <View
                className="flex-col justify-center gap-2 items-center"

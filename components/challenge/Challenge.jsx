@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ImageBackground, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, AppState } from 'react-native'
+import { View, Text, FlatList, ImageBackground, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, AppState, StatusBar, useWindowDimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { images } from '../../constants'
 import { findTopChallengers, getTimeLapse } from '../../helper'
@@ -27,7 +27,7 @@ import ViewDetail from './ViewDetail'
 
 
 
-export default function Challenge({challenge,isVisibleVertical}) {
+export default function Challenge({challenge,isVisibleVertical,h,w}) {
 
     const[topChallenger , setTopChallenger] = useState(challenge.participants[0])
     const [ownChallenge , setOwnChallenge ] = useState(false)
@@ -58,6 +58,9 @@ export default function Challenge({challenge,isVisibleVertical}) {
     const [isModeVisible,setIsModeVisible] = useState(false)
     const [selectedMode,setSelectedMode] = useState(challenge.audience)
     const [updateChallenge,setUpDateChallenge] = useState(challenge)
+    const { width, height } = useWindowDimensions();
+
+    const [challengers, setChallangers] = useState(null)
 
     const isYourChallenge = challenge.origin_id == user._id
 
@@ -66,6 +69,15 @@ export default function Challenge({challenge,isVisibleVertical}) {
     useEffect(() => {
      const top = findTopChallengers(challenge.participants)
      setTopChallenger(top)   
+     const data = []
+     challenge.participants.forEach(p => {
+       data.push(p)
+     })
+     const obj ={
+        participants:data
+     }
+     setChallangers({...obj})
+    //  setChallangers([...challenge.participants])
     }, [])
     
     const hideNavigationBar = async () => {
@@ -109,12 +121,12 @@ export default function Challenge({challenge,isVisibleVertical}) {
     setIsModalVisible(true)
     
     setAction("FA")
-    setText("Are you sure you want to add the challenge to your favourite list")
+    setText("You are about to add the challenge to your Watchlist list")
     }
     const confirmRemoveFromFavourite  = ()=> {
       setIsModalVisible(true)
       setAction("RF")
-      setText("Are you sure you want to remove  the challenge from your favourite list")
+      setText("You are  about to remove  the challenge from your Watchlist list")
     }
    
   //**************************** confirm join delete design challenge ************************ */
@@ -126,11 +138,10 @@ export default function Challenge({challenge,isVisibleVertical}) {
     }
 
     const resignChallenge = async() => {
-      console.log(isYourChallenge)
       setIsModalVisible(false)
       await quitChallenge(challenge._id,user._id).
       then(res => {
-        setVisible(true)
+        // setVisible(true)
         if(isYourChallenge) {
           challenge.privacy == "Public"? getUserPublicChallenges(user._id,setUserPublicChallenges)
           :getUserPrivateChallenges(user._id,setUserPrivateChallenges)
@@ -146,14 +157,14 @@ export default function Challenge({challenge,isVisibleVertical}) {
           strict :!isYourChallenge && challenge.privacy=="Private" && challenge.audience == "Strict"?"true":"false"
         } }) 
         setTimeout(() => {
-          // router.push({ pathname: '/profile'})
-          setVisible(false)
+          // setVisible(false)
         }, 1500);
         const you = challenge.participants.find(participant => participant.user_id == user._id)
-         const fileRef = ref(storage,you.video_url); 
-         deleteObject(fileRef)
+         const videoRef = ref(storage,you.video_url); 
+         const thumbnailRef = ref(storage,you.thumbNail_URL); 
+         Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
           .then(() => {
-           console.log("File deleted successfully!");
+           console.log("both deleted successfully!");
     
            })
           .catch((error) => {
@@ -168,19 +179,19 @@ export default function Challenge({challenge,isVisibleVertical}) {
       console.log(isYourChallenge)
       setIsModalVisible(false)
       await deleteChallenge(challenge._id,user._id).
-       then((res) => { 
-            setVisible(true)
+       then((res) => {    
+            // setVisible(true)
             const you = challenge.participants.find(participant => participant.user_id == user._id);
-            const fileRef = ref(storage,you.video_url); 
+            const videoRef = ref(storage,you.video_url); 
+            const thumbnailRef = ref(storage,you.thumbNail_URL); 
             if(user._id == challenge.origin_id) 
               { 
                challenge.privacy === "Public"? getUserPublicChallenges(user._id , setUserPublicChallenges)
                :getUserPrivateChallenges(user._id , setUserPrivateChallenges)
                router.push({ pathname: '/profile',params: {
-                 priv:challenge.privacy == "Private"?"true":"false", publ:challenge.privacy === "Public"? "true":"false",
-                 participate:"false" , invited:"false" , strict :"false"
-               
-               } }) 
+                priv:challenge.privacy == "Private"?"true":"false", publ:challenge.privacy === "Public"? "true":"false",
+                participate:"false" , invited:"false" , strict :"false" 
+                 }})    
                }              
             else {
                  challenge.privacy === "Public"? getUserPublicChallenges(user._id , setPublicParticipateChallenges)
@@ -192,20 +203,18 @@ export default function Challenge({challenge,isVisibleVertical}) {
                    strict : challenge.privacy=="Private" && challenge.audience == "Strict"?"true":"false"
                  } }) 
                }
-            setTimeout(() => {
-                  setVisible(false)
-            }, 3500);
+                setTimeout(() => {
+                      // setVisible(false)
+                }, 1500);
 
-             deleteObject(fileRef)
+               Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
                .then(() => {
-                 console.log("File deleted successfully!");
-                 // router.push('/profile')
+                 console.log("both deleted successfully!");
                })
                .catch((error) => {
                  console.error("Error deleting file:", error);
                });  
-             
-              
+            
        })
      
    }
@@ -275,7 +284,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
 
 
 
-   if(isExpired) return <ChallengeExpired challenge_id={challenge._id}/>
+  if(isExpired) return <ChallengeExpired challenge_id={challenge._id}/>
 
 
 
@@ -303,18 +312,29 @@ export default function Challenge({challenge,isVisibleVertical}) {
 
   return (
     <>
-    <View className="justify-start h-[740px] w-[100vw] mt-3 mb-3 items-center flex-col gap-0">
-             <View className="min-w-full flex-1   border-t-2 border-gray-700 border-l-2 border-r-2
+    
+         
+    <View 
+     style={{height:h ,width:w}}
+     className="justify-start h-[740px] w-[100vw] mt-3 mb-3 items-center flex-col gap-0">
+             <View 
+                  style={{height:"5%"}}
+                  className="min-w-full flex-1   border-t-2 border-gray-700 border-l-2 border-r-2
                   rounded-tl-lg rounded-tr-lg flex-row items-center justify-start min-h-[5%]">
                  <TouchableOpacity  
-                  onPress={()=> router.navigate({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
+                  onPress={
+                    // () => router.navigate('/CoverChallengePage')
+                    ()=> router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })
+                  }
                   className="w-[18%]  min-h-[90%] ml-0 border-2 rounded-lg bg-yellow-400  flex-col justify-center  items-center  ">
-                    <Text className="text-gray-900 text-sm  font-bold font-pregular ">
-                       View
+                    <Text 
+                    style={{fontSize:width/33}}
+                    className="text-gray-900 text-sm  font-bold font-pregular ">
+                       Play
                     </Text>
                  </TouchableOpacity>
                  
-                 <View className="w-[62%] min-h-[97%] border-x-white bg-blue-1000  flex-col justify-center gap-1 items-center" >
+                 <View className="w-[62%] min-h-[97%] border-x-white bg-black  flex-col justify-center gap-1 items-center" >
              
                      <SwingingTitle text={challenge.desc} color="white" fontSize={10}/>
                        
@@ -330,7 +350,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
                     className="w-[18%] rounded-md h-[90%] mr-0  border-2 flex-1 flex-col justify-center  items-center">
           
                     <Text
-                    style={{color: !canJoin?"black" :""}}
+                    style={{color: !canJoin?"black" :"",fontSize:width/33}}
                     className="text-blue-700 text-sm  font-bold font-pregular">
                        Join 
                     </Text>
@@ -343,14 +363,18 @@ export default function Challenge({challenge,isVisibleVertical}) {
                       <TouchableOpacity onPress={confirmDeleteChallenge}
                        className="w-[18%] h-[90%] flex-1 flex-col justify-center  rounded-md
                         bg-violet-300 items-center">
-                        <Text className="text-red-700 text-sm font-bold font-pregular ">
+                        <Text 
+                        style={{fontSize:width/33}}
+                        className="text-red-700 text-sm font-bold font-pregular ">
                           Delete      
                         </Text>    
                       </TouchableOpacity>
                      ):(
                       <TouchableOpacity  onPress={confirmResignChallenge}
                        className="w-[20%] h-[90%] flex-col justify-center mr-1 rounded-lg  bg-pink-200 items-center">
-                        <Text className="text-red-700 text-sm font-bold ">
+                        <Text 
+                        style={{fontSize:width/33}}
+                        className="text-red-700 text-sm font-bold ">
                           Resign
                         </Text>
                       </TouchableOpacity>
@@ -359,29 +383,72 @@ export default function Challenge({challenge,isVisibleVertical}) {
                      )}  
  
              </View>
-             <View className="min-w-full flex-1  border-gray-700 border-l-2 border-r-2 
-                   flex-row items-center justify-start min-h-[5%]">
+
+            {h !== 7400 && (
+                    <View className="min-w-full flex-1  border-l-2 border-r-2 
+                    flex-row items-center justify-evenly min-h-[5%]">
+                  <TouchableOpacity  
+                   onPress={()=> router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
+                   className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  "
+                   >
+                     <Text className="text-gray-50 text-sm  font-black font-pregular "
+                                           style={{fontSize:width/42}}>
+                        CHALLENGE 
+                     </Text>
+                  </TouchableOpacity>
+ 
+                  <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
+                     <Text className="text-gray-50 text-sm  font-black font-pregular "
+                        style={{fontSize:width/42}}>
+                         {challenge.type.toUpperCase()}
+                     </Text>
+                  </View>
+                  <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
+                     <Text className={challenge.privacy == "Public"?"text-blue-500   font-black font-pregular ":
+                                                           "text-red-500  font-black font-pregular "
+                     }
+                     style={{fontSize:width/42}}>
+                         {challenge.privacy.toUpperCase()}
+                      
+                     </Text>
+                  </View>
+                 
+                  <TouchableOpacity  
+                   onPress={!isFavourite?confirmAddToFavourite:confirmRemoveFromFavourite}
+                   className="min-w-[25%]  h-[98%]  border-2 rounded-lg flex-row justify-center gap-3  items-center  "
+                   >
+                     <Text className="text-blue-400 text-sm  font-black font-pregular "
+                     style={{fontSize:width/42}}>
+                      {isFavourite?"FAV":"ADD"} 
+                     </Text>
+                     <Ionicons name='heart' size={18} color={isFavourite?"red":"pink"} />
+                  </TouchableOpacity>
+              </View>        
+            )}
+
+             {/* <View className="min-w-full flex-1  border-l-2 border-r-2 
+                   flex-row items-center justify-evenly min-h-[5%]">
                  <TouchableOpacity  
                   onPress={()=> router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
                   className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  "
                   >
                     <Text className="text-gray-50 text-sm  font-black font-pregular "
-                      style={{fontSize:9}}>
+                                          style={{fontSize:width/42}}>
                        CHALLENGE 
                     </Text>
                  </TouchableOpacity>
 
                  <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
-                    <Text className="text-gray-50 text-sm  font-bold font-pregular "
-                       style={{fontSize:9}}>
+                    <Text className="text-gray-50 text-sm  font-black font-pregular "
+                       style={{fontSize:width/42}}>
                         {challenge.type.toUpperCase()}
                     </Text>
                  </View>
                  <View  className="min-w-[24%]  h-[98%]  border-2 rounded-lg flex-col justify-center  items-center  " >
-                    <Text className={challenge.privacy == "Public"?"text-blue-500 text-sm  font-black font-pregular ":
+                    <Text className={challenge.privacy == "Public"?"text-blue-500   font-black font-pregular ":
                                                           "text-red-500  font-black font-pregular "
                     }
-                       style={{fontSize:9}}>
+                    style={{fontSize:width/42}}>
                         {challenge.privacy.toUpperCase()}
                      
                     </Text>
@@ -392,16 +459,16 @@ export default function Challenge({challenge,isVisibleVertical}) {
                   className="min-w-[25%]  h-[98%]  border-2 rounded-lg flex-row justify-center gap-3  items-center  "
                   >
                     <Text className="text-blue-400 text-sm  font-black font-pregular "
-                    style={{fontSize:11}}>
+                    style={{fontSize:width/42}}>
                      {isFavourite?"FAV":"ADD"} 
                     </Text>
                     <Ionicons name='heart' size={18} color={isFavourite?"red":"pink"} />
                  </TouchableOpacity>
+             </View>         */}
 
- 
-             </View>          
-            
-             <ParticipantPost  participants={challenge.participants} isVisibleVertical={isVisibleVertical} challenge={challenge} />
+            {/* {challengers && ( */}
+                              <ParticipantPost  participants={challenge.participants} isVisibleVertical={isVisibleVertical} challenge={challenge} />
+            {/* )} */}
              
         
             <View className="min-w-full flex-1  bg-gray-800 flex-row items-center justify-evenly min-h-[5%] 
@@ -412,9 +479,9 @@ export default function Challenge({challenge,isVisibleVertical}) {
                    className="min-w-[20%]  flex-1 h-[90%]  bg-red-800 rounded-md
                    flex-col justify-center  items-center" >
                      <Text 
-                     style={{fontSize:9}}
+                     style={{fontSize:width/42}}
                      className="text-white text-xs font-black"> 
-                         Invites 
+                        {challenge.invited_friends.length} Invites 
                     </Text>
                  </TouchableOpacity>
 
@@ -430,7 +497,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
                          </Text>
                          <Text
                            style={selectedMode=="Open"?{fontSize:10 ,color:"green"}:selectedMode == "Restricted"?
-                           {fontSize:10  ,color:"pink"}:{fontSize:10,color:"red"} }
+                           {fontSize:10  ,color:"pink"}:{fontSize:10,color:"red",fontSize:width/42} }
                            className="text-green-600 text-xs  font-black ">
                              {
                              !updateChallenge ? 
@@ -445,8 +512,8 @@ export default function Challenge({challenge,isVisibleVertical}) {
                           className="min-w-[21%] min-h-[90%] flex-1 flex-row  border-2 rounded-sm
                                               gap-1 px-2 justify-center  items-center" >
                           <Text
-                            style={selectedMode=="Open"?{fontSize:10 ,color:"white"}:selectedMode == "Restricted"?
-                            {fontSize:10  ,color:"pink"}:{fontSize:10 ,color:"red"} }
+                            style={selectedMode=="Open"?{color:"green"}:selectedMode == "Restricted"?
+                            {color:"pink"}:{fcolor:"red"} }
                             className="text-gray-200 text-xs  font-black ">
                               {challenge.audience}
                           </Text>
@@ -459,7 +526,7 @@ export default function Challenge({challenge,isVisibleVertical}) {
                     className="min-w-[21%] min-h-[90%] flex-1 flex-row  border-2 rounded-sm
                                           gap-1 px-2 justify-center  items-center" >
                         <Text
-                          style={{fontSize:9}}
+                          style={{fontSize:width/42}}
                           className="text-white text-xs font-black ">
                           View Details
                         </Text>             
@@ -471,14 +538,19 @@ export default function Challenge({challenge,isVisibleVertical}) {
                    className="min-w-[21%]  flex-1 h-[90%]  bg-blue-800 rounded-md
                    flex-col justify-center  items-center" >
                      <Text
-                      style={{fontSize:9}}
-                      className="text-white text-xs font-black"> Challengers </Text>
+                      style={{fontSize:width/42}}
+                      className="text-white text-xs font-black">{challenge.participants.length}{'  '}Participants </Text>
                  </TouchableOpacity>
       
+          
             </View>
 
            
-  
+            {/* {isModalVisible && (  
+                <CustomAlert text={text} action={action} isModalVisible={isModalVisible} removeFromFavourite={removeFromFavourite}
+                       setIsModalVisible={setIsModalVisible} addToFavourite={addToFavourite} joinChallenge ={joinChallenge }
+                       resignChallenge={resignChallenge} removeChallenge={removeChallenge}/>
+            )} */}
             
       </View>
 

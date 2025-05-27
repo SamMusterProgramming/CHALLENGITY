@@ -87,11 +87,11 @@ export default function favouriteChallenges() {
                     <Image 
                        className="w-24 h-[100%]"
                        resizeMode='contain'
-                       source={icons.favourite} 
+                       source={icons.watchlist} 
                     />
                     <View className="justify-end gap-1 items-center min-h-[100%] flex-col">
                       <Text className=" text-xl  text-blue-400 font-bold">
-                                Favourite
+                                Watchlist
                       </Text>  
                       <Text className=" text-sm  text-white font-bold">
                                 Challenges

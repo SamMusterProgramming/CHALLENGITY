@@ -54,7 +54,7 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
     const [ownChallenge , setOwnChallenge ] = useState(false)
     const [ownPost , setOwnPost ] = useState(false)
 
-    const [commentCount,setCommentCount] =useState(0)
+    const [commentCount,setCommentCount] = useState(0)
    
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [action, setAction] = useState("");
@@ -126,6 +126,7 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
         } else {        
          player.pause()
          setIsPlaying(false)    
+         setDisplayComments(false)
         } 
       
     }, [isVisible,videoUri])
@@ -134,7 +135,7 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
     useEffect(() => {
       if(isPlaying){
          isVisible && player.play()
-
+         setDisplayComments(false)
         } else {        
          player.pause()
         } 
@@ -371,8 +372,16 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
   
   useEffect(() => {
     // if(commentData === "empty") return setCommentCount(0) 
-    setCommentCount(commentCount * 0 + commentData && commentData.content.length || 0)
+  
+   if(commentData)
+    if(commentData == "empty") setCommentCount(0)
+    else  setCommentCount(commentData.content.length)
+  
   }, [commentData])
+
+  useEffect(() => {
+      if(displayComments) setIsPlaying(false)
+  }, [displayComments])
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -405,17 +414,19 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
               } }
                 className="flex-row w-[10%] justify-center items-center gap-0">
                     <Image 
-                    className="w-[35px] h-[35px] rounded-full"
+                    className="w-[30px] h-[30px] rounded-full"
                     source={{uri:participant.profile_img}} 
                     />
                 </TouchableOpacity>
 
                 <View className="flex-col w-[30%] justify-center items-center gap-1">
                     <Text className="text-white text-xs font-bold"
-                       style={{ fontSize:9}}>
+                       style={{ fontSize:8}}>
                         {participant.name}
                     </Text>
-                    <Text className="text-white text-xs font-bold">
+                    <Text
+                      style={{ fontSize:9}}
+                      className="text-white text-xs font-bold">
                        {getInition(participant.name)}Challenger
                     </Text>
                 </View>
@@ -443,29 +454,38 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
                     <TouchableOpacity 
                     onPress={ownPost?()=>{}:isFollowing? handleUnFollowing : handleFollowing}
                     className="flex-col w-[22%] justify-center items-center gap-1">
-                        <View className ="flex-row  justify-center items-center">
-                            <Image 
-                            className="w-6 h-6"
-                              source={icons.follow}
-                              resizeMode='contain'
-                            />
-                             {isFollowing && (
-                              <Image 
-                              className="w-6 h-6"
-                              source={icons.check}
-                              resizeMode='contain'
-                            />
-                            )}
-                        </View>
+                        <Text className="text-gray-300 text-xs font-bold">
+                            Ranked
+                         </Text>
                          <Text className="text-gray-300 text-xs font-bold">
-                            {isFollowing ? "Unfollow" : "Follow"} 
-                        </Text>
+                             #  {index +1}
+                         </Text>
                     </TouchableOpacity>
           
                    
-                  
+                    <TouchableOpacity
+                       onPress={ownPost?()=>{}:isFollowing? handleUnFollowing : handleFollowing}
+                       className="flex-col w-[22%] justify-center items-center gap-1">
+                           <View className ="flex-row  justify-center items-center">
+                               <Image 
+                               className="w-5 h-5"
+                                 source={icons.follow}
+                                 resizeMode='contain'
+                               />
+                                {isFollowing && (
+                                 <Image 
+                                 className="w-5 h-5"
+                                 source={icons.check}
+                                 resizeMode='contain'
+                               />
+                               )}
+                           </View>
+                            <Text className="text-gray-300 text-xs font-bold">
+                               {isFollowing ? "Unfollow" : "Follow"} 
+                           </Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                    onPress={ownPost?()=>{}:isFriend? confirmUnfriend  : 
                     isAccept? confirmAccept : isPending?
                     confirmCancel : confirmFriendRequest  }
@@ -485,7 +505,7 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
                       <Text className="text-gray-300 text-xs font-bold">
                       {isFriend? "Unfriend": isAccept ? "Accept": isPending ?"Pending": "Add Friend"} 
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
            
@@ -556,7 +576,7 @@ export default function Post({participant,challenge,index,isVisible,setViewableI
                 }
               
 
-            {likesVotesData && (
+            {likesVotesData  &&(
                 <PostFooter handleLikes={handleLikes} index={index} handleVotes={handleVotes} isLiked={isLiked} comment_count={commentData && commentCount }
                 isVoted={isVoted} participant={participant} likesVotesData={likesVotesData} setDisplayComments={setDisplayComments}/>
             )}

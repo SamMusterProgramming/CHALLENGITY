@@ -5,12 +5,10 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 
 
 
+
 const downloadVideo = async (videoUrl, localPath) => {
     try {
-       
-        console.log("download file")
         const downloadedVideo = await FileSystem.downloadAsync(videoUrl, localPath);
-        console.log(downloadVideo)
         return downloadedVideo.uri;
     } catch (error) {
         console.error("Error downloading video:", error);
@@ -27,7 +25,6 @@ export const saveVideoLocally = async (videoUrl) => {
 
     const fileInfo = await FileSystem.getInfoAsync(localPath);
     if (fileInfo.exists) {
-        console.log("file exists 2")
         return localPath;
     }
     
@@ -43,7 +40,6 @@ export const getVideo = async (videoUrl) => {
     const fileInfo = await FileSystem.getInfoAsync(localPath);
 
     if (fileInfo.exists) {
-        console.log("file exists 1")
         return localPath;
     } else {
         return await saveVideoLocally(videoUrl);
@@ -51,13 +47,13 @@ export const getVideo = async (videoUrl) => {
 };
 
 export async function clearLocalStorage() {
+    const directory = FileSystem.documentDirectory;
     try {
+     
         const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
         for (const file of files) {
-          console.log(file)
-          await FileSystem.deleteLegacyDocumentDirectoryAndroid(FileSystem.documentDirectory + file);
+          await FileSystem.deleteAsync(FileSystem.documentDirectory+file, { idempotent: true });
         }
-        console.log('Local storage cleared successfully');
       } catch (error) {
         console.error('Error clearing local storage:', error);
       }

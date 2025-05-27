@@ -25,7 +25,7 @@ export const setLoadingBarAxios =(loadingRef) => {
   
   axios.interceptors.response.use((response) => {
     loadingRef.current.complete();
-
+    
   }, (error) => {
     loadingRef.current.complete();
 
@@ -75,7 +75,6 @@ const removeToken = async (token) => {
 // *********************************** AUTHENTIFICATION *************************
 
 export const isAuthenticated = async(setUser)=>{
-
   try {
     await axios.get(BASE_URL +'/users/isAuthenticated')
     .then(res => { 
@@ -92,7 +91,7 @@ export const isAuthenticated = async(setUser)=>{
   }
  
 }
-export const authLogin = async(credentiels,setUser,setMessage)=>{
+export const authLogin = async(credentiels,setUser,setMessage,setIsFetching)=>{
 
     try {
       await axios.post(BASE_URL +'/users/login',credentiels)
@@ -106,17 +105,29 @@ export const authLogin = async(credentiels,setUser,setMessage)=>{
     } catch (error) {
        console.log(error)     
     }
-   
+   finally {
+    setIsFetching(false);
+    }
 }
 
-export const authRegister= async(credentiels,setUser)=>{
-   
-  await axios.post( BASE_URL +'/users/',credentiels)
-	.then(res => {
-		if(res.status == 200 ) {
-      setUser({...res.data ,isNewUser:true})
-     }
-		})
+export const authRegister = async(credentiels,setUser,setMessage,setIsFetching)=>{
+  try {
+    await axios.post( BASE_URL +'/users/',credentiels)
+    .then(res => {
+      console.log(res.data)
+      if(res.data.auth) {
+        storeToken(res.data.token)
+        setUser({...res.data.user,isNewUser:true});
+       }
+       else setMessage(res.data.error)
+      })
+  } catch (error) {
+    console.log(error)  
+  } 
+  finally {
+    setIsFetching(false);
+    }
+ 
 }
   
 export const getUserById = async(user_id,setUserProfile) =>{
@@ -136,13 +147,37 @@ export const getUserById = async(user_id,setUserProfile) =>{
 export const updateUser = async(user_id,rawBody,setUser,user)=> {
   try {
      await axios.patch(BASE_URL + `/users/user/${user_id}`,rawBody)
-     .then(res =>{
-      setUser( {...user,profile_img:res.data.profile_img,cover_img:res.data.cover_img} )
+     .then(res =>{ 
+      setUser( {...res.data,profile_img:res.data.profile_img,cover_img:res.data.cover_img} )
     } )
   } catch (error) {
      console.error(error)
   }
 }
+
+
+export const searchUsers = async(user_id,searchQuery,setData , setIsFetching)=>{
+
+  try {
+    await axios.get(BASE_URL +`/users/find/search?name=${searchQuery}`)
+    .then(res => { 
+               const users =  res.data.users.filter(user=> user._id !== user_id) 
+               setData({users:users})
+               
+        })
+  } catch (error) {
+     console.log(error)     
+  }
+ finally {
+  setTimeout(() => {
+    setIsFetching(false);
+  }, 1000);
+
+  }
+}
+
+
+
 // *********************************** getChallenge by id *************************
 
 
@@ -257,6 +292,41 @@ export const getUserPublicChallenges = async( user_id , setChallenges)=>{
        console.log(error)
     }
 }
+
+// *********************************** viewers *************************
+
+export const getPostViewers = async( post_id , setViewers)=>{
+ 
+  try {
+      await axios.get( BASE_URL + `/challenges/viewer/${post_id}`)
+      .then(res => {
+          if(!res.data){
+            setViewers("no") 
+          }else
+          setViewers({...res.data}) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
+export const addViewer = async( post_id , rawBody, setViewersList)=>{
+ 
+  try {
+      await axios.post( BASE_URL + `/challenges/viewer/${post_id}`,rawBody)
+      .then(res => {
+          setViewersList({...res.data}) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
+
+// *********************************** favourites *************************
+
 
 export const addChallengeToFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
  

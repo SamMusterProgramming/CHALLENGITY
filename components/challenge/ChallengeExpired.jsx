@@ -3,16 +3,22 @@ import React, { useEffect, useState } from 'react'
 import { router } from 'expo-router'
 import { icons } from '../../constants'
 import { useGlobalContext } from '../../context/GlobalProvider'
-import { getTopChallenges, removeChallengeFromFavourite } from '../../apiCalls'
+import { getTopChallenges, getUserPrivateChallenges, getUserPublicChallenges, removeChallengeFromFavourite } from '../../apiCalls'
 
 export default function ChallengeExpired({challenge_id}) {
-    const{user,trendingsChallenges,setTrendingChallenges,favouriteChallenge,setFavouriteChallenge} = useGlobalContext()
+    const{user,trendingsChallenges,setTrendingChallenges,favouriteChallenge,setFavouriteChallenge, userPublicChallenges,setUserPublicChallenges
+      ,privateParticipateChallenges,setPrivateParticipateChallenges,userPrivateChallenges,setUserPrivateChallenges
+    } = useGlobalContext()
     const[isExpired,setIsExpired] = useState(false)
 
     useEffect(() => {
         getTopChallenges(user._id,setTrendingChallenges)
         if(favouriteChallenge.favourites.find(challenge => challenge._id == challenge_id))
             removeChallengeFromFavourite(user._id,{_id:challenge_id},setFavouriteChallenge,setIsExpired)
+        if(userPublicChallenges.find(challenge => challenge._id == challenge_id))
+          getUserPublicChallenges(user._id,setUserPublicChallenges,setIsExpired)
+        if(userPrivateChallenges.find(challenge => challenge._id == challenge_id))
+          getUserPrivateChallenges(user._id,setUserPrivateChallenges,setIsExpired)
     }, [])
     
   return (

@@ -1,4 +1,4 @@
-import { FlatList, Image, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import React, { memo, PureComponent, useEffect, useMemo, useRef, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { images } from '../../constants'
@@ -18,6 +18,10 @@ import { isLoaded } from 'expo-font';
 import * as NavigationBar from 'expo-navigation-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, Inter_100Thin, Inter_900Black } from '@expo-google-fonts/inter';
+import Heart from '../../components/custom/Heart';
+import HeadLineChallengeList from '../../components/headLights/HeadLineChallengeList';
+import FriendChallengeBox from '../../components/challenge/FriendChallengeBox';
+// import HeadLineChallengeList from '../../components/headLights/HeadLineChallengeList';
 
 
 
@@ -32,7 +36,7 @@ class ListItem extends PureComponent {
 }
 
 
-
+const avatar = "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2Favatar.jpg?alt=media&token=25ae4701-e132-4f15-a522-5b9332d2c0b2"
 
 export default function timeline() {
 
@@ -43,8 +47,12 @@ export default function timeline() {
   const [challengeData, setChallengeData] = useState([]);
   const [displayData, setDisplayData] = useState(trendingChallenges.slice(0,2));
   const [index, setIndex] = useState(2);
-  const [friendsChallenges, setFriendsChallenges] = useState([]);
+  const [friendsChallengesList, setFriendsChallengesList] = useState(null);
   const flatListRef = useRef()
+  const { width, height } = useWindowDimensions();
+  const [showList, setShowList] = useState(true);
+
+
   
 
 
@@ -59,18 +67,25 @@ export default function timeline() {
   }, [])
 
   useEffect(() => {
+
     if(trendingChallenges.length > 0){
       const friends = userFriendData.friends;
     
       let challenges = []
+
       challenges = trendingChallenges.filter(challenge => 
-                     (friends.find(friend => (friend.sender_id == challenge.origin_id))&& challenge.privacy == "Private"  
-                         && challenge.invited_friends.find(friend => friend.sender_id == user._id))
-                      // ||      challenge.participants.find(participant=>participant.user_id == friend.sender_id)
-                    )
-      setFriendsChallenges([...challenges])
+        (friends.find(friend => (friend.sender_id == challenge.origin_id) && challenge.privacy == "Public")
+        || (friends.find(friend => (friend.sender_id == challenge.origin_id))&& challenge.privacy == "Private"  
+        && challenge.audience !== "Strict" && !challenge.invited_friends.find(friend => friend.sender_id == user._id))
+
+       ))     
+
+      challenges.length > 0 && setFriendsChallengesList({challenges:challenges})
                   }
    }, [trendingChallenges])
+
+
+
     
   const handleAll = ()=> {
     setChallengeData(trendingChallenges)
@@ -105,6 +120,7 @@ export default function timeline() {
                     // ||      challenge.participants.find(participant=>participant.user_id == friend.sender_id)
 
                   ))
+                  // setFriendsChallenges(challenges)
                   setChallengeData(challenges)
                   setSelectedPrivacy("Friend")
   }
@@ -133,90 +149,121 @@ export default function timeline() {
   
   const renderHeader = useMemo(() => ( 
     <>
-      <View  className=" w-[100vw] flex-col justify-start items-center">
+      <View  className=" w-[100vw]  flex-col justify-start items-center">
       
           <View
            style={{fontSize:11}}
-           className=" w-[100vw] h-[4vh]  mt-2 flex-row justify-center items-center">
-                    <Text
-                    className="text-blue-400 font-bold text-">CHALLENGIFY</Text>           
+           className=" w-[100vw] h-[7vh] b-[#0a144b] bg-white rounde-bl-3xl rounde-br-3xl flex-row justify-center items-center   borde-t-black">
+                    
+                    <View className="justify-center items-center rounded-xl w-[25%]  h-[96%] borde-l-2 borde-r-2 borde-[#0a144b] b-[#0a144b] flex-col">
+                      <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[70%] rounded-lg h-[80%] bg-[#1198ec] flex-col">
+                          <Heart title="Challenges" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.challenge} link="/UserChallenges"/>
+                      </View>
+                    </View>
+               
+                      <View
+                                        className="flex-row justify-center rounded-xl border- bg-white items-center gap-1 w-[50%] h-[96%]">
+                                              
+                                              <View
+                                              className="flex-row justify-start rounded-xl items-center w-[20%] h-[100%] ">
+                                                  <Image
+                                                  className="w-[100%] h-[80%]"
+                                                  source={icons.home}
+                                                  resizeMethod='contain' />
+                                                
+                                              </View>
+                                              <View
+                                              className="flex-col justify-end  items-center w-[60%] h-[100%] ">
+                                                    <View
+                                                      className="flex-row justify-center  items-end w-[100%] h-[30%] ">
+                                                          <Text 
+                                                               style={{fontSize:width/45}}
+                                                               className="font-bold text-sm text-black">
+                                                                   Push your limits with
+                                                          </Text> 
+                                                      
+                                                    </View>
+                                                    <View
+                                                      className="flex-row justify-center mt- items-center w-[100%] h-[60%] ">
+                                                          <Text 
+                                                               style={{fontSize:width/29}}
+                                                               className="font-bold text-sm text-[#1071e0]">
+                                                                  Challengify
+                                                          </Text> 
+                                                      
+                                                    </View>
+                                              </View>
+                       </View>
+                       <View className="justify-center items-center rounded-xl w-[25%]  h-[96%] borde-l-4 borde-r-4 borde-[#0a144b] b-[#0a144b] flex-col">
+                        <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[70%] rounded-lg h-[80%] bg-[#5e11ec] flex-col">
+                            <Heart title="Find Friends" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.search_people} link="/SearchFriend"/>
+                        </View>
+                       </View>
           </View>
 
-        
+          
         
        
-          {user &&  ( <View className="mt-  w-full h-[8vh] flex-row px-2 gap-1 items-end justify-start "
-             style={{marginTop:Platform.OS == "android" ? 10 : 0 ,marginBottom:Platform.OS == "android" ? 20 : 0 }}>
-             
-             <View className="justify-center items-center   w-[24%]  h-[100%] flex-col ">
-                <TouchableOpacity onPress={()=>{ 
-                 router.push('/favouriteChallenges'); 
-                }}
-                className="justify-center items-center border-2 rounded-xl bg-pink-400 gap-0  w-[100%] h-[80%] flex-col ">
-                  <Image 
-                      className="w-6 h-6  "
-                      source={icons.favourite}
-                      resizeMode='contain'
-                    />
-                  <Text 
-                    style={{fontSize:9}}
-                    className="font-black text-sm text-white">
-                        Favourites
-                  </Text>    
-                </TouchableOpacity> 
+        <View className="mt-0  w-full h-[7vh] flex-row px- gap- px- borde-4 bg-[#f8f2f2]  items-center bg[#0a144b] justify-start"
+             style={{marginTop:Platform.OS == "android" ? 0 : 0 ,marginBottom:Platform.OS == "android" ? 0 : 0 }}>
+
+             <View className="justify-start items-center rounded-xl w-[25%]  h-[100%] borde-l-4 borde-r-4 borde-[#0a144b] b-[#0a144b] flex-col">
+              <View className="justify-center items-center  rounded-bl-xl rounded-br-xl w-[90%]  h-[90%] bg-[#0813b7] flex-col">
+                  <Heart title="Watchlist" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.watchlist} link="/favouriteChallenges"/>
+              </View>
              </View>
-             
+
              <View
-                className="justify-center  w-[50%] items-center min-h-[100%] flex-row ">
-                      <View className="justify-center   w-[20%] items-center min-h-[100%] flex-col ">
-                            <Image 
-                              className="w-[50px] h-[50px] rounded-full "
-                              source={{uri :  user.profile_img}}
-                            />
-                      </View>
-                      <View className="justify-center   w-[60%]    gap-2  items-center h-[90%] flex-col ">
-                              <Text className="font-pmedium text-sm text-gray-100">
-                                  <Text 
-                                  style={{fontSize:8}}
-                                  className="font-black text-sm text-white">
-                                      {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
-                                  </Text> 
-                              </Text>
-                              <Text 
-                                  style={{fontSize:9}}
-                                  className=" text-sm text-blue-400 font-black">
-                                  {getInition(user.name)}Challenger
-                              </Text>
-                      </View>
-             </View>          
+                className="justify-end gap-3 px-  w-[50%] items-center  h-[100%] flex-col rounded-tl-3xl rounded-tr-3xl bg-[#e2e5e] ">
+                  
 
-             <View className="justify-center items-center   w-[24%]   h-[100%] flex-col ">
-                <TouchableOpacity onPress={()=>{ 
-                 router.push('/(tabs)/NewChallenge'); 
-                }}
-                className="justify-center items-center border-2 rounded-xl bg-blue-700 gap-0  w-[100%] h-[80%] flex-col ">
-                  <Image 
-                      className="w-6 h-6  "
-                      source={icons.challenge}
-                      resizeMode='contain'
-                    />
-                  <Text 
-                    style={{fontSize:9}}
-                    className="font-black text-sm text-white">
-                        New Challenge
-                  </Text>    
-                </TouchableOpacity> 
-             </View>
+                  <View
+                      className="justify-center  px-6 gap-4 w-[100%] items-center h-[85%] flex-row rounded-tl-lg bg-[#03033d] rounded-tr-lg  ">
+                            <View className="justify-center items-center min-h-[100%] flex-row ">
+                                  <Image 
+                                    style={{width:width<= 330? 30:35 ,height:width <= 330? 30:35}}
+                                    className="w-[40px] h-[40px] rounded-full "
+                                    source={{uri : user.profile_img? user.profile_img  : avatar}}
+                                  />
+                            </View>
+                            <View className="justify-center gap- -auto items-start h-[100%] flex-col ">
+                                    {/* <Text 
+                                        style={{fontSize:width<= 330? 10:11}}
+                                        className=" text-sm text-gray-500 font-psemibold">
+                                        WELCOME
+                                    </Text> */}
+                                    <Text className="font-pmedium  text-sm text-white">
+                                        <Text 
+                                        style={{fontSize:width<= 330? 8:10}}
+                                        className="font-black text-sm text-white">
+                                            {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
+                                        </Text> 
+                                    </Text>
+                                    <Text 
+                                        style={{fontSize:width<= 330? 8:10}}
+                                        className=" text-sm text-blue-400 font-black">
+                                        {getInition(user.name)}Challenger
+                                    </Text>
+                            </View>
+                  </View>          
+                  </View>
+                  <View className="justify-start items-center   w-[25%]  h-[100%] rounded-xl borde-l-4 borde-r-4 bordr-[#0a144b] b-[#0a144b]  flex-col">
+                    <View className="justify-center items-center rounded-bl-xl rounded-br-xl w-[90%]  h-[90%] bg-[#0813b7] flex-col">
+                      <Heart title="New Challenge" color1 = '#b0611c' color2 = '#633711' icon ={icons.newChallenge} link="/CoverNewChallenge"/>
+                    </View>
+                  </View>
 
-          </View>
-          )}
+            </View>
+ 
+      </View>
 
-       <View className=" w-[100vw] h-[6vh] px-2 mt-2
+      <View
+             className="w-full h-[7vh] px-2 border-2 border-[#044743] bg-[#044743]
                 flex-row justify-center items-center">
-                 <View className=" w-[100%] h-[100%] px-4 border-gray-200 border-2  focus:border-secondary-100 rounded-xl
+                 <View className=" w-[100%] h-[80%] px-4 border-gray-200 border-2 bg-white  rounded-lg rounded-tr-lg
                      flex-row justify-center items-center">
                     <TextInput
-                        className=" text-white w-[100%]   h-full px-3
+                        className=" text-gray-600 w-[100%]   h-[100%] px-3
                         font-bold text-sm"
                         placeholder="Search for a challenge "
                         placeholderTextColor="#7b7b8b"
@@ -227,46 +274,40 @@ export default function timeline() {
                           source={icons.search} />
                       </TouchableOpacity>                
                  </View >
-          </View>
-
       </View>
-          
 
-          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-2 mb-1 h-[40px]" >
-                  <Text className="font-bold text-sm text-blue-100">
-                        Friends who challenged you  - List -  
-                  </Text>    
-          </View>
-          {/* <View className="bg-white min-w-full min-h-1"></View> */}
-         
-          <View className="w-[100vw] mt-0 mb-0 h-[150px] border-4  rounded-lg bg-gray-700 ">
-              {friendsChallenges.length > 0 &&  (
-                 <HeadLineChallenges user={user} challengeData={friendsChallenges} />  
-                )}  
-          </View>
+      {friendsChallengesList &&  (
+                 <FriendChallengeBox friendsChallenges={friendsChallengesList.challenges}/> 
+          )}
+        
 
-          {/* <View className="bg-white min-w-full mb-3 mt-1 min-h-1"></View> */}
-          <View className="w-[100vw] flex-row justify-start px-3 items-center mt-5 mb-0 " >
-                  <Text className="font-bold text-sm text-blue-100">
-                        Trending Challenges 
-                  </Text>    
-          </View>
+  
 
-          <View className = "w-full h-[50px] mt-3 flex-row justify-evenly items-center ">
-              <SelectButton color="white" bgColor={selectedPrivacy == "All"?"#0345fc":"#2e2b22"}
-               title ="Top" action={handleAll} />
-              <SelectButton color="white" bgColor={selectedPrivacy == "Public"?"#0345fc":"#2e2b22"}
-               title ="Public" action={handlePublic}/>
-              <SelectButton color="white" bgColor={selectedPrivacy == "Private"?"#0345fc":"#2e2b22"}
-              title ="Private" action={handlePrivate} />
-              <SelectButton color="white" bgColor={selectedPrivacy == "Friend"?"#0345fc":"#2e2b22"} 
-              title ="Friends" action={handleFriend}/>
-              {/* <SelectButton color="white" bgColor={selectedPrivacy == "Invites"?"#0345fc":"#2e2b22"} 
-              title ="Invites" action={handleInvites}/> */}
+          <View className=" min-w-full mb-3 mt-5 rounded-tl-3xl py-4  rounded-tr-3xl bg-[#313f8d] flex-col justify-center items-center" >
+              <View className="w-[100vw] h-[30px] flex-row justify-center  items-center mt- mb-0 " >
+                      <Text 
+                      style={{fontSize:width/33}}
+                      className="font-bold text-sm text-[#bfc2d2]">
+                            Trending Challenges 
+                      </Text>    
+              </View>
+
+              <View className = "w-full h-[40px] mt-3 flex-row  justify-evenly items-center ">
+                  <SelectButton color="white" bgColor={selectedPrivacy == "All"?"#0345fc":"#031f52"}
+                  title ="Top" action={handleAll} />
+                  <SelectButton color="white" bgColor={selectedPrivacy == "Public"?"#0345fc":"#031f52"}
+                  title ="Public" action={handlePublic}/>
+                  <SelectButton color="white" bgColor={selectedPrivacy == "Private"?"#0345fc":"#031f52"}
+                  title ="Private" action={handlePrivate} />
+                  {/* <SelectButton color="white" bgColor={selectedPrivacy == "Friend"?"#0345fc":"#031f52"} 
+                  title ="Friends" action={handleFriend}/> */}
+                  {/* <SelectButton color="white" bgColor={selectedPrivacy == "Invites"?"#0345fc":"#2e2b22"} 
+                  title ="Invites" action={handleInvites}/> */}
+              </View>
           </View>
           
     </>
-  ),[trendingChallenges,selectedPrivacy,friendsChallenges]);
+  ),[selectedPrivacy,friendsChallengesList,showList,setShowList]);
 
 
 
@@ -285,7 +326,7 @@ export default function timeline() {
   const renderItem = ({ item , index }) => {  
     const isVisibleVertical = viewableItems.some(viewableItem => viewableItem.index === index);
 
-      return (<Challenge key={item._id} isVisibleVertical={isVisibleVertical} challenge={item}/> ) 
+      return (<Challenge key={item._id} isVisibleVertical={isVisibleVertical} challenge={item}  h={740} w={width}/> ) 
   
   };
 
@@ -315,10 +356,11 @@ export default function timeline() {
   
 
   return (
-    <SafeAreaView className="min-w-full bg-primary min-h-full">  
+    <SafeAreaView className="min-w-full  bg-primary min-h-full">  
       <View
           style={{ flex: 1 }}
->
+          className="min-h-full"
+        >
         <FlatList 
         ref={flatListRef}
         removeClippedSubviews={true}

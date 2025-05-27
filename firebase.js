@@ -1,9 +1,10 @@
-// Import the functions you need from the SDKs you need
+
 import { initializeApp } from "firebase/app";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 import { generateRandomString, getRandomInt } from "./helper";
-import { Video } from "react-native-compressor";
+import { clearCache } from "react-native-compressor";
+import { Image, Video } from "react-native-compressor";
 
 
 
@@ -40,7 +41,7 @@ export const  getMediaFireBase = (filename,setFilename)=> {
     });
 }
 
-export const  _uploadVideoAsync = async(uri , email,name)=> {
+export const  _uploadVideoAsync = async(uri , email, name)=> {
 
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
@@ -90,10 +91,12 @@ export const compressVideo = async (videoUri) => {
         console.log('Compression Progress:', progress);
       }
     );
- 
+   
   } catch (error) {
     console.error('Compression Error:', error);
     return null;
+  } finally{
+    // await clearCache();
   }
 };
 

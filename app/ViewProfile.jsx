@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ViewProfile() {
   const {
-    } = useGlobalContext()
+    user } = useGlobalContext()
   const {isViewed ,setIsViewed} = useGlobalContext()
   const [follow , setFollow ] = useState(null)
   const [friends, setFriends ] = useState(null)
@@ -59,26 +59,53 @@ export default function ViewProfile() {
     setViewableItems(viewableItems);
   };
 
+  const canViewChallenge = (challenger, challenge, user)=> {
+        if(challenge.origin_id == user._id)
+          return true
+        if(challenge.participants.find(participant => participant.user_id === user._id))
+          return true
+        if (challenge.privacy == "Public")
+          return true
+        if(challenge.audience == "Open" )
+           return true
+        if(challenge.audience == "Restricted" && friends.friends.find(friend =>friend.sender_id == user._id))
+           return true
+        if(challenge.audience =="Strict" && challenge.invited_friends.find(invite=> invite.sender_id == user._id))
+           return true
+
+        return false         
+  } 
+
   const renderItem = ({ item, index }) => {  
     // if(challengeData.length == 0 && userButton) return  <NoChallenge />
     const isVisibleVertical = viewableItems.some(viewableItem => viewableItem.index === index);
 
     return  ( 
-    <>
-    <View
-     className="w-full h-[30px] bg-primary flex-row items-center justify-start border-2 border-black-400">
-      {user_id === item.origin_id? 
-      (
-        <Text className="text-white font-bold text-xs ">{challenger.name } has Create the Challenge on {item.createdAt.slice(0,10)}</Text>
-      ):
-      ( 
-      <Text className="text-white font-bold text-xs ">{challenger.name } has Participated in the Challenge on {item.createdAt.slice(0,10)}</Text>
-      )}    
-    </View>
-    <Challenge key={item._id} isVisibleVertical={isVisibleVertical} challenge={item}/>
-    </>
-    )
+   <>
+    { canViewChallenge(challenger, item , user) && (
+      <>
+        <View
+        className="w-full h-[30px] bg-primary flex-row items-center justify-start border-2 border-black-400">
+         {user_id === item.origin_id? 
+         (
+           <Text className="text-white font-bold text-xs ">{challenger.name } has Create the Challenge on {item.createdAt.slice(0,10)}</Text>
+         ):
+         ( 
+         <Text className="text-white font-bold text-xs ">{challenger.name } has Participated in the Challenge on {item.createdAt.slice(0,10)}</Text>
+         )}    
+       </View>
+       <Challenge key={item._id} isVisibleVertical={isVisibleVertical} challenge={item}/>
+     </>
+       )
+    
+            } 
+
+
+  </>
+  )
   };
+
+
   const renderEmptyItem = () => {  
      return  <NoChallenge />
   };

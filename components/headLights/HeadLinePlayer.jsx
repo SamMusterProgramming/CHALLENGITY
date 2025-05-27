@@ -17,7 +17,6 @@ export default function HeadLinePlayer({challenge,index}) {
       const getThumbNail = async()=>{
         if(!thumbNailURL) {
           const imageUrl = await generateThumbnail(challenge.video_url)
-          console.log(imageUrl)
           setThumbNailURL(imageUrl.uri)
           }
       }
@@ -87,15 +86,13 @@ export default function HeadLinePlayer({challenge,index}) {
     <View
      className=" w-[95px] h-[100%]  flex-row justify-center items-center ">
       <TouchableOpacity
-        onPress={()=>router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
-        className="w-[95%] h-[90%] border-2 border-white opacity-35 rounded-lg ">
-         
+        onPress={()=>router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })}
+        className="w-[95%] h-[90%] border-2  opacity-75 rounded-lg ">
              <Image
              style={{with:'98%',height:"98%",borderRadius:5,backgroundColor:"black"}}
              contentFit='contain'
              source={{uri:thumbNailURL || ""}}
              />
-       
       </TouchableOpacity>
 
 
@@ -123,7 +120,7 @@ export default function HeadLinePlayer({challenge,index}) {
 
         <TouchableOpacity
          hitSlop={Platform.OS === "android" &&{ top: 70, bottom: 70, left: 40, right: 40 }}
-         onPress={()=>router.push({ pathname: '/ChallengeDisplayer', params: {challenge_id:challenge._id} })}
+         onPress={()=>router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })}
          className="absolute  flex-col top-6  opacity-100  h-[60px] w-[60px]  rounded-full justify-center items-center  ">
           <Image 
           source={getIcon(challenge.type)}

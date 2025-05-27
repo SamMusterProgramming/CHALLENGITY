@@ -27,15 +27,13 @@
         "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45"
       },
       "ios": {
-        "simulator": true
+        "buildConfiguration": "Release"
       },
       "android": {
         "resourceClass": "medium"
       },
-    "channel": "preview"
+      "channel": "preview"
     },
-
-
     "production": {
       "channel": "production"
     }

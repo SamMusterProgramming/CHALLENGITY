@@ -7,7 +7,7 @@ export default function PostSideFooter(props) {
   return (
     <View className="min-w-[50px] absolute right-0 flex-col bottom-1 h-[40%]  items-center px-0 justify-between min-h-[300px]">
              
-        <View className="flex-col justify-center items-center min-h-[8%] gap-1">
+        <View className="flex-col justify-center items-center min-h-[7%] gap-1">
                 <TouchableOpacity onPress={props.handleLikes}
                   className="flex-col justify-center items-center w-12 h-12 ">
                     <Image 
@@ -20,7 +20,7 @@ export default function PostSideFooter(props) {
                     {props.likesVotesData.like_count}  
                 </Text>
         </View>
-        <View className="flex-col justify-center items-center min-h-[8%] gap-1">
+        <View className="flex-col justify-center items-center min-h-[7%] gap-1">
                 <TouchableOpacity onPress={props.handleVotes}
                  className="flex-col justify-center items-center w-12 h-12">
                     <Image 
@@ -35,14 +35,14 @@ export default function PostSideFooter(props) {
         </View>
         <TouchableOpacity
          onPress={() => props.setDisplayComments(prev => !prev)}
-         className="flex-col justify-center gap-1 min-h-[8%] items-center">
+         className="flex-col justify-center gap-1 min-h-[7%] items-center">
             <Ionicons name="chatbubble" size={25} color="white"/>
             <Text className="text-white mt-auto text-sm font-bold">
                    {props.comment_count}
             </Text>
-            <Text className="text-white mt-auto text-xs font-bold">
+            {/* <Text className="text-white mt-auto text-xs font-bold">
                     Comments
-            </Text>
+            </Text> */}
         </TouchableOpacity>
 
         <TouchableOpacity

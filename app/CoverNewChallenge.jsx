@@ -10,6 +10,8 @@ import SelectMode from '../components/challenge/SelectMode';
 import { useGlobalContext } from '../context/GlobalProvider';
 import SelectFriends from '../components/challenge/SelectFriends';
 import CustomAlert from '../components/custom/CustomAlert';
+import MakeSelectionChallengeModal from '../components/modal/MakeSelectionChallengeModel';
+import { getInition } from '../helper';
 
 export default function CoverNewChallenge() {
 
@@ -32,6 +34,11 @@ export default function CoverNewChallenge() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [action, setAction] = useState("");
     const [text,setText] = useState("")
+    const [isSelectionModalVisible, setIsSelectionModalVisible] = useState(false)
+    const [selectionType, setSelectionType] = useState(false)
+    const [data, setData] = useState([])
+
+
 
 
     const{width ,height} = useWindowDimensions()
@@ -155,88 +162,70 @@ export default function CoverNewChallenge() {
   return (
     
     <SafeAreaView className="flex-1 bg-primary" >
-              <View className=" h-full flex-col justify-start gap-2 border-l-2 border-r-2 b-[#a9cdf0] items-center">
+              <View className=" h-full flex-col justify-start gap- border-l-2 border-r-2 border-[#f6f8f9] items-center">
+                         
+                          <View
+                            className = "min-w-[100%] h-[5%] gap- rounded-tl-x rounded-tr-x flex-row justify-start items-center px-1 bg-[white]">
+                                
+                                <TouchableOpacity
+                                    className="w-[8%] h-[100%] justify-center g-[#eb0a0a] px-1 py-1 rounded-xl items-center opacity  "
+                                    onPressIn={()=> router.back()}
+                                    >
+                                      <Image   
+                                      source={icons.x}
+                                      className=" w-10 h-10 rounded-full"
+                                      />
+                              </TouchableOpacity>
+                              <View
+                              className = "w-[35%] h-[80%] rounded-xl flex-row justify-center items-center px- g-[#fffefd]">
+                                      <View className = "px-2 py-1 w-[100%] flex-row justify-center gap-2 items-center">
+                                            <Image 
+                                              className={ "rounded-full w-7 h-7"}
+                                              source={ {uri:user.profile_img} }
+                                              resizeMode='cover'
+                                              />
+                                              <View className="justify-center py-1  items-start h-[80%] flex-col ">
+                                                            
+                                                            <Text className="font-pmedium  text-sm text-black">
+                                                                <Text 
+                                                                style={{fontSize:width<= 330? 7:7}}
+                                                                className="font-black text-sm text-black">
+                                                                    {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
+                                                                </Text> 
+                                                            </Text>
+                                                            <Text 
+                                                                style={{fontSize:width<= 330? 8:7}}
+                                                                className=" text-sm text-blue-400 font-black">
+                                                                {getInition(user.name)}Challenger
+                                                            </Text>
+                                              </View>
+                                      </View>
+                                  
+                              </View>
+                              <View
+                              className = "w-[55%] h-[100%] flex-row justify-center items-center px- g-[#de8124]">
+                                  
+                                  <Text 
+                                        style={{fontSize:16}}
+                                        className=" text-sm text-blue-900 mt-1 font-black">
+                                            NEW CHALLENGE
+                                    </Text>
+                                  
+                              </View>
+              
+                          </View>
+
 
                           <View
-                          style={Platform.OS == "android" && {borderTopRightRadius:5,borderTopLeftRadius:5}}
-                          className =" w-[100%] h-[17%] flex-col bg-[#a9cdf0] mb-2 justify-evenly rounded-tl-[50px] rounded-tr-[50px] items-center">
-                                  <View
+                          // style={Platform.OS == "android" && {borderTopRightRadius:5,borderTopLeftRadius:5}}
+                          className =" w-[100%] h-[7vh] flex-col g-[#0b2c4d] mb-8 justify-evenly rounde-tl-[50px] borde-4 border-white rouned-tr-[50px] items-center">
+                                 
+                                 {/* <View
                                           style={Platform.OS == "android" && {borderTopRightRadius:5,borderTopLeftRadius:5}}
-                                          className="w-[100%] h-[40%]  rounded-tl-[50px] rounded-tr-[50px] flex-row  justify-between items-center  ">
+                                          className="w-[100%] h-[40%]  rounded-tl-[50px] rounded-tr-[50px] flex-row  justify-between items-end  ">
                                             
-                                              <TouchableOpacity
-                                                  onPress={()=> router.back()}
-                                                  // style={{height:heigh * 0.07}}
-                                                  className= "w-[15%] h-[100%]  bg- rounded-tl-[50px] flex-row justify-center items-center ">
-                                                  <Image
-                                                      source={icons.back1} 
-                                                      resizeMethod='contain'
-                                                      style={{width:width/13 ,height:width/13}}
-                                                      className=""
-                                                      />
-                                              </TouchableOpacity>
-
-                                            <View
-                                              className= "w-[70%] h-[100%]  bg-[#183755] rounded-xl flex-row justify-center items-center " >
-                                                      <TouchableOpacity
-                                                        onPress={()=>{router.navigate("profile")}}
-                                                        className= "w-[33%] h-[100%]  gap-1 flex-col justify-center items-center ">
-                                                          <Image
-                                                            source={{uri:user.profile_img}} 
-                                                            resizeMethod='contain'
-                                                            style={{width:width/12 ,height:width/12}}
-                                                            className ="rounded-full"
-                                                          />
-                                                          <Text
-                                                          style={{fontSize:8}}
-                                                          className="text-gray-100 font-bold">
-                                                            Profile
-                                                          </Text>
-                                                      </TouchableOpacity> 
-
-                                                      <TouchableOpacity
-                                                        onPress={()=>{router.navigate("CoverNewChallenge")}}
-                                                        className= "w-[33%] h-[100%]  gap-1 flex-col justify-center items-center ">
-                                                          <Image
-                                                            source={icons.newChallenge} 
-                                                            resizeMethod='contain'
-                                                            style={{width:width/13 ,height:width/13}}
-                                                            className ="rounded-full"
-                                                          />
-                                                          <Text
-                                                          style={{fontSize:8}}
-                                                          className="text-gray-100 font-bold">
-                                                            New Challenge
-                                                          </Text>
-                                                      </TouchableOpacity>   
-
-                                                      <TouchableOpacity
-                                                        onPress={()=>{router.navigate("timeline")}}
-                                                        className= "w-[33%] h-[100%]  gap-1 flex-col justify-center items-center ">
-                                                          <Image
-                                                            source={icons.home} 
-                                                            resizeMethod='contain'
-                                                            style={{width:width/13 ,height:width/13}}
-                                                            className ="rounded-full"
-                                                          />
-                                                          <Text
-                                                          style={{fontSize:8}}
-                                                          className="text-gray-100 font-bold">
-                                                            Home
-                                                          </Text>
-                                                      </TouchableOpacity>   
-                                            </View>
-                                            
-                                              <TouchableOpacity
-                                                  
-                                                  className= "w-[15%] h-[100%]  bg- rounded-tr-[50px] flex-row justify-center items-center ">
-                                                  <Image
-                                                  source={icons.next} 
-                                                  resizeMethod='fill'
-                                                  className="w-9 h-9 "
-                                                  />
-                                              </TouchableOpacity>          
-                                  </View>
+                                             
+                                  </View> */}
 
                                   <View
                                           className="w-[100%] h-[50%]   flex-row justify-center items-center  ">
@@ -245,8 +234,8 @@ export default function CoverNewChallenge() {
                                           className=" w-[95%] h-[30%] px-4 border-gray-200 border-2  bg-white rounded-lg
                                           flex-row justify-center items-center">
                                               <TextInput
-                                                  style={{fontSize:width/33}}
-                                                  className=" text-gray-600 w-[100%] font-bold bg- h-[100%] px-3 rounded-lg
+                                                  style={{fontSize:width/30}}
+                                                  className=" text-gray-600 w-[100%] text-center font-bold bg- h-[100%] px-3 rounded-lg
                                                        "
                                                   onChangeText={text => setDescription(text)}
                                                   placeholder={currentPlaceholder}
@@ -271,15 +260,21 @@ export default function CoverNewChallenge() {
 
       
 
-                        <View className="w-[100%] h-[16%] px-2    flex-row justify-center gap-2 items-center">
+                        <View className="w-[100%] h-[13%] px-2  g-[#071b2c]  flex-row justify-center gap-2 items-center">
                                  <TouchableOpacity
-                                 onPress={()=>setIsSelectorVisible(true)}
-                                  className="w-[33%] h-[90%] flex-col justify-center gap-2 items-center">
+                                 onPress={() =>{
+                                  setIsSelectionModalVisible(true)
+                                  setSelectionType("type")
+                                  setData([...challengeType])
+                                  // setIsSelectorVisible(true)
+                                 }
+                                 }
+                                  className="w-[30%] h-[100%] flex-col rounded-xl border-b-2 border-t-2 border-l-4 border-r-4 border-white justify-center gap-1 items-center">
                                      <View
                                             className="w-[100%] h-[20%] flex-row justify-center items-center">
                                             <Text 
-                                                style={{fontSize:11}}
-                                                className="text-gray-200 text-sm font-bold">
+                                                style={{fontSize:9}}
+                                                className="text-gray-500 text-sm font-bold">
                                                 Select Type
                                             </Text>
                                           
@@ -289,13 +284,13 @@ export default function CoverNewChallenge() {
                                      <Image
                                      source={getIcon(selectedType)}
                                      resizeMethod='contain'
-                                     style={{width:width/6, height:width/6}}
-                                     className="w-[95%] h-[70%]" />
+                                     style={{width:width/10, height:width/10}}
+                                     className="w-[75%] h-[50%]" />
                                       <View
                                             className="w-[100%] h-[20%] flex-row justify-center items-center">
                                          
                                             <Text 
-                                              style={{fontSize:11}}
+                                              style={{fontSize:9}}
                                               className="text-white font-black"> 
                                                 {selectedType}
                                             </Text>
@@ -304,47 +299,65 @@ export default function CoverNewChallenge() {
                                  </TouchableOpacity>
 
                                  <TouchableOpacity
-                                  onPress={()=>setIsPrivacySelectorVisible(true)}
-                                  className="w-[33%] h-[90%] flex-col justify-center gap-2 items-center">
+                                  onPress={()=>
+                                    // setIsPrivacySelectorVisible(true)
+                                    {
+                                      setIsSelectionModalVisible(true)
+                                      setSelectionType("privacy")
+                                      setData([...privacyData])
+                                      // setIsSelectorVisible(true)
+                                    }
+                                     
+                                  }
+                                  className="w-[30%] h-[100%] flex-col justify-center py-2 rounded-xl border-b-2 border-t-2 border-l-4 border-r-4 border-white gap-2 items-center">
                                      <View
                                             className="w-[100%] h-[20%] flex-row justify-center items-center">
                                             <Text 
-                                                style={{fontSize:11}}
-                                                className="text-gray-200 text-sm font-bold">
+                                                style={{fontSize:9}}
+                                                className="text-gray-500 text-sm font-bold">
                                                 Select Privacy
                                             </Text>
                                     </View>          
                                      <Image
                                      source={getIcon(selectedPrivacy)}
                                      resizeMethod='contain'
-                                     style={{width:width/6, height:width/6}}
-                                     className="w-[95%] h-[70%]" />
+                                     style={{width:width/10, height:width/10}}
+                                     className="w-[75%] h-[50%]" />
                                      <Text 
-                                        style={{fontSize:11}}
+                                        style={{fontSize:9}}
                                         className="text-white font-black"> 
                                         {selectedPrivacy}
                                      </Text>
                                  </TouchableOpacity>
+
                                  {selectedPrivacy == "Private" && (
 
                                  <TouchableOpacity
-                                        onPress={()=>setIsModeVisible(true)}
-                                        className="w-[33%] h-[90%] flex-col justify-center gap-2 items-center">
+                                        onPress={()=>
+                                          // setIsModeVisible(true)
+                                          {
+                                            setIsSelectionModalVisible(true)
+                                            setSelectionType("audience")
+                                            setData([...Audience])
+                                            // setIsSelectorVisible(true)
+                                          }
+                                        }
+                                        className="w-[33%] h-[100%] py-2 rounded-xl border-t-2 border-b-2 border-l-4 border-r-4 border-white  flex-col justify-center gap-2 items-center">
                                         <View
                                                 className="w-[100%] h-[20%] flex-row justify-center items-center">
                                                 <Text 
-                                                  style={{fontSize:12}}
-                                                  className="text-gray-200 text-sm font-bold">
+                                                  style={{fontSize:9}}
+                                                  className="text-gray-500 text-sm font-bold">
                                                     Select Audience
                                                 </Text>
                                         </View>          
                                         <Image
                                         source={getIcon(selectedAudience)}
                                         resizeMethod='contain'
-                                        style={{width:width/6, height:width/6}}
+                                        style={{width:width/10, height:width/10}}
                                         className="w-[95%] h-[70%]" />
                                         <Text 
-                                            style={{fontSize:11}}
+                                            style={{fontSize:9}}
                                             className="text-white font-black"> 
                                             {selectedAudience}
                                         </Text>
@@ -359,13 +372,21 @@ export default function CoverNewChallenge() {
                         <>
                            
                   
-                            <View className="w-[100%] h-[53%]  px-2 mt-4 flex-row justify-center gap-2 items-center">
+                            <View className="w-[100%] h-[53%]  px-2 mt-4 flex-col justify-center gap-2 items-center">
                                     <TouchableOpacity
-                                        onPress={()=>setIsFriendListVisible(!isFriendListVisible)}
-                                        className="w-[36%] h-[90%] flex-col justify-center gap-2 items-center">
+                                        onPress={()=>{
+                                          // setIsFriendListVisible(!isFriendListVisible)
+                                          setIsSelectionModalVisible(true)
+                                          setSelectionType("invite")
+                                          setData(friendList)
+                                         }
+                                        }
+                                        className="w-[100%] h-[25%] flex-col justify-evenly  gap- items-center">
                                         <View
                                                 className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                                <Text className="text-gray-200 text-sm font-bold">
+                                                <Text
+                                                style={{fontSize:9}}
+                                                className="text-gray-400 text-sm font-bold">
                                                     Invite Friends
                                                 </Text>
                                         </View>
@@ -373,34 +394,37 @@ export default function CoverNewChallenge() {
                                         <Image
                                         source={icons.invites}
                                         resizeMethod='contain'
-                                        style={{width:width/6, height:width/6}}
+                                        style={{width:width/10, height:width/10}}
                                         className="w-[95%] h-[70%]" />
                                         <View
+                                                style={{fontSize:9}}
                                                 className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                                <Text className="text-white font-black"> 
+                                                <Text 
+                                                style={{fontSize:10}}
+                                                className="text-white font-black"> 
                                                     {selectedFriends.length}{' '}Invites
                                                 </Text>
                                         </View>
                                     </TouchableOpacity>
 
                                     <View
-                                        className="w-[56%] h-[100%]  border-blue-300 border-4 rounded-xl ">
+                                        className="w-[100%] h-[75%]  borde-blue-300 borde-4 rounded-xl ">
                                        <ScrollView  className=" flex-1">
                                        <View
-                                        className="min-w-[100%] min-h-[100%] flex-row flex-wrap  py-2   justify-center  items-center">
+                                        className="min-w-[100%] min-h-[100%] flex-row flex-wrap px-2  py-2 gap-y-4  justify-center  items-center">
                                         {selectedFriends.map((friend,index) => {
                                              return (<View
                                                 key={index}
-                                                className="w-[45%] h-[20%] flex-col justify-center items-center">
+                                                className="w-[23%] h-[30%] px- flex-col justify-center gap-2 items-center">
                                                         <Image
                                                         source={{uri:friend.profile_img}}
                                                         resizeMethod='contain'
                                                         style={{width:width/10, height:width/10}}
                                                         className="w-[40px] h-[40px] rounded-full" />
                                                         <Text 
-                                                           style={{fontSize:9}}
+                                                           style={{fontSize:8}}
                                                            className="text-gray-200 text-sm font-bold">
-                                                            {friend.name.slice(0,8)}
+                                                            {friend.name.slice(0,12)}
                                                         </Text>
                                                </View>  )  
                                         })}
@@ -415,20 +439,20 @@ export default function CoverNewChallenge() {
 
 
                             
-                            <View className="w-[100%] h-[6%]  mt-auto  flex-row justify-center bg-[#a9cdf0] items-center">
+                            <View className="w-[100%] h-[6%]  mt-auto  flex-row justify-center bg-[#f5f7fa] items-center">
                                  <TouchableOpacity
                                     onPress={handleContinue}
                                     className="w-[46%] h-[90%] flex-row mb-4 justify-center rounded-lg gap-2 items-end">
                                      <Text 
-                                       style={{fontSize:20}}
-                                       className="text-blue-400 text-sm font-black">
+                                       style={{fontSize:18}}
+                                       className="text-blue-800 text-sm mb-2 font-black">
                                                 Next
                                      </Text>
                                      <Image
                                                         source={icons.forward}
                                                         resizeMethod='contain'
                                                         // style={{width:width/12, height:width/12}}
-                                                        className="w-7 h-7 rounded-full" />
+                                                        className="w-7 h-7 mb-1 rounded-full" />
                                  </TouchableOpacity>
                                
                         </View>
@@ -448,7 +472,13 @@ export default function CoverNewChallenge() {
            {isModeVisible && (
             <SelectMode height={height} width={width} data ={Audience} selectedAudience={selectedAudience} setIsModeVisible={setIsModeVisible} setSelectedAudience={setSelectedAudience}/>
           )}
-
+          {isSelectionModalVisible && (  
+                     <MakeSelectionChallengeModal isSelectionModalVisible={isSelectionModalVisible} selectionType ={selectionType} selectedType={selectedType}
+                     setIsSelectionModalVisible={setIsSelectionModalVisible} text={text} data ={data} setSelectedType={setSelectedType} selectedPrivacy ={selectedPrivacy}
+                     setSelectedPrivacy ={setSelectedPrivacy} selectedAudience ={selectedAudience} setSelectedAudience = {setSelectedAudience}  
+                     selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends}
+                       />
+                 )}
           {isModalVisible && (
                     <CustomAlert text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
                )}

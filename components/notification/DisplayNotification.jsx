@@ -27,7 +27,7 @@ export default function DisplayNotification({notification,setNotifications,user}
   const handleViewChallenge = ()=> {   
     console.log(notification.content.challenge_id)
     updateNotificationByUser(notification._id,setNot)
-    router.push({ pathname:'CoverChallengePage', params:{challenge_id:notification.content.challenge_id} })
+    router.push({ pathname:'FSinstantChallengeDisplayer', params:{challenge_id:notification.content.challenge_id} })
    }
 
   const acceptFRequest =()=>{

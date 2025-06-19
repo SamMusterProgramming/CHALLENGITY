@@ -1,5 +1,5 @@
 import { FlatList, Image, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
-import React, { memo, PureComponent, useEffect, useMemo, useRef, useState } from 'react'
+import React, { memo, PureComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { images } from '../../constants'
 import RNPickerSelect from 'react-native-picker-select';
@@ -10,7 +10,7 @@ import Challenge from '../../components/challenge/Challenge';
 import ParticipantPost from '../../components/challenge/ParticipantPost';
 import { ResizeMode, Video } from 'expo-av';
 import { Camera } from 'expo-camera';
-import { router, useRouter } from 'expo-router';
+import { router, useFocusEffect, useRouter } from 'expo-router';
 import { getInition } from '../../helper';
 import HeadLineChallenges from '../../components/headLights/HeadLineChallenges';
 import SelectButton from '../../components/custom/SelectButton';
@@ -43,17 +43,14 @@ export default function timeline() {
   const {user,setUser,trendingChallenges,setTrendingChallenges,userChallenges,setUserChallenges,userFriendData} = useGlobalContext()
   const [viewableItems, setViewableItems] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [selectedPrivacy,setSelectedPrivacy] = useState("All")
+  const [selectedPrivacy,setSelectedPrivacy] = useState(null)
   const [challengeData, setChallengeData] = useState([]);
-  const [displayData, setDisplayData] = useState(trendingChallenges.slice(0,2));
+  const [displayData, setDisplayData] = useState([]);
   const [index, setIndex] = useState(2);
   const [friendsChallengesList, setFriendsChallengesList] = useState(null);
   const flatListRef = useRef()
   const { width, height } = useWindowDimensions();
   const [showList, setShowList] = useState(true);
-
-
-  
 
 
 
@@ -65,6 +62,33 @@ export default function timeline() {
         flatListRef.current = null ;
         }
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+        // setDisplayData(trendingChallenges.slice(0,2) )
+        // if(trendingChallenges.length > 0){
+        //   const friends = userFriendData.friends;
+        
+        //   let challenges = []
+    
+        //   challenges = trendingChallenges.filter(challenge => 
+        //     (friends.find(friend => (friend.sender_id == challenge.origin_id) && challenge.privacy == "Public")
+        //     || (friends.find(friend => (friend.sender_id == challenge.origin_id))&& challenge.privacy == "Private"  
+        //     && challenge.audience !== "Strict" && !challenge.invited_friends.find(friend => friend.sender_id == user._id))
+    
+        //    ))     
+    
+        //   challenges.length > 0 && setFriendsChallengesList({challenges:challenges})
+        //               }
+        return () => {
+          setChallengeData([])
+          setDisplayData([])
+          setSelectedPrivacy(null)
+          // setFriendsChallengesList(null)
+          // flatListRef.current = null ;
+        };
+    }, [])
+);
 
   useEffect(() => {
 
@@ -138,8 +162,8 @@ export default function timeline() {
   }
     
   useEffect(() => {
-    setChallengeData(trendingChallenges)
-    setDisplayData(trendingChallenges.slice(0,2))
+    // setChallengeData(trendingChallenges)
+    // setDisplayData(trendingChallenges.slice(0,2))
    }, [trendingChallenges])
 
    const onViewableItemsChanged = ({ viewableItems }) => {
@@ -149,17 +173,25 @@ export default function timeline() {
   
   const renderHeader = useMemo(() => ( 
     <>
-      <View  className=" w-[100vw]  flex-col justify-start items-center">
+      <View
+        // style={{height:height}}
+        className=" w-[100vw]  flex-col justify-start items-center bg-[#6a7c83]">
       
           <View
            style={{fontSize:11}}
-           className=" w-[100vw] h-[7vh] b-[#0a144b] bg-white rounde-bl-3xl rounde-br-3xl flex-row justify-center items-center   borde-t-black">
-                    
-                    <View className="justify-center items-center rounded-xl w-[25%]  h-[96%] borde-l-2 borde-r-2 borde-[#0a144b] b-[#0a144b] flex-col">
-                      <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[70%] rounded-lg h-[80%] bg-[#1198ec] flex-col">
-                          <Heart title="Challenges" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.challenge} link="/UserChallenges"/>
-                      </View>
-                    </View>
+           className=" w-[100vw] h-[6vh] b-[#0a144b] bg-white rounde-bl-3xl rounde-br-3xl flex-row justify-center items-center   borde-t-black">
+                     
+                      <TouchableOpacity 
+                       onPress={()=> {router.navigate("/UserChallenges")}}
+                         className="justify-center items-center rounded-xl w-[25%]  h-[100%]  borde-[#0a144b] b-[#0a144b] flex-col">
+                        {/* <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[100%] rounded-lg min-h-[100%] bg-[#f5f4f6] flex-col">
+                            <Heart title="" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.search_people} link="/SearchFriend"/>
+                        </View> */}
+                                 <Image
+                                     className="w-[35px] h-[35px]"
+                                     source={icons.challenge}
+                                     resizeMethod='cover' />
+                      </TouchableOpacity>
                
                       <View
                                         className="flex-row justify-center rounded-xl border- bg-white items-center gap-1 w-[50%] h-[96%]">
@@ -194,24 +226,41 @@ export default function timeline() {
                                                     </View>
                                               </View>
                        </View>
-                       <View className="justify-center items-center rounded-xl w-[25%]  h-[96%] borde-l-4 borde-r-4 borde-[#0a144b] b-[#0a144b] flex-col">
-                        <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[70%] rounded-lg h-[80%] bg-[#5e11ec] flex-col">
-                            <Heart title="Find Friends" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.search_people} link="/SearchFriend"/>
-                        </View>
-                       </View>
+                       <TouchableOpacity 
+                       onPress={()=> {router.navigate("/SearchFriend")}}
+                         className="justify-center items-center rounded-xl w-[25%]  h-[100%]  borde-[#0a144b] b-[#0a144b] flex-col">
+                        {/* <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[100%] rounded-lg min-h-[100%] bg-[#f5f4f6] flex-col">
+                            <Heart title="" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.search_people} link="/SearchFriend"/>
+                        </View> */}
+                                 <Image
+                                     className="w-[35px] h-[35px]"
+                                     source={icons.search_people}
+                                     resizeMethod='cover' />
+                       </TouchableOpacity>
           </View>
 
           
         
        
-        <View className="mt-0  w-full h-[7vh] flex-row px- gap- px- borde-4 bg-[#f8f2f2]  items-center bg[#0a144b] justify-start"
+        <View className="mt-0  w-[100%] h-[6vh] flex-row px- gap- px- borde-4 bg-[#fafeff] rounded-bl-3xl  rounded-br-3xl items-center bg[#0a144b] justify-evenly"
              style={{marginTop:Platform.OS == "android" ? 0 : 0 ,marginBottom:Platform.OS == "android" ? 0 : 0 }}>
 
-             <View className="justify-start items-center rounded-xl w-[25%]  h-[100%] borde-l-4 borde-r-4 borde-[#0a144b] b-[#0a144b] flex-col">
+             {/* <View className="justify-start items-center rounded-xl w-[25%]  h-[100%] borde-l-4 borde-r-4 borde-[#0a144b] b-[#0a144b] flex-col">
               <View className="justify-center items-center  rounded-bl-xl rounded-br-xl w-[90%]  h-[90%] bg-[#0813b7] flex-col">
                   <Heart title="Watchlist" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.watchlist} link="/favouriteChallenges"/>
               </View>
-             </View>
+             </View> */}
+             <TouchableOpacity 
+                       onPress={()=> {router.navigate("/UserChallenges")}}
+                         className="justify-center items-center  rounded-bl-xl rounded-br-xl w-[15%]  h-[90%] bg-[#2e2f35] flex-col">
+                        {/* <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[100%] rounded-lg min-h-[100%] bg-[#f5f4f6] flex-col">
+                            <Heart title="" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.search_people} link="/SearchFriend"/>
+                        </View> */}
+                                 <Image
+                                     className="w-[35px] h-[35px] "
+                                     source={icons.watchlist}
+                                     resizeMethod='cover' />
+              </TouchableOpacity>
 
              <View
                 className="justify-end gap-3 px-  w-[50%] items-center  h-[100%] flex-col rounded-tl-3xl rounded-tr-3xl bg-[#e2e5e] ">
@@ -247,18 +296,24 @@ export default function timeline() {
                             </View>
                   </View>          
                   </View>
-                  <View className="justify-start items-center   w-[25%]  h-[100%] rounded-xl borde-l-4 borde-r-4 bordr-[#0a144b] b-[#0a144b]  flex-col">
-                    <View className="justify-center items-center rounded-bl-xl rounded-br-xl w-[90%]  h-[90%] bg-[#0813b7] flex-col">
-                      <Heart title="New Challenge" color1 = '#b0611c' color2 = '#633711' icon ={icons.newChallenge} link="/CoverNewChallenge"/>
-                    </View>
-                  </View>
+                  <TouchableOpacity 
+                       onPress={()=> {router.navigate("/UserChallenges")}}
+                         className="justify-center items-center  rounded-bl-xl rounded-br-xl w-[15%]  h-[90%] bg-[#1d35b9] flex-col">
+                        {/* <View className="justify-center items-center  rounded-tl-xl rounded-tr-xl w-[100%] rounded-lg min-h-[100%] bg-[#f5f4f6] flex-col">
+                            <Heart title="" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.search_people} link="/SearchFriend"/>
+                        </View> */}
+                                 <Image
+                                     className="w-[35px] h-[35px] "
+                                     source={icons.newChallenge}
+                                     resizeMethod='cover' />
+                  </TouchableOpacity>
 
             </View>
  
       </View>
 
       <View
-             className="w-full h-[7vh] px-2 border-2 border-[#044743] bg-[#044743]
+             className="w-full h-[7vh] px-2 border-2 border-[#6a7c83] bg-[#6a7c83]
                 flex-row justify-center items-center">
                  <View className=" w-[100%] h-[80%] px-4 border-gray-200 border-2 bg-white  rounded-lg rounded-tr-lg
                      flex-row justify-center items-center">
@@ -276,10 +331,10 @@ export default function timeline() {
                  </View >
       </View>
 
-      {friendsChallengesList &&  (
+      {/* {friendsChallengesList &&  (
                  <FriendChallengeBox friendsChallenges={friendsChallengesList.challenges}/> 
           )}
-        
+         */}
 
   
 
@@ -348,8 +403,10 @@ export default function timeline() {
   };
 
   useEffect(() => {
+    if(challengeData.length > 0){
     setDisplayData(challengeData.slice(0,2))
     setIndex(2)
+    }
    }, [challengeData])
 
 
@@ -368,7 +425,6 @@ export default function timeline() {
         showsHorizontalScrollIndicator={false}
         data={
           displayData
-          // []
         }
         keyExtractor={(item)=> item._id}
         renderItem={

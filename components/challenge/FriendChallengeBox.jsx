@@ -9,6 +9,7 @@ import { getTimeLapse } from '../../helper';
 import SwingingTitle from '../custom/SwingingTitle';
 
 import { getTopChallenges } from '../../apiCalls';
+import InstantChallengeDisplay from './InstantChallengeDisplay';
 
 
 export default function FriendChallengeBox() {
@@ -259,12 +260,19 @@ useEffect(() => {
    <>
 
         <View
-        style={{height:Platform.OS == "android" ? height * 0.78 : 554}}
-        className="w-[100vw]  bg-[#044743] px- flex-col justify-start items-center h-[78vh]" >
+         style={{
+          height:
+          Platform.OS == "android" ? "72%" :
+           "76%"
+          }}
+        className="w-[100vw]  bg-[#6a7c83] px- flex-col justify-start items-center h-[80vh]" >
+
+        {!selectedChallenge ?(
+           <>
             <View 
-              style={{height:"8%"
+              style={{height:"9%"
                 }}
-              className="w-[100%] h-[100%] px-4 rounded-tr-3xl rounded-tl-3xl flex-row justify-between items-center border-b-2 border-white  bg-white [#061c29] " >
+              className="w-[100%] h-[100%] px-4 rounded-tr-lg rounded-tl-lg flex-row justify-between items-center border-b-2 border-[#044743]   bg-[#06163d] [#061c29] " >
                    
                 <View
                  className="w-[40%] h-[80%] flex-row bg-[#06163d] rounded-lg justify-center items-center ">
@@ -286,7 +294,7 @@ useEffect(() => {
                     </View>
 
                     <View
-                     className="w-[70%] h-[80%] flex-col b-[#1046e6] justify-center items-start ">
+                     className="w-[70%] h-[80%] py-2 flex-col b-[#1046e6] justify-center items-start ">
                           <Text 
                                style={{fontSize:width/47}}
                                className="font-bold ml-5 text-sm text-white">
@@ -322,7 +330,7 @@ useEffect(() => {
                 </View>
 
                 <View
-                 className="w-[40%] h-[80%] flex-row bg-[#020d15] rounded-lg justify-center gap-2 items-center ">
+                 className="w-[40%] h-[80%] flex-row g-[#020d15] rounded-lg justify-center gap-2 items-center ">
                      <TouchableOpacity
                        
                        onPress={()=>{
@@ -330,7 +338,7 @@ useEffect(() => {
                           setSelectedChallenge(null)
                        }}
                        
-                       style={{backgroundColor:selectedPrivacy == "Public" ? "#5e91b8" : "#020d15"}}
+                       style={{backgroundColor:selectedPrivacy == "Public" ? "white" : ""}}
                        className=" w-[45%] h-[80%] rounded-lg  flex-row justify-center bg-[#053a08] items-center gap-1">
                             <Image
                                source={icons.publi}
@@ -352,7 +360,7 @@ useEffect(() => {
                               setSelectedPrivacy("Private")
                               setSelectedChallenge(null)
                            }}
-                       style={{backgroundColor:selectedPrivacy == "Private" ? "#5e91b8" : "#020d15"}}
+                       style={{backgroundColor:selectedPrivacy == "Private" ? "white" : ""}}
                        className="w-[45%] h-[80%] rounded-lg bg-whit flex-row justify-center items-center gap-1">
                             <Image
                              source={icons.priv}
@@ -377,28 +385,27 @@ useEffect(() => {
              </View>
         
              <View
-             style={{borderLeftColor:"#032e3a" ,borderRightColor:"#032e3a"
-                , height:  "80%"}}
+             style={{borderLeftColor:"#032e3a" ,borderRightColor:"#6a7c83"
+                , height:   "79%"}}
              className="min-w-[100vw] px- borde-l-2  borde-r-2 flex-col justify-center items-center  ">
 
-                    {!selectedChallenge ?(
                              <View 
                              style={{borderLeftColor:"white" ,borderRightColor:"white",height:"100%"}}
-                             className="flex-row flex-wrap justify-start items-center border-l-2 border-r-2 borde-[#fafafa] px-[3px] gap-[2px] py-2 gap-y-2 min-w-[100%] bg-[#303032]">
-                                 { friendsChallengesList && displayData.map((challenge,index,width)=> {
-                               
-                               
+                             className="flex-row flex-wrap justify-start items-center borde-l-2 borde-r-2 borde-[#fafafa] px-1 gap-x-1 py-2 gap-y-2 min-w-[100%] bg-[#6a7c83]">
+                                
+                              {friendsChallengesList && displayData.map((challenge,index,width)=> {      
                                return (
                                      <TouchableOpacity
                                          key={index}
                                          onPress={
-                                               ()=>
-                                                router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })
-                                            //    setSelectedChallenge({...challenge})
+                                               ()=> {
+                                                // router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })
+                                                setSelectedChallenge({...challenge})
+                                               }
                                             }
-                                         className="min-w-[32%] h-[49%] border-2 border-[#07071b]  rounded-lg  ">
+                                         className="min-w-[32%] h-[49%] borde-2 border-[#07071b]  rounded-lg  ">
                                          <Image
-                                         style={{with:'100%',height:"100%",borderRadius:5,backgroundColor:"black",opacity:0.5}}
+                                         style={{with:'100%',height:"100%",borderRadius:5,backgroundColor:"black",opacity:0.7}}
                                          contentFit='contain'
                                          source={{uri:challenge.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
                                          />
@@ -498,20 +505,28 @@ useEffect(() => {
                                              </View>
  
                                              <View
-                                                 className="absolute bottom-0 flex-row w-[100%]  h-8 px-1 py-1 justify-start items-end gap-1 ">
+                                                 className="absolute bottom-0 flex-row w-[100%]  h-8 px-1 py-1 justify-start items-end gap- ">
                                                     
                                                     <Image
                                                      className="w-7 h-7 rounded-full"
                                                      source={icons.newChallenge}
                                                      resizeMethod='cover' />
+                                                      {/* <View
+                                                      className="flec-row  h-[100%] g-[#524f4f] px-2 rounded- justify-center ml-auto items-center gap- ">
+                                                          
+                                                          <Text className="text-white  text-xs font-bold"
+                                                            style={{fontSize:7}}>
+                                                              CH
+                                                          </Text>
+                                                     </View> */}
                                                      <View
-                                                      className="flec-row min-w-[65%] h-[100%] bg-blue-700 px-2 rounded-full justify-center ml-auto items-center gap- ">
+                                                      className="flec-row  h-[100%] bg-[#524f4f] px-2 rounded- justify-center ml-auto items-center gap- ">
                                                           {/* <Text className="text-white  text-xs font-bold"
                                                             style={{fontSize:7}}>
                                                                 {getTimeLapse(challenge.createdAt)}
                                                           </Text> */}
                                                           <Text className="text-white  text-xs font-bold"
-                                                            style={{fontSize:9}}>
+                                                            style={{fontSize:7}}>
                                                               {getTimeLapse(challenge.createdAt)}  ago
                                                           </Text>
                                                      </View>
@@ -541,10 +556,6 @@ useEffect(() => {
                                  </TouchableOpacity>
  
                          </View>
-                    ):(
-                         <Challenge  isVisibleVertical={true} challenge={selectedChallenge} h={height-100} w={width}/>
-
-                    )}
                       
                 </View>
 
@@ -552,13 +563,13 @@ useEffect(() => {
                         style={{
                             height:"12%"
                         }}
-                        className= "w-[100vw] border- h-[100%] px-1 py-2 order-white bg-white  [#061c29] flex-row px- justify-center  items-center  ">
+                        className= "w-[98vw] border- h-[100%] px-2 py- order-white g-white  [#061c29] flex-row px- justify-center  items-start  ">
                             
                              <TouchableOpacity
                                             onPress={()=> {setSelectedFriend("all")}}
                                             style={{ backgroundColor:selectedFriend == "all" ? "blue" : "black"
                                          }}
-                                            className="w-[15%] h-[100%] flex-col justify-start py-2 rounded-l-lg bg-[#0d0c0c]  items-center gap-">
+                                            className="w-[15%] h-[85%] flex-col justify-start py-2 rounded-l-lg bg-[#0d0c0c]  items-center gap-">
                                               <Image
                                             source={icons.invites}
                                             resizeMethod='contain'
@@ -574,42 +585,12 @@ useEffect(() => {
                              </TouchableOpacity>
 
                             <View
-                            className= "w-[82vw] border- -[100%]  order-white px- bg-black " >
+                            className= "w-[82vw] border- h-[85%]  order-white px- bg-black " >
                                 
                                         <FlatList
                                         data={userFriendData.friends}
                                         keyExtractor={(item)=> item.sender_id}
-                                        //    ListHeaderComponent={() => {
-                                        //          return (
-                                        //             <TouchableOpacity
-                                        //                 onPress={()=> {setSelectedFriend("all")}}
-                                        //                 style={{ backgroundColor:selectedFriend == "all" ? "blue" : "black"
-                                        //              }}
-                                        //                 className=" min-w-[15vw] h-[100%] flex-col justify-center  rounded-l-xl bg-[#0d0c0c]  items-center gap-1">
-                                        //                   <Image
-                                        //                 source={icons.invites}
-                                        //                 resizeMethod='contain'
-                                        //                 style={{height:width/15 , width:width/15}}
-                                        //                 className="w-16 h-16 mt-2 rounded-full" />
-                                        //                 <Text 
-                                        //                     style={{
-                                        //                     fontSize : 6
-                                        //                     }}
-                                        //                     className="font-black text-sm text-white">
-                                        //                          All Friends
-                                        //                 </Text>    
-                                        //             </TouchableOpacity>
-                                        //             )
-                                                
-                                        //    }}
-                                        // ListFooterComponent={() => {
-                                        //     return (
-                                        //     <View
-                                        //         className=" w-[8vw] h-[100%] flex-col justify-center bg-black border-tl-3xl  items-center gap-2">
-                                                
-                                        //     </View>)
-                                            
-                                        // }}
+                                       
                                         renderItem={
                                             ({item,index}) => {
                                             return (
@@ -644,13 +625,17 @@ useEffect(() => {
                                 </View>  
 
                                 <View
-                                  className=" w-[2vw] h-[100%] flex-col justify-center bg-[#0b0a0a] rounded-r-lg  items-center ">    
+                                  className=" w-[2vw] h-[85%] flex-col justify-center bg-[#0b0a0a] rounded-r-lg  items-center ">    
                                 </View>
 
                  </View>
+                 </>
+                   ):(
+                    <InstantChallengeDisplay challenge={selectedChallenge} setSelectedChallenge ={setSelectedChallenge}/>
+
+               )}
 
             </View>
-            {/* </View> */}
 
 
    </>

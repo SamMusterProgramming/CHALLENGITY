@@ -494,7 +494,7 @@ const confirmUnfriend = () => {
                 )}
 
 
-              {/* <ProgresssBarVideo player={player} visible={!isPlaying} bottom={72} /> */}
+              <ProgresssBarVideo player={player} visible={!isPlaying} bottom={72} />
 
               <TouchableOpacity 
                hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
@@ -654,8 +654,7 @@ const confirmUnfriend = () => {
                  {!isPlaying && !displayComments  && (
                      <View
                           className="absolute bottom-[9%] left-2  flex-col justify-start gap-1  items-start">
-              
-
+        
                           <View className="px-2 flex-row justify-start items-center ">
                             <Text 
                                 style={{fontSize:11}}
@@ -672,7 +671,7 @@ const confirmUnfriend = () => {
                                      {participant.votes}  Votes
                               </Text>
                               <Image 
-                                  className="w-8 h-8"
+                                  className="w-6 h-6"
                                     source={icons.heart}
                                   />
                           </View>
@@ -681,19 +680,19 @@ const confirmUnfriend = () => {
 
                   {!isPlaying && (
                      <View
-                          className="absolute bottom-[9%] left-44  flex-col justify-start gap-1  items-start">
+                          className="absolute bottom-[18%] w-[15%] left-2  flex-col justify-start gap-1  items-start">
               
 
-                          <View className="px-2 flex-row justify-start items-center ">
+                          <View className="px-2 flex-row justify-center w-[100%] items-center ">
                             <Text 
-                                style={{fontSize:11}}
+                                style={{fontSize:12}}
                                 className="text-white font-bold ">
                                      Views        
                             </Text>
                           </View>  
-                          <View className=" flex-row justify-start px-2 items-center ">
+                          <View className=" flex-row justify-center w-[100%] text-center px-2 items-center ">
                               <Text 
-                                style={{fontSize:11}}
+                                style={{fontSize:12}}
                                 className="text-white font-bold text-sm">
                                       {!viewersList || viewersList == "no" ? 0 : viewersList.viewers.length}  
                               </Text>

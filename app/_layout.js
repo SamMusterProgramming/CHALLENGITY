@@ -27,6 +27,9 @@ export default function rootLayout() {
        <Stack.Screen name='ParticipationManagement' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='PlayModeChallenges' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='WatchList' options={{ headerShown:false,unmountOnBlur: true}} />
+       <Stack.Screen name='FSinstantChallengeDisplayer' options={{ headerShown:false,unmountOnBlur: true}} />
+       <Stack.Screen name='TalentContestRoom' options={{ headerShown:false,unmountOnBlur: true}} />
+       <Stack.Screen name='CreateParticipateTalent' options={{ headerShown:false,unmountOnBlur: true}} />
 
 
      </Stack>

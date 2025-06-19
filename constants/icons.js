@@ -34,7 +34,7 @@ import check from '../assets/icons/check.png'
 import pending from '../assets/icons/pending.png'
 // import rank from '../assets/icons/ranking.png'
 import challengify from '../assets/icons/logo-challengify.png'
-import check_red from '../assets/icons/check-red.png'
+import check_red from '../assets/icons/red-check.png'
 import down_arrow from '../assets/icons/down-arrow.png'
 import publi from '../assets/icons/public.png'
 import favourite from '../assets/icons/favourite.webp'
@@ -74,6 +74,19 @@ import vs from '../assets/icons/vs.png'
 import notifications_post from '../assets/icons/notification-post.png'
 import next_arrow from '../assets/icons/next_arrow.png'
 import back_arrow from '../assets/icons/back_arrow.png'
+import playmode from '../assets/icons/playmode.png'
+import fullscreen from '../assets/icons/fullscreen.png'
+import guiness from '../assets/icons/guiness.png'
+import talent from '../assets/icons/talent.png'
+import challenge_competition from '../assets/icons/challenge_competition.png'
+import art from '../assets/icons/art.png'
+import tech from '../assets/icons/tech.png'
+import comedy from '../assets/icons/comedy.png'
+import contestant from '../assets/icons/contestant.png'
+import africa from '../assets/icons/africa.png'
+import europe from '../assets/icons/europe.png'
+import asia from '../assets/icons/asia.png'
+import america from '../assets/icons/america.png'
 
 
 
@@ -81,6 +94,19 @@ import back_arrow from '../assets/icons/back_arrow.png'
 
 
 export default {
+  america,
+  asia,
+  europe,
+  africa,
+  contestant,
+  comedy,
+  tech,
+  art,
+  challenge_competition,
+  talent,
+  guiness,
+  fullscreen,
+  playmode,
   back_arrow,
   next_arrow,
   notifications_post,

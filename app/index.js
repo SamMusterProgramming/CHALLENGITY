@@ -53,7 +53,7 @@ export default function app() {
       getTopChallenges(user._id,setTrendingChallenges) 
       setTimeout(() => {
         setIsFetching(false)
-        router.replace('/timeline')
+        router.replace('/Home')
       }, 2000);
      
     }
@@ -81,7 +81,8 @@ export default function app() {
 
   return (
    
-    <SafeAreaView className= "flex-1 bg-primary ">
+    // <SafeAreaView className= "flex-1 bg-primary ">
+    <SafeAreaProvider>
            <ImageBackground className=" flex-1 w-[100vw]  h-full  justify-start items-center"
                       source={images.night_bg} >
             <View className="w-[100%]  h-[100%]  bg-whi rounded-xl border- borde " >          
@@ -230,7 +231,8 @@ export default function app() {
         </ImageBackground>
     
 
-    </SafeAreaView> 
+    {/* </SafeAreaView>  */}
+    </SafeAreaProvider>
 
       
  

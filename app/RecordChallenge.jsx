@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, useWindowDimensions, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, Image, useWindowDimensions, Alert, ScrollView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router';
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
@@ -15,7 +15,8 @@ import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from
 import { generateThumbnail, saveVideoLocally } from '../videoFiles';
 import { BASE_URL, getUserPrivateChallenges, getUserPublicChallenges } from '../apiCalls';
 import axios from 'axios';
-import { clearCache } from 'react-native-compressor';
+import { getInition } from '../helper';
+// import { clearCache } from 'react-native-compressor';
 
 
 export default function RecordChallenge() {
@@ -43,7 +44,7 @@ export default function RecordChallenge() {
   const [action, setAction] = useState("");
   const [text,setText] = useState("")
 
-  const [invitedFriends,setInvitedFriends] = useState([])
+  const [invitedFriends,setInvitedFriends] = useState(null)
 
 
   const [bgPrivacyColor ,setBgPrivacyColor] = useState("blue")
@@ -115,7 +116,7 @@ export default function RecordChallenge() {
          frs.push(friend)
         }
     })
-    setInvitedFriends([...frs])
+    setInvitedFriends({invites:frs})
    
   }, [])
  
@@ -220,7 +221,7 @@ export default function RecordChallenge() {
               name:user.name,
               video_url : urls[0],
               email:user.email,
-              friendList:invitedFriends,
+              friendList:invitedFriends ? invitedFriends.invites : [] ,
               audience:challengeMode,
               thumbNail: urls[1]
           
@@ -233,7 +234,11 @@ export default function RecordChallenge() {
                                               getUserPrivateChallenges(user._id ,setUserPrivateChallenges)                
                   setTimeout(() => {
                         setVideoUri(null)
-                        router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:res.data._id} })
+                        // router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:res.data._id} })
+                        router.push({ pathname: '/FSinstantChallengeDisplayer', params: {
+                          challenge_id:res.data._id
+                         } })
+
                   }, 1000);
                       
 
@@ -245,7 +250,7 @@ export default function RecordChallenge() {
           }).finally (async()=>{
             FileSystem.deleteAsync(results[0], { idempotent: true }).then(res => console.log("file deleted "));
             FileSystem.deleteAsync(results[1], { idempotent: true }).then(res => console.log("file deleted "));
-            await clearCache();
+            // await clearCache();
           }
           )
 
@@ -376,7 +381,7 @@ export default function RecordChallenge() {
     <>
            
     <SafeAreaView
-         className="flex-1 bg-primary">           
+         className="flex-1 bg-primary h-[100vh] ">           
          {videoUri ? (
         <View 
         className=" flex-1 flex-column bg-black justify-start  items-center ">
@@ -398,106 +403,174 @@ export default function RecordChallenge() {
            
            {!play && (
                <>
-                   <View className="min-w-full h-[6vh] rounded-tl-full rounded-tr-full flex-row justify-center items-center bg-[#e0a607]">
-                               
-                                 <View 
-                                     className="w-[100%]  min-h-[95%] rounded-md bg-s  flex-row justify-evenly  items-center ">
-                                       <Text className="text-white text-sm  font-bold ">
-                                           New Challenge
-                                       </Text>
-                               </View>          
-                   </View>
 
-                   <View className="w-[100%] h-[6vh]  bg-[#151f36] flex-row justify-center items-center rounded-lg  ">
-                       <SwingingTitle color="white" fontSize={12} text={description} />
-                   </View>
+              <View
+                  className = "min-w-[100%] h-[5%] gap- rounded-tl-x rounded-tr-x flex-row justify-start items-center px-1 bg-[white]">
+                      
+                      <TouchableOpacity
+                          className="w-[8%] h-[100%] justify-center g-[#eb0a0a] px-1 py-1 rounded-xl items-center opacity  "
+                          onPressIn={()=> router.back()}
+                          >
+                            <Image   
+                             source={icons.x}
+                             className=" w-7 h-7 rounded-full"
+                             />
+                     </TouchableOpacity>
+                     <View
+                     className = "w-[35%] h-[80%] rounded-xl flex-row justify-center items-center px- g-[#fffefd]">
+                            <View className = "px-2 py-1 w-[100%] flex-row justify-center gap-2 items-center">
+                                   <Image 
+                                    className={ "rounded-full w-7 h-7"}
+                                    source={ {uri:user.profile_img} }
+                                    resizeMode='cover'
+                                    />
+                                     <View className="justify-center py-1  items-start h-[80%] flex-col ">
+                                                   
+                                                   <Text className="font-pmedium  text-sm text-black">
+                                                       <Text 
+                                                       style={{fontSize:width<= 330? 7:7}}
+                                                       className="font-black text-sm text-black">
+                                                           {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
+                                                       </Text> 
+                                                   </Text>
+                                                   <Text 
+                                                       style={{fontSize:width<= 330? 8:7}}
+                                                       className=" text-sm text-blue-400 font-black">
+                                                       {getInition(user.name)}Challenger
+                                                   </Text>
+                                     </View>
+                            </View>
+                         
+                     </View>
+                     <View
+                     className = "w-[55%] h-[100%] flex-row justify-center items-center px- g-[#de8124]">
+                        
+                         <Text 
+                               style={{fontSize:16}}
+                               className=" text-sm text-blue-900 mt-1 font-black">
+                                  NEW CHALLENGE
+                          </Text>
+                        
+                     </View>
+    
+                 </View>
 
-                   <View className="w-[100%] h-[16%] px-2   flex-row justify-center gap-2 items-center">
-                                 <View
-                                  className="w-[33%] h-[90%] flex-col justify-center gap- items-center">
-                                     <View
-                                            className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                            {/* <Text className="text-gray-400 text-sm font-bold">
-                                                TYPE : {''}
-                                            </Text> */}
-                                            <Text 
-                                               style={{fontSize:10}}
-                                                className="text-white font-black"> 
-                                                {challengeType}
-                                            </Text>
+                 <View
+                  className = "min-w-[100%] h-[40%] gap- flex-row justify-between mt-auto items-center px- ">
+                      <View
+                      className = "w-[10%] h-[100%] flex-col justify-start items-center px- py-8 bg-[white] g-white">
+                            <TouchableOpacity
+                                // onPress={handleChallengeCompetitionDescrition}
+                                className = "px-0 py- h-[25%] flex-col justify-start gap- items-center">
+                                    <Image 
+                                            className={ "rounded-full w-7 h-7"}
+                                            source={icons.newChallenge }
+                                            resizeMode='cover'
+                                            />
+                                    <Text 
+                                                    style={{fontSize:width<= 330? 6:6}}
+                                                    className=" text-sm text-blue-400 mt-1 font-black">
+                                                    Challenge
+                                    </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                // onPress={ handleTypeDescrition }
+                                className = "px-0 py- h-[25%] flex-col justify-start gap- items-center">
+                              
+                                    <Image
+                                    source={getIcon(challengeType)}
+                                    resizeMethod='contain'
+                                    // style={{width:width/8, height:width/8}}
+                                    className="w-7 h-7 rounded-full" /> 
+                                    <Text 
+                                        style={{fontSize:6}}
+                                        className="text-black mt-1 font-black"> 
+                                            {challengeType}
+                                    </Text>
 
-                                    </View>
-                                     
-                                     <Image
-                                     source={getIcon(challengeType)}
-                                     resizeMethod='contain'
-                                     style={{width:width/6, height:width/6}}
-                                     className="w-[95%] h-[70%]" />
-                                 </View>
-                                 <View
-                                  className="w-[33%] h-[90%] flex-col justify-center gap-2 items-center">
-                                     <View
-                                            className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                            
-                                            <Text 
-                                                style={{fontSize:10}}
-                                                className="text-white font-black"> 
-                                                {challengePrivacy}
-                                            </Text>
-
-                                    </View>
-                                     
-                                     <Image
-                                     source={getIcon(challengePrivacy)}
-                                     resizeMethod='contain'
-                                     style={{width:width/6, height:width/6}}
-                                     className="w-[95%] h-[70%]" />
-                                 </View>
-
-                                 <View
-                                    className="w-[33%] h-[100%] flex-col justify-center gap-2 items-center">
-                                        <View
-                                                className=" w-[100%] h-[20%] flex-row justify-center items-center">
-                                                <Text className="text-gray-400 text-xs font-bold">
-                                                  
-                                                </Text>
-                                                <Text className="text-white text-xs font-black"> 
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity 
+                                // onPress={ handlePrivacyDescrition }
+                                className = "px- py- h-[25%] flex-col justify-center gap- items-center">
+                                    <Image 
+                                            className={ "rounded-full w-7 h-7"}
+                                            source={challengePrivacy == "Public" ?icons.publi : icons.priv }
+                                            resizeMode='contain'
+                                            />
+                                    <Text 
+                                                    style={{fontSize:width<= 330? 6:7}}
+                                                    className=" text-sm text-red-400 mt-1 font-black">
+                                                    {challengePrivacy == "Public" ? "Public" : "Private" }
+                                    </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                // onPress={handleAudienceDescrition}
+                                className = "px- py- h-[25%] flex-col justify-center gap- items-center">
+                                    <Image 
+                                            className={ "rounded-full w-7 h-7"}
+                                            source={challengeMode == "Open" ? icons.open:
+                                                challengeMode == "Restricted" ? icons.restricted : icons.strict }
+                                            resizeMode='cover'
+                                            />
+                                    <Text 
+                                                    style={{fontSize:width<= 330? 6:7}}
+                                                    className=" text-sm text-blue-400 mt-1 font-black">
                                                     {challengeMode}
-                                                </Text>
+                                    </Text>
+                            </TouchableOpacity>
 
-                                        </View>
-                                        <Image
-                                                source={getIcon(challengeMode)}
-                                                resizeMethod='cover'
-                                                style={{width:width/6, height:width/6}}
-                                                className=" rounded-full bg-white" />
-                                       
-                                 </View>
-                   </View>
+                  </View> 
 
-                   {/* <View className="w-[100%] h-[15%] px-2  flex-row justify-center items-center">
-                                  <View
-                                    className="w-[50%] h-[100%] flex-col justify-center gap-2 items-center">
-                                        <View
-                                                className=" w-[100%] h-[20%] flex-row justify-center items-center">
-                                                <Text className="text-gray-400 text-xs font-bold">
-                                                  
-                                                </Text>
-                                                <Text className="text-white text-xs font-black"> 
-                                                    {challengeMode}
-                                                </Text>
+                  <View
+                        className = "min-w-[10%] h-[100%] flex-col justify-end items-center py-4 px- bg-[#f8f1f1]">
+                            <View
+                                className = "w-[98%] h-[100%] flex-col rounde-tl-xl rounde-tr-xl  justify-between items-center py-2 px- ">
+                                    <TouchableOpacity
+                                    // onPress={handleInviteDescrition}
+                                    className = " w-[100%] h-[15%] flex-col justify-center gap- items-center">
+                                        <Image 
+                                                className={ "rounded-full w-7 h-7"}
+                                                source={ icons.invites }
+                                                resizeMode='cover'
+                                                />
+                                        <Text 
+                                                        style={{fontSize:width<= 330? 8:8}}
+                                                        className=" text-sm text-blue-400 mt- font-black">
+                                                        {invitedFriends && invitedFriends.invites.length }
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <ScrollView className = "w-[100%] max-h-[82%] flex-col justif-center gap- bg-[#e5f8f9] ite-center">
+                                              {invitedFriends && invitedFriends.invites.map((participant, index)=> {
+                                                    return(
+                                                    <View key={index} className = " w-[100%]  flex-col justify-center py-1 items-center">
+                                                            <Image 
+                                                              className={ "rounded-full w-7 h-7"}
+                                                              source={ {uri:participant.profile_img} }
+                                                              resizeMode='cover'
+                                                            />
+                                                            <Text 
+                                                              style={{fontSize:width<= 330? 7:7}}
+                                                              className=" text-sm text-black mt- font-black">
+                                                             {participant.name.slice(0,6)}
+                                                            </Text>
+                                                    </View>)
+                                              })}   
+                                    </ScrollView>
+                            </View>
+                        </View>
 
-                                        </View>
-                                        <Image
-                                                source={getIcon(challengeMode)}
-                                                resizeMethod='cover'
-                                                style={{width:width/6, height:width/6}}
-                                                className=" rounded-full bg-white" />
-                                       
-                                 </View>
-                                 
-                   </View> */}
+                </View>
 
+               
+                <View
+                   className = "w-[100%] h-[5%] px-2 py-1 flex-row rounded-bl-xl rounded-br-xl justify-center items-center px- bg-[#f1f5f6]">
+                                                {/* <View className = "w-[90%] h-[80%] px-2 py-1 flex-row justify-center rounde-lg items-center bg-[#d9d7d4]"> */}
+                      <SwingingTitle text={description} color="black" fontSize={13} />
+                                                {/* </View> */}
+                 </View>
+
+                  
                    <TouchableOpacity onPress={()=>setPlay(!play)}
                         hitSlop={{ top: 300, bottom: 300, left: 400, right: 400 }}
                         style={{bottom:height/5, left:0}}
@@ -514,50 +587,6 @@ export default function RecordChallenge() {
                             </Text>
                   </TouchableOpacity>     
 
-                   {challengePrivacy == "Private" &&  (
-                   <View className="w-[100%] h-[30%] px-2 mt-10 flex-row justify-center items-center">
-                              <View
-                                className="w-[80%] h-[100%] flex-col justify-center gap-1 items-center">
-                                      
-                                      <View
-                                        className=" w-[100%] h-[20%] flex-row justify-center items-center">
-                                           <Text className="text-white text-sm font-bold">
-                                                   {invitedFriends.length}{'  '}
-                                           </Text>
-                                           <Text
-                                             style={{fontSize:12}} 
-                                             className="text-blue-200 text-sm font-black"> 
-                                                   Invites
-                                           </Text>
-
-                                      </View>
-                      
-                                      <View
-                                      className=" w-[100%] h-[80%] px-3 flex-row flex-wrap justify-center items-center">
-                                       {invitedFriends.map((invite,index)=> {
-                                             return (
-                                            <View key={index}
-                                             style={{width:width/6, height:width/6}}
-                                             className="  flex-col justify-evenly items-center">
-                                               <Image
-                                              source={{uri:invite.profile_img}}
-                                              resizeMethod='cover'
-                                              style={{width:width/10, height:width/10}}
-                                              className=" rounded-full " />
-                                               <Text
-                                                       className="text-white font-black "
-                                                       style={{fontSize:9}}>
-                                                           {invite.name.slice(0,6)} 
-                                               </Text>
-                                            </View>
-                                             )
-                                       })}
-                                     </View>
-                              </View>       
-
-                   </View>
-                   )}
-              
             
                </>
                
@@ -565,7 +594,7 @@ export default function RecordChallenge() {
 
               {play && (
                  <TouchableOpacity onPress={()=>setPlay(!play)}
-                        hitSlop={{ top: 300, bottom: 300, left: 400, right: 400 }}
+                        hitSlop={{ top: 300, bottom: 200, left: 400, right: 400 }}
                         className="top-96 -right-50 flex-row justify-center gap-1 items-center">
                          
                             <Image source={play? "" : ""}
@@ -574,40 +603,42 @@ export default function RecordChallenge() {
                   </TouchableOpacity>     
               )}  
 
-           <View className="flex-row min-w-full mt-auto  justify-between  items-center  opacity-85  h-[7vh]">
-              <View className="flex-row w-[40%] mt-auto  bg-wh mb- justify-center  items-center   h-[99%]">   
-                <TouchableOpacity
-                   className=" flex-row  justify-center bg-red-500 gap-2 items-center h-[95%] w-[95%] rounded-bl-[38px] "
-                   // onPress={goBack}  
-                   onPress={()=>setIsRecording(false)}   
-                   onPressOut={()=> {setVideoUri(null)}}
-                     >
-                   <Text
-                   style={{fontSize:width/30}}
-                   className="text-white text-xs font-bold">Go Back</Text>
-                   <Image      
-                   className="w-10 h-10 "
-                   source={icons.back}
-                   resizeMode='contain'
-                   />  
-                </TouchableOpacity>
-              </View>
-              <View className="flex-row w-[40%]  bg-whi  mb- justify-center  items-center   h-[99%]">
-                <TouchableOpacity
-                   className="flex-row justify-center bg-blue-600 gap-2 items-center h-[95%] w-[95%] rounded-br-[38px]"
-                   onPress={handleSumitChallenge}
-                     >
-                   <Image      
-                   className="w-10 h-10 "
-                   source={isRecording ? icons.submit : icons.submit}
-                   resizeMode='contain'
-                   />  
-                   <Text 
-                   style={{fontSize:width/30}}
-                   className="text-white text-xs font-bold">{isRecording? "Submit":"Submit"}</Text>
-                </TouchableOpacity>
-              </View>  
-           </View>
+         {!play && (
+           <View className="absolute top-[6vh] flex-row min-w-full -auto  justify-between  items-center  opacity-85  h-[5vh]">
+                      <View className="flex-row w-[30%] mt-auto  bg-wh mb- justify-center  items-center   h-[99%]">   
+                        <TouchableOpacity
+                          className=" flex-row  justify-center bg-white gap-2 items-center h-[95%] w-[95%] rounded-bl-[38px] "
+                          // onPress={goBack}  
+                          onPress={()=>setIsRecording(false)}   
+                          onPressOut={()=> {setVideoUri(null)}}
+                            >
+                          <Text
+                          style={{fontSize:width/40}}
+                          className="text-red-600 text-xs font-bold">Go Back</Text>
+                          <Image      
+                          className="w-7 h-7 "
+                          source={icons.back}
+                          resizeMode='contain'
+                          />  
+                        </TouchableOpacity>
+                      </View>
+                      <View className="flex-row w-[30%]  bg-whi  mb- justify-center  items-center   h-[99%]">
+                        <TouchableOpacity
+                          className="flex-row justify-center bg-white gap-2 items-center h-[95%] w-[95%] rounded-br-[38px]"
+                          onPress={handleSumitChallenge}
+                            >
+                          <Image      
+                          className="w-7 h-7 "
+                          source={isRecording ? icons.submit : icons.submit}
+                          resizeMode='contain'
+                          />  
+                          <Text 
+                          style={{fontSize:width/40}}
+                          className="text-blue-700 text-xs font-bold">{isRecording? "Submit":"Submit"}</Text>
+                        </TouchableOpacity>
+                      </View>  
+                 </View>
+         )}
 
 
            </View>
@@ -623,57 +654,210 @@ export default function RecordChallenge() {
        </View>
          ):
 
-         (
-         
+         ( 
+       <View  className="flex-1">  
       <CameraView ref={cameraRef} videoQuality="720p"  
          mode='video'    
          facing={facing}    
-         style={{flex:1}}
-         >
+         style={{minWidth:'100%',minHeight:'100%'}}
+         className="fle"
+         />
           
-           <View className="w-full   min-h-[100%]  flex-col justify-start  items-center "
+           <View className="absolute top- w-full h-full  min-h-[100%]  flex-col justify-start  items-center "
                                          >
 
                  {!isRecording &&
                    (
-                   <>
-                   <View className="min-w-full  rounded-md opacity-100  flex-row items-center justify-between h-[5vh]"
-                             >
-                                 <TouchableOpacity
-                                       onPress={() => router.back()}
-                                       className="w-[10%] h-[95%]  flex-col justify-center  items-center">
-                                       <Image
-                                       className="w-9 h-9 "
-                                       source={icons.back1} />
-                                 </TouchableOpacity>
-                                 <View 
-                                   className="w-[90%]  min-h-[95%] rounded-md bg-s  flex-row justify-center  items-end  ">
-                                     <Text className="text-white text-md  font-bold ">
-                                     New Challenge
-                                     </Text>
-                                 </View> 
-                  </View>  
+                   
+                <>
+                  <View
+                  className = "min-w-[100%] h-[5%] gap- rounded-tl-x rounded-tr-x flex-row justify-start items-center px-1 bg-[white]">
+                      
+                      <TouchableOpacity
+                          className="w-[8%] h-[100%] justify-center g-[#eb0a0a] px-1 py-1 rounded-xl items-center opacity  "
+                          onPressIn={()=> router.back()}
+                          >
+                            <Image   
+                             source={icons.x}
+                             className=" w-7 h-7 rounded-full"
+                             />
+                     </TouchableOpacity>
+                     <View
+                     className = "w-[35%] h-[80%] rounded-xl flex-row justify-center items-center px- g-[#fffefd]">
+                            <View className = "px-2 py-1 w-[100%] flex-row justify-center gap-2 items-center">
+                                   <Image 
+                                    className={ "rounded-full w-7 h-7"}
+                                    source={ {uri:user.profile_img} }
+                                    resizeMode='cover'
+                                    />
+                                     <View className="justify-center py-1  items-start h-[80%] flex-col ">
+                                                   
+                                                   <Text className="font-pmedium  text-sm text-black">
+                                                       <Text 
+                                                       style={{fontSize:width<= 330? 7:7}}
+                                                       className="font-black text-sm text-black">
+                                                           {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
+                                                       </Text> 
+                                                   </Text>
+                                                   <Text 
+                                                       style={{fontSize:width<= 330? 8:7}}
+                                                       className=" text-sm text-blue-400 font-black">
+                                                       {getInition(user.name)}Challenger
+                                                   </Text>
+                                     </View>
+                            </View>
+                         
+                     </View>
+                     <View
+                     className = "w-[55%] h-[100%] flex-row justify-center items-center px- g-[#de8124]">
+                        
+                         <Text 
+                               style={{fontSize:16}}
+                               className=" text-sm text-blue-900 mt-1 font-black">
+                                  NEW CHALLENGE
+                          </Text>
+                        
+                     </View>
+    
+                 </View>
+
+
+                 <View
+                  className = "min-w-[100%] h-[40%] mt-auto gap- flex-row justify-between items-center px- ">
+
+                      <View
+                      className = "w-[10%] h-[100%] flex-col justify-start items-center px- py-8 bg-[white] g-white">
+                            <TouchableOpacity
+                                // onPress={handleChallengeCompetitionDescrition}
+                                className = "px-0 py- h-[25%] flex-col justify-start gap- items-center">
+                                    <Image 
+                                            className={ "rounded-full w-7 h-7"}
+                                            source={icons.newChallenge }
+                                            resizeMode='cover'
+                                            />
+                                    <Text 
+                                                    style={{fontSize:width<= 330? 6:6}}
+                                                    className=" text-sm text-blue-400 mt-1 font-black">
+                                                    Challenge
+                                    </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                // onPress={ handleTypeDescrition }
+                                className = "px-0 py- h-[25%] flex-col justify-start gap- items-center">
+                              
+                                    <Image
+                                    source={getIcon(challengeType)}
+                                    resizeMethod='contain'
+                                    // style={{width:width/8, height:width/8}}
+                                    className="w-7 h-7 rounded-full" /> 
+                                    <Text 
+                                        style={{fontSize:6}}
+                                        className="text-black mt-1 font-black"> 
+                                            {challengeType}
+                                    </Text>
+
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity 
+                                // onPress={ handlePrivacyDescrition }
+                                className = "px- py- h-[25%] flex-col justify-center gap- items-center">
+                                    <Image 
+                                            className={ "rounded-full w-7 h-7"}
+                                            source={challengePrivacy == "Public" ?icons.publi : icons.priv }
+                                            resizeMode='contain'
+                                            />
+                                    <Text 
+                                                    style={{fontSize:width<= 330? 6:7}}
+                                                    className=" text-sm text-red-400 mt-1 font-black">
+                                                    {challengePrivacy == "Public" ? "Public" : "Private" }
+                                    </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                // onPress={handleAudienceDescrition}
+                                className = "px- py- h-[25%] flex-col justify-center gap- items-center">
+                                    <Image 
+                                            className={ "rounded-full w-7 h-7"}
+                                            source={challengeMode == "Open" ? icons.open:
+                                                challengeMode == "Restricted" ? icons.restricted : icons.strict }
+                                            resizeMode='cover'
+                                            />
+                                    <Text 
+                                                    style={{fontSize:width<= 330? 6:7}}
+                                                    className=" text-sm text-blue-400 mt-1 font-black">
+                                                    {challengeMode}
+                                    </Text>
+                            </TouchableOpacity>
+
+                  </View>
+
+                  <View
+                        className = "min-w-[10%] h-[100%] flex-col justify-end items-center py-4 px- bg-[#f8f1f1]">
+                            <View
+                                className = "w-[98%] h-[100%] flex-col rounde-tl-xl rounde-tr-xl  justify-between items-center py-2 px- ">
+                                    <TouchableOpacity
+                                    // onPress={handleInviteDescrition}
+                                    className = " w-[100%] h-[15%] flex-col justify-center gap- items-center">
+                                        <Image 
+                                                className={ "rounded-full w-7 h-7"}
+                                                source={ icons.invites }
+                                                resizeMode='cover'
+                                                />
+                                        <Text 
+                                                        style={{fontSize:width<= 330? 8:8}}
+                                                        className=" text-sm text-blue-400 mt- font-black">
+                                                        {invitedFriends && invitedFriends.invites.length }
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <ScrollView className = "w-[100%] max-h-[82%] flex-col justif-center gap- bg-[#e5f8f9] ite-center">
+                                              {invitedFriends && invitedFriends.invites.map((participant, index)=> {
+                                                    return(
+                                                    <View key={index} className = " w-[100%]  flex-col justify-center py-1 items-center">
+                                                            <Image 
+                                                              className={ "rounded-full w-7 h-7"}
+                                                              source={ {uri:participant.profile_img} }
+                                                              resizeMode='cover'
+                                                            />
+                                                            <Text 
+                                                              style={{fontSize:width<= 330? 7:7}}
+                                                              className=" text-sm text-black mt- font-black">
+                                                             {participant.name.slice(0,6)}
+                                                            </Text>
+                                                    </View>)
+                                              })}   
+                                    </ScrollView>
+                            </View>
+                        </View>
+
+                </View>
                      
-                 </>
+                </>
 
                    )}
+                 {!isRecording && (
+                 <View
+                   className = "w-[100%] h-[5vh] px-2 py-1 flex-row rounded-bl-xl rounded-br-xl justify-center items-center px- bg-[#f1f5f6]">
+                                                {/* <View className = "w-[90%] h-[80%] px-2 py-1 flex-row justify-center rounde-lg items-center bg-[#d9d7d4]"> */}
+                      <SwingingTitle text={description} color="black" fontSize={13} />
+                                                {/* </View> */}
+                 </View>
+               )}     
+
+
 
         <View 
-        style={{backgroundColor: !isRecording ?"#523c27":"transparent"}}
-        className=" w-[100%] flex-col justify-start items-center mt-auto bg-amber-800  opacity-100 ">
-             <View className="flex-row min-w-full mt-auto   justify-between  items-center  opacity-85  h-[7vh]">
-              
-             {!isRecording && (
+            style={{backgroundColor: !isRecording ?"":"transparent"}}
+            className="absolute top-7 w-[100%] flex-row justify-between items-center mt-10 gap-12 min--[40vh] -auto bg-amber-800 py-4 px-4 opacity-100 ">
+               {!isRecording && (
                <TouchableOpacity
-                   className="flex-row justify-center gap-2 items-center h-[100%] w-[33%] "
+                   className="flex-col justify-start gap-2 items-center h-[100%] -[35%] "
                    onPress={isRecording? stopRecording : startRecording}
                     >
                    <Image    
-                   className="w-10 h-10 "
+                   className="w-12 h-12 "
                    source={isRecording ? icons.camera_recording : icons.camera}
                    resizeMode='contain'
                    />
-                   <View className="h-[50%] flex-col justify-end  ">
+                   <View className="-[50%] flex-col justify-end  ">
                        <Text
                        style={{fontSize:10}}
                        className="text-white text-xs font-black">
@@ -682,18 +866,17 @@ export default function RecordChallenge() {
                    </View>      
                </TouchableOpacity>
               )}   
-
-              {!isRecording && (
+               {!isRecording && (
                <TouchableOpacity
-                  className="flex-row justify-center gap-2 items-center h-[100%] w-[33%] "
+                  className="flex-col justify-start gap-2 items-center h-[100%] -[15%] "
                   onPress={uploadVideo}
                    >     
                   <Image    
-                  className="w-12 h-12 "
+                  className="w-14 h-14 "
                   source={icons.upload}
                   resizeMode='contain'
                   />
-                   <View className="h-[50%] flex-col justify-end  ">
+                   <View className="-[50%] flex-col justify-end  ">
                        <Text 
                      style={{fontSize:10}}
                      className="text-white text-xs font-black">
@@ -702,7 +885,15 @@ export default function RecordChallenge() {
                   </View>        
               </TouchableOpacity>
               )}    
-             
+        </View>
+
+
+        {isRecording && (  
+
+        <View 
+        style={{backgroundColor: !isRecording ?"":"transparent"}}
+        className=" w-[100%] flex-col justify-start items-center mt-auto bg-amber-800  opacity-100 ">
+             <View className="flex-row min-w-full -auto   justify-center  items-center  opacity-85  h-[5vh]">
 
               {isRecording && (   
                  <View
@@ -737,10 +928,11 @@ export default function RecordChallenge() {
 
 
            </View>
+        )}
 
            {!isRecording && (  
               <TouchableOpacity
-                  className="flex-row justify-center absolute top-2 right-2  items-center  "
+                  className="flex-row justify-center absolute bottom-24 right-  items-center  "
                   onPress={toggleCameraFacing}
                     >
                   <Image
@@ -760,7 +952,7 @@ export default function RecordChallenge() {
              <CustomAlert text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
         )}
 
-       </CameraView>   
+       </View>   
 
 
          )

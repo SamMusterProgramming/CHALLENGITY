@@ -22,7 +22,7 @@ export default function ChallengeDisplayer() {
     const[challenge,setChallenge] = useState(null)
     const[isExpired,setIsExpired] = useState(false)
 
-    const {challenge_id} =  useLocalSearchParams();
+    const {challenge_id , playIndex} =  useLocalSearchParams();
     const swiperRef = useRef('')
     const [viewableItems, setViewableItems] = useState([]);
     const [finishPlaying ,setFinishPlaying] = useState(false)
@@ -36,7 +36,7 @@ export default function ChallengeDisplayer() {
           getChallengeById(challenge_id,setChallenge,setIsExpired)
         }
         return () => {
-          console.log("cleaning up displayer")
+          console.log("cleaning up displayer")    
           setChallenge(null)
           setDisplayData([])
           setViewableItems([])
@@ -76,12 +76,23 @@ export default function ChallengeDisplayer() {
     useEffect(() => {
         if(finishPlaying){
           if (swiperRef.current) {
-            // const currentIndex = swiperRef.current?.
-          //  if(currentIndex !== challenge.participants.length)
              swiperRef.current?.scrollToIndex({ index: ((currentIndex + 1) % challenge.participants.length) });
           }
         }
+       
+        
+        
       }, [finishPlaying])
+
+      useEffect(() => {  
+        if(playIndex){
+           setTimeout(() => {
+            if (swiperRef.current) {
+              swiperRef.current?.scrollToIndex({ index: playIndex-1 });
+           }
+           }, 1000);
+        }
+      }, [playIndex])
 
 
       const loadMoreData = () => {

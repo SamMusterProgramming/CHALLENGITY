@@ -3,7 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 import { generateRandomString, getRandomInt } from "./helper";
-import { clearCache } from "react-native-compressor";
 import { Image, Video } from "react-native-compressor";
 
 

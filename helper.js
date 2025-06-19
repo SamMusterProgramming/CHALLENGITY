@@ -97,3 +97,7 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
     }
     return result;
   }
+
+  export function screenSize(widh ,height, setScreen) {
+      widh < 330 ? setScreen(true) : setScreen(true)
+  }

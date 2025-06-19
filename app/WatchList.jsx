@@ -9,6 +9,7 @@ import { getTopChallenges } from '../apiCalls';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SwingingTitle from '../components/custom/SwingingTitle';
 import Heart from '../components/custom/Heart';
+import InstantChallengeDisplay from '../components/challenge/InstantChallengeDisplay';
 
 export default function WatchList() {
     const {user,setUser,userPublicChallenges,setUserPublicChallenges,followings,setFollowings,follow ,setTrendingChallenges, setFollow,trendingChallenges,
@@ -16,7 +17,9 @@ export default function WatchList() {
         setUserFriendData,userPrivateChallenges,setUserPrivateChallenges,setIsViewed,setNotifications ,favouriteChallenge , setFavouriteChallenge} = useGlobalContext()
     const { width, height } = useWindowDimensions();
     const [selectedPrivacy,setSelectedPrivacy] = useState("Public")
-    const [boxDisplayChallenges,setBoxDisplayChallenges] = useState([...favouriteChallenge.favourites].reverse())
+    const [boxDisplayChallenges,setBoxDisplayChallenges] = useState(
+                                                 [...favouriteChallenge.favourites].reverse()
+                                                            )
   
     // const [displayData , setDisplayData] = useState(userPublicChallenges)
     const [indexList , setIndexList] = useState(1)
@@ -32,17 +35,27 @@ export default function WatchList() {
     const [refresh , Setrefresh] = useState(false)
 
 
-    useEffect(() => {
-        setIsLoaded(true)
-      }, [])
+    // useEffect(() => {
+    //     setIsLoaded(true)
+    //   }, [])
 
 
 
-      useEffect(() => {
-        setIsLoaded(true)
-      }, [])
+    const upload =   ()=> {
+        const favChallenges = favouriteChallenge.favourites.reverse();
+        let challenges = []
+        favChallenges.forEach((ch)=> {
+            const c = trendingChallenges.find(chall => chall._id === ch._id)
+            if (c) challenges.push(c)
+        })
+        setBoxDisplayChallenges([...challenges])
+        setDisplayData(challenges.slice(0,6))
+        setMoreRight(challenges.length > 6 ? true:false)
+        setIndexList(1)
+      }
     
-      const handleNext = ()=> {
+
+    const handleNext = ()=> {
         const newData = boxDisplayChallenges.slice( indexList * 6 , (indexList + 1)* 6);
         setDisplayData([ ...newData]);
         setIndexList(prev => prev + 1 )
@@ -136,38 +149,104 @@ useEffect(() => {
     <SafeAreaView className="flex-1 min-w-full min-h-full bg-primary ">  
       <View
             // style={{ flex: 1 }}
-            className="flex h-[100%] min-w-full flex-col justify-start items-center" >
+            className="flex h-[100%] min-w-full flex-col justify-start items-center bg-white" >
+
+                    <View className="mt-0  min-w-[100%] h-[7vh] flex-row px- gap- items-center justify-center rounde-bl-[70px]  g-[white] rounde-br-[70px] 
+                              borde-l-2 borde-l-white borde-r-2 borde-r-white"
+                          style={{marginTop:Platform.OS == "android" ? 0 : 0 ,marginBottom:Platform.OS == "android" ? 0 : 0 }}>
+                          
+                          <TouchableOpacity
+                                        onPress={()=>{ router.back()}}
+                                        className="flex-col justify-center  items-center text-center w-[25%] h-[100%]">
+                                             
+                
+                                              <View
+                                              className="flex-row justify-center gap-2 items-center w-[100%] h-[100%] ">
+                                                  <Image
+                                                  className="w-[35%] h-[60%]"
+                                                  source={icons.back}
+                                                  resizeMethod='fill' />
+                                                 
+                                              </View>
+                            </TouchableOpacity>
+                          
+                          <View
+                              className="justify-end gap-3 px-  w-[50%] items-center  h-[100%] flex-col  g-[#eff6f9] ">
+                                
+      
+                                <View
+                                    className="justify-start gap-6 px-4  w-[100%] items-center h-[85%] flex-row rounded-tl-3xl rounded-tr-3xl bg-[#083d52] ">
+                                          <View className="justify-start items-center min-h-[100%] flex-row ">
+                                                <Image 
+                                                  style={{width:width<= 330? 30:30 ,height:width <= 330? 30:30}}
+                                                  className="w-[35px] h-[35px] rounded-full "
+                                                  source={{uri : user.profile_img? user.profile_img  : avatar}}
+                                                />
+                                          </View>
+                                          <View className="justify-center gap-  items-start h-[100%] flex-col ">
+                                               
+                                                  <Text className="font-pmedium  text-sm text-black">
+                                                      <Text 
+                                                      style={{fontSize:width<= 330? 8:9}}
+                                                      className="font-black text-sm text-white">
+                                                          {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
+                                                      </Text> 
+                                                  </Text>
+                                                  <Text 
+                                                      style={{fontSize:width<= 330? 8:9}}
+                                                      className=" text-sm text-blue-400 font-black">
+                                                      {getInition(user.name)}Challenger
+                                                  </Text>
+                                          </View>
+                                </View>          
+                              </View>
+                               <View
+                                        className="flex-col justify-end  items-center w-[25%] h-[100%]">
+                                        
+                                              <View
+                                                className="flex-row justify-center gap- bg-black rounded-lg items-center w-[80%] h-[80%] ">
+                                                   {refresh ? (
+                                                    <ActivityIndicator  size={24} color={"white"}/>
+                                                    ):(
+                                                    <TouchableOpacity
+                                                        onPress={
+                                                       
+                                                            ()=>{
+                                                            Setrefresh(true)
+                                                            getTopChallenges(user._id , setTrendingChallenges)
+                                                            setTimeout(() => {
+                                                                Setrefresh(false)
+                                                            }, 1000);
+                                                        }
+                                                    }
+                                                        className="w-[100%] h-[100%] bg-black rounded-lg  flex-col justify-center items-center gap-">
+                                                            <Image
+                                                            source={icons.refresh}
+                                                            resizeMethod='contain'
+                                                            style={{height:width/14 , width:width/14}}
+                                                            className="w-14 h-14  " />
+                                                    </TouchableOpacity>
+                                                    
+                                                )}
+                                              </View>
+                                      
+                             </View>
+      
+                    </View>
+
 
                 
                     <View
                         style={{fontSize:11}}
-                        className=" w-[100vw] h-[6vh] bg-white rounde-tl-3xl rounde-tr-3xl flex-row justify-center items-start  border-t- border-t-black">
-                            <View
-                                        className="flex-col justify-center  items-center text-center w-[25%] h-[100%]">
-                                             
-                                             {/* <Text 
-                                                      style={{fontSize:width/50}}
-                                                      className="font-black text-sm text-black ">
-                                                        Participations
-                                              </Text>  */}
-                                      
-                                              
-                                              <View
-                                              className="flex-row justify-center gap-2 items-end w-[100%] h-[100%] ">
-                                                  <Image
-                                                  className="w-[50%] h-[90%]"
-                                                  source={icons.favourite}
-                                                  resizeMethod='fill' />
-                                                  <Text 
-                                                      style={{fontSize:width/25}}
-                                                      className="font-black text-sm text-black">
-                                                       5
-                                                  </Text> 
-                                              </View>
+                        className=" w-[100vw] h-[7vh] g-white rounde-tr-3xl flex-row justify-evenly items-center  border-t- borde-t-black">
+
+                            <View className="justify-center items-center  rounded-lg bg-black rounde-br-3xl w-[23%] g-[#03471a] h-[85%] flex-col">
+                              <Heart title="home" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.home} link="/timeline"/>
                             </View>
+                            
                           
                             <View
-                                        className="flex-row justify-center rounded-bl-3xl rounded-br-3xl border- bg-[#141e2c] items-center gap-1 w-[40%] h-[85%]">
+                                        className="flex-row justify-center rounded-xl  border- bg-[#07326e] items-center gap-1 w-[50%] h-[85%]">
                                               
                                               <View
                                               className="flex-row justify-start rounded-xl items-center w-[20%] h-[100%] ">
@@ -199,123 +278,69 @@ useEffect(() => {
                                                     </View> */}
                                               </View>
                            </View>
-                           <View
-                                        className="flex-col justify-center  items-center w-[25%] h-[100%]">
-                                       <View
-                                        className="flex-col justify-center  items-center w-[100%] h-[100%]">
-                                               
-                                              <View
-                                                className="flex-row justify-center gap-2  items-end w-[100%] h-[100%] ">
-                                                  <Image
-                                                  className="w-[45%] h-[90%]"
-                                                  source={icons.challenge}
-                                                  resizeMethod='cover' />
-                                                  <Text 
-                                                      style={{fontSize:width/25}}
-                                                      className="font-black text-sm text-black ">
-                                                        {boxDisplayChallenges.length}
-                                                  </Text> 
-                                              </View>
-                                       </View>
-                             </View>
+                           <View className="justify-center items-center  rounded-lg bg-black rounde-br-3xl w-[23%] g-[#03471a] h-[85%] flex-col">
+                              <Heart title="home" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.home} link="/timeline"/>
+                        </View>
+                           
                 </View>
 
-                <View className="mt-0  min-w-[100%] h-[7vh] flex-row px- gap- items-center justify-center rounded-bl-[70px]  bg-[white] rounded-br-[70px] 
-                              borde-l-2 borde-l-white borde-r-2 borde-r-white"
-                          style={{marginTop:Platform.OS == "android" ? 0 : 0 ,marginBottom:Platform.OS == "android" ? 0 : 0 }}>
-                          
-                          <View className="justify-center items-center  rounded-bl-3xl rounded-br-3xl w-[20%] g-[#03471a] h-[100%] flex-col">
-                              <Heart title="" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.back} link="/back"/>
-                          </View>
-                          
-                          <View
-                              className="justify-end gap-3 px-  w-[50%] items-center  h-[100%] flex-col  bg-[#eff6f9] ">
-                                
-      
-                                <View
-                                    className="justify-start gap-6 px-4  w-[100%] items-center h-[85%] flex-row rounded-tl-3xl rounded-tr-3xl bg-[#010e13] ">
-                                          <View className="justify-start items-center min-h-[100%] flex-row ">
-                                                <Image 
-                                                  style={{width:width<= 330? 30:30 ,height:width <= 330? 30:30}}
-                                                  className="w-[35px] h-[35px] rounded-full "
-                                                  source={{uri : user.profile_img? user.profile_img  : avatar}}
-                                                />
-                                          </View>
-                                          <View className="justify-center gap-  items-start h-[100%] flex-col ">
-                                               
-                                                  <Text className="font-pmedium  text-sm text-black">
-                                                      <Text 
-                                                      style={{fontSize:width<= 330? 8:9}}
-                                                      className="font-black text-sm text-white">
-                                                          {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
-                                                      </Text> 
-                                                  </Text>
-                                                  <Text 
-                                                      style={{fontSize:width<= 330? 8:9}}
-                                                      className=" text-sm text-blue-400 font-black">
-                                                      {getInition(user.name)}Challenger
-                                                  </Text>
-                                          </View>
-                                </View>          
-                              </View>
-                          <View className="justify-center items-center rounded-bl-3xl rounded-br-3xl  g-[#083bf5]  w-[20%]   h-[100%] flex-col ">
-                            <Heart title="" color1 = '#b0611c' color2 = '#633711' icon ={icons.next} link="/challengeManagement"/>
-                          </View>
-      
-                </View>
+                
 
 
                 <View
-                style={{height: "85%"}}
+                style={{height: "84%"}}
                 className="w-[100vw] mt-aut g-[#03095e] flex-col justify-start items-center" >
-                    <View 
-                    style={{height:"8%"
-                        //    ,backgroundColor:color
+           {!selectedChallenge ?(
+                <>
+                    {/* <View 
+                    style={{height:"7%"
+               
                         }}
-                    className="w-[100vw] flex-row justify-between px-3 items-center rounded-tr-3xl rounded-tl-3xl mt- mb- bg-[#041153] h-[40px]" >
+                    className="w-[100vw] flex-row justify-between px- items-center rounde-tr-3xl rounde-tl-3xl mt- mb- bg-[#151822] h-[40px]" >
                     
                         <View
-                        className="w-[35%] h-[80%] rounded-xl ml-auto flex-row justify-center items-end">
+                            className="w-[25%] h-[100%] rounded- -auto flex-row justify-center items-end">
                             
                                 <TouchableOpacity
                                 onPress={()=> { router.navigate({ pathname: '/PlayModeChallenges',params: {
-                                    box: "invite",
-                                    challengePrivacy:"Private",
+                                  
+                                    challengePrivacy:selectedPrivacy,
                                     displayChallenges:JSON.stringify(boxDisplayChallenges)
                                 } }) 
                                 }}
-                                className="w-[85%] h-[100%] rounded-lg flex-row justify-center items-center bg-[#283851]"
+                                className="w-[85%] h-[80%] rounded-tl-3xl rounded-tr-3xl f flex-col justify-center items-center bg-[#090b0f]"
                                 >
+                                    <Image
+                                    source={icons.playmode}
+                                    resizeMethod='contain'
+                                    style={{height:width/24 , width:width/24}}
+                                    className="w-10 h-10 rounded-full" />
                                     <Text 
-                                        style={{fontSize:width/35
+                                        style={{fontSize:width/55
                                         }}
                                         className="font-black text-sm text-secondary">
-                                            Play Mode 
+                                            Action Mode 
                                     </Text>   
                                 </TouchableOpacity>   
                         </View>
-
                         <View
                         className="w-[30%] h-[100%] rounded-xl  flex-row justify-evenly items-center">
                             
                             
                             {refresh ? (
-                                <ActivityIndicator  size={"large"} color={"white"}/>
+                                <ActivityIndicator  size={27} color={"white"}/>
                                 ):(
                                 <TouchableOpacity
-                                    onPress={()=>{
-                                        Setrefresh(true)
-                                        getTopChallenges(user._id , setTrendingChallenges)
-                                        setTimeout(() => {
-                                            Setrefresh(false)
-                                        }, 1000);
-                                    }}
+                                    onPress={
+                                        upload
+                                  
+                                }
                                     className="w-[30%] h-[100%] rounded-lg  flex-col justify-center items-center gap-">
                                         <Image
                                         source={icons.refresh}
                                         resizeMethod='contain'
-                                        style={{height:width/12 , width:width/12}}
-                                        className="w-16 h-16" />
+                                        style={{height:width/14 , width:width/14}}
+                                        className="w-14 h-14" />
                                 </TouchableOpacity>
                                 
                             )}
@@ -323,17 +348,17 @@ useEffect(() => {
 
                         </View>
 
-                    </View>
+                    </View> */}
                 
                     <View
                     style={{borderLeftColor:"#10152d" ,borderRightColor:"#10152d"
-                        , height:  "85%"}}
-                    className="min-w-[100vw] px- border-l-2  border-r-2 flex-col justify-center items-center  ">
+                        , height:  "95%"}}
+                    className="min-w-[100vw] px- py- borde-l-2  borde-r-2 flex-col border-t-4 border-t-black justify-center items-center bg- ">
 
-                            {!selectedChallenge ?(
+                           
                                     <View 
                                     style={{borderLeftColor:"#10152d" ,borderRightColor:"#10152d",height:"100%"}}
-                                    className="flex-row flex-wrap justify-start items-center border-l-2 border-r-2  px-[3px] gap-[2px] py-2 gap-y-2 min-w-[100%] bg-[#322f2e]">
+                                    className="flex-row flex-wrap justify-start items-center borde-l-2 borde-r-2  px-1 gap-x-1 py-2 gap-y-2 min-w-[100%] bg-[#5e5e5b]">
                                         { displayData.map((challenge,index,width)=> {
                                     
                         
@@ -342,10 +367,10 @@ useEffect(() => {
                                                 key={index}
                                                 onPress={
                                                     ()=>
-                                                        router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })
-                                                    //    setSelectedChallenge({...challenge})
+                                                        // router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })
+                                                       setSelectedChallenge({...challenge})
                                                     }
-                                                className="min-w-[32%] h-[49%] border-2 borde-[#0505e6]  rounded-lg  ">
+                                                className="min-w-[32%] h-[49%] borde-2 borde-[#0505e6]  rounded-lg  ">
                                                 <Image
                                                 style={{with:'100%',height:"100%",borderRadius:5,backgroundColor:"black",opacity:0.5}}
                                                 contentFit='contain'
@@ -453,17 +478,14 @@ useEffect(() => {
                                                             className="w-7 h-7 rounded-full"
                                                             source={icons.newChallenge}
                                                             resizeMethod='cover' />
-                                                            <View
-                                                            className="flec-row min-w-[65%] h-[100%] bg-blue-700 px-2 rounded-full justify-center ml-auto items-center gap- ">
-                                                                {/* <Text className="text-white  text-xs font-bold"
-                                                                    style={{fontSize:7}}>
-                                                                        {getTimeLapse(challenge.createdAt)}
-                                                                </Text> */}
-                                                                <Text className="text-white  text-xs font-bold"
-                                                                    style={{fontSize:9}}>
-                                                                    {getTimeLapse(challenge.createdAt)}  ago
-                                                                </Text>
-                                                            </View>
+                                                             <View
+                                                            className="flec-row min--[65%] h-[100%] bg-[#524f4f] px-2 rounded-sm justify-center ml-auto items-center gap- ">
+                                                         
+                                                          <Text className="text-white  text-xs font-bold"
+                                                            style={{fontSize:7}}>
+                                                              {getTimeLapse(challenge.createdAt)}  ago
+                                                          </Text>
+                                                     </View>
                                                             
                                                         
                                                     </View>
@@ -494,30 +516,15 @@ useEffect(() => {
                                         </TouchableOpacity>
         
                                 </View>
-                            ):(
-                                <Challenge  isVisibleVertical={true} challenge={selectedChallenge} h={height-100} w={width}/>
-
-                            )}
+                         
                             
                         </View>
-
-                        <View 
-                                style={{backgroundColor:"#10152d" ,
-                                    height:"8%"
-                                }}
-                                className= " w-[100%] h-[40px] flex-row px-4 justify-between rounded-bl-md rounded-br-md items-center  ">
-                                    
-                                    
-
-                                            <Text 
-                                                style={{fontSize:width/40}}
-                                                className="font-bold ml-5 text-sm text-white">
-                                                Invitation to challenge
-                                            </Text>  
-                                
-                                        
-
-                        </View>
+                        </>
+                    ):(
+                               <InstantChallengeDisplay challenge = {selectedChallenge} setSelectedChallenge ={setSelectedChallenge}/>
+      
+                   )}
+                       
 
                     </View>
 

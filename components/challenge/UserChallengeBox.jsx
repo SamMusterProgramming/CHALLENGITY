@@ -3,13 +3,16 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 // import HeadLineChallengeList from '../headLights/HeadLineChallengeList';
 import { icons, images } from '../../constants';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import Challenge from './Challenge';
 import { getTimeLapse } from '../../helper';
 import SwingingTitle from '../custom/SwingingTitle';
-import { getNotificationByUser, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, updateNotificationByUser } from '../../apiCalls';
+import { getChallengeById, getNotificationByUser, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, updateNotificationByUser } from '../../apiCalls';
+import InstantChallengeDisplay from './InstantChallengeDisplay';
+import AnimatedCircleText from '../custom/AnimatedCircleText';
+import AnimatedRightLeftText from '../custom/AnimatedRightLeftText';
 
-export default function UserChallengeBox({selectedBox, refresh, selectedPr}) {
+export default function UserChallengeBox({selectedBox, refresh,  selectedPr}) {
     const {user,setUser,userPublicChallenges,setUserPublicChallenges,followings,setFollowings,follow ,setTrendingChallenges, setFollow,notifications ,
         publicParticipateChallenges,setPublicParticipateChallenges,privateParticipateChallenges,setPrivateParticipateChallenges,userFriendData,
         setUserFriendData,userPrivateChallenges,setUserPrivateChallenges,setIsViewed,setNotifications } = useGlobalContext()
@@ -31,8 +34,10 @@ export default function UserChallengeBox({selectedBox, refresh, selectedPr}) {
     const [color , setColor] = useState(selectedBox === "owner"? "#10152d" : "#10152d")
     const [selectColor , setSelectColor] = useState(selectedBox === "owner"? "white" : "white")
     const [refreshing , setRefreshing] = useState(refresh)
-  
 
+
+  
+ 
 
 
     useEffect(() => {
@@ -199,7 +204,9 @@ const handleRefresh = () => {
     if(selectedBox === "owner"){  
         selectedPrivacy == "Public" && handlePublic()
         selectedPrivacy == "Private" && handlePrivate()
-        selectedPrivacy == "Public" && handleStrict()  
+        selectedPrivacy == "Stric" && handleStrict()  
+        getUserPrivateChallenges(user._id, setUserPrivateChallenges)  
+        getUserPublicChallenges(user._id, setUserPublicChallenges) 
     }
     else  {
         getUserPublicParticipateChallenges(user._id, setPublicParticipateChallenges)  
@@ -242,18 +249,26 @@ useCallback(
   return (
    <>
         <View
-        style={{height:Platform.OS == "android" ? height * 0.68 : "68%"}}
-        className="w-[100vw]  bg-[#09aadb] h-[68%] flex-col justify-start items-center" >
+        style={{
+          height:
+          Platform.OS == "android" ? "72%" :
+           "76%"
+          }}
+        className="min-w-[100%] flex-  -[77%]  bg-[#6a7c83] border--4 borde-[#6a7c83] flex-col justify-start items-center" >
 
-            
+        {!selectedChallenge ? (
+          <>
             <View 
-              style={{height:Platform.OS == "android" ? width/7:"10%"
-                   ,backgroundColor:color
+              style={{
+                // height:
+                // Platform.OS == "android" ? width/8:
+                // "9%"
+                   backgroundColor:color
                 }}
-              className="w-[100vw] flex-row justify-center px-3 items-center rounded-tr-3xl rounded-tl-3xl mt-0 mb- bg-[#09aadb] h-[40px]" >
+              className="w-[98%] h-[8%] flex-row justify-start px-1 items-center border-b-2 border-b-[#6a7c83] rounded-tr-lg rounded-tl-lg mt-0 mb- bg-[#6a7c83] " >
                  
                 <View
-                 className="w-[50%] h-[80%] rounded-xl  flex-row justify-evenly items-center">
+                 className="w-[40%] h-[80%] rounded-xl  flex-row justify-evenly items-center">
                       <TouchableOpacity
                        
                         onPress={()=>{
@@ -262,12 +277,12 @@ useCallback(
                         }}
                         
                         style={{backgroundColor:selectedPrivacy == "Public" ? selectColor : color}}
-                        className=" w-[30%] h-[100%] rounded-lg py- flex-col justify-end items-center gap-">
+                        className=" w-[30%] h-[100%] rounded-sm py-2 flex-col justify-center items-center gap-">
                              <Image
                                 source={icons.publi}
                                 resizeMethod='fill'
-                                style={{height:width/24 , width:width/24}}
-                                className="w-8 h-8  rounded-full" />
+                                style={{height:width/32 , width:width/32}}
+                                className="w-7 7-8  rounded-xl" />
                               <Text 
                                 style={{
                                     fontSize:width/55,
@@ -284,11 +299,11 @@ useCallback(
                                setSelectedChallenge(null)
                             }}
                         style={{backgroundColor:selectedPrivacy == "Private" ? selectColor : color}}
-                        className="w-[30%] h-[100%] rounded-lg bg-whit flex-col justify-end items-center gap-">
+                        className="w-[30%] h-[100%] rounded-sm py-2 bg-whit flex-col justify-center items-center gap-">
                              <Image
                               source={icons.priv}
                               resizeMethod='fill'
-                              style={{height:width/22 , width:width/22}}
+                              style={{height:width/28 , width:width/28}}
                               className=" rounded-full" />
                               <Text 
                                 style={{fontSize:width/55 ,
@@ -304,11 +319,11 @@ useCallback(
                             setSelectedChallenge(null)
                          }}
                          style={{backgroundColor:selectedPrivacy == "Strict"? selectColor:color}}
-                         className="w-[30%] h-[100%] rounded-lg  flex-col justify-end items-center gap-">
+                         className="w-[30%] h-[100%] rounded-sm py-2  flex-col justify-center items-center gap-">
                              <Image
                               source={icons.strict}
                               resizeMethod='contain'
-                              style={{height:width/22 , width:width/22}}
+                              style={{height:width/28 , width:width/28}}
                               className="w-10 h-10 rounded-full" />
                               <Text 
                                 style={{fontSize:width/55 ,
@@ -323,7 +338,7 @@ useCallback(
                 </View>
 
                 <View
-                 className="w-[35%] h-[80%] rounded-xl ml-auto flex-row justify-center items-end">
+                 className="w-[25%] h-[100%] rounded- -auto flex-row justify-center items-end">
                        
                         <TouchableOpacity
                           onPress={()=> { router.navigate({ pathname: '/PlayModeChallenges',params: {
@@ -332,13 +347,18 @@ useCallback(
                             displayChallenges:JSON.stringify(boxDisplayChallenges)
                         } }) 
                          }}
-                          className="w-[85%] h-[100%] rounded-lg flex-row justify-center items-center bg-[#283851]"
+                          className="w-[85%] h-[80%] rounded-tl-3xl rounded-tr-3xl f flex-col justify-center items-center bg-[#090b0f]"
                         >
+                             <Image
+                            source={icons.playmode}
+                            resizeMethod='contain'
+                            style={{height:width/28 , width:width/28}}
+                            className="w-10 h-10 rounded-full" />
                             <Text 
-                                style={{fontSize:width/35
+                                style={{fontSize:width/55
                                 }}
                                 className="font-black text-sm text-secondary">
-                                     Play Mode 
+                                     Action Mode 
                               </Text>   
                         </TouchableOpacity>   
                 </View>
@@ -346,7 +366,7 @@ useCallback(
                 <View
                  className="w-[10%] h-[100%] rounded-xl ml-auto flex-row justify-evenly items-center">
                        {refreshing ? (
-                     <ActivityIndicator  size={"large"} color={"white"}/>
+                     <ActivityIndicator  size={width/20} color={"white"}/>
                     ):(
                         <TouchableOpacity
                          onPress={handleRefresh}
@@ -354,7 +374,7 @@ useCallback(
                              <Image
                               source={icons.refresh}
                               resizeMethod='contain'
-                              style={{height:width/12 , width:width/12}}
+                              style={{height:width/14 , width:width/14}}
                               className="w-20 h-20" />
                         </TouchableOpacity>
                          
@@ -365,16 +385,18 @@ useCallback(
              </View>
         
              <View
-             style={{borderLeftColor:color ,borderRightColor:color,
-                height: Platform.OS == "android" ? height * 0.685 - 2 * width/7 : "79%"}}
-  
-
-             className="min-w-[100vw] px- bg-[#303032] border-l-2  border-r-2 h-[68%] flex-col text-center justify-center items-center  ">
-
-                    {displayData.length > 0 && (
+             style={{borderLeftColor:"#09aadb" ,borderRightColor:"#09aadb",
+                // height: 
+                // Platform.OS == "android" ? height * 0.74 - 1 * width/8  : 
+                // "90%"
+              }}
+                className="min--[100%] h-[92%] flex- px- b-black [#6a7c83] border-l- rounded-lg border-r- -[68%] flex-col text-center justify-center items-center">
+                  {/* {!selectedChallenge ? (
+                     <> */}
+                      {displayData.length > 0 && (
                              <View 
-                             style={{borderLeftColor:color ,borderRightColor:color,height:"100%"}}
-                             className="flex-row flex-wrap justify-start items-center border-l-2  border-r-2 px-[3px] gap-[2px] py-2 gap-y-2 min-w-[100%]  bg-[#303032]  ">
+                             style={{borderLeftColor:color ,borderRightColor:color}}
+                             className="flex-row flex- h-[100%] flex-wrap justify-center items-center rounded-lg borde-l-2  borde-r-2 px-1 gap-x-1 py-1 gap-y-1 min-w-[100%]  bg-[#6a7c83]  ">
                                 
                             {isLoaded &&  displayData.map((challenge,index)=> {
                                return (
@@ -383,19 +405,20 @@ useCallback(
                                          key={index}
                                          onPress={
                                                ()=>{
-                                                    router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })
+                                                    // router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })
+                                                    setSelectedChallenge({...challenge})
+                                                    // setSelectionMade({...challenge})
                                                 }
-                                            //    setSelectedChallenge({...challenge})
                                             }
                                           style ={{ borderColor:generateNewMatches(challenge,notifications) !== " "? "white" :"" }}
-                                          className="min-w-[32%] h-[49%] border-2 borde-[white]  rounded-lg  ">
+                                          className="min-w-[31.5%] h-[49%] border- borde-[white]  rounded-lg  ">
                                          <Image
-                                         style={{with:'100%',height:"100%",borderRadius:5,backgroundColor:"black",opacity:0.5}}
+                                         style={{with:'100%',height:"100%",borderRadius:5,backgroundColor:"black",opacity:0.7}}
                                          contentFit='contain'
                                          source={{uri:challenge.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
                                          />
                                              <View
-                                             className="absolute top-0 flex-row w-[100%] px-2 py-2 bg-black  h-8 g-black opacity-100 rounded-t-lg justify-start items-end gap-2 ">
+                                              className="absolute top-0 flex-row w-[100%] px-2 py-2 bg-black  h-8 g-black opacity-100 rounded-t-lg justify-start items-end gap-2 ">
                                                    <Image
                                                      className="w-6 h-6 rounded-full"
                                                      source={{uri:challenge.participants[0].profile_img}}
@@ -408,7 +431,7 @@ useCallback(
                                              </View>
  
                                              <TouchableOpacity
-                                                 // hitSlop={Platform.OS === "android" &&{ top: 70, bottom: 70, left: 40, right: 40 }}
+                                      
                                                  onPress={()=>router.navigate({ pathname: '/CoverChallengePage', params: {challenge_id:challenge._id} })}
                                                  className="absolute  flex-row top-8 px-2 opacity-100  h-6 w-[100%] g-black  justify-between items-center  ">
                                                  <Image 
@@ -424,8 +447,6 @@ useCallback(
                                                  className="w-5 h-5"
                                                  />
                                              </TouchableOpacity>
-
-
 
                                              <View
                                                  className="absolute  flex-row top-14  opacity-100  h-4 w-[100%] g-black  justify-between items-center  ">
@@ -456,32 +477,34 @@ useCallback(
                                              <View
                                               className="absolute  flex-row top-24  opacity-100  h-8 w-[100%] g-black  justify-between items-center ">
                                                       <View
-                                                       className="w-[30%] h-[60%] flex-row justify-center items-center gap-1">
-                                                            <Text className="text-white text-xs font-black"
-                                                               style={{fontSize:8}}>
-                                                               {challenge.participants.length}
-                                                            </Text>
+                                                       className="w-[30%] h-[60%] flex-col justify-center items-center gap-1">
+                                                           
                                                             <Image
                                                                 //  style={{height:width/12}}
                                                                 className="w-6 h-6 rounded-full"
                                                                 source={icons.participate}
                                                                 resizeMethod='cover' />
+                                                                <Text className="text-white text-xs font-black"
+                                                                  style={{fontSize:8}}>
+                                                                  {challenge.participants.length}
+                                                                </Text>
                                                     </View> 
                                                      <Image 
                                                         source={icons.play}
-                                                        className="w-6 h-6"
+                                                        className="w-10 h-10"
                                                         />
                                                     <View
-                                                     className="w-[30%] h-[60%] flex-row justify-center items-center gap-1">
-                                                            <Text className="text-white text-xs font-black"
-                                                               style={{fontSize:8}}>
-                                                               {challenge.privacy == "Public"?"All":challenge.invited_friends.length}
-                                                            </Text>
+                                                     className="w-[30%] h-[60%] flex-col justify-center items-center gap-1">
+                                                           
                                                             <Image
                                                                 //  style={{height:width/12}}
                                                                 className="w-6 h-6 rounded-full"
                                                                 source={icons.invites}
                                                                 resizeMethod='cover' />
+                                                            <Text className="text-white text-xs font-black"
+                                                               style={{fontSize:8}}>
+                                                               {challenge.privacy == "Public"?"All":challenge.invited_friends.length}
+                                                            </Text>
                                                         
                                                     </View> 
                                              </View>
@@ -510,8 +533,9 @@ useCallback(
                                              )}
 
                                              <View
-                                              className="absolute  flex-row bottom-10 opacity-100  h-5 w-[100%] g-black bg-[#f0f4f8] rounded-sm justify-center items-center  ">
+                                              className="absolute  flex-row bottom-10 opacity-100  py-1 w-[100%] g-black bg-[#f7f7f7] rounded-sm justify-center items-center  ">
                                                      <SwingingTitle text={challenge.desc} color="black" fontSize={7} />
+                                                     {/* <AnimatedRightLeftText title ={challenge.desc} width={100}/> */}
                                              </View>
  
                                              <View
@@ -522,10 +546,10 @@ useCallback(
                                                      source={icons.newChallenge}
                                                      resizeMethod='cover' />
                                                      <View
-                                                     className="flec-row min-w-[65%] h-[100%] bg-blue-700 px-2 rounded-full justify-center ml-auto items-center gap- ">
+                                                     className="flec-row min--[65%] h-[100%] bg-[#524f4f] px-2 rounded-sm justify-center ml-auto items-center gap- ">
                                                          
                                                           <Text className="text-white  text-xs font-bold"
-                                                            style={{fontSize:9}}>
+                                                            style={{fontSize:7}}>
                                                               {getTimeLapse(challenge.createdAt)}  ago
                                                           </Text>
                                                      </View>
@@ -560,7 +584,7 @@ useCallback(
                            
                                 )}
                       
-                        { displayData.length == 0 && (
+                         { displayData.length == 0 && (
                                     <TouchableOpacity 
                                      className ="px-2 py-2 flex-col justify-center items-center b-[#eff2f7] min-w-[80%] min-h-[30%] rounded-full " >
                                          <Image
@@ -573,100 +597,20 @@ useCallback(
                                              </Text>
                                     </TouchableOpacity>
                                  )}
+{/* 
+                         </>
+                       ):(
+                                  <InstantChallengeDisplay challenge = {selectedChallenge} />
+         
+                       )} */}
                       
                 </View>
 
-                <View 
-                            style={{backgroundColor:color ,
-                            height:Platform.OS == "android" ? width/7:"10%"}}
-                            className= " w-[100%] h-[40px] flex-row px-4 justify-between rounded-bl-md rounded-br-md items-center  ">
-                            
-                                    <TouchableOpacity
-                                      className="w-[30%] h-[70%] flex-row g-[#032446] justify-start rounded-lg items-center   "
-                                      onPressIn={()=>{}}
-                                      >
-                                         <View
-                                              className="flex-col  w-[20%] g-black  justify-center items-center  ">
-                                                    <Image   
-                                                      source={icons.publi}
-                                                      className=" w-7 h-7 rounded-full"
-                                                      />
-                                         </View>
-                                         <View
-                                              className="flex-col w-[90%] h-[80%] ml-2 g-black py-2 justify-center items-start    ">
-                                                 <Text 
-                                                      style={{fontSize:width/53}}
-                                                      className="font-black  text-sm text-white">
-                                                        Total  Public
-                                                  </Text>  
-                                                   <Text 
-                                                      style={{fontSize:width/58}}
-                                                      className="font-bold  text-sm text-white">
-                                                       {selectedBox === "owner" ? "Challenges" : "Participations"} :{'  '}
-                                                       { selectedBox === "owner" ? userPublicChallenges.length: publicParticipateChallenges.length}
-                                                  </Text>  
-                                          </View>
- 
-                                       
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                      className="w-[30%] h-[70%] flex-row g-[#032446] justify-start rounded-lg items-center   "
-                                      onPressIn={()=>{}}
-                                      >
-                                         <View
-                                              className="flex-col  w-[20%] g-black  justify-center items-center  ">
-                                                    <Image   
-                                                      source={icons.priv}
-                                                      className=" w-7 h-7 rounded-full"
-                                                      />
-                                         </View>
-                                         <View
-                                              className="flex-col w-[80%] h-[80%] ml-2 g-black py-2 justify-center items-start    ">
-                                                 <Text 
-                                                      style={{fontSize:width/53}}
-                                                      className="font-black  text-sm text-white">
-                                                        Total  Private
-                                                  </Text>  
-                                                   <Text 
-                                                      style={{fontSize:width/58}}
-                                                      className="font-bold  text-sm text-white">
-                                                         {selectedBox === "owner" ? "Challenges" : "Participations"} :{'  '}
-                                                         {selectedBox === "owner" ? userPublicChallenges.length: privateParticipateChallenges.length}
-
-                                                  </Text>  
-                                          </View>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                      className="w-[30%] h-[70%] flex-row g-[#032446] justify-start rounded-lg items-center   "
-                                      onPressIn={()=>{}}
-                                      >
-                                         <View
-                                              className="flex-col  w-[20%] g-black  justify-center items-center  ">
-                                                    <Image   
-                                                      source={icons.priv}
-                                                      className=" w-7 h-7 rounded-full"
-                                                      />
-                                         </View>
-                                         <View
-                                              className="flex-col w-[80%] h-[80%] ml-2 g-black py-2 justify-center items-start    ">
-                                                 <Text 
-                                                      style={{fontSize:width/53}}
-                                                      className="font-black  text-sm text-white">
-                                                        Total  Private
-                                                  </Text>  
-                                                   <Text 
-                                                      style={{fontSize:width/58}}
-                                                      className="font-bold  text-sm text-white">
-                                                         {selectedBox === "owner" ? "Challenges" : "Participations"} :{'  '}
-                                                         {selectedBox === "owner" ? userPublicChallenges.length: privateParticipateChallenges.length}
-
-                                                  </Text>  
-                                          </View>
-                                    </TouchableOpacity>
-                                   
-
-                 </View>
+                </>
+                       ):(
+                                  <InstantChallengeDisplay challenge = {selectedChallenge} setSelectedChallenge ={setSelectedChallenge}/>
+         
+                 )}
 
             </View>
             {/* </View> */}

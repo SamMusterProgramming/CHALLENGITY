@@ -21,7 +21,7 @@ export const GlobalProvider =({children}) => {
     const [userFriendData,setUserFriendData] = useState(null)
     const [follow , setFollow ] = useState(null)
     const [favouriteChallenge , setFavouriteChallenge] = useState(null)
-
+    const [smallScreen , setSmallScreen] = useState (false)
 
 
     useEffect(() => {
@@ -48,7 +48,8 @@ export const GlobalProvider =({children}) => {
             followings,setFollowings,
             userFriendData,setUserFriendData,
             follow , setFollow ,
-            favouriteChallenge , setFavouriteChallenge
+            favouriteChallenge , setFavouriteChallenge,
+            smallScreen , setSmallScreen
             }
             } >
             {children}

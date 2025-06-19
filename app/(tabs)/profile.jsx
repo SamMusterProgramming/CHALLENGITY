@@ -4,7 +4,7 @@ import { useGlobalContext } from '../../context/GlobalProvider'
 import { getFollowData, getUserFriendsData, getUserParticipateChallenges, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges } from '../../apiCalls'
 import Challenge from '../../components/challenge/Challenge'
 import { icons } from '../../constants'
-import { router, useLocalSearchParams} from 'expo-router'
+import { router, useFocusEffect, useLocalSearchParams} from 'expo-router'
 import { useNavigation } from '@react-navigation/native'
 import { storage } from '../../firebase'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -186,6 +186,15 @@ const handleStrict = ()=> {
 }
 , []);
 
+useFocusEffect(
+  useCallback(() => {
+      return () => {
+        setChallengeData([])
+        setDisplayData([])
+        setSelectedPrivacy("Public")
+      };
+  }, [])
+);
 
   const renderHeader = useMemo(() => ( 
       <>

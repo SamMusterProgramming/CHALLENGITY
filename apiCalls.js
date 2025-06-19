@@ -655,3 +655,39 @@ export const getCommentsByPost = async(post_id,setComments) =>{
     console.log(error)
   }
  }
+
+
+ // *********************************** Talents *************************
+
+
+ // *********************************** create Talent *************************
+
+
+ export const createTalentRoom = async(body, setTalentRoom , setIsLoading) =>{
+  try {
+    await axios.post( BASE_URL + `/talents/creates/`,body )
+    .then(res =>  {
+         setTalentRoom(res.data)
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const GetTalentRoomById = async(talentRoom_id, setTalentRoom , setIsLoading) =>{
+  try {
+    await axios.get( BASE_URL + `/talents/room/${talentRoom_id}` )
+    .then(res =>  {
+         setTalentRoom(res.data)
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+

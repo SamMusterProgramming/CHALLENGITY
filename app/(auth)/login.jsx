@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from 'react-native'
+import { ActivityIndicator, Image, ImageBackground, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, Vibration, View } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
@@ -14,6 +14,7 @@ import { useVideoPlayer, VideoView } from 'expo-video'
 import demo from "../../assets/video/demo1.mp4"
 import { Accelerometer } from 'expo-sensors'
 import { useFonts } from 'expo-font'
+import { screenSize } from '../../helper.js'
 
 
 
@@ -21,10 +22,11 @@ import { useFonts } from 'expo-font'
 
 export default function login() {
   
-  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge
+  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge, smallScreen , setSmallScreen
     ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges
   } = useGlobalContext()
   // const [user,setUser] = useState(null)
+  const { width, height } = useWindowDimensions();
 
   const [form, setForm] = useState({
     email:"samirhaddadi@gmail.com",
@@ -120,6 +122,7 @@ export default function login() {
   useEffect(() => {
     if(user) {
       setIsFetching(true)
+      screenSize(width,height , setSmallScreen)
       getUserPublicChallenges(user._id,setUserPublicChallenges)
       getUserPrivateChallenges(user._id,setUserPrivateChallenges)
       getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
@@ -131,7 +134,7 @@ export default function login() {
       getFavouriteChallenges(user._id,setFavouriteChallenge)
       getTopChallenges(user._id,setTrendingChallenges)
       setTimeout(() => {
-        router.replace('/timeline')
+        router.replace('/Home')
         setIsFetching(false)
       }, 1000);
       setTimeout(() => {
@@ -143,6 +146,7 @@ export default function login() {
 
  
   useEffect(() => {
+    StatusBar.setHidden(true)
     isAuthenticated(setUser)
    },[])
 
@@ -156,6 +160,7 @@ export default function login() {
   });
 
   useFocusEffect(
+    
     useCallback(() => {
       return () => {
         if (player) {

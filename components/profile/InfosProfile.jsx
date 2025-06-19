@@ -11,31 +11,31 @@ export default function InfosProfile(props) {
                         >
                             <View className="w-[100%] h-[40%] mt-4 mr-[20%] flex-row justify-center px-2 items-center ">
                                  <Text 
-                                   style={{fontSize:11}}
-                                   className="text-gray-400 font-bold ">
+                                   style={{fontSize:9}}
+                                   className="text-gray-600 font-bold ">
                                     City : 
                                  </Text>
                                  <Text
                                     className="font-black"
                                     style={{
-                                      fontSize:10,
-                                      color:"white"
+                                      fontSize:8,
+                                      color:props.color ?"black" : "white"
                                     }}
                                   >
                                     {' '}{props.city}
                                  </Text>
                             </View>
-                            <View className="w-[100%] h-[40%] mr-[20%] flex-row justify-center px-2 items-center">
+                            <View className="w-[100%] h-[40%] mr-[15%] flex-row justify-center px-2 items-center">
                                  <Text 
-                                   style={{fontSize:11}}
-                                   className="text-gray-400 font-bold ">
+                                   style={{fontSize:9}}
+                                   className="text-gray-600 font-bold ">
                                     State :
                                  </Text>
                                  <Text
                                     className="font-black"
                                     style={{
-                                      fontSize:10,
-                                      color:"white",
+                                      fontSize:8,
+                                      color:props.color ?"black" : "white",
                                     }}
                                   >
                                     {' '}{props.state}
@@ -53,15 +53,15 @@ export default function InfosProfile(props) {
                             <View 
                                className="w-[100%] h-[40%] mt-4 flex-row justify-center px-2 items-center ">
                                  <Text 
-                                   style={{fontSize:11}}
-                                   className="text-gray-400 ml-[20%] font-bold ">
+                                   style={{fontSize:9}}
+                                   className="text-gray-600 ml-[20%] font-bold ">
                                     City :
                                  </Text>
                                  <Text
                                     className="font-black"
                                     style={{
-                                      fontSize:10,
-                                      color:"white"}}
+                                      fontSize:8,
+                                      color:props.color ?"black" : "white"}}
                                   >
                                     {' '}{props.city}
                                   </Text>
@@ -76,7 +76,7 @@ export default function InfosProfile(props) {
                                     className="w-[20%] h-[100%]  flex-row justify-center items-center">
                                         < CountryFlag
                                             isoCode={props.country}
-                                            size={12}
+                                            size={10}
                                             style={ {
                                                 marginLeft:"auto"
                                                 }}
@@ -93,8 +93,8 @@ export default function InfosProfile(props) {
                                       }}>
                                       <Text style={ {
                                             fontWeight:"800",
-                                            color:"white",
-                                            fontSize: 12,
+                                            color:props.color ?"black" : "white",
+                                            fontSize: 10,
                                           }}>{props.country || "US"}</Text>
                                   </View>
                                  

@@ -22,7 +22,6 @@
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "resizeMode": "contain",
         "foregroundImage": "./assets/images/challenge-logo.png",
         "backgroundColor": "#ffffff"
       },

@@ -84,6 +84,7 @@ const scrollToLastItem = () =>{
   });
   return (
 
+
     <View 
         style={style}
         className="absolute  w-[99%] min-h-[60%] bottom-10 flex-col justify-center items-center rounded-2xl border-4 border-gray-400
@@ -156,8 +157,10 @@ const scrollToLastItem = () =>{
 
             />
   
-            <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            <View
+            // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            // behavior="position" 
+            // keyboardVerticalOffset={60}
             className="w-[98%] h-[50px] flex-row border-gray-400  border-2 mt-1 mb-1 justify-start items-center rounded-xl"
             >
                 <TextInput  style={styles.input}
@@ -166,7 +169,8 @@ const scrollToLastItem = () =>{
                 returnKeyType="send"
                 removeClippedSubviews={false}
                 value={newComment}
-                keyboardType='email-address'
+                // keyboardType='email-address'
+                keyboardType= "default"
                 onChangeText={text => setNewComment(text)}
                 onSubmitEditing={() => {
                  addComment()
@@ -180,10 +184,11 @@ const scrollToLastItem = () =>{
                     </Text>
                 </TouchableOpacity>
           
-            </KeyboardAvoidingView>
+            </View>
        
             
    </View>
+  
 
   )
 }

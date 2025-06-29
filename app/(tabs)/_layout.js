@@ -19,7 +19,7 @@ export default function tabsLayout() {
   const TabIcon =({color,icon,name,focused,dimension}) =>{
     return (
       <View 
-      className="items-center text-center justify-center mt-0"
+      className="items-center g-[#052a72] text-center justify-center mt-0"
       >
         <Image
           source={icon}
@@ -50,7 +50,7 @@ export default function tabsLayout() {
             // display: hideTabBar ? 'none' : 'none',
           // marginLeft:"5%",
           bottom:Platform.OS =="ios" ? 0:0,
-          backgroundColor: "black",
+          backgroundColor: "#052a72",
           // '#fcba03',
           width:'100%',
           height: Platform.OS =="ios" ? width/6: width/7,
@@ -80,7 +80,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => (
             <View
             className ="rounded-full borde-2 borde-[#56617a]  [#15181e] justify-center items-center "
-            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "#56617a"}}
+            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
           >
               <Image
                 source={focused ? icons.home : icons.home}
@@ -100,7 +100,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full borde-2 borde-[#092969] justify-center items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "#56617a"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
             >
                 <Image
                   source={focused ? icons.challenge : icons.challenge}
@@ -120,7 +120,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => (
             <View
             className ="rounded-full borde-2 borde-[#092969]  justify-center items-center "
-            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "#56617a"}}
+            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
              >
               <Image
               source={focused ? icons.notification : icons.notification}
@@ -140,7 +140,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full borde-2 borde-[#092969] justify-center items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "#56617a"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "black"}}
             >
               <Image
               source={{ uri :focused ? user.profile_img: user.profile_img }}
@@ -161,7 +161,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full justify-center borde-2 borde-[#092969] items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "#56617a"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "black"}}
             >
               <Image
               source={icons.setting}

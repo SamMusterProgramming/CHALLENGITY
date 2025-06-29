@@ -158,9 +158,7 @@ const scrollToLastItem = () =>{
             />
   
             <View
-            // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            // behavior="position" 
-            // keyboardVerticalOffset={60}
+          
             className="w-[98%] h-[50px] flex-row border-gray-400  border-2 mt-1 mb-1 justify-start items-center rounded-xl"
             >
                 <TextInput  style={styles.input}

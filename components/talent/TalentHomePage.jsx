@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react
 import { FontAwesome5, MaterialIcons, Entypo } from '@expo/vector-icons';
 import { icons } from '../../constants';
 import TalentRoom from './TalentRoom';
+import { MotiView } from 'moti';
 
 const talentRooms = [
   { id: '1', name: 'Music', icon: icons.music, iconPack: 'FontAwesome5',color:"#34cfeb" },
@@ -37,16 +38,31 @@ const TalentHomePage = ({ setSelectedPage }) => {
   const renderItem = ({ item }) => {
     const IconComponent = getIconComponent(item.iconPack);
     return (
+    <MotiView
+        from={{ opacity: 0, translateY: 40 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ delay: 100 * item.id , type: 'timing', duration: 600  }}
+        className ="bg-[#04273f]" 
+        style={[styles.card,
+            {
+              // backgroundColor:"#f0f0fa"
+            }
+             ]}>
       <TouchableOpacity 
       onPress ={()=> setSelectedTalent({name:item.name , icon:item.icon})}
-      style={[styles.card, {backgroundColor:item.color} ]} >
-        {/* <IconComponent name={item.icon} size={32} color="#4B0082" /> */}
+    //   style={[styles.card,
+    //    {backgroundColor:"#f0f0fa"}
+    //     ]} 
+        className="w-[100%]  "
+        >
         <Image
              className="w-14 h-14"
              source={item.icon}
              esizeMethod='cover' />
-        <Text style={styles.label}>{item.name}</Text>
+       
       </TouchableOpacity>
+      <Text style={styles.label}>{item.name}</Text>
+     </MotiView>
     );
   };
 
@@ -54,24 +70,24 @@ const TalentHomePage = ({ setSelectedPage }) => {
     <>
     {!selectedTalent ?  (
         <>
-            <View
-            className="flex-row w-full justify-between bg-[#d7dfe0] items-center p-4">
+            {/* <View
+            className="flex-row w-full justify-between bg-[#0e0e0e] items-end pt-0 px-5">
                 <TouchableOpacity
                 onPress={() => setSelectedPage(null)}
                 className="" >
                     <Image
-                    className ="w-8 h-8 "
-                    source={icons.back} />
+                    className ="w-7 h-7 "
+                    source={icons.back1} />
                 </TouchableOpacity>
                 <Text style={styles.header}>🎭 Explore Talent Rooms</Text>
                 <TouchableOpacity
                 className="" >
                 
                 </TouchableOpacity>
-            </View>
+            </View> */}
         
             <View 
-            className = "bg-[#ffffff]"
+            className = "g-[#030303]  border-l-[10px] border-r-[10px] border-[#052d40]"
             style={styles.container}>
             {/* <Text style={styles.header}>🎭 Explore Talent Rooms</Text> */}
             <FlatList
@@ -81,6 +97,21 @@ const TalentHomePage = ({ setSelectedPage }) => {
                 numColumns={3}
                 contentContainerStyle={styles.list}
             />
+            </View>
+            <View
+            className="flex-row w-full  border-l-[2px] border-r-[10px] border-b-[4px] border-[#052d40] justify-between bg-[#052d40] items-center pt-0 py- px-5">
+                <TouchableOpacity
+                onPress={() => setSelectedPage(null)}
+                className=" p-2 g-white flex-col justify-center items-center" >
+                    <Image
+                    className ="w-8 h-8 rounded-full "
+                    source={icons.back1} />
+                </TouchableOpacity>
+                <Text style={styles.header}>🎭 Explore Talent Rooms</Text>
+                <TouchableOpacity
+                className="" >
+                
+                </TouchableOpacity>
             </View>
         </>
     ) : (
@@ -103,11 +134,11 @@ const styles = StyleSheet.create({
     alignItems :"center",
   },
   header: {
-    fontSize: 20,
+    fontSize: 12,
     fontWeight: '600',
     // marginBottom: 12,
     marginTop:0,
-    color: 'black',
+    color: 'white',
   },
   list: {
     justifyContent: 'center',
@@ -115,7 +146,7 @@ const styles = StyleSheet.create({
     // flex:1
   },
   card: {
-    backgroundColor: "black",
+    // backgroundColor: "black",
     //  '#f3f1f9',
     padding: 30,
     margin: 6,
@@ -134,12 +165,12 @@ const styles = StyleSheet.create({
     width:65,
     // marginTop: 8,
     fontSize: 9,
-    fontWeight: '700',
-    color:  "black",
+    fontWeight: '900',
+    color:  "white",
     textAlign: 'center',
-    backgroundColor:"white",
+    backgroundColor:"black",
     borderTopRightRadius : 5,
-    elevation: 0,
+    elevation: 10,
 
   },
 });

@@ -87,13 +87,20 @@ import africa from '../assets/icons/africa.png'
 import europe from '../assets/icons/europe.png'
 import asia from '../assets/icons/asia.png'
 import america from '../assets/icons/america.png'
-
+import volume from '../assets/icons/volume.png'
+import vote from '../assets/icons/vote.png'
+import voted from '../assets/icons/voted.png'
+import rank from '../assets/icons/rank.png'
 
 
 
 
 
 export default {
+  rank,
+  voted,
+  vote,
+  volume,
   america,
   asia,
   europe,

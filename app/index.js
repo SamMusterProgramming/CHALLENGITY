@@ -14,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useGlobalContext } from '../context/GlobalProvider';
 import { clearLocalStorage } from '../videoFiles';
 import { useFonts } from 'expo-font';
+import ChallengifyHeader from '../components/custom/ChallengifyHeader';
 
 
 
@@ -116,26 +117,16 @@ export default function app() {
                             </View>
 
                             <View className=" w-[100%]  h-[8%] flex-row justify-center items-center  py-2 px-2">
-                                  {/* <View className=" flex-col px-2 justify-center items-center " >
-                                          <Image
-                                                className=" w-12 mt-0  b-white h-12"
-                                                resizeMethod='fill'
-                                                source={icons.competition} />
-                                          
-                                  </View>
-                                  <View className=" flex-col px-2 justify-center items-center " >
-                                          <Image
-                                                className=" w-20 mt-0  b-white h-20"
-                                                resizeMethod='cover'
-                                                source={icons.vs} />
-                                       
-                                  </View> */}
+                            
                             
                             </View>
 
-                            <View  className="  w-[100%] h-[32%] flex-col mt-auto justify-center gap-  
-                                items-center py-  -[#07324f]  ">
-                                <View className="  -[100%] flex-row justify-center mt-4 items-center py-1 px-2 g-[#191111] ">
+                            <View 
+                             style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
+                             className="  w-[100%] -[40%] py-6 flex-col mt-auto gap-4 rounded-t-xl justify-center gap-  
+                                items-center py-    ">
+                                   <ChallengifyHeader /> 
+                                {/* <View className="  -[100%] flex-row justify-center mt-4 items-center py-1 px-2 g-[#191111] ">
                                       <Text
                                       style={{fontSize:12,fontFamily:"myFontt"}}
                                       className=" text-gray-200 justify-center items-center font-bold px-2 ">
@@ -176,9 +167,9 @@ export default function app() {
                                       className="text-md text-gray-100 justify-center items-center font-bold px-2">
                                           of the world, the challenges never stop! Enjoy
                                       </Text>
-                                </View>
+                                </View> */}
 
-                                <View className="min-w-[100%] mb-2 flex-row justify-center items-center mt-auto " >
+                                <View className="min-w-[100%] -2 flex-row justify-center items-center mt-auto " >
                                         <TouchableOpacity onPress={()=> router.replace('/login')}
                                           className="bg-blue-400 mt-2 rounded-xl w-[95%] min-h-[55px] justify-center items-center">
 

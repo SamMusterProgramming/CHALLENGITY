@@ -9,7 +9,6 @@ export default function Comment({data,post_id,setCommentData,post_user_id}) {
   
 
   const deleteComment = ()=>{
-    console.log(data._id)
         deleteCommentsById(post_id,{comment_id:data._id},setComment)
     }
 
@@ -32,7 +31,7 @@ export default function Comment({data,post_id,setCommentData,post_user_id}) {
         <View
          className=" flex-col justify-start min-w-[88%]  ">
             <View
-              className=" bg-gray-200 px-1 py-2 flex-col justify-start w-[96%] rounded-xl ">
+              className=" bg-gray-200 px-1 py-2 flex-col justify-start w-[96%] rounded-md ">
                 <Text
                     className="text-primary text-sm font-black"
                     >   {data.commenter_id == user._id ?data.name + "- You":data.name}</Text>
@@ -42,7 +41,7 @@ export default function Comment({data,post_id,setCommentData,post_user_id}) {
                 </Text>
             </View>
             <View
-              className="px-2 py-1 flex-row justify-start gap-2 w-[96%] rounded-xl ">
+              className="px-2 py-1 flex-row justify-start gap-2 w-[96%] rounded-lg ">
                    <Text
                     className="text-primary text-sm"
                     > 15h

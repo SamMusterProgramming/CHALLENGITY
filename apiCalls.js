@@ -663,11 +663,20 @@ export const getCommentsByPost = async(post_id,setComments) =>{
  // *********************************** create Talent *************************
 
 
- export const createTalentRoom = async(body, setTalentRoom , setIsLoading) =>{
+ export const createTalentRoom = async(body, setTalentRoom ,user_id , setUserContestantStatus, setUserParticipation , setIsLoading) =>{
   try {
     await axios.post( BASE_URL + `/talents/creates/`,body )
     .then(res =>  {
          setTalentRoom(res.data)
+         if(res.data.contestants.length > 0) {
+          const userParticipation = res.data.contestants.find((contestant)=> contestant.user_id === user_id) 
+          userParticipation ? setUserContestantStatus("P") : setUserContestantStatus("NP")
+          const rank = res.data.contestants.findIndex(contestant => contestant._id === userParticipation._id)
+          userParticipation["rank"] = rank + 1
+          setUserParticipation({userParticipation})
+        }else {
+         setUserContestantStatus("NP")
+        }
       } )
       .finally(()=>{
         setIsLoading(false)
@@ -682,6 +691,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
     await axios.get( BASE_URL + `/talents/room/${talentRoom_id}` )
     .then(res =>  {
          setTalentRoom(res.data)
+       
       } )
       .finally(()=>{
         setIsLoading(false)
@@ -691,3 +701,93 @@ export const getCommentsByPost = async(post_id,setComments) =>{
   }
  }
 
+ export const GetTalentRoomsByName = async(queryParams,setTalentRooms ,  setIsLoading) =>{
+  try {
+    await axios.get( BASE_URL + `/talents/rooms`,{
+      params: queryParams
+  } )
+    .then(res =>  {
+         setTalentRooms(res.data)
+       
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const deleteContestant = async(talentRoom_id, user_id, setTalentRoom , setIsLoading) =>{
+  try {
+    setIsLoading(true)
+    await axios.patch( BASE_URL + `/talents/delete/${talentRoom_id}`,{user_id:user_id} )
+    .then(res =>  {
+         setTalentRoom(res.data)
+       
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+
+  // ***********************************like Talent posts *************************
+
+
+   export const likeTalentPost = async(post_id , body, setPostData , setIsLoading) =>{
+    try { 
+    await axios.post( BASE_URL + `/talents/likes/${post_id}`,body )
+    .then(res =>  {
+         setPostData(res.data)
+      } )
+      .finally(()=>{
+        // setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const voteTalentPost = async(post_id , body, setPostData , setIsLoading) =>{
+  try { 
+  await axios.post( BASE_URL + `/talents/votes/${post_id}`, body )
+  .then(res =>  {
+       setPostData(res.data)
+    } )
+    .finally(()=>{
+      // setIsLoading(false)
+    })
+} catch (error) {
+  console.log(error)
+}
+}
+
+ export const getPostData = async(post_id , setPostData ) =>{
+  try { 
+  await axios.get( BASE_URL + `/talents/likes/${post_id}` )
+  .then(res =>  {
+       setPostData(res.data)
+    } )
+    .finally(()=>{
+      // setIsLoading(false)
+    })
+} catch (error) {
+  console.log(error)
+}
+}
+
+
+export const addCommentContestant = async(post_id,body,setPostData) =>{
+  try {
+    await axios.post( BASE_URL + `/talents/posts/${post_id}`,body)
+    .then(res =>  { 
+         setPostData({...res.data})
+      } )
+  } catch (error) {
+    console.log(error)
+  }
+ }

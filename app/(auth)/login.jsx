@@ -15,6 +15,7 @@ import demo from "../../assets/video/demo1.mp4"
 import { Accelerometer } from 'expo-sensors'
 import { useFonts } from 'expo-font'
 import { screenSize } from '../../helper.js'
+import ChallengifyHeader from '../../components/custom/ChallengifyHeader.jsx'
 
 
 
@@ -181,15 +182,11 @@ export default function login() {
                         source={images.sky_bg} 
                         resizeMode='cover' 
                         className="6"/>
-                     <Image 
-                        style={{ width:'50%',height:'30%',opacity:1}}
-                        source={images.challenge_logo} 
-                        resizeMode='cover' 
-                        className="absolute top-48"/>
+                    
 
-         <View className="min-w-full  justify-between absolute top-0  flex-col items-center h-[100%]  ">
+         <View className="min-w-full  justify-between absolute top-0 gap- flex-col items-center h-[100%]  ">
           
-              <View className="w-full justify-center  mt-6 min-h-[25h] flex-col items-center gap-0 ">
+              {/* <View className="w-full justify-center  mt-6 min-h-[25h] flex-col items-center gap-0 ">
                                <Text className="text-3xl  font-bold text-secondary">
                                     Challengify
                                 </Text> 
@@ -197,13 +194,25 @@ export default function login() {
                                   Welcome !
                                   Step Out of Your Comfort Zone—Your Stage Awaits, and the World is the Judge! {'  '}  
                                 </Text>
+              </View> */}
+              <View
+                  className="w-[100%] -[34%] pt-4 px-2 borde-2 borde-t-4 borde-b-4 rounded-xl border-[#6a7c83] g-[#0a0b0b]
+                  flex-col justify-center items-end">
+                     <ChallengifyHeader /> 
+              </View>
+              <View className="w-[90%] justify-center p- mt-auto gap- flex-row items-center">  
+                  <Image 
+                            style={{ width: width * 0.4,height:width * 0.4,opacity:1}}
+                            source={images.challenge_logo} 
+                            resizeMode='cover' 
+                            className=""/>
               </View>
            
-              <View className="w-[80%] justify-start mt-80 gap-4 flex-col items-start">  
+              <View className="w-[90%] justify-start 80 mt-auto gap-4 flex-col items-start">  
 
                     <FormField 
                     width="100%"
-                    height= {50}
+                    height= {height * 0.06}
                     invalid = {isEmailInvalid || isEmailWrong}
                     title="Email" 
                     value={form.email.toLowerCase()}
@@ -214,7 +223,7 @@ export default function login() {
 
                     <FormField 
                     width="100%"
-                    height= {50}
+                    height= {height * 0.06}
                     invalid = {isPasswordInvalid || isPasswordWrong}
                     title="Password" 
                     value={form.password}
@@ -226,8 +235,8 @@ export default function login() {
                     <TouchableOpacity 
                       // onPressIn={()=>{setIsFetching(true)}}
                       onPress={handleLogin}
-                      // style={{backgroundColor:"#5d23db"}}
-                      className="bg-blue-500  rounded-xl w-[100%] h-[50px] justify-center items-center">
+                      style={{height : height * 0.06}}
+                      className="bg-blue-500  rounded-lg w-[100%] h-[50px] justify-center items-center">
                         {isFetching ? (
                                <View >
                                  <ActivityIndicator size="large" color="#030202" />
@@ -250,7 +259,7 @@ export default function login() {
 
               </View>
              
-              <View className="  w-[80%] -auto h-[10vh] flex-col justify-center items-center text-center ">
+              <View className="  w-[90%] -auto h-[10vh] py-2 flex-row justify-start items-center text-center ">
                     {(isEmailWrong || isEmailInvalid || isPasswordInvalid || isPasswordWrong)&& <Text className="text-gray-200 ">{message}</Text>}
               </View>
             

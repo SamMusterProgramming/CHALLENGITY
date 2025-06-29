@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from 'react-native'
+import { ActivityIndicator, Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, Vibration, View } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
@@ -16,6 +16,9 @@ export default function signup() {
   const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge
     ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges
   } = useGlobalContext()
+
+  const { width, height } = useWindowDimensions();
+
 
 
   const [form, setForm] = useState({
@@ -188,15 +191,15 @@ useEffect(() => {
                         source={images.night_bg} 
                         resizeMode='cover' 
                         className="6"/>
-                     <Image 
+                     {/* <Image 
                         style={{ width:'40%',height:'25%',opacity:1}}
                         source={images.challenge_logo} 
                         resizeMode='cover' 
-                        className="absolute top-44"/>
+                        className="absolute top-44"/> */}
 
-      <View className="w-full flex-col justify-start absolute  top-0 items-center h-[100%] ">
+      <View className="w-full flex-col justify-between absolute  top-0 items-center h-[100%] ">
        
-           <View className="w-full justify-center mt- h-[20vh] flex-col items-center gap-0 ">
+           <View className="w-full justify-center mt- -[20vh] flex-col items-center gap-0 ">
                                 <Text className="text-3xl  font-bold text-secondary">
                                     Challengify
                                 </Text> 
@@ -205,13 +208,20 @@ useEffect(() => {
                                   Step Out of Your Comfort Zone—Your Stage Awaits, and the World is the Judge! {'  '}  
                                 </Text>
            </View>
+           <View className="w-[90%] justify-center p-4 gap- flex-row items-center">  
+                  <Image 
+                            style={{ width: width * 0.3,height:width * 0.3,opacity:1}}
+                            source={images.challenge_logo} 
+                            resizeMode='cover' 
+                            className=""/>
+              </View>
            
-           <View className="w-[80%] mt-52 justify-start gap-3 flex-col items-start">  
+           <View className="w-[90%]  justify-start mt-auto  gap-3 flex-col items-start">  
                 <View
                  className="w-[100%] flex-row justify-between   items-center">
                         <FormField 
                         width="48%"
-                        height= {47}
+                        height= {height * 0.06}
                         invalid = {isFirstnameInvalid }
                         title="firstname" 
                         value={form.firstname}
@@ -221,7 +231,7 @@ useEffect(() => {
                         />
                          <FormField 
                         width="48%"
-                        height= {47}
+                        height= {height * 0.06}
                         invalid = {isLastnameInvalid}
                         title="lastname" 
                         value={form.lastname}
@@ -232,7 +242,7 @@ useEffect(() => {
                 </View>
                  <FormField 
                  width="100%"
-                 height= {47}
+                 height= {height * 0.06}
                  invalid = {isEmailInvalid || isEmailWrong}
                  title="Email" 
                  value={form.email}
@@ -242,7 +252,7 @@ useEffect(() => {
                  />
                  <FormField 
                  width="100%"
-                 height= {47}
+                 height= {height * 0.06}
                  invalid = {isPasswordInvalid || isPasswordWrong}
                  title="Password" 
                  value={form.password}
@@ -251,7 +261,7 @@ useEffect(() => {
                  />
                   <FormField 
                  width="100%"
-                 height= {47}
+                 height= {height * 0.06}
                  invalid = {isPasswordWrong}
                  title="Confirm" 
                  value={form.confirm}
@@ -270,8 +280,8 @@ useEffect(() => {
                         )}
                  </TouchableOpacity>
 
-                 <View className="justify-center items-center w-[80%] pt-5 flex-row gap-4">
-                     <Text className="text-lg text-gray-100 font-semibold">
+                 <View className="justify-start items-center w-[90%] -5 flex-row gap-4">
+                     <Text className="text-sm text-gray-100 font-semibold">
                        Already have an account ?
                      </Text>
                      <Link className=" text-lg text-blue-400 font-semibold"
@@ -281,9 +291,9 @@ useEffect(() => {
                  </View>
            </View>
 
-           <View className="  w-[80%] h-[10vh] flex-col mt-auto justify-center items-center text-center ">
+           <View className="  w-[90%] h-[10vh] flex-col -auto justify-center items-start ">
                     {(isEmailWrong || isEmailInvalid || isPasswordInvalid 
-                      || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-200 ">{message}</Text>}
+                      || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 ">{message}</Text>}
            </View>
 
           

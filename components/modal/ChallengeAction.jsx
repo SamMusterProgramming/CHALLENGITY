@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function ChallengeAction({text,action,isModalVisible, setIsModalVisible,
-    removeChallenge, addToFavourite,removeFromFavourite,
+    removeChallenge, addToFavourite,removeFromFavourite, handleTalentParticipation , handleTalentResignition,
     joinChallenge ,resignChallenge}) {
     
     const { wid, height } = useWindowDimensions();
@@ -92,7 +92,7 @@ export default function ChallengeAction({text,action,isModalVisible, setIsModalV
                              {textArray && textArray.textData.map((text,index)=> {
                                 return  (
                                     <Text key={index} style={styles.modalText}
-                                       className="font-bold" >{text}
+                                       className="font-bold" > {text}
                                     </Text>
                                 )
                              })}
@@ -114,11 +114,11 @@ export default function ChallengeAction({text,action,isModalVisible, setIsModalV
                                      </Text>
                                </TouchableOpacity>
                                {action !=="OK" && (
-
                                <TouchableOpacity 
                                   onPress={
                                   action == "JN"?joinChallenge:action =="DT"?removeChallenge:
-                                  action =="RS"?resignChallenge:action =="FA"? addToFavourite : action == "RF" ? removeFromFavourite :()=> {}}
+                                  action =="RS"?resignChallenge:action =="FA"? addToFavourite : action == "RF" ? removeFromFavourite :
+                                  action == "NP"? handleTalentParticipation: action == "P" ? handleTalentResignition : ()=> {}}
                                   className="w-[80px] h-[35px] bg-blue-700 rounded-lg flex-row justify-center items-center">
                                     <Text
                                     className="text-white font-black"

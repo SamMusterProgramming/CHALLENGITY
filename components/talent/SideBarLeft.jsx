@@ -10,7 +10,7 @@ import { icons } from '../../constants';
 
 // const { width } = Dimensions.get('window');
 
-const SideBarLeft = ({ show, onClose , height, width ,top ,bottom,left ,right, regionIcon, contestants ,selectedContestant, setSelectedContestant}) => {
+const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon, selectedIcon , contestants ,selectedContestant, setSelectedContestant}) => {
 //   const sidebarWidth = width * 0.8; 
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  -width )).current;
 
@@ -49,6 +49,7 @@ const SideBarLeft = ({ show, onClose , height, width ,top ,bottom,left ,right, r
         }
         , 
     { transform: [{ translateX: sidebarAnimation }] }]}>
+
        {/* <View
          className ="w-[95%] h-[10%] py- flex-col bg-white rounded-tr-xl  justify-start items-start">
             <View
@@ -78,30 +79,41 @@ const SideBarLeft = ({ show, onClose , height, width ,top ,bottom,left ,right, r
          
       }}
      className =" w-[95%] max-h-[100%] g-white "> */}
+
        <View
-       className ="w-[95%] h-[100%] py-2 px- flex-col g-[#27a9ef] gap-2 -2 rounde-tr-xl rounded-br-xl borde-t-4 justify-center items-start">
+       className ="w-[95%] h-[100%] py- px- flex-col g-[#055783] gap-2 -2 rounde-tr-xl rounded-br-xl borde-t-4 justify-start items-start">
           {contestants.map((contestant , index) => {
                return (
                 <TouchableOpacity
-                  onPress={ ()=> {setSelectedContestant(contestant)}}
+                  onPress={ ()=> {setSelectedContestant({...contestant, rank:(index + 1)*2 + 3})}}
                   key ={index}
-                  style ={{backgroundColor : selectedContestant && selectedContestant._id === contestant._id ? "green" : "black"}}
-                  className ="w-[95%] h-[12%] py- flex-col g-black rounded-tr-lg  justify-start items-start">
+                  style ={{borderColor : selectedContestant && selectedContestant._id === contestant._id ? "red" : "transparent"}}
+                  className ="w-[95%] h-[14%] py- flex-col g-black rounded-tr-lg border-b-4 borde-l-2 justify-start items-start">
                         <View
-                        className ="w-[95%] h-[50%] py- flex-row g-white rounde-tr-xl borde-t-4 justify-center items-center">
+                        className ="w-[95%] h-[50%]  py- flex-row g-white rounde-tr-xl borde-t-4 justify-evenly items-center">
+                              <Image
+                              source={regionIcon}
+                              className ="w-[12px] h-[15px] m- g-white rounded-full"
+                              resizeMethod='contain'
+                              />
                              <Image
                               source={{uri:contestant.profile_img}}
                               className ="w-[30px] h-[30px] rounded-full"
                               resizeMethod='fill'
                               />
-                              <View
+                              <Image
+                              source={selectedIcon}
+                              className ="w-[14px] h-[15px] m- rounded-full"
+                              resizeMethod='fill'
+                              />
+                              {/* <View
                                   className =" py- flex-1  -[80%]  flex-col g-white   justify-center items-center">
                                      <View
                                      className ="h-[50%] px- flex-row justify-center items-center">
                                             <Text 
                                               style ={{fontSize:9}}
                                               className="text-xl font-black text-white"> 
-                                                {index + 1 }
+                                                {index * 2 + 4 }
                                             </Text>
                                      </View>
                                      <View
@@ -113,7 +125,7 @@ const SideBarLeft = ({ show, onClose , height, width ,top ,bottom,left ,right, r
                                             </Text>
                                      </View>
                                 
-                              </View>
+                              </View> */}
                         </View>
                         <View
                         className ="w-[95%] h-[50%] py- flex-col mt-auto g-white rounded-tr-xl bg-white justify-start items-start">
@@ -126,15 +138,27 @@ const SideBarLeft = ({ show, onClose , height, width ,top ,bottom,left ,right, r
                                   </Text>
                               </View>
                               <View
-                                  className ="w-[90%] h-[50%] py- flex-row g-white rounded-tr-lg bg-blue-700  justify-center items-center">
+                                  className ="w-[96%] h-[50%] py- flex-row g-white rounded-tr-lg bg-blue-700  justify-evenly items-center">
+                                   <Text 
+                                    style ={{fontSize:7}}
+                                    className="text-xl font-black text-white"> 
+                                     Vt :{contestant.votes }
+                                   </Text>
                                    <Text 
                                     style ={{fontSize:8}}
                                     className="text-xl font-black text-white"> 
-                                     Ranked : {index + 1 }
-                                  </Text>
+                                     # {(index + 1)*2 + 3 }
+                                   </Text>
                               </View>
                              
                         </View>
+                        {selectedContestant && selectedContestant._id === contestant._id && (
+                                  <Image
+                                  source={icons.check_red}
+                                  className ="absolute bottom-6 right-0 w-[20px] h-[20px]  rounded-full"
+                                  resizeMethod='fill'
+                                  />
+                            )}
                 </TouchableOpacity>
                 )
           })}

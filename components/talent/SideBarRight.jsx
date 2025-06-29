@@ -10,7 +10,7 @@ import { icons } from '../../constants';
 
 // const { width } = Dimensions.get('window');
 
-const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regionIcon, contestants}) => {
+const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regionIcon, selectedIcon , contestants ,selectedContestant, setSelectedContestant}) => {
 //   const sidebarWidth = width * 0.8; 
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  width )).current;
 
@@ -72,20 +72,33 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
        </View> */}
 
        <View
-       className ="w-[95%] h-[100%] py-2 px- flex-col g-[#178bea] gap-2 -2 rounded-bl-xl borde-t-4 justify-center items-end">
+      
+       className ="w-[95%] h-[100%] py-2 px- flex-col g-[#178bea] gap-2 -2 rounded-bl-xl borde-t-4 justify-start items-end">
           {contestants.map((contestant , index) => {
                return (
                 <TouchableOpacity
                   key ={index}
-                  className ="w-[95%] h-[12%] py- flex-col bg-black rounded-tl-lg  justify-evenly items-end">
+                  onPress={ ()=> {setSelectedContestant({...contestant, rank:(index ) * 2 + 4})}}
+                  style ={{borderColor : selectedContestant && selectedContestant._id === contestant._id ? "red" : "transparent"}}
+                  className ="w-[95%] h-[14%] py- flex-col g-black rounded-tl-lg border-b-4 borde-r-2 justify-evenly items-end">
                         <View
-                        className ="w-[95%] h-[40%] py- flex-row-reverse g-white rounde-tl-xl borde-t-4 justify-center items-center">
-                             <Image
+                        className ="w-[95%] h-[50%] px- py- flex-row-reverse g-white rounde-tl-xl borde-t-4 justify-evenly items-center">
+                              <Image
+                              source={regionIcon}
+                              className ="w-[12px] h-[15px] m- g-white  rounded-full"
+                              resizeMethod='contain'
+                              />
+                              <Image
                               source={{uri:contestant.profile_img}}
                               className ="w-[30px] h-[30px] rounded-full"
                               resizeMethod='fill'
                               />
-                               <View
+                                <Image
+                              source={selectedIcon}
+                              className ="w-[14px] h-[15px] m- rounded-full"
+                              resizeMethod='fill'
+                              />
+                               {/* <View
                                   className =" py- flex-1  -[80%]  flex-col g-white   justify-center items-center">
                                      <View
                                      className ="h-[50%] px- flex-row justify-center items-center">
@@ -104,7 +117,7 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
                                             </Text>
                                      </View>
                                 
-                              </View>
+                              </View> */}
                         </View>
                         <View
                         className ="w-[95%] h-[50%] py- flex-col g-white rounded-tl-xl bg-white justify-start items-end">
@@ -117,12 +130,17 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
                                   </Text>
                               </View>
                               <View
-                                  className ="w-[90%] h-[50%] py- flex-row g-white rounded-tl-lg bg-blue-700  justify-center items-center">
+                                  className ="w-[90%] h-[50%] py- flex-row g-white rounded-tl-lg bg-blue-700  justify-evenly items-center">
+                                    <Text 
+                                    style ={{fontSize:7}}
+                                    className="text-xl font-black text-white"> 
+                                     Vt : {contestant.votes }
+                                   </Text>
                                    <Text 
                                     style ={{fontSize:8}}
                                     className="text-xl font-black  text-white"> 
-                                     Ranked : {index + 1 }
-                                  </Text>
+                                     # {(index ) * 2 + 4 }
+                                   </Text>
                               </View>
                              
                         </View>
@@ -134,6 +152,13 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
                               resizeMethod='fill'
                               />
                         </View> */}
+                             {selectedContestant && selectedContestant._id === contestant._id && (
+                                  <Image
+                                  source={icons.check_red}
+                                  className ="absolute top-[-4] left-0 w-[20px] h-[20px]  rounded-full"
+                                  resizeMethod='fill'
+                                  />
+                            )}
                 </TouchableOpacity>
                 )
           })}

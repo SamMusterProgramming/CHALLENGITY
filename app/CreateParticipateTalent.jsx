@@ -173,7 +173,7 @@ export default function CreateParticipateTalent() {
         //     selectedIcon: selectedIcon,
         //     regionIcon : regionIcon
         //   } }) 
-        router.navigate('/Home')
+        router.replace('/Home')
        }, 1500); 
       
 
@@ -205,7 +205,8 @@ export default function CreateParticipateTalent() {
                         region:talentRoom.region,
                         selectedTalent:talentRoom.name, 
                         selectedIcon: selectedIcon,
-                        regionIcon : regionIcon
+                        regionIcon : regionIcon,
+                         startIntroduction :"false"
                       } }) 
                 
                    }, 2500); 

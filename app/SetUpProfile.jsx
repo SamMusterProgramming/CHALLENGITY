@@ -1,7 +1,7 @@
-import { View, Text, Image, TouchableOpacity, Dimensions, ActivityIndicator, TextInput } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Dimensions, ActivityIndicator, TextInput, Platform } from 'react-native'
 import React, { useState } from 'react'
 import { useGlobalContext } from '../context/GlobalProvider'
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { icons } from '../constants';
 import { router } from 'expo-router';
@@ -25,6 +25,8 @@ export default function SetUpProfile() {
   const [countryCode, setCountryCode] = useState(user.country || "US");
   const [countryVisible, setCountryVisible] = useState(false);
   const [tellUs, setTellUs] = useState(user.tellus || "");
+  const insets = useSafeAreaInsets();
+
 
   const pickImage = async (setProfile_img) => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -57,11 +59,14 @@ const handleUpdate = ()=> {
               country:countryCode
          }
         return updateUser(user._id,rawBody,setUser,user)
-         .finally( 
+         .finally (
           setUser({...user , isNewUser:false}),
           setIsFetching(false),
-           router.navigate(`/profile`)
-        )  
+          router.replace('/Home'),
+          // setTimeout(() => {
+          //   router.push('/ProfilePage')
+          // }, 200)
+        )
       })
    if(cover_img !== user.cover_img ) 
         uploadThumbnail(cover_img , user.email)
@@ -77,7 +82,10 @@ const handleUpdate = ()=> {
            .finally( 
             setUser({...user , isNewUser:false}),
             setIsFetching(false),
-            router.navigate(`/profile`)
+            router.replace('/Home'),
+            // setTimeout(() => {
+            //   router.navigate('/ProfilePage')
+            // }, 200)
           )  
    })
    if(profile_img !== user.profile_img ) 
@@ -94,7 +102,10 @@ const handleUpdate = ()=> {
        .finally( 
         setUser({...user , isNewUser:false}),
         setIsFetching(false),
-        router.navigate(`/profile`)
+        router.replace('/Home'),
+        // setTimeout(() => {
+        //   router.navigate('/ProfilePage')
+        // }, 200)
       )  
 })
 
@@ -108,7 +119,11 @@ const handleUpdate = ()=> {
     .finally( 
     setUser({...user , isNewUser:false}),
     setIsFetching(false),
-    router.navigate(`/profile`)
+    router.replace('/Home'),
+    // setTimeout(() => {
+    //   router.navigate('/ProfilePage')
+    // }, 200)
+    
     )  
 
 }
@@ -121,233 +136,198 @@ const onSelectCountry = (country="US") => {
 
 
   return (
-    <SafeAreaView
-    className="flex-1 bg-primary" >
+    // <SafeAreaView
+    // className="flex-1 bg-primary" >
         <View 
-          className="w-full h-full flex-col justify-start items-center bg-primary">
+           style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top,
+                    paddingBottom:insets.bottom,
+           }}
+           className="flex- 1 h-full w-full flex-col justify-start items-center bg-primary">
               
-              <View className="w-full min-h-[7%] flex-row justify-between items-center">
+            
+
+              <View
+              className="w-[100%] h-[25%] bg-primary  justify-center items-center"
+               >
+                
+                  <TouchableOpacity
+                    onPress={()=>pickImage(setCover_img)}
+                    // style={{left:width/2-24}}
+                    className="w-[80%] h-[100%] flex-row justify-center items-center rounded-lg"
+                    >
+                        <Image  
+                        className="w-[100%] h-[100%] rounded-lg"
+                        source={{uri:cover_img}}
+                        />
+                        <Image
+                        source={icons.update}
+                        resizeMethod='contain'
+                        className="w-10 h-10 absolute top-0 right-0 " />   
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{width:height/10 ,height:height/10
+                        ,marginBottom: -height/20
+                    }}
+                    className="bg-  absolute bottom-0 bg-black flex-col rounded-full justify-center items-center ">
+                    <Image 
+                    className="w-[95%] h-[95%] rounded-full"
+                    resizeMode='cover'
+                    source={{uri:user && user.profile_img}} 
+                    />
+                       <TouchableOpacity
+                      onPress={()=>pickImage(setProfile_img)}
+                      className="w-[100px] h-[30px] absolute bottom-2 flex-row justify-center items-center rounded-lg"
+                       >
+                        <Image
+                        source={icons.update}
+                        className="w-8 h-8 "/>
+                          
+                      </TouchableOpacity>
+                  </TouchableOpacity>
+                  <View className="absolute top-0 left-0 flex-row justify-between items-center">
                    <TouchableOpacity
                         onPress={()=>router.back()}
                         className=" flex-row justify-center items-center  rounded-lg"
                         >
                             <Image
-                            className="w-10 h-10"
+                            className="w-8 h-8"
                             source={icons.back} />
                     </TouchableOpacity>
-                    <Text 
-                                   style={{fontSize:11}}
-                                   className="text-white font-black ">
-                                    Update Profile
-                    </Text>
-                    <TouchableOpacity
-                        onPress={()=>router.navigate("NewChallenge")}
-                        className=" flex-row justify-center items-center  rounded-lg"
-                        >
-                            <Image
-                            className="w-10 h-10"
-                            source={icons.challenge} />
-                    </TouchableOpacity>
+                
+                  </View>
 
               </View>
 
+
               <View
-              className="w-full h-[25%] bg-primary"
-               >
-               
-                <Image  
-                 className="w-[100%] h-[100%]"
-                 source={{uri:cover_img}}
-                 />
-
-                  <TouchableOpacity
-                    onPress={()=>pickImage(setCover_img)}
-                    style={{left:width/2-24}}
-                    className=" absolute top-14  flex-row justify-center items-center rounded-lg"
-                    >
-                    <Image
-                    source={icons.update}
-                    resizeMethod='contain'
-                     className="w-12 h-12 " />
-                        
-                  </TouchableOpacity>
-
-                  
-                  <View
-                    style={{width:"100%",height:width/6-2}}
-                    className="w-full h-[25%] flex-row justify-center items-center"
+                    // style={{width:"100%",height:width/6-2}}
+                    className="w-full h-[20%] flex-row justify-between px-2 items-center"
                     >
                       <View
-                        style={{width:"50%",height:width/6-2}}
-                        className="w-[50%] h-[100%] flex-col justify-start items-center"
+                   
+                        className="w-[30%] h-[50%] flex-col gap-4 justify-end items-center"
                         >
-                            <View className="w-[100%] h-[40%] mt-4 flex-row justify-start px-2 items-center ">
+                        
                                  <Text 
                                    style={{fontSize:11}}
                                    className="text-gray-400 font-bold ">
-                                    City :
+                                   Enter City 
                                  </Text>
-                                 <TextInput
-                                    className="font-black"
-                                    style={{
-                                      fontSize:10,
-                                      color:"white",
-                                      height: "99%", 
-                                      width:"80%",
-                                      borderColor: 'none',
-                                      padding: 5,}}
-                                      value={city}
-                                      onChangeText={text => setCity(text)}
-                                  />
-                            </View>
-                            <View className="w-[100%] h-[40%] flex-row justify-start px-2 items-center">
-                                 <Text 
-                                   style={{fontSize:11}}
-                                   className="text-gray-400 font-bold ">
-                                    State :
-                                 </Text>
-                                 <TextInput
-                                    className="font-black"
-                                    style={{
-                                      fontSize:10,
-                                      color:"white",
-                                      height: "99%", 
-                                      width:"80%",
-                                      borderColor: 'none',
-                                      padding: 5,}}
-                                      value={state}
-                                      onChangeText={text => setState(text)}
-                                  />
+                                 <View className="w-[90%] p-1 borde-2 borde-white rounded-md bg-[#696666] -[50%] flex-row justify-center  items-center">
+                                      <TextInput
+                                          className="font-bold text-"
+                                          style={{
+                                            fontSize:13,
+                                            color:"black",
+                                            height: "95%", 
+                                            width:"95%",
+                                            textAlign:"center",
+                                            borderColor: 'white',
+                                            backgroundColor:"white",
+                                            padding: 10,}}
+                                            value={city}
+                                            onChangeText={text => setCity(text)}
+                                        />
+                                 </View>
                                
-                            </View>
-
+                  
+                           
                     </View>
 
-
                     <View
-                        style={{width:"50%",height:width/6-2}}
-                        className="w-[50%] h-[100%] flex-col justify-start px-2 items-center "
+                        className="w-[30%] h-[50%] flex-col gap-1 justify-end items-center"
                         >
-                            <View 
-                               className="w-[100%] h-[40%] mt-4 flex-row justify-endn px-2 items-center ">
-                                 <Text 
-                                   style={{fontSize:11}}
-                                   className="text-gray-400 ml-auto font-bold ">
-                                    City :
-                                 </Text>
-                                 <TextInput
-                                    className="font-black"
-                                    style={{
-                                      fontSize:10,
-                                      color:"white",
-                                      height: "99%", 
-                                      // width:"40%",
-                                      borderColor: 'none',
-                                      padding: 5,}}
-                                      value={city}
-                                      onChangeText={text => setCity(text)}
+                                <CountryPicker
+                                    visible={countryVisible}
+                                    onSelect={onSelectCountry}
+                                    onClose={() => setCountryVisible(false)}
                                   />
-                            </View>
-
-                            <View className="w-[100%] min-h-[40%] flex-row justify-between px-2 items-center">
-                                  <View
-                                    className="w-[50%] h-[100%]  flex-row justify-center items-center">
-                                        
-                                  </View>
-                                  <View
-                                    className="w-[20%] h-[100%] ml-auto flex-row justify-center items-center">
-                                        < CountryFlag
-                                            isoCode={countryCode}
-                                            size={12}
-                                            style={ {
-                                                marginLeft:"auto"
-                                                }}
-                                        />
-                                  </View>
-                                 
-                                  <TouchableOpacity onPress={() => setCountryVisible(true)} style={{
-                                        borderWidth: 0,
-                                        padding: 10,
-                                        borderRadius: 5,
-                                        alignItems:"center",
-                                        width:"30%"
-                                      }}>
+                                 <TouchableOpacity onPress={() => setCountryVisible(true)} 
+                                      >
                                       <Text style={ {
                                             fontWeight:"800",
                                             color:"white",
                                             fontSize: 12,
                                           }}>{countryCode || 'Select Country'}</Text>
                                   </TouchableOpacity>
-                                  <CountryPicker
-                                    visible={countryVisible}
-                                    onSelect={onSelectCountry}
-                                    onClose={() => setCountryVisible(false)}
-                                  />
-                            </View>
+                                  
+                                 <TouchableOpacity
+                                    onPress={() => setCountryVisible(true)}
+                                    className="w-[100%] h-[50%] mlauto flex-row justify-center items-end">
+                                        < CountryFlag
+                                            isoCode={countryCode}
+                                            size={36}
+                                        />
+                                </TouchableOpacity>
+                                 
+                    </View>
 
-                      </View>
+                    <View
+                        className="w-[30%] h-[50%] flex-col gap-4 justify-end items-center"
+                        >
+                                <Text 
+                                   style={{fontSize:11}}
+                                   className="text-gray-400 font-bold ">
+                                    Enter State 
+                                 </Text>
+                                 <View className="w-[100%] p-1 borde-2 borde-white rounde-lg bg-[#564e4e] -[50%] flex-row justify-center  items-center">
+                                      <TextInput
+                                          className="font-bold rounded-md"
+                                          style={{
+                                            fontSize:13,
+                                            color:"black",
+                                            height: "95%", 
+                                            width:"95%",
+                                            textAlign:"center",
+                                            borderColor: 'white',
+                                            backgroundColor:"white",
+                                            padding: 10,}}
+                                            value={state}
+                                            onChangeText={text => setState(text)}
+                                        />
+                                 </View>
+                    </View>
                     
-                  </View>
-
-                  <View
-                    style={{width:width/3,height:width/3, bottom:-width/6,left:(width- (width/3))/2}}
-                    className=" bg-blue-400 absolute  rounded-full flex-row justify-center items-center"
-                    >
-                      <Image
-                      className="w-[95%] h-[95%] rounded-full"
-                      source={{uri:profile_img}}
-                      />
-
-                      <TouchableOpacity
-                      onPress={()=>pickImage(setProfile_img)}
-                      className="w-[100px] h-[30px] absolute bottom-2 flex-row justify-center items-center rounded-lg"
-                       >
-                        <Image
-                        source={icons.update}
-                        className="w-10 h-10 "/>
-                          
-                      </TouchableOpacity>
-                  </View>
-
-
               </View>
 
-              {/* <View
-              style={{width:"100%",height:width/6}}
-              className="w-full h-[25%]  bg-white"
-               >
-                
-               </View> */}
+              
+
+
+
+         
 
               <View
-              style={{marginTop:width/5+30}}
-              className="w-full h-[40%]   flex-col justify-center gap-10 items-center "
+              className="w-full h-[40%]  g-white flex-col justify-evenly gap- items-center "
                >
                     <View 
-                    className= "w-[100%] h-[30%] flex-col justify-start items-center gap-2 " >
-                        <Text style={ {
+                    className= "w-[100%] h-[30%] flex-col justify-start items-center gap-4 " >
+                        <Text 
+                                className="text-gray-200"
+                                style={ {
                                             fontWeight:"800",
-                                            color:"gray",
-                                            fontSize: 10,
+                                            
+                                            fontSize: 12,
                                           }}>Tell us about you</Text>
                         <TextInput
-                          style={{fontSize:11}}
+                          style={{fontSize:13}}
                           className= "w-[100%] h-[80%] px-2 border-2 border-gray bg-white text-blackece font-pregular rounded-lg"
                           placeholder="Tell us about yourself..."
                           onChangeText={newText => setTellUs(newText)}
                           defaultValue={tellUs}
                           multiline
-                          numberOfLines={4} // Adjust as needed
+                          numberOfLines={4} 
                           textAlignVertical="top"
                         />
                     </View>
 
                     <View 
                     className= "w-[100%] h-[30%] flex-col justify-start items-center gap-2 " >
-                        <Text style={ {
+                        <Text 
+                           className="text-gray-200"
+                           style={ {
                                             fontWeight:"800",
-                                            color:"gray",
-                                            fontSize: 10,
+                                            fontSize: 12,
                                           }}>Tell us about your talent</Text>
                         <TextInput
                           style={{fontSize:11}}
@@ -356,7 +336,7 @@ const onSelectCountry = (country="US") => {
                           onChangeText={newText => setTellUs(newText)}
                           defaultValue={tellUs}
                           multiline
-                          numberOfLines={4} // Adjust as needed
+                          numberOfLines={4} 
                           textAlignVertical="top"
                         />
                     </View>
@@ -391,6 +371,6 @@ const onSelectCountry = (country="US") => {
              
 
         </View>
-    </SafeAreaView>
+    // </SafeAreaView>
   )
 }

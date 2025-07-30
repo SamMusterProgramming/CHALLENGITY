@@ -90,7 +90,7 @@ const getItemLayout = (data, index) => ({
         onRequestClose={() =>setDisplayComment(false)}     
         >
         <Animated.View
-        className="rounded-t-lg"
+        className="rounded-t-lg rgba(20,0 , 0 , 0.5)'"
           style={[
             styles.modalContent,
             {
@@ -101,16 +101,17 @@ const getItemLayout = (data, index) => ({
         >
           
             <View 
-                     className="flex-row justify-between w-full h-[8%] rounded-t-lg border-pink-300 border-2 bg-blue-200 mb-1 px-2 items-center">
-                      <View  className="flex-row justify-start items-center gap-1" >
+            style={{backgroundColor:'rgba(255,255 , 255, 0.5)'}}
+                     className="flex-row bg-rgba(20,0 , 0 , 0.9) justify-between w-full h-[7%]  rounded-t-lg order-pink-300 borde-2 g-white mb-2 px-2 items-center">
+                      <View  className="flex-row justify-start items-center gap-2" >
                             <Text
-                             className="text-xs  font-bold"
+                             className=" text-xs font-black text-white"
                               >
                               {postData.votes.length}
                             </Text>
                             {/* <Ionicons name='heart' color="red" side={15}/> */}
                             <Text 
-                              className="text-xs  font-black"
+                              className="text-xs  font-black text-white"
                                >
                               VOTES
                             </Text>
@@ -118,7 +119,7 @@ const getItemLayout = (data, index) => ({
                      <TouchableOpacity
                         onPress={()=>{setDisplayComment(false)}}>
                         <Image  
-                         className="w-8 h-8"
+                         className="w-10 h-10"
                          source={icons.x}/>
                      </TouchableOpacity>
                      <View  className="flex-row justify-start items-center gap-1" >
@@ -128,11 +129,11 @@ const getItemLayout = (data, index) => ({
                               {postData.likes.length}
                             </Text>
                             <Image
-                            className="w-5 h-5"
+                            className="w-7 h-7"
                              source={icons.like}
                              />
                             <Text 
-                              className="text-xs  font-black"
+                              className="text-xs text-white font-black"
                                >
                               LIKES
                             </Text>
@@ -142,42 +143,47 @@ const getItemLayout = (data, index) => ({
             {postData.comments.length == 0 && 
             ( <WelcomeComment/> )}
 
-           <FlatList
-            ref={flatListRef}
-            scrollEnabled={true}
-            nestedScrollEnabled={true}
-            // pagingEnabled
-            scrollEventThrottle={16}
-            // onEndReached={handleRefresh}
-            // onEndReached={({item,index})=>{setDisplayComments(false)}}
-            data={postData.comments}
-            renderItem={renderComment}
-            keyExtractor={item => item._id}
-            ListHeaderComponent={
-                ( <>
-                  
-               
-                </> )
-            }
-            onRefresh={handleRefresh}
-            getItemLayout={getItemLayout}
-            refreshing={refreshing}
-            extraData={refreshing}
+            <View
+            style={{backgroundColor:'rgba(0,0 , 0, 0.7)'}}
+            className="flex-1 w-full h-[86%]">
+                  <FlatList
+                    ref={flatListRef}
+                    scrollEnabled={true}
+                    nestedScrollEnabled={true}
+                    // pagingEnabled
+                    scrollEventThrottle={16}
+                    // onEndReached={handleRefresh}
+                    // onEndReached={({item,index})=>{setDisplayComments(false)}}
+                    data={postData.comments}
+                    renderItem={renderComment}
+                    keyExtractor={item => item._id}
+                    ListHeaderComponent={
+                        ( <>
+                          
+                      
+                        </> )
+                    }
+                    onRefresh={handleRefresh}
+                    getItemLayout={getItemLayout}
+                    refreshing={refreshing}
+                    extraData={refreshing}
 
-            />
-
+                    />
+            </View>
 
            <View
-                className="w-[98%] h-[50px] flex-row border-gray-400  border-2 mt-1 mb-1 justify-start items-center rounded-xl"
+                className="w-[98%] h-[7%] flex-row  border-gray-200  border-2 mt-1 mb-1 justify-start items-center rounded-lg"
                 >
-              <TextInput  style={styles.input}
-              className="px-4"
+              <TextInput  
+              // style={styles.input}
+              className="px-2 text-white"
+              placeholderTextColor={"white"}
               placeholder="Add a comment..."
               returnKeyType="send"
               removeClippedSubviews={false}
               value={newComment}
-              // keyboardType='email-address'
-              keyboardType= "default"
+              keyboardType='email-address'
+              // keyboardType= "default"
               onChangeText={text => setNewComment(text)}
               onSubmitEditing={() => {
                addComment()
@@ -185,7 +191,7 @@ const getItemLayout = (data, index) => ({
               />
               <TouchableOpacity
                onPress={addComment} 
-               className="ml-auto w-[18%] h-[85%] flex-row justify-center rounded-2xl mr-2 items-center bg-gray-300 ">
+               className="ml-auto w-[18%] h-[95%] flex-row justify-center rounded-lg mr- items-center bg-gray-300 ">
                   <Text>
                       send
                   </Text>
@@ -218,11 +224,11 @@ const styles = StyleSheet.create({
     // flex: 1, 
     // position: "absolute",
     marginTop :"auto",
-    height : "60%",
+    height : "70%",
     minWidth :"100%",
     justifyContent: 'start',
     alignItems: 'center',
-    backgroundColor: "white",
+    // backgroundColor: 'rgba(0,0 , 0 , 0.8)',
     // 'rgba(0, 0, 0, 0.8)', 
     // zIndex:1
   },

@@ -7,7 +7,7 @@ export default function WelcomeComment() {
 
     return (
       <View
-      className="w-[98vw]  flex-row mt-0 items-start px-2 py-1 gap-2 justify-start "
+      className="w-[100vw]  flex-row mt-0 items-start px-2 py-1 gap-2 justify-start "
       >
           <Image
           source={{uri:user.profile_img}}
@@ -17,13 +17,13 @@ export default function WelcomeComment() {
           <View
            className=" flex-col justify-start min-w-[88%]  ">
               <View
-              className=" bg-gray-200 px-1 py-2 flex-col justify-start w-[96%] rounded-xl ">
+              className=" bg-gray-200 px-1 py-2 flex-col justify-start w-[96%] rounded-lg ">
                   <Text
-                      className="text-primary text-sm font-black"
+                      className="text-primary text-sm mb-2 font-black"
                       >   {user.name}</Text>
                   <Text
-                      className="text-primary px-2 text-sm font-semibold "
-                      >be The first one to comment this Challenge
+                      className="text-primary px-2 text-sm font-base"
+                      >be The first one to comment 
                   </Text>
               </View>
           {/* <View

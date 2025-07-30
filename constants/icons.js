@@ -82,6 +82,7 @@ import challenge_competition from '../assets/icons/challenge_competition.png'
 import art from '../assets/icons/art.png'
 import tech from '../assets/icons/tech.png'
 import comedy from '../assets/icons/comedy.png'
+import instrument from '../assets/icons/instrument.png'
 import contestant from '../assets/icons/contestant.png'
 import africa from '../assets/icons/africa.png'
 import europe from '../assets/icons/europe.png'
@@ -89,14 +90,25 @@ import asia from '../assets/icons/asia.png'
 import america from '../assets/icons/america.png'
 import volume from '../assets/icons/volume.png'
 import vote from '../assets/icons/vote.png'
-import voted from '../assets/icons/voted.png'
+import voted from '../assets/icons/voted.jpg'
 import rank from '../assets/icons/rank.png'
+import flag from '../assets/icons/flag.png'
+import available from '../assets/icons/available.png'
+import you from '../assets/icons/you.png'
+import headline from '../assets/icons/logo1.png'
+import big_heart from '../assets/icons/big_heart.png'
 
 
 
 
 
 export default {
+  big_heart,
+  instrument,
+  headline,
+  you,
+  available,
+  flag,
   rank,
   voted,
   vote,

@@ -71,7 +71,7 @@ export default function app() {
     useCallback(() => {
       return () => {
         if (player) {
-          // player.pause();
+    
         }
         videoRef.current = null;
       };
@@ -82,7 +82,7 @@ export default function app() {
 
   return (
    
-    // <SafeAreaView className= "flex-1 bg-primary ">
+ 
     <SafeAreaProvider>
            <ImageBackground className=" flex-1 w-[100vw]  h-full  justify-start items-center"
                       source={images.night_bg} >
@@ -126,48 +126,7 @@ export default function app() {
                              className="  w-[100%] -[40%] py-6 flex-col mt-auto gap-4 rounded-t-xl justify-center gap-  
                                 items-center py-    ">
                                    <ChallengifyHeader /> 
-                                {/* <View className="  -[100%] flex-row justify-center mt-4 items-center py-1 px-2 g-[#191111] ">
-                                      <Text
-                                      style={{fontSize:12,fontFamily:"myFontt"}}
-                                      className=" text-gray-200 justify-center items-center font-bold px-2 ">
-                                          In a world full of hidden talents
-                                      </Text>
-                                </View>
-                                <View className="  -[100%] flex-row justify-center rounded-t-2xl items-center py-1 px-2 g-[#191111] ">
-                                      <Text
-                                      style={{fontSize:12,fontFamily:"myFontt"}}
-                                      className="text-md text-gray-100 justify-center items-center font-bold px-2">
-                                          and untapped potential,Challengify 
-                                      </Text>
-                                </View>
-                                <View className="  -[100%] flex-row justify-center items-center rounded-t-2xl py-1 px-2 g-[#191111]  ">
-                                      <Text
-                                      style={{fontSize:12,fontFamily:"myFontt"}}
-                                      className="text-md text-gray-100 justify-center items-center font-bold  px-2">
-                                          is your  arena to shine. Whether  you 
-                                      </Text>
-                                </View>
-                                <View className="  -[100%] flex-row justify-center items-center rounded-t-2xl py-1 px-2 g-[#191111]  ">
-                                      <Text
-                                      style={{fontSize:12,fontFamily:"myFontt"}}
-                                      className="text-md text-gray-100 justify-center items-center font-bold  px-2">
-                                              are squaring off with a friend  or facing
-                                      </Text>
-                                </View>
-                                <View className="  -[100%] flex-row justify-center  items-center rounded-t-2xl py-1 px-2 g-[#191111]  ">
-                                      <Text
-                                      style={{fontSize:12,fontFamily:"myFontt"}}
-                                      className="text-md text-gray-100 justify-center items-center font-bold   px-2">
-                                            off  against  someone from  the other side
-                                      </Text>
-                                </View>
-                                <View className="  -[100%] flex-row justify-center  items-center rounded-t-2xl py-1 px-2 g-[#191111]  ">
-                                      <Text
-                                      style={{fontSize:12,fontFamily:"myFontt"}}
-                                      className="text-md text-gray-100 justify-center items-center font-bold px-2">
-                                          of the world, the challenges never stop! Enjoy
-                                      </Text>
-                                </View> */}
+                                
 
                                 <View className="min-w-[100%] -2 flex-row justify-center items-center mt-auto " >
                                         <TouchableOpacity onPress={()=> router.replace('/login')}
@@ -201,19 +160,7 @@ export default function app() {
                 
       
 
-                        {/* <View className="w-[100%] flex-row justify-center mb-2 " >
-                            <TouchableOpacity onPress={()=> router.replace('/login')}
-                              className="bg-blue-400 mt- rounded-xl w-[90%] min-h-[55px] justify-center items-center">
-
-                              {isFetching ? (
-                               <View >
-                                 <ActivityIndicator size="large" color="#030202" />
-                               </View>
-                               ):(
-                                <Text className="text-[#030202] font-semibold text-lg">Get Started</Text>
-                                )}
-                            </TouchableOpacity>
-                        </View>    */}
+                       
                        
                 </View>
                        
@@ -222,7 +169,7 @@ export default function app() {
         </ImageBackground>
     
 
-    {/* </SafeAreaView>  */}
+  
     </SafeAreaProvider>
 
       

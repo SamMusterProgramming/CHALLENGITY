@@ -16,6 +16,7 @@ import { Accelerometer } from 'expo-sensors'
 import { useFonts } from 'expo-font'
 import { screenSize } from '../../helper.js'
 import ChallengifyHeader from '../../components/custom/ChallengifyHeader.jsx'
+import LoadingPage from '../../components/custom/LoadingPage.jsx'
 
 
 
@@ -62,7 +63,6 @@ export default function login() {
       setIsPasswordInvalid(true)
       return true
      }
-     setIsFetching(true)
      authLogin(form,setUser,setMessage,setIsFetching)
   }
 
@@ -142,6 +142,8 @@ export default function login() {
         user.isNewUser && router.push('/SetUpProfile')
       }, 1500);
       
+    }else {
+      setIsFetching(false)
     }
   }, [user])
 
@@ -161,7 +163,6 @@ export default function login() {
   });
 
   useFocusEffect(
-    
     useCallback(() => {
       return () => {
         if (player) {
@@ -171,7 +172,12 @@ export default function login() {
       };
     }, [])
   );
-  
+
+  if(isFetching){
+    return <LoadingPage text="loging in ... please wait" />
+  }
+ 
+
   return (
     <SafeAreaView className=" flex-1 bg-primary ">
       <View

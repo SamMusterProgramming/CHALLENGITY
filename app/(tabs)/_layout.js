@@ -1,6 +1,6 @@
 import { Image, Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React from 'react'
-import { Stack, Tabs, useSegments } from 'expo-router'
+import { router, Stack, Tabs, useSegments } from 'expo-router'
 import {icons} from '../../constants'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,12 +10,12 @@ import { useGlobalContext } from '../../context/GlobalProvider'
 
 
 export default function tabsLayout() {
+  
   const {user} = useGlobalContext()
   const { width, height } = useWindowDimensions();
 
-  // const segments = useSegments();
-  // const hideTabBar = segments.length > 1;
-
+  
+  
   const TabIcon =({color,icon,name,focused,dimension}) =>{
     return (
       <View 
@@ -34,8 +34,8 @@ export default function tabsLayout() {
 
 
   return (
-
-    
+    <>
+    { user && (
     <Tabs
       screenOptions={{
         // tabBarHideOnKeyboard: true ,
@@ -50,7 +50,7 @@ export default function tabsLayout() {
             // display: hideTabBar ? 'none' : 'none',
           // marginLeft:"5%",
           bottom:Platform.OS =="ios" ? 0:0,
-          backgroundColor: "#052a72",
+          backgroundColor: "#ebecf0",
           // '#fcba03',
           width:'100%',
           height: Platform.OS =="ios" ? width/6: width/7,
@@ -80,7 +80,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => (
             <View
             className ="rounded-full borde-2 borde-[#56617a]  [#15181e] justify-center items-center "
-            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
+            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"#325096": "black"}}
           >
               <Image
                 source={focused ? icons.home : icons.home}
@@ -100,7 +100,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full borde-2 borde-[#092969] justify-center items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"#325096": "black"}}
             >
                 <Image
                   source={focused ? icons.challenge : icons.challenge}
@@ -112,18 +112,18 @@ export default function tabsLayout() {
         }}
        />
         <Tabs.Screen 
-        name='notifications'
+        name='Talent'
         options={{
           tabBarLabel: '',
-          title:"notifications",
+          title:"Talent",
           headerShown:false,
           tabBarIcon:({color,focused,size}) => (
             <View
             className ="rounded-full borde-2 borde-[#092969]  justify-center items-center "
-            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
+            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"#325096": "black"}}
              >
               <Image
-              source={focused ? icons.notification : icons.notification}
+              source={focused ? icons.talent : icons.talent}
               style={{ width: size+width/30-10, height:size+width/30-3-10, tintColor: "none"}}
               />
         </View>
@@ -131,22 +131,24 @@ export default function tabsLayout() {
         }}
        />
         <Tabs.Screen 
-        name='profile'
+        name='Guiness'
         options={{
           tabBarLabel: '',
           unmountOnBlur: true,
-          title:"profile",
+          title:"Guiness",
           headerShown:false,
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full borde-2 borde-[#092969] justify-center items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "black"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"#325096": "black"}}
             >
+            { user && (
               <Image
-              source={{ uri :focused ? user.profile_img: user.profile_img }}
+              source={icons.guiness}
               className ="rounded-full w-15 h-15"
               style={{ width: size+width/30-10, height: size+width/30-10, tintColor: "none"}}
               />
+                )} 
             </View>
           )
         }}
@@ -161,7 +163,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full justify-center borde-2 borde-[#092969] items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "black"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"#325096": "black"}}
             >
               <Image
               source={icons.setting}
@@ -173,6 +175,9 @@ export default function tabsLayout() {
         }}
        />
     </Tabs>
+    )}
+    </>
+
   )
 }
 const styles = StyleSheet.create({})

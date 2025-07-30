@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChallengeAction({text,action,isModalVisible, setIsModalVisible,
     removeChallenge, addToFavourite,removeFromFavourite, handleTalentParticipation , handleTalentResignition,
-    joinChallenge ,resignChallenge}) {
+    joinChallenge ,resignChallenge , handleVotePost , handleFlagPost, handleQueue}) {
     
     const { wid, height } = useWindowDimensions();
     const [isLoaded , setIsLoaded] = useState(false)
@@ -21,16 +21,16 @@ export default function ChallengeAction({text,action,isModalVisible, setIsModalV
     const slideAnim = useRef(new Animated.Value(height)).current;
 
     
-    useEffect(() => {
-        let index = 0
-        let textData =[]
-        while(index * 35 <= text.length) {
-            const s = text.slice(index * 35 , (index + 1) * 35 )
-            textData.push(s)
-            index = index + 1
-        }
-        setTextArray({textData:textData})
-      }, []);
+    // useEffect(() => {
+    //     let index = 0
+    //     let textData =[]
+    //     while(index * 35 <= text.length) {
+    //         const s = text.slice(index * 35 , (index + 1) * 35 )
+    //         textData.push(s)
+    //         index = index + 1
+    //     }
+    //     setTextArray({textData:textData})
+    //   }, []);
 
     useEffect(() => {
       Animated.timing(slideAnim, {
@@ -84,33 +84,37 @@ export default function ChallengeAction({text,action,isModalVisible, setIsModalV
                   <View 
                     style={styles.modalOverlay} >
                     <Animated.View 
-                      className=" border-2 border-[#f1ecec] "
+                      className=" borde-2 borde-[#292727] "
                       style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
 
                       <View
-                        className="py-4 w-[90%] max-h-[120px] flex-col px-4 justify-start rounded-lg bg-[#121414] items-center">
-                             {textArray && textArray.textData.map((text,index)=> {
+                        style={{      backgroundColor: 'rgba(0, 10, 50, 0.9)'                        }}
+                        className=" w-[90%] flex-col px-4 py-6 justify-start rounded-lg g-[#f8fbfb] items-center">
+                             {/* {textArray && textArray.textData.map((text,index)=> {
                                 return  (
                                     <Text key={index} style={styles.modalText}
                                        className="font-bold" > {text}
                                     </Text>
                                 )
-                             })}
+                             })} */}
+                               <Text  style={styles.modalText}
+                                       className="font-bold text-center text-lg" > {text}
+                                </Text>
                               
                       </View>
                        
 
                       <View
-                      className=" w-[90%]  flex-row justify-between gap- mt-5 items-center">
+                      className=" w-[90%]  flex-row justify-center gap-6 mt-5 items-center">
         
                                <TouchableOpacity 
                                   onPress={()=>{setIsModalVisible(false)}} 
                                   className="w-[80px] h-[35px] bg-red-700 rounded-lg flex-row justify-center items-center">
                                     <Text
                                     className="text-white font-black"
-                                     style={{fontSize:9}}
+                                     style={{fontSize:10}}
                                      >
-                                       { action!=="OK" ?"Cancel" :"ok" }
+                                       { action!=="OK" ?"Cancel" :"Ok" }
                                      </Text>
                                </TouchableOpacity>
                                {action !=="OK" && (
@@ -118,11 +122,12 @@ export default function ChallengeAction({text,action,isModalVisible, setIsModalV
                                   onPress={
                                   action == "JN"?joinChallenge:action =="DT"?removeChallenge:
                                   action =="RS"?resignChallenge:action =="FA"? addToFavourite : action == "RF" ? removeFromFavourite :
-                                  action == "NP"? handleTalentParticipation: action == "P" ? handleTalentResignition : ()=> {}}
+                                  action == "NP"? handleTalentParticipation: action == "P" ? handleTalentResignition :
+                                  action =="VT"? handleVotePost: action=="FL"? handleFlagPost: action= "Q" ?handleQueue: ()=> {}}
                                   className="w-[80px] h-[35px] bg-blue-700 rounded-lg flex-row justify-center items-center">
                                     <Text
                                     className="text-white font-black"
-                                     style={{fontSize:9}}
+                                     style={{fontSize:10}}
                                      >Confirm</Text>
                                </TouchableOpacity>
                                       )}  
@@ -165,18 +170,18 @@ export default function ChallengeAction({text,action,isModalVisible, setIsModalV
     modalContainer: {
       position: 'absolute',
       bottom: "40%",
-      left: "15%",
+      left: "10%",
       right: 0,
-      backgroundColor: "white",
-      padding: 15,
+      backgroundColor: 'rgb(255, 255, 255)',
+      padding: 25,
       borderTopLeftRadius: 10,
       borderRadius: 10,
       justifyContent:"center",
       alignItems: 'center',
-      width:"70%"
+      width:"80%"
     },
     modalText: {
-      fontSize: 8,
+      fontSize: 11,
     //   marginBottom: 20,
       color:"white"
     },

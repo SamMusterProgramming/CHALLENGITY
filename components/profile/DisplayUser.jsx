@@ -105,18 +105,18 @@ export default function DisplayUser({userData}) {
                     style={{width:width/11 ,height:width/11 }}
                     className="rounded-full"
                     resizeMethod='cover'
-                    source={userFriendData.friends.find(friend=>friend.sender_id == userData._id) ?icons.check_red :
-                            userFriendData.friend_request_send.find(friend=>friend.sender_id == userData._id) ? icons.pending:
-                            userFriendData.friend_request_received.find(friend=>friend.sender_id == userData._id) ? icons.check_red:icons.profile
-                    }
+                    // source={userFriendData.friends.find(friend=>friend.sender_id == userData._id) ?icons.check_red :
+                    //         userFriendData.friend_request_send.find(friend=>friend.sender_id == userData._id) ? icons.pending:
+                    //         userFriendData.friend_request_received.find(friend=>friend.sender_id == userData._id) ? icons.check_red:icons.profile
+                    // }
                 />
-                <Text
+                {/* <Text
                        style={{fontSize:width/50,color:"pink"}}
                        className="text-white font-black">
                          {userFriendData.friends.find(friend=>friend.sender_id == userData._id) ? "FRIEND":
                          userFriendData.friend_request_send.find(friend=>friend.sender_id == userData._id) ? "PENDING"
                         :userFriendData.friend_request_received.find(friend=>friend.sender_id == userData._id) ?"ACCEPT":"ADD FRIEND"}
-                </Text>
+                </Text> */}
            </View>   
             
     </TouchableOpacity>

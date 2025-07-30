@@ -14,10 +14,10 @@ const RegionSelector = ({  selectedTalent }) => {
     const [isLoading , setIsLoading] = useState(true)
     // const regions = ['Africa', 'Asia', 'Europe', 'America'];
    const regions = [ { 
-     id: '1', name: 'Africa', icon: icons.africa, color:"#34cfeb" },
-    { id: '2', name: 'Asia', icon: icons.asia , color:"#3a34eb" },
-    { id: '3', name: 'Europe', icon: icons.europe , color:"#eb34cc" },
-    { id: '4', name: 'America', icon: icons.america , color:"#6709e3"}
+     id: '1', name: 'Africa', icon: icons.africa, color:"white" },
+    { id: '2', name: 'Asia', icon: icons.asia , color:"white" },
+    { id: '3', name: 'Europe', icon: icons.europe , color:"white" },
+    { id: '4', name: 'America', icon: icons.america , color:"white"}
   ]
 
   useEffect(() => {
@@ -27,18 +27,15 @@ const RegionSelector = ({  selectedTalent }) => {
       GetTalentRoomsByName(queryParams, setTalentRegions,setIsLoading )
   }, [])
 
-  // useEffect(() => {
-  //   if(talentRegions.length > 0) {
-    
-  //   }
-  // }, [talentRegions])
+
   
   
     return (
      
       <View 
-      className="flex-1 rounded-xl border-2 order-white"
+      className="flex-1 rounded-xl py-4 borde-2 order-white"
       style={styles.regionGrid}>
+       
         {! isLoading && regions.map((region) => (
           <MotiView
             key={region.id}
@@ -48,11 +45,12 @@ const RegionSelector = ({  selectedTalent }) => {
             style={[
               styles.regionButton
             ]}
-            className="w-[45%] h-[47%] bg-[#0b273c]"
+            // style={{}}
+            className="w-[47%] h-[47%] g-[#0b273c]"
               >
               <TouchableOpacity
-                
-                className= "w-[100%] h-[100%] flex-row justify-start g-[#fff] items-start"
+                style={{backgroundColor:region.color}}
+                className= "w-[100%] h-[100%] rounded-xl flex-row justify-center g-[#fff] items-center"
                 // style={[
                 //   styles.regionButton
                 // ]}
@@ -67,41 +65,49 @@ const RegionSelector = ({  selectedTalent }) => {
                       } }) 
                 }}
               >
-                <View
-                className ="w-[60%] h-[70%] g-[#f6f4f1] bg-[#192037] rounded-lg flex-col justify-start gap- items-center p-2">
-                        <Image
-                        className ="w-12 h-12 "
-                        resizeMethod='contain'
-                        source={icons.contestant} />
-                          <Text 
-                            className="text-xs text-white mt-auto font-black"> 
-                            {talentRegions.find(el=> el.region === region.name).contestants.length}
-                            
-                          </Text>
-                          <Text 
-                            style={{fontSize:9}}
-                            className=" text-white text-base  font-semibold"> 
-                            {' '}Contestants
-                          </Text>
-                </View>
-                <View
-                className ="w-[50%] h-[100%] flex-col justify-between  items-center  p-2">
-                      <Image
-                        className ="w-14 h-14 "
-                        resizeMethod='contain'
-                        source={selectedTalent.icon} />
-                         <Text 
-                            style={{fontSize:7}}
-                            className=" text-white text-base  font-black"> 
-                            {selectedTalent.name.toString()}
-                          </Text>
-                    <Image
-                        className ="w-16 h-16 "
-                        resizeMethod='contain'
-                        source={region.icon} />
-                      
-                </View>
-               
+
+                 <View
+                   className="w-[95%] h-[95%] z- p- bg-black flex-row justify-start items-start " >
+                        <View
+                        className ="w-[50%] h-[70%] g-[#f6f4f1] g-[#192037] rounded-lg flex-col justify-start gap- items-center py-4 ">
+                                <Image
+                                className ="w-10 h-10 "
+                                resizeMethod='contain'
+                                source={icons.contestant} />
+                                  <Text 
+                                    className="text-xs text-white mt-auto font-black"> 
+                                    {talentRegions.find(el=> el.region === region.name).contestants.length}
+                                    
+                                  </Text>
+                                  <Text 
+                                    style={{fontSize:11}}
+                                    className=" text-white text-base  font-bold"> 
+                                    {' '}CONT
+                                  </Text>
+                                  <Text 
+                                    style={{fontSize:11}}
+                                    className=" text-white text-base  font-bold"> 
+                                    {' '}ESTANTS
+                                  </Text>
+                        </View>
+                        <View
+                        className ="w-[50%] h-[100%] flex-col justify-start  gap-2 items-center  p-2">
+                              <Image
+                                className ="w-12 h-12 "
+                                resizeMethod='contain'
+                                source={selectedTalent.icon} />
+                                <Text 
+                                    style={{fontSize:9}}
+                                    className=" text-white   font-black"> 
+                                    {selectedTalent.name.toString()}
+                                  </Text>
+                            <Image
+                                className ="w-14 h-12 mt-auto "
+                                resizeMethod='contain'
+                                source={region.icon} />
+                              
+                        </View>
+                    </View>
               
               </TouchableOpacity>
               <View
@@ -176,15 +182,16 @@ const styles = StyleSheet.create({
     },
     regionButton: {
       // backgroundColor: '#e0dfff',
-      paddingVertical: 8,
-      paddingHorizontal: 14,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
       borderRadius: 10,
-      margin: 6,
+      // margin: 6,
     },
     regionButtonSelected: {
       backgroundColor: '#4B0082',
     },
     regionText: {
+      fontWeight:800,
       fontSize: 14,
       color: 'white',
     },

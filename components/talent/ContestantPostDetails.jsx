@@ -10,7 +10,7 @@ import { router } from 'expo-router';
 import { createdAt } from 'expo-updates';
 
 export default function ContestantPostDetails({user,show , height, width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
-    ,handleRefresh, setIsExpired }) {
+    ,rank,handleRefresh, setIsExpired }) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
   const [voteTimeLaps,setVoteTimeLaps] = useState(30)
@@ -92,7 +92,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
      <>
        
          <View
-             className = " absolute borde-4 flex-col justify-center gap-1 items-center borde g-white opacity-100 "
+             className = " absolute borde-4 flex-col justify-center gap-1 items-center borde g-black opacity-100 "
              style={{ 
                         
                              width: width * 0.45,height :width * 0.8,
@@ -106,7 +106,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                    <TouchableOpacity
                      onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
                      // style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
-                     className = "w-[100%]  h-[27%] px-4 flex-col g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
+                     className = "w-[100%]  h-[20%] px-4 flex-col g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
                                        <Image
                                       style ={{height : width * 0.8 /6 ,
                                                        width :width * 0.8 /6 }}
@@ -115,7 +115,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                       resizeMethod='fill'
                                                          />
                                      <Text 
-                                         style ={{fontSize:12 ,
+                                         style ={{fontSize:11 ,
                                           fontStyle:"italic"
                                          }}
                                          className="text-xl font-black  text-white"> 
@@ -230,7 +230,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                     {!postData.flags.find(flag => flag.flagger_id == user._id) && (
                                         <Text 
                                         style ={{fontSize:12}}
-                                        className="text-xl font-black    text-white"> 
+                                        className="text-xl font-black    text-gray-700"> 
                                           {!postData.flags.find(flag => flag.flagger_id == user._id) &&  "FLAG"}
                                          </Text>
                                     )}
@@ -285,8 +285,8 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                   </View>
 
                   <View
-                     style={{backgroundColor: 'rgba(0, 0, 0, 0.2)'}}
-                     className = "w-[100%]  h-[13%] px-6 flex-row g-[#12aaf1] rounded-xl  g-blue-500  justify-between items-center">
+                     // style={{backgroundColor: 'rgba(0, 0, 0, 0.2)'}}
+                     className = "w-[100%]  h-[20%] px-2 flex-row g-[#12aaf1] rounded-xl  g-blue-500  justify-between items-start">
                                      <Text 
                                          style ={{fontSize:13 ,
                                           fontStyle:"italic"
@@ -300,7 +300,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                           fontStyle:"italic"
                                          }}
                                          className="text-xl font-black  text-white"> 
-                                          {selectedContestant.rank < 4 ? "TOP" : "#"}  {selectedContestant.rank}
+                                          {rank < 4 ? "TOP" : "#"}  {rank}
                                      </Text>
                    </View>
 

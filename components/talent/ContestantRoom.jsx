@@ -287,7 +287,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
              from={{ opacity: 0, translateY: 40 }}
              animate={{ opacity: 1, translateY: 0 }}
              transition={{ delay: 800, type: 'timing', duration: 600 }}
-             className=" min-w-[100%] h-[220px] py- 2 flex-col px- bg-[#161e28]  justify-start g-white items-center gap- mb-">
+             className=" min-w-[100%] h-[200px] py- 2 flex-col px- bg-[#161e28]  justify-start g-white items-center gap- mb-">
                     <View
                     className="w-full h-[70%] flex-row justify-center gap- items-center">
                            <TouchableOpacity

@@ -1,4 +1,4 @@
-import { View, Text, Platform, TouchableOpacity, Image, KeyboardAvoidingView, StyleSheet, ImageBackground } from 'react-native'
+import { View, Text, Platform, TouchableOpacity, Image, KeyboardAvoidingView, StyleSheet, ImageBackground, useWindowDimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import ProgresssBarVideo from '../custom/ProgresssBarVideo'
 import { icons } from '../../constants'
@@ -8,8 +8,10 @@ import { useGlobalContext } from '../../context/GlobalProvider'
 import ShuffleLetters from '../custom/ShuffleLetters'
 import { router } from 'expo-router'
 import FloatingBalloon from './FloatingBallon'
+import CommentModal from './modal/CommentModal'
+import ContestantPostDetails from './ContestantPostDetails'
 
-export default function TalentPlayer({contestant,index,dimension,isVisible,setFinishPlaying}) {
+export default function TalentPlayer({contestant,index,dimension,isVisible,setFinishPlaying, status , handleRefresh , talentRoom}) {
     const videoRef = useRef()
     const {user,setUser,isViewed,setIsViewed,followings,setFollowings,userFriendData,setUserFriendData,notifications, setNotifications
       ,favouriteChallenge , setFavouriteChallenge
@@ -17,10 +19,10 @@ export default function TalentPlayer({contestant,index,dimension,isVisible,setFi
 
     const [isExpired,setIsExpired] = useState(false)
     const [isPlaying, setIsPlaying] = useState(isVisible);
+    const [displayComment , setDisplayComment] = useState(false)
+    const{width ,height} = useWindowDimensions()
 
-  
 
-    const [participantFriendData,setParticipantFriendData] = useState(null)
     // const [userFriendData,setUserFriendData] = useState(null)
   
   
@@ -147,10 +149,24 @@ export default function TalentPlayer({contestant,index,dimension,isVisible,setFi
       
   //**************************** confirm favourite adding option ************************ */
   
+  const getIcon = (name)=>{
+     switch (name) {
+        case "Music":
+            return icons.music
+            break;
+        case "Magic":
+            return icons.magic
+            break;
+        case "Asia":
+            return icons.asia
+            break;
+        default:
+            break;
+     }
+  }
   
     
        
-      
   
     return (
       <KeyboardAvoidingView
@@ -176,41 +192,66 @@ export default function TalentPlayer({contestant,index,dimension,isVisible,setFi
                 </TouchableOpacity>
   
                 <ProgresssBarVideo player={player} visible={!isPlaying} bottom={72} />
-  
+                
+                {!isPlaying &&  (
+                 <>
+                        <Image
+                            source={getIcon(talentRoom.name)}
+                            className="absolute top-2 left-2 w-12 h-12 rounded-full"
+                            resizeMode='cover'
+                                        />
+                        <Image
+                            source={getIcon(talentRoom.region)}
+                            className="absolute top-2 right-2 w-12 h-12 rounded-full"
+                            resizeMode='cover'
+                                        />
+                        <View
+                        className="absolute top-2 p-2 gap-6 flex-col justify-start items-center ">
+                                 <ShuffleLetters text={`${talentRoom.name}` + " Contest"} textSize={15} />
+                                 <Text
+                                    className="font-black"
+                                    style={{fontSize:15 ,
+                                        color: "white"
+                                    }}>
+                                        {talentRoom.region}
+                                </Text>
+                        </View>
+                 </>
+                )}
+
+                {!isPlaying && status !=="closed" && (
                 <TouchableOpacity 
                  hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
                  onPress={ () => {!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) } }
-                 className= "absolute justify-center items-center">
+                 className= "absolute z-10  justify-center items-center">
                     <Image 
                      className="w-20 h-20 opacity-60"
                      source={!isPlaying && icons.play}/>
                 </TouchableOpacity>
+                )}
 
-                {!isPlaying && (
-                    //   <View
-                    //   className = "absolute top-0 left-2  p-4 gap-2 rounde-xl g-[#020f38]">
-                           
-                    //   </View>
+                {!isPlaying &&  (
+             
                     <TouchableOpacity
                       onPress={()=> router.back() }
-                      className ="absolute top-2 left-2"
+                      className ="absolute bottom-2 "
                       >
                         <Image 
-                                  source={icons.back}
-                                  className ="w-8 h-8 "
+                                  source={icons.x}
+                                  className ="w-12 h-12 "
                                   resizeMode='cover'
                                 />
                     </TouchableOpacity> 
                 )} 
                 
-                {!isPlaying && index == 0 && (
+                {!isPlaying && status == "closed" && index == 0 && (
                       <View
                       className = "absolute top-0   p-4 gap-2 rounde-xl g-[#020f38]">
                            <ShuffleLetters text="Winner" textSize={16} />
                       </View>
                 )} 
 
-                {!isPlaying && (
+                {!isPlaying && status == "closed" && (
                     <View
                     className = "absolute top-[220px] left-10  p-4 gap-2 rounded-xl bg-[#020f38]">
                         <Text
@@ -224,7 +265,7 @@ export default function TalentPlayer({contestant,index,dimension,isVisible,setFi
                     </View>
                 )}
 
-                {!isPlaying && (
+                {!isPlaying && status == "closed" && (
                     <View
                     className = "absolute top-[220px] right-10 p-4 gap-2 rounded-xl bg-[#020f38]">
                         <Text
@@ -238,7 +279,7 @@ export default function TalentPlayer({contestant,index,dimension,isVisible,setFi
                     </View>
                 )}
 
-               {!isPlaying && (
+               {!isPlaying &&  status == "closed" && (
                     <ImageBackground 
                      source={index == 0 ? icons.big_heart :""}
                      style={styles.backgroundImage}
@@ -263,7 +304,17 @@ export default function TalentPlayer({contestant,index,dimension,isVisible,setFi
                     </ImageBackground>
                 )}
   
-                   
+                {!isPlaying &&  status == "open" && (
+                    <>
+                      <ContestantPostDetails user={user} show = {!isPlaying } displayComment={displayComment}
+                      setDisplayComment = {setDisplayComment} selectedContestant={contestant} setIsExpired={setIsExpired} talentRoom={talentRoom}
+                      // confirmAction = {confirmAction} setAction ={setAction} setText ={setText}
+                      handleRefresh = {handleRefresh} rank={index+1}
+                      width ={width } height={height} top = { height/4} />    
+
+                      {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={contestant}  />)}
+                    </>
+                )}
    
   
         </View>  

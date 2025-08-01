@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'react-native'
 import { icons } from '../constants'
 import ChallengeExpired from '../components/challenge/ChallengeExpired'
+import { Swipeable } from 'react-native-gesture-handler'
 
 
 
@@ -63,7 +64,7 @@ export default function ChallengeDisplayer() {
 
     const renderItem = ({ item, index }) => {
         const isVisible = viewableItems.some(viewableItem => viewableItem.index === index);
-        return  <Player
+        return   <Player
          isVisible={isVisible}
          setFinishPlaying={setFinishPlaying}
          key={item._id} 
@@ -71,6 +72,7 @@ export default function ChallengeDisplayer() {
          participant={item}
          challenge={challenge} 
           />
+     
       };
 
     useEffect(() => {
@@ -121,8 +123,9 @@ export default function ChallengeDisplayer() {
                 itemVisiblePercentThreshold: 70, 
             }}
             scrollEventThrottle={15}
-            pagingEnabled
+            // pagingEnabled
             horizontal
+           
             />
        )}  
 

@@ -1,17 +1,20 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, Animated, Button, StyleSheet, Image, useWindowDimensions, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { View, Text, Animated, Button, StyleSheet, Image, useWindowDimensions, TouchableOpacity, FlatList, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { icons } from '../../../constants';
 import Modal from 'react-native-modal';
 import { addCommentContestant, getPostData } from '../../../apiCalls';
 import WelcomeComment from '../../comments/WelcomeComment';
 import Comment from '../../comments/Comment';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const CommentModal = ({user,displayComment , setDisplayComment , selectedContestant}) => {
+const CommentModal = ({user , displayComment , setDisplayComment , selectedContestant}) => {
   const scaleAnim = useRef(new Animated.Value(0)).current; 
   const { width, height } = useWindowDimensions();
   const [postData , setPostData] = useState(null)
   const [newComment, setNewComment] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
+
   const flatListRef = useRef()
 
 
@@ -22,7 +25,8 @@ const CommentModal = ({user,displayComment , setDisplayComment , selectedContest
   //**************************** flatlist items here */
 
   const renderComment = ( {item,index}) => { 
-    return <Comment key={index} data={item} setCommentData={setPostData} post_user_id={selectedContestant.user_id} post_id={selectedContestant._id} />
+    return <Comment key={index} data={item} setCommentData={setPostData} post_user_id={selectedContestant.user_id}
+     post_id={selectedContestant._id} setPostData={setPostData} />
    }
  
   const addComment = () => {
@@ -79,7 +83,11 @@ const getItemLayout = (data, index) => ({
   }, [displayComment]);
 
   return (
-    <View style={styles.container}>
+    <View
+    // style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top}}
+    //      className=" flex- 1 w-full h-full   bg-[#060606]"
+    style={styles.container}
+     >
     {displayComment && postData && (
         <Modal
         style={{margin:0}}
@@ -90,7 +98,7 @@ const getItemLayout = (data, index) => ({
         onRequestClose={() =>setDisplayComment(false)}     
         >
         <Animated.View
-        className="rounded-t-lg rgba(20,0 , 0 , 0.5)'"
+        className="rounded-t-lg mt-auto bg-white"
           style={[
             styles.modalContent,
             {
@@ -101,8 +109,8 @@ const getItemLayout = (data, index) => ({
         >
           
             <View 
-            style={{backgroundColor:'rgba(255,255 , 255, 0.5)'}}
-                     className="flex-row bg-rgba(20,0 , 0 , 0.9) justify-between w-full h-[7%]  rounded-t-lg order-pink-300 borde-2 g-white mb-2 px-2 items-center">
+            style={{backgroundColor:'rgba(0,0 , 0, 0.8)'}}
+                     className="flex-row bg-black justify-between w-full  h-[50px]  rounded-t-lg order-pink-300 borde-2 g-white mb-2 px-2 items-center">
                       <View  className="flex-row justify-start items-center gap-2" >
                             <Text
                              className=" text-xs font-black text-white"
@@ -144,8 +152,8 @@ const getItemLayout = (data, index) => ({
             ( <WelcomeComment/> )}
 
             <View
-            style={{backgroundColor:'rgba(0,0 , 0, 0.7)'}}
-            className="flex-1 w-full h-[86%]">
+            style={{backgroundColor:"white"}}
+            className="flex-1 w-full h- [80%]">
                   <FlatList
                     ref={flatListRef}
                     scrollEnabled={true}
@@ -172,11 +180,12 @@ const getItemLayout = (data, index) => ({
             </View>
 
            <View
-                className="w-[98%] h-[7%] flex-row  border-gray-200  border-2 mt-1 mb-1 justify-start items-center rounded-lg"
+
+                className="w-[95%] min- h-[50px] px-2 flex-row  border-gray-600 border-2 border-b-2  border-l- 4  border-r- 4 mt-1 mb- justify-start items-center rounded-lg"
                 >
               <TextInput  
               // style={styles.input}
-              className="px-2 text-white"
+              className="px-2 text-gray-700 bg-gray-100 w-[100%] min-h-[95%] border-r-2 border-gray"
               placeholderTextColor={"white"}
               placeholder="Add a comment..."
               returnKeyType="send"
@@ -191,7 +200,7 @@ const getItemLayout = (data, index) => ({
               />
               <TouchableOpacity
                onPress={addComment} 
-               className="ml-auto w-[18%] h-[95%] flex-row justify-center rounded-lg mr- items-center bg-gray-300 ">
+               className="absolute right-0 w-[18%] h-[95%] flex-row justify-center rounded-lg mr- items-center bg-blue-200 ">
                   <Text>
                       send
                   </Text>
@@ -199,8 +208,12 @@ const getItemLayout = (data, index) => ({
         
            </View>
            <View
-                className="w-[98%] h-[10px] flex-row  borde-2 mt-3 mb-1 justify-start items-center rounded-xl"
-                ></View>
+                className="w-[98%] h-[5%] flex-row bg-white borde-2 mt- mb-1 justify-center items-center rounded-xl"
+                >
+                    <Text>
+                      Comment
+                  </Text>
+                </View>
 
         </Animated.View>
       </Modal>
@@ -223,8 +236,8 @@ const styles = StyleSheet.create({
   modalContent: {
     // flex: 1, 
     // position: "absolute",
-    marginTop :"auto",
-    height : "70%",
+    // marginTop :"auto",
+    height : "85%",
     minWidth :"100%",
     justifyContent: 'start',
     alignItems: 'center',

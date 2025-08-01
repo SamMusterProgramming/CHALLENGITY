@@ -8,7 +8,7 @@ import CountryFlag from 'react-native-country-flag'
 import { icons } from '../../constants'
 
 export default function ContestantList({contestants , selectedIcon , selectedTalent,region ,regionIcon,setSelectedContestant,
-     h ,w , top,left,right,bottom}) {
+    talentRoom, h ,w , top,left,right,bottom}) {
   return (
     <View
     style={{height:h,width:w,
@@ -46,6 +46,31 @@ export default function ContestantList({contestants , selectedIcon , selectedTal
                        className="text-yellow-400 font-bold"> {selectedTalent}</Text>
                  </View>
         </MotiView>
+        <TouchableOpacity
+                       onPress={()=>{
+                        router.navigate({ pathname: '/TalentContestantPlayMode',params: { 
+                            talentRoom_id : talentRoom._id,
+                            // edition_id : edition._id ,
+                          } }) 
+                       }}
+                       className="py-1 px-6 gap-1 mb-1 flex-row justify-center rounded-xl  bg-[#07245d] items-center"
+                       >
+                      <Text 
+                            style ={{fontSize:12}}
+                            className="text-xl font-black -auto text-white"> 
+                                PLAY
+                    </Text> 
+                    <Image
+                       className="w-[25] h-[25] rounded-full "
+                       source={icons.play}
+                       resizeMethod='contain'
+                           />
+                     <Text 
+                            style ={{fontSize:12}}
+                            className="text-xl font-black -auto text-white"> 
+                               ALL
+                    </Text> 
+         </TouchableOpacity>
 
         <ScrollView
             className="flex-1 w-[100%] g-white ">

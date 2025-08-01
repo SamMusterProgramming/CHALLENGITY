@@ -336,6 +336,7 @@ return (
                                               <ContestantPostDetails user={user} show = {!isContestantVisible && !isPlaying && selectedContestant} displayComment ={displayComment}
                                                   setDisplayComment = {setDisplayComment} selectedContestant={selectedContestant} setIsExpired={setIsExpired} talentRoom={talentRoom}
                                                   // confirmAction = {confirmAction} setAction ={setAction} setText ={setText}
+                                                  rank={selectedContestant.rank}
                                                   handleRefresh ={handleRefresh}
                                                   width ={width } height={height} top = { height/4} />       
                                              
@@ -354,7 +355,7 @@ return (
                                               <DisplayContestant show = {isContestantVisible} setIsContestantVisible = {setIsContestantVisible} selectedContestant={selectedContestant} 
                                               width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} />
 
-                                              {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedContestant}/>)}
+                                              {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedContestant}  />)}
 
                                               {isPlaying && ! isContestantVisible && (<ProgresssBarVideo player={player} visible={!isPlaying} bottom={82} />)}
                                               {isPlaying && ! isContestantVisible && (
@@ -373,7 +374,7 @@ return (
                                         //             </Text>
                                         // </TouchableOpacity>
                                         <ContestantList contestants={talentRoom.contestants}  selectedIcon ={selectedIcon} selectedTalent={selectedTalent} setSelectedContestant={setSelectedContestant}
-                                        edition={edition} region={region} regionIcon ={regionIcon} h={height * 0.5} w ={width * 0.5} top = { height * 0.11 + insets.top   } />
+                                        talentRoom={talentRoom} edition={edition} region={region} regionIcon ={regionIcon} h={height * 0.5} w ={width * 0.5} top = { height * 0.11 + insets.top   } />
                                     )}
                                       
                                 </>
@@ -400,7 +401,7 @@ return (
                 animate={{ opacity: 1, translateY: 0 }}
                 transition={{ delay: 800, type: 'timing', duration: 600 }}
                 style ={{bottom: !show? height * 0.12 + insets.bottom : height * 0.12 + insets.bottom}}
-                className ="-[20%] -[10%]  absolute bottom-36 flex-col g-white rounded-xl  justify-start items-center">
+                className ="w-[40%] -[10%] p-2  absolute bottom-36 flex-col bg-[#0f1457] rounded-xl  justify-start items-center">
                 <TouchableOpacity
                        onPress={handleRefresh}
                        className="p-1 justify-center items-center"
@@ -414,32 +415,34 @@ return (
                           )}
                         
                 </TouchableOpacity>
+                {/* <TouchableOpacity
+                       onPress={handleRefresh}
+                       className="py -1 px-6 justify-center rounded-xl  bg-black items-center"
+                       >
+                      <Text 
+                            style ={{fontSize:9}}
+                            className="text-xl font-black -auto text-white"> 
+                                Play All
+                    </Text> 
+                </TouchableOpacity> */}
+
                 <View
-                  className ="-[100%] -[60%] px-  g-white rounded-xl flex-col justify-center items-center">
-                 <View
-                    className ="-[100%] -[60%] px-1 gap-4 g-white rounded-xl flex-row justify-center items-center">
-                    <Image
-                    source={selectedIcon}
-                    className ="w-5 h-5"
-                    />
-                     <Text 
+                  className ="w-[100%] -[60%] px- py-1 gap-2 g-white rounded-xl flex-row justify-center items-start">
+
+                    <Text 
                             style ={{fontSize:11 ,fontStyle:"italic"}}
                             className="text-xl font-black -auto text-white"> 
                             {talentRoom.contestants.length} 
                     </Text>
-                    <Image
-                    source={regionIcon}
-                    className ="w-5 h-5"
-                    />
-                 </View>
-                 <Text 
+                  
+                    <Text 
                             style ={{fontSize:11}}
                             className="text-xl font-black -auto text-white"> 
-                            Contestants
-                 </Text>
-                   
-               
+                                Contestants
+                    </Text>
+
                 </View>
+
                 <TouchableOpacity
                     onPress={()=> {
                         setSelectedContestant(null)
@@ -447,16 +450,25 @@ return (
                         createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation,setEdition, setIsLoading)
                        }
                     }
-                    className ="-[100%] -[40%] py-1 bg-gray-200 rounded-lg flex-row justify-center items-center">
+                    className ="w-[100%] -[40%] p-1 bg-gray-200 rounded-lg flex-row justify-center items-center">
                      <View
-                       className ="-[98%] -[94%] px-8 bg-white rounded-lg flex-row justify-center items-center">
+                       className ="w-[98%] -[94%] px-8 bg-white rounded-lg flex-row justify-center items-center">
                            <Text 
                                 style ={{fontSize:9}}
                                 className="text-xl font-black -auto text-black"> 
-                                  {show? "BACK" :"ENTER"} 
+                                  {show? "EXIT STAGE" :"ENTER STAGE"} 
                            </Text>
                      </View>
                 </TouchableOpacity>
+
+                <Image
+                          source={selectedIcon}
+                          className ="absolute top-1 left-1 w-6 h-6"
+                          />
+                  <Image
+                          source={regionIcon}
+                          className ="absolute top-1 right-2 w-6 h-6"
+                          />
             </MotiView>
 
             )}

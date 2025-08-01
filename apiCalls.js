@@ -881,12 +881,27 @@ export const flagTalentPost = async(post_id , body, setPostData ,setIsExpired) =
 }
 }
 
+//***************post comments, add , edit , delete */
 
 export const addCommentContestant = async(post_id,body,setPostData) =>{
   try {
     await axios.post( BASE_URL + `/talents/posts/${post_id}`,body)
     .then(res =>  { 
          setPostData({...res.data})
+      } )
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ 
+
+ export const deleteTalentCommentsById = async(post_id,body,setPostData) =>{
+  try {
+    console.log(post_id)
+    await axios.patch( BASE_URL + `/talents/posts/comment/${post_id}`,body )
+    .then(res =>  {
+      setPostData({...res.data})
       } )
   } catch (error) {
     console.log(error)

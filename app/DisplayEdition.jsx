@@ -61,7 +61,9 @@ export default function DisplayEdition() {
          key={item._id} 
          index={index}
          contestant={item}
-
+         status ="closed"
+         talentRoom={talentRoom}
+         handleRefresh={handleRefresh}
           />
       };
 
@@ -73,7 +75,10 @@ export default function DisplayEdition() {
         }
     }, [finishPlaying])
 
-
+    const handleRefresh =()=> {
+      GetTalentRoomById(talentRoom_id , setTalentRoom)       
+    }
+    
   return (
     
     <View

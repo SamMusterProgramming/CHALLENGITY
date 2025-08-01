@@ -7,7 +7,7 @@ export default function WelcomeComment() {
 
     return (
       <View
-      className="w-[100vw]  flex-row mt-0 items-start px-2 py-1 gap-2 justify-start "
+      className="w-[100vw]  flex-row mt-0 items-start px-2 py-2 gap-2 justify-start "
       >
           <Image
           source={{uri:user.profile_img}}
@@ -15,7 +15,7 @@ export default function WelcomeComment() {
           resizeMethod='contain'
           />
           <View
-           className=" flex-col justify-start min-w-[88%]  ">
+           className=" flex-col justify-start min- w- [88%]  flex-1 ">
               <View
               className=" bg-gray-200 px-1 py-2 flex-col justify-start w-[96%] rounded-lg ">
                   <Text

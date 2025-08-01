@@ -15,6 +15,7 @@ import { useGlobalContext } from '../context/GlobalProvider';
 import { clearLocalStorage } from '../videoFiles';
 import { useFonts } from 'expo-font';
 import ChallengifyHeader from '../components/custom/ChallengifyHeader';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 
@@ -82,8 +83,8 @@ export default function app() {
 
   return (
    
- 
     <SafeAreaProvider>
+        
            <ImageBackground className=" flex-1 w-[100vw]  h-full  justify-start items-center"
                       source={images.night_bg} >
             <View className="w-[100%]  h-[100%]  bg-whi rounded-xl border- borde " >          
@@ -169,7 +170,7 @@ export default function app() {
         </ImageBackground>
     
 
-  
+        
     </SafeAreaProvider>
 
       

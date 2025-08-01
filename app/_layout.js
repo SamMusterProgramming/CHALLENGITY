@@ -3,9 +3,11 @@ import React from 'react'
 import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native'
 import { GlobalProvider } from '../context/GlobalProvider'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 export default function rootLayout() {
   return (
-    
+   
+    <GestureHandlerRootView >
     <GlobalProvider>
      <Stack
      screenOptions={{ 
@@ -33,10 +35,12 @@ export default function rootLayout() {
        <Stack.Screen name='CreateParticipateTalent' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='ProfilePage' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='DisplayEdition' options={{ headerShown:false,unmountOnBlur: true}} />
+       <Stack.Screen name='TalentContestantPlayMode' options={{ headerShown:false,unmountOnBlur: true}} />
 
 
      </Stack>
      </GlobalProvider>
+     </GestureHandlerRootView>
    
   )
 }

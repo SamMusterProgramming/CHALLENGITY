@@ -54,7 +54,7 @@ const NotificationsModal = ({user,displayNotificationsModal , setDisplayNotifica
     scaleAnim.setValue(0);
     Animated.timing(scaleAnim, {
         toValue: 1, // Animate to full scale (1)
-        duration: 500, // Animation duration (in milliseconds)
+        duration: 200, // Animation duration (in milliseconds)
         useNativeDriver: true, // Use native driver for performance
       }).start();
     }
@@ -72,7 +72,7 @@ const NotificationsModal = ({user,displayNotificationsModal , setDisplayNotifica
         onRequestClose={() =>setDisplayNotificationsModal(false)}     
         >
         <Animated.View
-        className="rounded-t justify-center items-center"
+        className="rounded-t justify-center  bg-[#e2dada] items-center"
           style={[
             styles.modalContent,
             {
@@ -84,7 +84,9 @@ const NotificationsModal = ({user,displayNotificationsModal , setDisplayNotifica
           {isLoaded ? (
             <>
             <View 
-            style={{backgroundColor:'rgba(255,255, 255 , 0.8)'}}
+            style={{
+              backgroundColor:'rgba(255,255, 255 , 1)'
+            }}
                      className="flex-row  justify-between w-full h-[7%]  rounded-t-lg order-pink-300 borde-2 g-white mb-2 px-2 items-center">
                       <View  className="flex-row justify-start items-center gap-2" >
                             <Text
@@ -122,8 +124,10 @@ const NotificationsModal = ({user,displayNotificationsModal , setDisplayNotifica
 
           
             <View 
-            style={{backgroundColor:'rgba(0,0 , 0 , 0.8)'}}
-                className="w-full min-h-[93%] g-white flex-col justify-start items-start">
+            style={{
+              //  backgroundColor:'rgba(0,0 , 0 , 0.8)'
+              }}
+                className="w-full - h-[83%] bg-[#e2dada] flex-col justify-start items-start">
                 <FlatList
                     ref={flatListRef}
                     scrollEnabled={true}
@@ -155,7 +159,18 @@ const NotificationsModal = ({user,displayNotificationsModal , setDisplayNotifica
 
                     />
             </View>
-
+            
+            <View 
+               style={{
+                 backgroundColor:'rgba(255,255, 255 , 1)'
+                }}
+                className="flex-row  justify-center py-4 w-full h-[10%]  rounded-t-lg order-pink-300 borde-2 g-white mb-2 px-2 items-start">
+                          <Text 
+                              className="text-xl text-black font-black"
+                               >
+                              Notifications
+                            </Text>
+                    </View>
            
             </>
           ) : (

@@ -243,17 +243,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                       )}
                                    
                                  </View>   
-                                 {/* <View
-                                 className=" w-[80%] h-[100%] flex-row justify-center text-center items-center">
-                                   {postData.flags.find(flag => flag.flagger_id == user._id) && (
-                                       <Image
-                                       source={ icons.flag }
-                                       className ="w-7 h-7 rounded-full"
-                                       resizeMethod='fill'
-                                        />
-                                   )}
-                                    
-                                 </View> */}
+                                
                               
                           </TouchableOpacity>
                           <View

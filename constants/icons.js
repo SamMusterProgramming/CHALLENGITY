@@ -35,9 +35,9 @@ import pending from '../assets/icons/pending.png'
 // import rank from '../assets/icons/ranking.png'
 import challengify from '../assets/icons/logo-challengify.png'
 import check_red from '../assets/icons/red-check.png'
-import down_arrow from '../assets/icons/down-arrow.png'
+
 import publi from '../assets/icons/public.png'
-import favourite from '../assets/icons/favourite.webp'
+
 // import rank1 from '../assets/icons/rank1.avif'
 import sport from '../assets/icons/sport.png'
 import adventure from '../assets/icons/adventure.png'
@@ -67,6 +67,7 @@ import participate from '../assets/icons/participate.png'
 import resign from '../assets/icons/resign.webp'
 import delet from '../assets/icons/delete.png'
 import up_arrow from '../assets/icons/up-arrow.png'
+import down_arrow from '../assets/icons/down-arrow.png'
 import refresh from '../assets/icons/refresh.png'
 import setting from '../assets/icons/setting.png'
 import invite from '../assets/icons/invite.png'
@@ -103,6 +104,7 @@ import big_heart from '../assets/icons/big_heart.png'
 
 
 export default {
+  down_arrow ,
   big_heart,
   instrument,
   headline,
@@ -160,9 +162,9 @@ export default {
   open,
   restricted,
   strict,
-  favourite,
+
   publi,
-  down_arrow,
+ 
   challengify,
   check_red,
   priv,

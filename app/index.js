@@ -1,48 +1,35 @@
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Link, router } from 'expo-router'
+import { View, Text, Image, TouchableOpacity, ActivityIndicator, useWindowDimensions, Platform, SafeAreaView } from 'react-native'
+import React, {  useEffect, useRef, useState } from 'react'
+import {  router } from 'expo-router'
 import "../global.css";
-import { ImageBackground , StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ImageBackground  } from 'react-native';
+import {  SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {icons, images} from '../constants'
+import { getFavouriteChallenges, getFollowData, getFollowings, getNotificationByUser, getTopChallenges, getUserFriendsData, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, getUserQueueTalent, getUserTalent, getUserTalentPerformances, isAuthenticated } from '../apiCalls';
 
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { getFavouriteChallenges, getFollowData, getFollowings, getNotificationByUser, getTopChallenges, getUserFriendsData, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, isAuthenticated } from '../apiCalls';
-import { useVideoPlayer, VideoView } from 'expo-video';
-import demo from "../assets/video/demo1.mp4"
-import { useFocusEffect } from '@react-navigation/native';
 import { useGlobalContext } from '../context/GlobalProvider';
-import { clearLocalStorage } from '../videoFiles';
-import { useFonts } from 'expo-font';
+
 import ChallengifyHeader from '../components/custom/ChallengifyHeader';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 
 
 export default function app() {
   const videoRef = useRef()
-  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge
+  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge,setUserTalents,setUserTalentPerformances
     ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges
   } = useGlobalContext()
-
   const [isFetching, setIsFetching] = useState(false);
-
-  const [fontsLoaded] = useFonts({
-    myFont: require("../assets/fonts/Archivo/Archivo-VariableFont_wdth.ttf"),
-  });
-
-  const player = useVideoPlayer
-  ( 
-    demo, (player) => {
-    player.loop = true;
-    player.volume = 0.7
-    player.play() ;
-  });
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  
 
 
   useEffect(() => {
     if(user) {
       setIsFetching(true)
+      getUserTalent(user._id , setUserTalents)
+      getUserTalentPerformances(user._id , setUserTalentPerformances)
       getUserPublicChallenges(user._id,setUserPublicChallenges)
       getUserPrivateChallenges(user._id,setUserPrivateChallenges)
       getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
@@ -57,7 +44,6 @@ export default function app() {
         setIsFetching(false)
         router.replace('/Home')
       }, 2000);
-     
     }
   }, [user])
 
@@ -68,110 +54,150 @@ export default function app() {
 
 
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        if (player) {
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     return () => {
+  //       if (player) {
     
-        }
-        videoRef.current = null;
-      };
-    }, [])
-  );
+  //       }
+  //       videoRef.current = null;
+  //     };
+  //   }, [])
+  // );
 
 
 
   return (
    
-    <SafeAreaProvider>
-        
-           <ImageBackground className=" flex-1 w-[100vw]  h-full  justify-start items-center"
-                      source={images.night_bg} >
-            <View className="w-[100%]  h-[100%]  bg-whi rounded-xl border- borde " >          
-               
-                    <View className=" w-[100%]  h-[100%] justify-center items-center py-2 px-2">
-                        <VideoView 
-                          className="opacity-3 rounded-lg opacity-60"
-                          ref={videoRef}
-                          style={{  width:'100%',height:'100%',opacity:0.6}}
-                          player={player}
-                          contentFit="fill"
-                          nativeControls ={false}  
-                          />
-                        
-                        <View 
-                           className="absolute top-4 w-[100%] h-[100%] text-center flex-col justify-start py- items-center ">
-                            
-                            <View 
-                                className="h-[50%] text-center flex-col justify-start py-4 items-center ">
-                                <Text className="text-4xl  font-bold text-secondary">
-                                    Challengify
-                                </Text> 
-                                <Text className="text-xl mt-4 text-center text-white font-bold px-10 ">
-                                  Welcome !
-                                  Step Out of Your Comfort Zone—Your Stage Awaits, and the World is the Judge! {'  '}  
-                                </Text>
-                                <Image
-                                  className="w-32 mt-auto ml- h-32"
-                                  resizeMethod='fill'
-                                  source={icons.challenge} />
+    // <SafeAreaProvider> 
+      <ImageBackground
+      style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
+        paddingBottom:Platform.OS == "ios" ? insets.bottom : insets.bottom
+      }} 
+      source={images.night_bg}
+      className="w-[100%]  h-[100%] justify-center items-center ">
+                <View className="w-[100%]  h-[100%] flex-col justify-between items-center b b g-black py- 6 " >   
+                      
+                      <ChallengifyHeader /> 
+
+                      <View className=" w-[80%] h-[40%] mt- auto rounded-xl  justify-between items-center p-6 b b g-white">
+                            <View className=" w-[90%]  h-[100%] gap-2 flex-row flex-wrap justify-center items-center p-2 bg-black ">
+                                  
+                                  <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-center p-4 bg-[#1166ef] ">
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='fill'
+                                          source={icons.challenge} />
+                                  </View>    
+                                  <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-center p-4 bg-[#ae1717] ">
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='cover'
+                                          source={icons.home} />
+                                          
+                                  </View>
+                                  <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-center p-2 b bg-white ">
+                                       
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='cover'
+                                          source={icons.trophy} />
+                                         
+                                        
+                                  </View>
+                                  <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-end p-2 bg-blue-500 ">
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='contain'
+                                          source={icons.competition} />
+                                         
+                                  </View>
+
+                                 
+                                   
                             </View>
-
-                            <View className=" w-[100%]  h-[8%] flex-row justify-center items-center  py-2 px-2">
                             
                             
+                            <View
+                                 className="p- 4 absolute -rotate-45 rounded-tr-xl top-0 left-0 b bg-[#000000] flex-col  justify-center ">
+                                    <Text 
+                                        style={{fontSize:width/30,
+                                                 color:'white'}}
+                                        className="  font-black text-sm text-white">
+                                                Challenge                 
+                                    </Text>  
                             </View>
+                            <View
+                                              className="p- absolute -rotate-45 rounded-xl bottom-0 right-0 b bg-[#000000] flex-col  justify-end ">
+                                                  <Text 
+                                                      style={{fontSize:width/30,
+                                                            color:'white'}}
+                                                      className="  font-black  text-sm text-white">
+                                                          Training                  
+                                                </Text>  
+                            </View>
+                            <View
+                                              className="p- 4 absolute rotate-45 rounded-xl bottom-0 left-0 b bg-[#000000] flex-col  justify-end ">
+                                                  <Text 
+                                                      style={{fontSize:width/30,
+                                                            color:'white'}}
+                                                      className="  font-black  text-sm text-white">
+                                                          Guiness                  
+                                                  </Text>  
+                            </View>
+                            <View
+                                            className="p- 4 absolute rounded-tr-xl rotate-45 top-0 right-0 right- 0 b bg-[#000000] flex-col  justify-center ">
+                                                <Text 
+                                                    style={{fontSize:width/30,
+                                                          color:'white'}}
+                                                    className="  font-black text-sm text-white">
+                                                      Talent                 
+                                              </Text>  
+                            </View>
+                           
+                            
+                      </View>
+                     
+                      <View className="min-w-[100%] mt- 10  [50] flex- 1 p- 2 flex-col justify-between items-center gap-4 mt- auto " >
+                                        <Text style={{
+                                           fontSize: 30,
+                                           color: '#D2691E',
+                                           fontWeight: '800',
+                                           }}> 💪🎬🏆</Text>
+                                        <Text style={{
+                                            fontSize: 14,
+                                            color: '#fff',
+                                            fontWeight: '800',
+                                            // marginTop:"auto"
+                                           }}> Start your challenge today</Text>
+                                      
 
-                            <View 
-                             style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
-                             className="  w-[100%] -[40%] py-6 flex-col mt-auto gap-4 rounded-t-xl justify-center gap-  
-                                items-center py-    ">
-                                   <ChallengifyHeader /> 
-                                
-
-                                <View className="min-w-[100%] -2 flex-row justify-center items-center mt-auto " >
                                         <TouchableOpacity onPress={()=> router.replace('/login')}
-                                          className="bg-blue-400 mt-2 rounded-xl w-[95%] min-h-[55px] justify-center items-center">
-
+                                          className="bg-white mt- auto rounded-xl min-w-[90%] min-h-[47px] justify-center items-center">
                                           {isFetching ? (
                                           <View >
                                             <ActivityIndicator size="large" color="#030202" />
                                           </View>
-                                          ):(
+                                            ):(
                                             <Text className="text-[#030202] font-semibold text-md">Get Started</Text>
                                             )}
                                         </TouchableOpacity>
-                                </View>   
-                  
-                            </View>
-
-
-                        </View>
-                    
-                    </View>
-                    
-           
-                       
-
-
-                      
-
-
-        
-                
-      
-
-                       
-                       
+                      </View>   
+    
+                           
                 </View>
                        
               
         
-        </ImageBackground>
+          </ImageBackground>
     
 
         
-    </SafeAreaProvider>
+    //  </SafeAreaProvider>
 
       
  

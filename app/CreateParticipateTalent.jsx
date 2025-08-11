@@ -7,7 +7,7 @@ import { Video } from 'expo-av'
 import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail} from '../firebase'
 import { useGlobalContext } from '../context/GlobalProvider'
 import { Redirect, router, useFocusEffect, useLocalSearchParams } from 'expo-router'
-import { BASE_URL, getChallengeById,  GetTalentRoomById,  getUserPrivateChallenges,  getUserPrivateParticipateChallenges,  getUserPublicParticipateChallenges } from '../apiCalls'
+import { BASE_URL, getChallengeById,  GetTalentRoomById,  getUserPrivateChallenges,  getUserPrivateParticipateChallenges,  getUserPublicParticipateChallenges, getUserTalent } from '../apiCalls'
 import axios from 'axios'
 import * as ImagePicker from 'expo-image-picker';
 import { challengeType  , privacyData } from '../utilities/TypeData'
@@ -30,7 +30,7 @@ import { storage } from '../firebase';
 
 
 export default function CreateParticipateTalent() {
-  const {user,setUser,userChallenges,setUserChallenges,favouriteChallenge , setFavouriteChallenge,setPrivateParticipateChallenges,
+  const {user,setUserTalents,
     setPublicParticipateChallenges,userFriendData,participateChallenges,setParticipateChallenges} = useGlobalContext()
   const [permission, requestPermission] = useCameraPermissions()
   const [audioPermission, requestAudioPermission] = useMicrophonePermissions();
@@ -149,7 +149,7 @@ export default function CreateParticipateTalent() {
     if(videoUri ){
       setVisible(true)  
       setTimeout(() => {
-        router.replace('/Home')
+        router.replace('/Talent')
        }, 1500); 
       
       setTimeout(() => {
@@ -176,7 +176,7 @@ export default function CreateParticipateTalent() {
                   .then(   
                     res =>  {
                     if(res.data === "challenge expired") return setIsExpired(true)
-
+                        getUserTalent(user._id , setUserTalents)
                         setTimeout(() => {
                             router.navigate({ pathname: '/TalentContestRoom',params: {
                                 region:talentRoom.region,

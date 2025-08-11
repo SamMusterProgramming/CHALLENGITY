@@ -682,13 +682,13 @@ export const getCommentsByPost = async(post_id,setComments) =>{
          edition.nextUpdate = Date(edition.createdAt)
          switch (edition.round) {
           case 1:
-            edition.title = "Round 1"
+            edition.title = "Elimination-Round 1"
             break;
           case 2:
-              edition.title  = "Round 2"
+              edition.title  = "Elimination-Round 2"
               break;
          case 3:
-              edition.title  = "Round 3"
+              edition.title  = "Elimination-Round 3"
               break;
           case 4:
             edition.title  = "1/8 Final"
@@ -755,6 +755,34 @@ export const getCommentsByPost = async(post_id,setComments) =>{
       } )
       .finally(()=>{
         setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const getUserTalent = async(user_id , setUserTalents ) =>{
+  try {
+    await axios.get( BASE_URL + `/talents/user/${user_id}` )
+    .then(res =>  {
+        setUserTalents(res.data)  
+      })
+      .finally(()=>{
+        // setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const getUserTalentPerformances = async(user_id ,setUserTalentPerformances ) =>{
+  try {
+    await axios.get( BASE_URL + `/talents/user/performance/${user_id}` )
+    .then(res =>  {
+      setUserTalentPerformances(res.data)  
+      })
+      .finally(()=>{
+        // setIsLoading(false)
       })
   } catch (error) {
     console.log(error)

@@ -3,6 +3,7 @@
     "name": "Challengify",
     "slug": "Challengify",
     "runtimeVersion": "1.0.0",
+    "backgroundColor": "#000000", 
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/challenge-logo.png",
@@ -22,8 +23,7 @@
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/challenge-logo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/challenge-logo.png"
       },
       "package": "com.anonymous.Challengify",
       "permissions": [

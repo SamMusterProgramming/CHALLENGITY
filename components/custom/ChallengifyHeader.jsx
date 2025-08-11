@@ -7,25 +7,22 @@ import { View, Text, StyleSheet } from 'react-native';
 const ChallengifyHeader = () => {
   return (
     <View
-    className ="g-[#f29756] text-center items-center px- flex-col"
+    className ="g-[#f29756] w-full text-center mt-[10px] gap-2 items-center px- flex-col"
      style={styles.container}>
-      <Text style={styles.title}>🌟 Welcome to Challengify</Text>
+      <Text className="text-4xl  font-bold text-secondary">
+                                    Challengify
+      </Text> 
+      {/* <Text style={styles.title}> Welcome to Challengify</Text> */}
       <Text style={styles.subtitle}>Unleash Talent. Share Challenges. Break Records.</Text>
       <Text style={styles.description}>
         Step into the spotlight with <Text style={styles.bold}>Challengify</Text> — the ultimate stage where everyday legends rise!
-        Whether you're conquering quirky dares, showcasing jaw-dropping skills, or chasing Guinness-level greatness,
-        Challengify is your arena.
-
-        {/* Unleash Talent. Share Challenges. Break Records.
-       Step into the spotlight with Challengify — the ultimate stage where everyday legends rise! Whether you're conquering quirky dares, showcasing jaw-dropping skills, or chasing Guinness-level greatness, Challengify is your arena. Built with the power of Expo + React Native, this sleek, dynamic app brings global challengers together to compete, inspire, and celebrate talent like never before.
-Ready to defy limits? Start your challenge today. */}
- {/* 💪🎬🏆 */}
+        {/* Whether you're conquering quirky dares, showcasing jaw-dropping skills, or chasing Guinness-level greatness,
+        Challengify is your arena. */}
       </Text>
       {/* <Text style={styles.description}>
-        Built with the power of <Text style={styles.bold}>Expo + React Native</Text>, this sleek, dynamic app brings global challengers
-        together to compete, inspire, and celebrate talent like never before.
+          Whether you're conquering quirky dares, showcasing jaw-dropping skills, or chasing Guinness-level greatness,
+        Challengify is your arena.
       </Text> */}
-      <Text style={styles.callToAction}> Start your challenge today. 💪🎬🏆</Text>
     </View>
   );
 };
@@ -36,33 +33,37 @@ const styles = StyleSheet.create({
     // backgroundColor: '#fff',
   },
   title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '700',
     color: "white",
     // '#b561ed',
-    marginBottom: 4,
+    marginBottom: 20,
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontStyle: 'italic',
     color: '#5ca9f0',
+    marginTop : 20 ,
     marginBottom: 8,
+    textAlign:"center"
   },
   description: {
-    fontSize: 11,
+    fontSize: 14,
     color: '#fff',
-    marginBottom: 4,
-    lineHeight: 18,
+    marginTop : 0 ,
+    marginBottom: 0,
+    lineHeight: 22,
     textAlign:"center"
   },
   bold: {
-    fontWeight: '600',
+    fontWeight: '800',
     color: '#f29756',
   },
   callToAction: {
-    fontSize: 13,
+    fontSize: 17,
     color: '#D2691E',
-    fontWeight: '500',
+    fontWeight: '800',
+    marginTop : 40 ,
     marginTop: 0,
   },
 });

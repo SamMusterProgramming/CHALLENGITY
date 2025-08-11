@@ -55,6 +55,7 @@ export const  _uploadVideoAsync = async(uri , email, name)=> {
     xhr.open('GET', uri, true)
     xhr.send(null)
   })
+
   const fileRef = ref(storage, generateUserFolder(email) + getRandomInt(1000,100000).toString()+ generateRandomString(5)+".mp4" )
   const result = await uploadBytes(fileRef, blob)
   return await getDownloadURL(fileRef)

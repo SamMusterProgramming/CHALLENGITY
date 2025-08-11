@@ -7,9 +7,11 @@ module.exports = function (api) {
       ],
       plugins: [
         'expo-router/babel',
-        'nativewind/babel',
-        // 'react-native-reanimated/plugin', 
-        // 'react-native-worklets/plugin'
+        'react-native-worklets-core/plugin',
+        // 'nativewind/babel',
+        'react-native-reanimated/plugin', 
+        // 'react-native-worklets/plugin',
+        // 'react-native-reanimated/plugin'
         // 'react-native-worklets/plugin'
       ],
     };

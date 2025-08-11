@@ -13,7 +13,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [showList, setShowList] = useState(false);
-  const [postData , setPostData] = useState(null)
+  // const [postData , setPostData] = useState(null)
   const [isExpired , setIsExipred] = useState(null)
   const [postTimeLaps , setPostTimeLaps] = useState(0)
   
@@ -100,17 +100,17 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
          } 
     }
    
- 
+       setIsLoaded(true)  
+
   }, [userParticipation])      
 
-
-  useEffect(() => {
-    console.log(status)
-    userParticipation  && getPostData(userParticipation._id,setPostData,setIsExipred)
-    status == "queued"  &&  getPostData(talentRoom.queue.find(u=>u.user_id === user._id)._id,setPostData,setIsExipred)
-    status == "eliminated"  &&  getPostData(talentRoom.eliminations.find(u=>u.user_id === user._id)._id,setPostData,setIsExipred)
-    setIsLoaded(true)  
-  }, [status])
+  // useEffect(() => {
+  //   console.log(status)
+  //   userParticipation  && getPostData(userParticipation._id,setPostData,setIsExipred)
+  //   status == "queued"  &&  getPostData(talentRoom.queue.find(u=>u.user_id === user._id)._id,setPostData,setIsExipred)
+  //   status == "eliminated"  &&  getPostData(talentRoom.eliminations.find(u=>u.user_id === user._id)._id,setPostData,setIsExipred)
+  //   setIsLoaded(true)  
+  // }, [status])
   
 
   return (
@@ -378,7 +378,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
                               </TouchableOpacity>
                               ):(
                                 <>
-                                 {status !== "join" && status !=="queue" && postData && (
+                                 {status !== "join" && status !=="queue" &&  (
                                   
                                    <View                      
                                   style={{
@@ -394,9 +394,10 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
 
 
 
-                    { postData && (
+                    {/* { postData && ( */}
                     <View
                                  className = "min-w-[100%] h-[25%] mt-auto p-2 rounded-t-3xl gap- flex-row text-centr mb- justify-evenly bg-[#0a3bce] items-center ">
+                                       {userParticipation &&( 
                                        <View
                                         className = "-[100%] -[50%]  gap-2 py- flex-row mb- justify-center g-white items-end ">
                                                     
@@ -410,10 +411,11 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
                                                      <Text 
                                                             style ={{fontSize:10}}
                                                             className="text-xl font-bold pt-4  text-white"> 
-                                                             {postData.votes.length}
+                                                             {userParticipation.votes}
                                                      </Text>
                                        </View>
-                                       <View
+                                       )}
+                                       {/* <View
                                         className = "-[100%] -[50%]  gap-2 flex-row mb- justify-center g-white items-end ">
                                                      <Image
                                                             source={icons.like}
@@ -425,8 +427,8 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
                                                             className="text-xl font-bold pt-4 text-white"> 
                                                               {postData.likes.length}
                                                      </Text>
-                                       </View>     
-                                       <View
+                                       </View>      */}
+                                       {/* <View
                                          className = "-[100%] -[50%]  gap-2 flex-row mb- justify-center g-white items-end ">
                                                     <Ionicons name="chatbubble" size={20} color="orange"/>
                                                     <Text 
@@ -434,7 +436,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
                                                     className="text-white pt-4 text-sm font-bold">
                                                         {postData.comments.length}
                                                     </Text>
-                                        </View>  
+                                        </View>   */}
                                         {userParticipation &&( 
                                         <View
                                         className = "-[100%] -[50%]  gap-2 flex-row mb- justify-center g-white items-end ">
@@ -453,7 +455,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
                                        </View>       
                                         )}                      
                     </View>
-                    )}
+                    {/* )} */}
                    
                
            </MotiView> 
@@ -470,7 +472,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
                         />
            </TouchableOpacity> 
      </View>
-     )}
+     )} 
     </>
   );
 }

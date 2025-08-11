@@ -39,19 +39,17 @@ export default function ChallengeAction({text,action,isModalVisible, setIsModalV
         useNativeDriver: true,
       }).start();
       const showModal = async () => {
-        // await NavigationBar.setVisibilityAsync("hidden");
-        // await NavigationBar.setPositionAsync("absolute");
-        // await NavigationBar.setBackgroundColorAsync("transparent");
-        // await NavigationBar.setVisibilityAsync('sticky-immersive');
-       
+        await NavigationBar.setVisibilityAsync("hidden");
+        await NavigationBar.setPositionAsync("absolute");
+        await NavigationBar.setBackgroundColorAsync("transparent");
+        await NavigationBar.setVisibilityAsync('sticky-immersive'); 
       };
-      // showModal()
+      showModal()
     }, [isModalVisible]);
 
     useEffect(() => {
       if(Platform.OS == "android"){
       NavigationBar.setPositionAsync("absolute");
-      // NavigationBar.setBackgroundColorAsync("#00000000");
       NavigationBar.setVisibilityAsync('sticky-immersive');
       }
       setIsLoaded(true)

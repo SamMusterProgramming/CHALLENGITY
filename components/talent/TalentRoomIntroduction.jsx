@@ -37,7 +37,7 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
     <MotiView
         from={{ opacity: 0, translateY: 40 }}
         animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 300, type: 'timing', duration: 600 }}
+        transition={{ delay: 300, type: 'timing', duration: 200 }}
         className="mb- gap-4" >
           {/* <Text
             style={{fontSize : height/45}}
@@ -82,11 +82,11 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
               <MotiView
               from={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1000, type: 'timing', duration: 800 }}
+              transition={{ delay: 400, type: 'timing', duration: 300 }}
               className="flex- 1 w-full h-[50%] mt-auto mb-10 px-2  flex-col justify-start items-center gap-">
                      <Text
                       style={{fontSize : height/75}}
-                      className="text-gray-300 font-black text-center text-lg">
+                      className="text-gray-200 font-base text-center text-lg">
                           Explore previous editions
                      </Text>
                      <View
@@ -105,11 +105,11 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
                                                         edition_id : edition._id ,
                                                       } }) 
                                                 }}
-                                                  className="w-[48%]  h-[31%] gap-2 py-4 6  flex-col justify-start bg-[#2c0649] items-center rounded-xl borde-2 border- [#ffffff]">
+                                                  className="w-[48%]  h-[31%] gap-2 p-1 6 bg-white flex-col justify-center g-[#2c0649] items-center rounded-xl borde-2 border- [#ffffff]">
                                                       <View
-                                                      className="w-[100%] flex-col justify-start items-center gap-2">
+                                                      className="w-[100%] h-[100%] flex-col justify-start bg-[#000000] items-center gap-2">
                                                               <View
-                                                                  className="w-[100%] px-2 flex-row justify-between items-start">
+                                                                  className="w-[100%] p-2 flex-row justify-between items-start">
                                                                     <Image
                                                                           source={selectedIcon}
                                                                           className="w-7 h-7 rounded-full"
@@ -149,7 +149,7 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
                                                       <View
                                                       className="absolute bottom-0 left-0 p-2 w -[100%] bg-black">
                                                             <Text
-                                                                style ={{fontSize:9}}
+                                                                style ={{fontSize:8}}
                                                                 className="text-white text-end font-bold text-xs">
                                                                           {edition.createdAt.slice(0,10)}
                                                             </Text>
@@ -162,74 +162,65 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
                             </ScrollView>
                           </View>
 
-                     {/* <View
-                        className="min-w-[100%] min-h-[15%]  flex- 1 flex-col justify-start items-center g-white ">
-                          <TouchableOpacity
-                           onPress={() => {setSelectedEdition(currentEdition)}}
-                           class=" min-w-[50%] min-h-[100%] flex-col justify-center items-center bg-white" >
-                            <Text
-                             style ={{fontSize:9}}
-                             className="text-white  font-bold text-xs">
-                                 Current Edition
-                            </Text>
-                          </TouchableOpacity>
-                     </View> */}
+                   
 
               </MotiView>
 
-              <View
+              <MotiView
+              from={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1300, type: 'timing', duration: 300 }}
                   className="w-[100%] h-[18%] mt-aut mb-8  gap-4 flex- 1 flex-col justify-between items-center g-white ">
                           <Text
                              style ={{fontSize:12}}
-                             className="text-white  font-black text-xs">
+                             className="text-white  font-base text-xs">
                                  Current Edition
                           </Text>
                           <TouchableOpacity
                            onPress={() => {setSelectedEdition(currentEdition)}}
-                           className=" w-[50%] flex- 1 py-4 flex-col justify-start items-center px-2 rounded-xl bg-[#1f252a]" >
+                           className=" w-[50%] flex- 1 p-1 flex-col justify-start items-center p- 2 rounded-xl bg-[#eff2f4]" >
                                <View
-                               className="w-[100%] min- h- [50%] flex-row justify-between items-start">
+                               className="w-[100%] p-2 bg-[#021524] min- h- [50%] flex-row justify-between items-start">
                                     <Image
                                         source={selectedIcon}
                                         className="w-8 h-8 rounded-full"
                                         resizeMode='cover' />
                                     <View
-                                    className="w-[40%] h- [100%] flex-col justify-between items-center">
+                                    className="w- [40%] h- [100%] flex-col justify-between items-center">
                                              <ShuffleLetters text={selectedTalent + ` Talent`} textSize={11}  />
+                                             <Text
+                                                style ={{fontSize:10}}
+                                                className="text-yellow-400 mt-2 font-black text-xs">
+                                                   {edition.title}
+                                            </Text>
                                              <Text
                                                 style ={{fontSize:10}}
                                                 className="text-white font-bold text-xs">
                                                   {talentRoom.contestants.length} 
                                             </Text>
+                                            <Text
+                                                style ={{fontSize:10}}
+                                                className="text-white font-bold text-xs">
+                                                  Contestants
+                                            </Text>
+                                          
                                     </View>
                                     <Image
                                         source={regionIcon}
                                         className="w-8 h-8 rounded-full"
                                         resizeMode='cover' />
                                </View>
-
                                <View
-                               className="w-[100%] min- h- [50%] flex-row justify-between items-end">
-                                   
-                                    <View
-                                    className="w-[100%] h- [100%] py-2 flex-col justify-center gap-2  items-center">
-                                             {/* <ShuffleLetters text="Contestants" textSize={11}  /> */}
-                                             <Text
-                                                style ={{fontSize:10}}
-                                                className="text-white font-bold text-xs">
-                                                  Contestants
-                                            </Text>
+                                       className="absolute bottom-0 left-0 p-2 w -[100%] bg-black">
                                             <Text
-                                                style ={{fontSize:10}}
-                                                className="text-yellow-400 font-black text-xs">
-                                                   {edition.title}
+                                                style ={{fontSize:8}}
+                                                className="text-white text-end font-bold text-xs">
+                                                    {edition.createdAt.slice(0,10)}
                                             </Text>
-                                    </View>
-                                   
-                               </View>
+                                </View>
                              
                           </TouchableOpacity>
-              </View>
+              </MotiView>
 
               <TouchableOpacity
               onPress={()=> router.back() }
@@ -250,7 +241,7 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
     <MotiView
         from={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1000, type: 'timing', duration: 800 }}
+        transition={{ delay: 400, type: 'timing', duration: 300 }}
         className="mb- px-2">
         <Text
          style={{fontSize : height/75}}
@@ -271,7 +262,7 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
       <MotiView
         from={{ opacity: 0, translateY: 40 }}
         animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 1200, type: 'timing', duration: 600 }}
+        transition={{ delay: 400, type: 'timing', duration: 400 }}
         className="mb-6 w-full flex-col gap-2 items-center text-center"
        >
         <View className="w-[98%] g-white/10 p-5 rounded-xl  text-start flex-col justify-start items-center order-white/20 mb-2">
@@ -319,7 +310,7 @@ export default function TalentRoomIntroduction({ talentRoom,edition,selectedIcon
       <MotiView
         from={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1800, type: 'spring' }}
+        transition={{ delay: 600, type: 'spring' }}
         className="mb-6 -auto gap-10  flex-col justify-center items-center">
         <View className=" g-white/10 px-6  py-1 rounde-2xl border-b-2 border-white borde-white/20 ">
          <ShuffleLetters textSize={18} text = {edition.title} />

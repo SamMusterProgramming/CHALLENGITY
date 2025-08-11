@@ -82,7 +82,7 @@ export default function DisplayContestant({show , height, width ,top ,bottom,lef
                 }}>
                      <Image
                                     source={{uri:selectedContestant.
-                                        thumbNail_URL}}
+                                    thumbNail_URL}}
                                     className ="w-[100%] h-[100%] rounde-full"
                                     resizeMethod='contain'
                                     />

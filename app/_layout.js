@@ -1,21 +1,26 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router'
-import { SafeAreaView } from 'react-native'
 import { GlobalProvider } from '../context/GlobalProvider'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import * as SystemUI from 'expo-system-ui';
+
+SystemUI.setBackgroundColorAsync('#000000');
+
 export default function rootLayout() {
+
+  SystemUI.setBackgroundColorAsync('#000000');
+
   return (
-   
-    <GestureHandlerRootView >
+    
+    // <GestureHandlerRootView >
     <GlobalProvider>
      <Stack
      screenOptions={{ 
      }}>
        <Stack.Screen name='index' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='WelcomePage' options={{ headerShown:false,unmountOnBlur: true}} />
-       <Stack.Screen name='(tabs)' options={{ headerShown:false}} />   
-       <Stack.Screen name='(auth)' options={{ headerShown:false}} />
+       <Stack.Screen name='(tabs)' options={{ headerShown:false ,unmountOnBlur: true}} />   
+       <Stack.Screen name='(auth)' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='ChallengeDisplayer' options={{ headerShown:false,unmountOnBlur: true}} />
        {/* <Stack.Screen name='NewChallenge' options={{ headerShown:false ,unmountOnBlur: true}} /> */}
        <Stack.Screen name='CreateParticipateChallenge' options={{ headerShown:false,unmountOnBlur: true}} />
@@ -40,7 +45,7 @@ export default function rootLayout() {
 
      </Stack>
      </GlobalProvider>
-     </GestureHandlerRootView>
+    //  </GestureHandlerRootView>
    
   )
 }

@@ -93,9 +93,11 @@ export default function DisplayNotification({notification,setNotifications,user,
 
   return (
     <View
-      style={{backgroundColor:isRead ?'rgba(90,90 , 90 , 0.5)' :'rgba(150,150 , 150 , 0.5)'}}
-      className={isRead ? "w-[48vw] px-2 py-1 m-1 mb-2  g-[#96daf7] flex-col justify-between  rounded-lg rounde-tr-xl items-center "
-            :"w-[48vw] px-2 py-1 m-1 mb-2 g-[#1499e0] flex-col justify-between  py- rounded-tl-xl rounded-lg items-center"}>
+      style={{
+        // backgroundColor:isRead ?'rgba(250,250 , 250 , 0.5)' :'rgba(255,255 , 255 ,1)'
+      }}
+      className={isRead ? "w-[48vw] px-2 py-1 m-1 mb-2  bg-[#0f0438] flex-col justify-between  rounded-lg rounde-tr-xl items-center "
+            :"w-[48vw] px-2 py-1 m-1 mb-2 bg-[#0f1166] flex-col justify-between  py- rounded-tl-xl rounded-lg items-center"}>
          <View
          className="w-[100%] px-1 flex-row justify-between items-end ">
 

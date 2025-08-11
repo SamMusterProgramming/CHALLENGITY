@@ -34,70 +34,25 @@ export default function TalentContestantPlayMode() {
 }, [talentRoom])
 
 
-//********************************************** f;at list set up , function */
+//***********************************************/
   
-  const onViewableItemsChanged = ({ viewableItems }) => {
-       setViewableItems(viewableItems);
-    };
+ 
 
-  useEffect(() =>{
-        setFinishPlaying(false)
-       if (talentRoom) for(let i=0 ; i < contestants.length ; i++) {
-         if( viewableItems.some(viewableItem => viewableItem.index === i)) {
-            setCurrentIndex(i);
-            break;
-         }
-        }
-     }, [viewableItems])
-    
-  const renderItem = ({ item, index }) => {
-        const isVisible = viewableItems.some(viewableItem => viewableItem.index === index);
-        return  <TalentPlayer
-         isVisible={isVisible}
-         setFinishPlaying={setFinishPlaying}
-         key={item._id} 
-         index={index}
-         contestant={item}
-         handleRefresh={handleRefresh}
-         status="open"
-         talentRoom={talentRoom}
-          />
-      };
+
 
   useEffect(() => {
         if(finishPlaying){
-          if (flatListRef.current) {
-             flatListRef.current?.scrollToIndex({ index: ((currentIndex + 1) % contestants.length) });
-          }
+          setPlayingIndex(prev => (prev + 1) % contestantList.contestants.length )
+          setFinishPlaying(false)
         }
     }, [finishPlaying])
  
     const handleRefresh =()=> {
         GetTalentRoomById(talentRoom_id , setTalentRoom)       
+        setContestantList(null)
       }
 
-    const pan = Gesture.Tap()
-      .onEnd((event , sucess) => {
-        if(sucess) {
-            runOnJS(myJavaScriptFunction)();
-        }
-        const swipeThreshold = 50; // Adjust as needed
-        
-    });
-  
-    const myJavaScriptFunction = (event) => {
-        if (event.translationX > swipeThreshold) {
-            // Swiped right - play previous video
-            setPlayingIndex((prevIndex) =>
-              prevIndex > 0 ? prevIndex - 1 : contestantList.contestants.length - 1
-            );
-          } else if (event.translationX < -swipeThreshold) {
-            // Swiped left - play next video
-            setPlayingIndex((prevIndex) =>
-              prevIndex < contestantList.contestants.length - 1 ? prevIndex + 1 : 0
-            );
-          }
-      };
+
 
   return (
     
@@ -105,24 +60,7 @@ export default function TalentContestantPlayMode() {
     style={{paddingTop:insets.top , paddingBottom:insets.bottom }}
     className="flex-1 bg-primary justify-center items-center ">
         {talentRoom && contestantList && (
-            //  <FlatList
-            //  ref={flatListRef}
-            //  nestedScrollEnabled={true}
-            //  data={contestants}
-            //  keyExtractor={(item) => item._id}
-            //  renderItem={renderItem}
             
-            //  onViewableItemsChanged={onViewableItemsChanged}
-            //  viewabilityConfig={{
-            //    itemVisiblePercentThreshold: 70, 
-            //  }}
-           
-            //  scrollEventThrottle={15}
-            //  pagingEnabled
-            //  horizontal
-            //  />
-            <GestureDetector gesture={pan}>
-              <View collapsable={false}>
                 <TalentPlayer
                 isVisible={true}
                 setFinishPlaying={setFinishPlaying}
@@ -132,9 +70,11 @@ export default function TalentContestantPlayMode() {
                 handleRefresh={handleRefresh}
                 status="open"
                 talentRoom={talentRoom}
+                setPlayingIndex={setPlayingIndex}
+                numberOfContestants={contestantList.contestants.length}
+                setTalentRoom ={setTalentRoom}
                 />
-             </View>
-            </GestureDetector>
+               
         )}
     </View>
   )

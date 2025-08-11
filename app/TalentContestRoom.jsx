@@ -63,7 +63,8 @@ const [edition,setEdition] = useState(null)
 //************************************ Player set up  */
 const player = useVideoPlayer
 (
-  demo
+  // demo
+  null
   , (player) => {
   player.loop = false;
   player.volume = volume
@@ -114,7 +115,7 @@ useEffect(() => {
 
 
 useEffect(() => {
-    createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation,setEdition, setIsLoading)
+    createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation, setEdition, setIsLoading)
 }, [])
 
 useEffect(() => {
@@ -234,7 +235,6 @@ const handleQueue = () => {
 }
 const confirmAction  = ()=> {
     setIsModalVisible(true)
-
     switch (participationType) {
       case "new":
         setAction("NP")
@@ -292,7 +292,7 @@ useEffect(() => {
     setTimeout(() => {
         player.replaceAsync(selectedContestant.video_url).then(()=> {setIsPlaying(true)});
         player.play();
-    }, 2500);
+    }, 2000);
     }
 }, [selectedContestant])
 
@@ -308,9 +308,10 @@ const handleRefresh =()=> {
 return (
     <>
       {!isLoading && ! isExpired && talentRoom &&  (
+        
         <View
          style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top}}
-         className=" flex-1  flex-col justify-center items-center  bg-[#060606]">
+         className=" flex-1  flex-col justify-center items-center   bg-[#060606]">
                
 
                 { start ?
@@ -322,14 +323,14 @@ return (
                                     {selectedContestant ? (
                                           <TouchableOpacity
                                           activeOpacity={1}
-                                        onPress={toggleVideoPlaying}
-                                          className={isPlaying? "w-[100vw] h-[100vh] flex-col justify-center items-center opacity-100":"w-[100vw] h-[100vh] flex-col justify-center items-center opacity-100"}
+                                          onPress={toggleVideoPlaying}
+                                          className={ "w-[100vw] h-[100vh] b g-white flex-col justify-center items-center opacity-100"}
                                               > 
                                               
                                               <VideoView 
                                                              style={{ width:'100%' ,height:'100%',opacity:100}}
                                                              player={player}
-                                                             contentFit='contain'
+                                                             contentFit='cover'
                                                              nativeControls ={false}
                                                              pointerEvents='box-only'
                                               />
@@ -502,8 +503,8 @@ return (
                      handleQueue ={handleQueue}
                        />
                  )}
-          {/* {displayComment && (<CommentModal displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedContestant}/>)} */}
         </View>
+       
       )}
 
       {isExpired && (

@@ -157,7 +157,6 @@ export default function UserChallenges() {
      }, [selectedPrivacy])
       
       useEffect ( () => {     
-        // challengeData.length >= 2 ? setDisplayData(challengeData.slice(0,2)) : setDisplayData(challengeData)
         setDisplayData(challengeData.slice(0,2))
         setIndex(2)
      } , [challengeData]) 
@@ -166,8 +165,7 @@ export default function UserChallenges() {
       return (
         <SafeAreaView className="bg-primary flex-1 min--full ">
 
-          <View 
-          // style={{minHeight:Platform.OS == "ios" ? "100%":"100%"}}
+          {/* <View 
           className={Platform.OS == "ios" ? "flex-1 -[100%] flex-col justify-start items-center bg-white " :
               "flex-1 min--full flex-col justify-start items-center bg-white "
           }> 
@@ -234,9 +232,7 @@ export default function UserChallenges() {
                               borde-l-2 borde-l-white borde-r-2 borde-r-white"
                           style={{marginTop:Platform.OS == "android" ? 0 : 0 ,marginBottom:Platform.OS == "android" ? 0 : 0 }}>
                           
-                          {/* <View className="justify-center items-center  rounded-bl-3xl rounded-br-3xl w-[25%] bg-[#03471a] h-[100%] flex-col">
-                              <Heart title="Participations" color1 = '#348ceb' color2 = '#4e1eeb' icon ={icons.participate} link="/ParticipationManagement"/>
-                          </View> */}
+                         
                           
                           <View
                               className="justify-end gap-3 px-  w-[49%] items-center  h-[100%] flex-col  bg-[#eff6f9] ">
@@ -268,9 +264,7 @@ export default function UserChallenges() {
                                           </View>
                                 </View>          
                               </View>
-                          {/* <View className="justify-center items-center rounded-bl-3xl rounded-br-3xl  bg-[#083bf5]  w-[25%]   h-[100%] flex-col ">
-                            <Heart title="User Challenge" color1 = '#b0611c' color2 = '#633711' icon ={icons.challenge} link="/challengeManagement"/>
-                          </View> */}
+                        
       
                     </View>
       
@@ -357,7 +351,7 @@ export default function UserChallenges() {
                                                 Your Challenges
                                         </Text>   
                                         <View
-                                            // style={{width:width/5}}
+                                    
                                             className=" flex-col  justify-start  border-gray-500 rounded-lg items-center "
                                            >
                                             <Image
@@ -464,7 +458,7 @@ export default function UserChallenges() {
       
 
       
-              </View>
+              </View> */}
         </SafeAreaView>
        
       )

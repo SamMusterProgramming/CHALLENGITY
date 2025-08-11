@@ -1,21 +1,17 @@
-import { ActivityIndicator, Image, ImageBackground, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, Vibration, View } from 'react-native'
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { images } from '../../constants'
+import { ActivityIndicator, Image,  Platform, StatusBar,  Text, TouchableOpacity, useWindowDimensions, Vibration, View } from 'react-native'
+import React, {  useEffect, useRef, useState } from 'react'
+import {  useSafeAreaInsets } from 'react-native-safe-area-context'
+import { icons } from '../../constants'
 import FormField from '../../components/custom/FormField'
-import { Link, router, useFocusEffect } from 'expo-router'
+import {  router } from 'expo-router'
 
 import { authLogin, getFavouriteChallenges, getFollowData, getFollowings, getNotificationByUser,
    getTopChallenges,
-   getUserFriendsData,  getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, isAuthenticated } from '../../apiCalls'
-import { GlobalProvider, useGlobalContext } from '../../context/GlobalProvider.js'
-import { useVideoPlayer, VideoView } from 'expo-video'
+   getUserFriendsData,  getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, getUserQueueTalent, getUserTalent, getUserTalentPerformances, isAuthenticated } from '../../apiCalls'
+import {  useGlobalContext } from '../../context/GlobalProvider.js'
+
 // import AuthContent from '../../context/AuthContent'
-import demo from "../../assets/video/demo1.mp4"
-import { Accelerometer } from 'expo-sensors'
-import { useFonts } from 'expo-font'
-import { screenSize } from '../../helper.js'
-import ChallengifyHeader from '../../components/custom/ChallengifyHeader.jsx'
+// import { screenSize } from '../../helper.js'
 import LoadingPage from '../../components/custom/LoadingPage.jsx'
 
 
@@ -24,11 +20,14 @@ import LoadingPage from '../../components/custom/LoadingPage.jsx'
 
 export default function login() {
   
-  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge, smallScreen , setSmallScreen
-    ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges
+  const {user,setUser, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge 
+    ,setPrivateParticipateChallenges,setFollow  ,setNotifications,setFollowings,setUserFriendData,setTrendingChallenges,setUserQueueTalents,
+    setUserTalents,userTalentPerformances , setUserTalentPerformances 
   } = useGlobalContext()
+
   // const [user,setUser] = useState(null)
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   const [form, setForm] = useState({
     email:"samirhaddadi@gmail.com",
@@ -36,9 +35,9 @@ export default function login() {
   })
 
 
-  const [fontsLoaded] = useFonts({
-    myFont: require("../../assets/fonts/Archivo/Archivo-VariableFont_wdth.ttf"),
-  });
+  // const [fontsLoaded] = useFonts({
+  //   myFont: require("../../assets/fonts/Archivo/Archivo-VariableFont_wdth.ttf"),
+  // });
 
 
   const [message,setMessage] = useState("")
@@ -52,6 +51,7 @@ export default function login() {
 
 
   //************************************* login here ************************ */
+
   const handleLogin =()=> {
      if(!validateEmail(form.email)) {
       Vibration.vibrate();
@@ -65,7 +65,6 @@ export default function login() {
      }
      authLogin(form,setUser,setMessage,setIsFetching)
   }
-
 
 //*************************************Validation ******************************* */
 
@@ -122,8 +121,11 @@ export default function login() {
 
   useEffect(() => {
     if(user) {
+      getUserTalent(user._id , setUserTalents)
       setIsFetching(true)
-      screenSize(width,height , setSmallScreen)
+      // screenSize(width,height , setSmallScreen)
+      getUserTalentPerformances(user._id , setUserTalentPerformances)
+ 
       getUserPublicChallenges(user._id,setUserPublicChallenges)
       getUserPrivateChallenges(user._id,setUserPrivateChallenges)
       getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
@@ -154,24 +156,17 @@ export default function login() {
    },[])
 
  
-  const player = useVideoPlayer
-  ( 
-    demo, (player) => {
-    player.loop = true;
-    player.volume = 0.7
-    player.play() ;
-  });
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        if (player) {
-          // player.pause();
-        }
-        videoRef.current = null;
-      };
-    }, [])
-  );
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     return () => {
+  //       if (player) {
+  //       }
+  //       videoRef.current = null;
+  //     };
+  //   }, [])
+  // );
 
   if(isFetching){
     return <LoadingPage text="loging in ... please wait" />
@@ -179,46 +174,134 @@ export default function login() {
  
 
   return (
-    <SafeAreaView className=" flex-1 bg-primary ">
-      <View
-       className="flex-1 justify-center items-center ">
-   
-                      <Image 
-                        style={{ width:'100%',height:'100%',opacity:0.4}}
-                        source={images.sky_bg} 
-                        resizeMode='cover' 
-                        className="6"/>
-                    
-
-         <View className="min-w-full  justify-between absolute top-0 gap- flex-col items-center h-[100%]  ">
+    
+         <View 
+         style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
+             paddingBottom:Platform.OS == "ios" ? insets.bottom : insets.bottom
+           }}
+         className="w-[100%]  h-[100%]  justify-between absolut e top- 0 gap- flex-col items-center bg-primary   ">
           
-              {/* <View className="w-full justify-center  mt-6 min-h-[25h] flex-col items-center gap-0 ">
-                               <Text className="text-3xl  font-bold text-secondary">
-                                    Challengify
-                                </Text> 
-                                <Text className="text-lg mt-4 text-center text-white font-bold px-10 ">
-                                  Welcome !
-                                  Step Out of Your Comfort Zone—Your Stage Awaits, and the World is the Judge! {'  '}  
-                                </Text>
-              </View> */}
+             
+        
               <View
-                  className="w-[100%] -[34%] pt-4 px-2 borde-2 borde-t-4 borde-b-4 rounded-xl border-[#6a7c83] g-[#0a0b0b]
-                  flex-col justify-center items-end">
-                     <ChallengifyHeader /> 
+              className ="g-[#f29756] w-full text-center mt-[40px] gap- 2 items-center px- flex-col">
+                    <Text className="text-2xl  font-bold text-secondary">
+                                                  Challengify
+                    </Text> 
+                    <Text style={ {fontSize: 14,fontStyle: 'italic',color: '#5ca9f0', marginTop : 10 ,marginBottom: 8,textAlign:"center"}}>
+                        Unleash Talent. Share Challenges. Break Records.
+                    </Text>
+                    <Text style={{fontSize: 12,color: '#fff',lineHeight: 18,textAlign:"center"}}>
+                        Step into the spotlight with <Text >Challengify</Text> — the ultimate stage where everyday legends rise!
+                    </Text>
+
               </View>
-              <View className="w-[90%] justify-center p- mt-auto gap- flex-row items-center">  
-                  <Image 
-                            style={{ width: width * 0.4,height:width * 0.4,opacity:1}}
-                            source={images.challenge_logo} 
-                            resizeMode='cover' 
-                            className=""/>
+            
+              <View className=" w-[70%] h-[30%] mt-auto rounded-xl  justify-between items-center p-6 b b g-white">
+                            <View className=" w-[80%]  h-[100%] gap-2 flex-row flex-wrap justify-center items-center p-2 bg-black ">
+                                  
+                            <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-center p-4 bg-[#1166ef] ">
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='fill'
+                                          source={icons.challenge} />
+                                  </View>
+                                  <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-center p-4 bg-[#ae1717] ">
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='cover'
+                                          source={icons.home} />
+                                          
+                                  </View>
+                                  <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-center p-2 b bg-white ">
+                                       
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='cover'
+                                          source={icons.trophy} />
+                                         
+                                        
+                                  </View>
+                                  <View
+                                    className=" w-[47%]  h-[47%] flex-row rounded-xl justify-center items-end p-2 bg-blue-500 ">
+                                          <Image
+                                          className=" w-[100%]  h-[100%]"
+                                          resizeMethod='contain'
+                                          source={icons.competition} />
+                                         
+                                  </View>
+                                                               
+                            </View>
+                            
+                            
+                            <View
+                                 className="p- 4 absolute -rotate-45 rounded-tr-xl top-0 left-0 b bg-[#000000] flex-col  justify-center ">
+                                    <Text 
+                                        style={{fontSize:width/40,
+                                                 color:'white'}}
+                                        className="  font-black text-sm text-white">
+                                                Challenge                 
+                                    </Text>  
+                            </View>
+                            <View
+                                              className="p- absolute -rotate-45 rounded-xl bottom-0 right-0 b bg-[#000000] flex-col  justify-end ">
+                                                  <Text 
+                                                      style={{fontSize:width/40,
+                                                            color:'white'}}
+                                                      className="  font-black  text-sm text-white">
+                                                          Training                  
+                                                </Text>  
+                            </View>
+                            <View
+                                              className="p- 4 absolute rotate-45 rounded-xl bottom-0 left-0 b bg-[#000000] flex-col  justify-end ">
+                                                  <Text 
+                                                      style={{fontSize:width/40,
+                                                            color:'white'}}
+                                                      className="  font-black  text-sm text-white">
+                                                          Guiness                  
+                                                  </Text>  
+                            </View>
+                            <View
+                                            className="p- 4 absolute rounded-tr-xl rotate-45 top-0 right-0 right- 0 b bg-[#000000] flex-col  justify-center ">
+                                                <Text 
+                                                    style={{fontSize:width/40,
+                                                          color:'white'}}
+                                                    className="  font-black text-sm text-white">
+                                                      Talent                 
+                                              </Text>  
+                            </View>
+                           
+                            
               </View>
            
-              <View className="w-[90%] justify-start 80 mt-auto gap-4 flex-col items-start">  
+              <View className="w-[90%]  justify-start 80 mt-auto gap-4 flex-col py-2 items-center">  
+
+                    <View className="  w-[90%] -auto min-h-[10vh] py-2 flex-row justify-center items-center text-center ">
+                    {(isEmailWrong || isEmailInvalid || isPasswordInvalid || isPasswordWrong)&& <Text className="text-gray-200 text-sm ">{message}</Text>}
+                    </View>
+
+                    <View className="justify-center items-center w-[100%] mt- 4 flex-row gap- 4">
+                        <Text className="text-md text-gray-200 font-black">
+                          Don't have an account ? {' '}
+                        </Text>
+                        <TouchableOpacity 
+                          onPress={()=>{
+                            router.replace('/signup')
+                          }}
+                          className=" text-center"
+                           >
+                          <Text className=" text-md text-blue-300 font-semibold">
+                              Register
+                          </Text>
+                        </TouchableOpacity>
+                    </View>
 
                     <FormField 
                     width="100%"
-                    height= {height * 0.06}
+                    height= {height * 0.05}
                     invalid = {isEmailInvalid || isEmailWrong}
                     title="Email" 
                     value={form.email.toLowerCase()}
@@ -229,7 +312,7 @@ export default function login() {
 
                     <FormField 
                     width="100%"
-                    height= {height * 0.06}
+                    height= {height * 0.05}
                     invalid = {isPasswordInvalid || isPasswordWrong}
                     title="Password" 
                     value={form.password}
@@ -241,7 +324,7 @@ export default function login() {
                     <TouchableOpacity 
                       // onPressIn={()=>{setIsFetching(true)}}
                       onPress={handleLogin}
-                      style={{height : height * 0.06}}
+                      style={{height : height * 0.05}}
                       className="bg-blue-500  rounded-lg w-[100%] h-[50px] justify-center items-center">
                         {isFetching ? (
                                <View >
@@ -250,33 +333,11 @@ export default function login() {
                         ):(
                               <Text className="text-[#302f2c] font-semibold text-lg">Login</Text>
                         )}
-                        
-                    </TouchableOpacity>
-
-                    <View className="justify-start items-center w-[80%] mt-4 flex-row gap-4">
-                        <Text className="text-md text-gray-200 font-black">
-                          Don't have an account   ?
-                        </Text>
-                        <Link className=" text-md text-blue-300 font-semibold"
-                          href="/signup">
-                          Register
-                        </Link>
-                    </View>
+                    </TouchableOpacity>           
 
               </View>
-             
-              <View className="  w-[90%] -auto h-[10vh] py-2 flex-row justify-start items-center text-center ">
-                    {(isEmailWrong || isEmailInvalid || isPasswordInvalid || isPasswordWrong)&& <Text className="text-gray-200 ">{message}</Text>}
-              </View>
-            
-           
-           
-              
+                  
          </View>
-        {/* </ImageBackground> */}
-        </View> 
-    </SafeAreaView>
+ 
   )
 }
-
-const styles = StyleSheet.create({})

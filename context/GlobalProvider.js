@@ -22,7 +22,8 @@ export const GlobalProvider =({children}) => {
     const [follow , setFollow ] = useState(null)
     const [favouriteChallenge , setFavouriteChallenge] = useState(null)
     const [smallScreen , setSmallScreen] = useState (false)
-
+    const [userTalents, setUserTalents] = useState ([])
+   const[ userTalentPerformances , setUserTalentPerformances ] = useState([])
 
     useEffect(() => {
           
@@ -49,7 +50,9 @@ export const GlobalProvider =({children}) => {
             userFriendData,setUserFriendData,
             follow , setFollow ,
             favouriteChallenge , setFavouriteChallenge,
-            smallScreen , setSmallScreen
+            smallScreen , setSmallScreen,
+            userTalents, setUserTalents,
+            userTalentPerformances , setUserTalentPerformances 
             }
             } >
             {children}

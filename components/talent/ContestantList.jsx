@@ -14,7 +14,7 @@ export default function ContestantList({contestants , selectedIcon , selectedTal
     style={{height:h,width:w,
         top:top,marginLeft:left,marginRight:right
     }}
-    className = "g-[#051652] absolute py-2 px-2 gap-2 g-red-400 flex-col justify-start items-center"
+    className = "g-[#051652] absolute py-2 px-2 gap-2 g-red-400 flex-col justify-start g-white items-center"
     >
         <MotiView
                 from={{ opacity: 0, translateY: 40 }}
@@ -46,9 +46,10 @@ export default function ContestantList({contestants , selectedIcon , selectedTal
                        className="text-yellow-400 font-bold"> {selectedTalent}</Text>
                  </View>
         </MotiView>
+
         <TouchableOpacity
                        onPress={()=>{
-                        router.navigate({ pathname: '/TalentContestantPlayMode',params: { 
+                       contestants.length >0 && router.replace({ pathname: '/TalentContestantPlayMode',params: { 
                             talentRoom_id : talentRoom._id,
                             // edition_id : edition._id ,
                           } }) 

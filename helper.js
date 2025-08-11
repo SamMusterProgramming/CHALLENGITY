@@ -1,3 +1,4 @@
+import { icons } from "./constants";
 
 
 export const findTopChallengers = (participants) => {
@@ -101,3 +102,63 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
   export function screenSize(widh ,height, setScreen) {
       widh < 330 ? setScreen(true) : setScreen(true)
   }
+
+
+ export function getIcon(name){
+    switch (name) {
+       case "Music":
+           return icons.music
+           break;
+       case "Magic":
+           return icons.magic
+           break;
+       
+       case "Asia":
+           return icons.asia
+           break;
+       case "Africa":
+           return icons.africa
+           break;
+        case "Europe":
+             return icons.europe
+             break;
+        case "America":
+            return icons.america
+            break;
+
+       case "Fitness":
+            return icons.fitness
+            break;
+       case "Art":
+            return icons.art
+            break;
+
+      case "Food":
+            return icons.eating
+            break;
+
+      case "Dancing":
+            return icons.dance
+              break;
+      case "Tech":
+            return icons.tech
+            break;
+      case "Adventure":
+            return icons.adventure
+            break;
+      case "Instrument":
+              return icons.instrument
+              break;
+      case "Gaming":
+              return icons.gamet
+              break;
+      case "Sport":
+              return icons.sport
+              break;
+       case "Comedy":
+              return icons.comedy
+           break;
+       default:
+           break;
+    }
+ }

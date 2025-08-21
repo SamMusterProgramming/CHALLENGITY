@@ -15,15 +15,15 @@ const TalentRoomHeader = ({ selectedTalent }) => {
     from={{ opacity: 0, translateY: 40 }}
     animate={{ opacity: 1, translateY: 0 }}
     transition={{ delay: 300, type: 'timing', duration: 600 }}
-    className ="min-w-full elevation-xl  h-[15%] gap- flex-col justify-evenly borde-t-2 order-blue-400 items-center gap- px-6 pt-1 p- g-[#2f2f70] -8"
+    className ="min-w-full elevation-xl  h- [15%] gap-2 flex-row justify-center borde-t-2 order-blue-400 items-end gap- px-8 pt-4 p-1 g-[#2f2f70] -8"
      >
        
         <Image
-                    className ="w-10 h-10 "
+                    className ="w-8 h-8 "
                     resizeMethod='contain'
                     source={selectedTalent.icon} />
         <View
-                className = "flex-row justify-center items-end gap- border-b-4 border-white">
+                className = "flex-row justify-center items-end   border-white">
                     <ShuffleLetters textSize={14} text={selectedTalent.name + ' Talent'}/>    
         </View>
 

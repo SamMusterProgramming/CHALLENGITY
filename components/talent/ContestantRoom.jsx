@@ -51,7 +51,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
               setTextColor("black")
               setType("locked")
             }
-    }else {
+    } else {
         if(talentRoom.eliminations.find(u =>u.user_id == user._id)){
           setNotation("Eliminated")
           setStatus("eliminated")
@@ -77,10 +77,10 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
                       setTextColor("white")
                       setType("new")
                     }else{
-                      setStatus("locked")
+                      setStatus("queue")
                       setBgColor("white")
                       setTextColor("black")
-                      setType("locked")
+                      setType("queue")
                     }
                   }else {
                     setNotation("Non Contestant")
@@ -102,7 +102,7 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
    
        setIsLoaded(true)  
 
-  }, [userParticipation])      
+  }, [])      
 
   // useEffect(() => {
   //   console.log(status)
@@ -117,7 +117,9 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
   
   <>
   {isLoaded && (
-    <View className="flex-1 g-white flex-col justify-start gap- 6 px-6 pt-3">
+    <View 
+    style={{paddingTop:34}}
+    className=" flex-1 g-white flex-col justify-start gap- 6 px-6 pt-3">
             <MotiView
                 from={{ opacity: 0, translateY: 40 }}
                 animate={{ opacity: 1, translateY: 0 }}
@@ -463,11 +465,11 @@ const ContestantRoom = ({regionIcon , selectedIcon ,user ,userContestantStatus ,
         
            <TouchableOpacity
               onPress={()=> setStart(false) }
-              className ="absolute top-2 left-2"
+              className ="absolute top-6 left-6"
               >
                   <Image 
                           source={icons.back}
-                          className ="w-8 h-8 "
+                          className ="w-6 h-6 "
                           resizeMode='cover'
                         />
            </TouchableOpacity> 

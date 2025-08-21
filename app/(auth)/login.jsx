@@ -182,12 +182,20 @@ export default function login() {
          className="w-[100%]  h-[100%]  justify-between absolut e top- 0 gap- flex-col items-center bg-primary   ">
           
              
-        
+              
               <View
-              className ="g-[#f29756] w-full text-center mt-[40px] gap- 2 items-center px- flex-col">
-                    <Text className="text-2xl  font-bold text-secondary">
+              className ="g-[#f29756] w-full text-center m -[40px] gap- 2 items-center px- flex-col">
+                    {/* <Text className="text-2xl  font-bold text-secondary">
                                                   Challengify
-                    </Text> 
+                    </Text>  */}
+                    <View className="justify-center items-center w-full h-[7vh] flex-row ">
+                                        <Image 
+                                  
+                                            className="w-[100%] h-[100%]  "
+                                            source={icons.headline}
+                                            resizeMode = 'cover'
+                                        />
+                   </View>
                     <Text style={ {fontSize: 14,fontStyle: 'italic',color: '#5ca9f0', marginTop : 10 ,marginBottom: 8,textAlign:"center"}}>
                         Unleash Talent. Share Challenges. Break Records.
                     </Text>
@@ -196,8 +204,18 @@ export default function login() {
                     </Text>
 
               </View>
+
+              <View
+                  className="  flex- 1  bg-[#000000] flex-col p-1 justify-center item-center">
+                                    <Text 
+                                        style={{fontSize:width/25,
+                                                 color:'white'}}
+                                        className="  font-black text-sm text-white">
+                                                LOGIN                
+                                    </Text>  
+              </View>
             
-              <View className=" w-[70%] h-[30%] mt-auto rounded-xl  justify-between items-center p-6 b b g-white">
+              <View className=" w-[70%] h-[30%] mt- auto rounded-xl border-b-2 border-white  justify-between items-center p-6 b b g-white">
                             <View className=" w-[80%]  h-[100%] gap-2 flex-row flex-wrap justify-center items-center p-2 bg-black ">
                                   
                             <View
@@ -236,7 +254,7 @@ export default function login() {
                                                                
                             </View>
                             
-                            
+{/*                             
                             <View
                                  className="p- 4 absolute -rotate-45 rounded-tr-xl top-0 left-0 b bg-[#000000] flex-col  justify-center ">
                                     <Text 
@@ -272,18 +290,18 @@ export default function login() {
                                                     className="  font-black text-sm text-white">
                                                       Talent                 
                                               </Text>  
-                            </View>
+                            </View> */}
                            
                             
               </View>
            
-              <View className="w-[90%]  justify-start 80 mt-auto gap-4 flex-col py-2 items-center">  
+              <View className="w-[90%]  justify-start 80 mt- auto gap-4 flex-col py-2 items-center">  
 
                     <View className="  w-[90%] -auto min-h-[10vh] py-2 flex-row justify-center items-center text-center ">
                     {(isEmailWrong || isEmailInvalid || isPasswordInvalid || isPasswordWrong)&& <Text className="text-gray-200 text-sm ">{message}</Text>}
                     </View>
 
-                    <View className="justify-center items-center w-[100%] mt- 4 flex-row gap- 4">
+                    {/* <View className="justify-center items-center w-[100%] mt- 4 flex-row gap- 4">
                         <Text className="text-md text-gray-200 font-black">
                           Don't have an account ? {' '}
                         </Text>
@@ -297,7 +315,7 @@ export default function login() {
                               Register
                           </Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
 
                     <FormField 
                     width="100%"
@@ -325,15 +343,30 @@ export default function login() {
                       // onPressIn={()=>{setIsFetching(true)}}
                       onPress={handleLogin}
                       style={{height : height * 0.05}}
-                      className="bg-blue-500  rounded-lg w-[100%] h-[50px] justify-center items-center">
+                      className="bg-blue-800  rounded-lg w-[100%] h-[50px] justify-center items-center">
                         {isFetching ? (
                                <View >
                                  <ActivityIndicator size="large" color="#030202" />
                                </View>
                         ):(
-                              <Text className="text-[#302f2c] font-semibold text-lg">Login</Text>
+                              <Text className="text-[#fff] font-semibold text-lg">Login</Text>
                         )}
-                    </TouchableOpacity>           
+                    </TouchableOpacity>   
+                    <View className="justify-center items-center w-[100%] mt- 4 flex-row gap- 4">
+                        <Text className="text-md text-gray-200 font-semibold">
+                          Don't have an account ? {' '}
+                        </Text>
+                        <TouchableOpacity 
+                          onPress={()=>{
+                            router.replace('/signup')
+                          }}
+                          className=" text-center"
+                           >
+                          <Text className=" text-md text-blue-300 font-semibold">
+                              Register
+                          </Text>
+                        </TouchableOpacity>
+                    </View>        
 
               </View>
                   

@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import { icons } from '../../constants';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function SelectType({data,height,width ,setIsSelectorVisible ,setSelectedType , selectedType}) {
 
@@ -67,30 +68,18 @@ export default function SelectType({data,height,width ,setIsSelectorVisible ,set
 
   return (
   <View
-  className="w-full min-h-[85%] absolute bottom-0 flex-col justify-start items-center rounded-t-xl bg-black ">
+  className="w-full min-h- [85%] absolute botto m-0 flex-col justify-start items-center rounded-t-xl b g-black ">
      <TouchableOpacity
-                    className="absolute top-[0]  justify-center items-center  w-12 h-12 border-2   rounded-full"
+                    className=" justify-center items-center  w-12 h-12 border-2   rounded-full"
                     onPressIn={()=>{setIsSelectorVisible(false)}}
                     >
-                        <Image   
-                        source={icons.x}
-                        className=" w-10 h-10 bg-white rounded-full"
-                        resizeMethod='contain'
-                        />
+                       <AntDesign name="closecircle" size={35} color="white" /> 
     </TouchableOpacity>
-    <View 
-      className= " w-[95%] h-[30%] flex-row  justify-center items-center p-4 gap-4 ">
-           <Text
-             className= "text-gray-200 font-black" >
-                  Select Challenge Type Bellow
-           </Text>
-    </View>
+   
 
     <View 
-      // style={{left:(width * 0.05/2) ,top:height * 0.75/2 - height*0.1}}
-      className= " w-[95%]  flex-row flex-wrap justify-center items-center p-4 gap-4  bg-gray-800 rounded-lg border-4 border-blue-500">
-         
-         
+      className= " w-[95%]  flex-row flex-wrap justify-center items-center p-4 gap-4  bg-gray-800 rounded-lg borde r-4 bor der-blue-500">
+    
          {data.map((element,index)=>
           {
                  return  (

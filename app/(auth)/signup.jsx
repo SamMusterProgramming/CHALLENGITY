@@ -25,10 +25,10 @@ export default function signup() {
   const [form, setForm] = useState({
     firstname:"",
     lastname:"",
-    email:"samirhaddadi@gmail.com",
-    username:"samirhaddadi@gmail.com",
-    password:"Samir@2023",
-    confirm:"Samir@2023",
+    email:"",
+    username:"",
+    password:"",
+    confirm:"",
     profile_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2Favatar.jpg?alt=media&token=25ae4701-e132-4f15-a522-5b9332d2c0b2",
     cover_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"
   })
@@ -178,12 +178,7 @@ useEffect(() => {
   return (
    
 
-    // <ImageBackground
-    //     style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
-    //       paddingBottom:Platform.OS == "ios" ? insets.bottom : insets.bottom
-    //         }}
-    //     source={images.night_bg}
-    //     className="w-[100%]  h-[100%] justify-center items-center ">        
+ 
                      
 
         <View 
@@ -194,10 +189,15 @@ useEffect(() => {
        
            
           <View
-              className ="g-[#f29756] w-full text-center mt-[40px] gap- 2 items-center px- flex-col">
-                    <Text className="text-2xl  font-bold text-secondary">
-                                                  Challengify
-                    </Text> 
+              className ="g-[#f29756] w-full text-center mt- [40px] gap- 2 items-center px- flex-col">
+                    <View className="justify-center items-center w-full h-[7vh] flex-row ">
+                                        <Image 
+                                  
+                                            className="w-[100%] h-[100%]  "
+                                            source={icons.headline}
+                                            resizeMode = 'cover'
+                                        />
+                   </View>
                     <Text style={ {fontSize: 14,fontStyle: 'italic',color: '#5ca9f0', marginTop : 10 ,marginBottom: 8,textAlign:"center"}}>
                         Unleash Talent. Share Challenges. Break Records.
                     </Text>
@@ -206,8 +206,18 @@ useEffect(() => {
                     </Text> */}
 
               </View>
+
+              <View
+                  className="  flex- 1 h-[5vh] bg-[#000000] flex-col p-1 justify-center item-center">
+                                    <Text 
+                                        style={{fontSize:width/25,
+                                                 color:'white'}}
+                                        className="  font-black text-sm text-white">
+                                                REGISTER              
+                                    </Text>  
+              </View>
             
-              <View className=" w-[70%] h-[30%] mt-auto rounded-xl  justify-between items-center p-6 b b g-white">
+              <View className=" w-[70%] h-[30%] flex-1 mt- auto rounded-xl  justify-between items-center p-6 b b g-white">
                             <View className=" w-[80%]  h-[100%] gap-2 flex-row flex-wrap justify-center items-center p-2 bg-black ">
                                   
                                   <View
@@ -249,7 +259,7 @@ useEffect(() => {
                             </View>
                             
                             
-                            <View
+                            {/* <View
                                  className="p- 4 absolute -rotate-45 rounded-tr-xl top-0 left-0 b bg-[#000000] flex-col  justify-center ">
                                     <Text 
                                         style={{fontSize:width/40,
@@ -284,7 +294,7 @@ useEffect(() => {
                                                     className="  font-black text-sm text-white">
                                                       Talent                 
                                               </Text>  
-                            </View>
+                            </View> */}
                            
                             
            </View>
@@ -295,21 +305,7 @@ useEffect(() => {
                             || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 text-sm text-center ">{message}</Text>}
                 </View>
 
-                <View className="justify-center items-center w-[100%] -5 flex-row gap- 4">
-                     <Text className="text-sm text-gray-100 font-semibold">
-                       Already have an account ? {' '}
-                     </Text>
-                     <TouchableOpacity 
-                        onPress={()=>{
-                          router.replace('/login')
-                        }}
-                        className=" text-center"
-                           >
-                          <Text className=" text-md text-blue-300 font-semibold">
-                              Login
-                          </Text>
-                        </TouchableOpacity>
-                 </View>
+                
 
                 <View
                  className="w-[100%] flex-row justify-between   items-center">
@@ -364,7 +360,7 @@ useEffect(() => {
                />
                 <TouchableOpacity onPress={handleRegistration}
                    style={{height : height * 0.05}}
-                   className="bg-blue-500 mt-0 rounded-xl w-[100%] h-[47px] justify-center items-center">
+                   className="bg-blue-800 mt-0 rounded-xl w-[100%] h-[47px] justify-center items-center">
 
                         {isFetching ? (
                                <View >
@@ -374,6 +370,23 @@ useEffect(() => {
                                <Text className="text-white font-semibold text-lg">Register</Text>
                         )}
                  </TouchableOpacity>
+
+
+                 <View className="justify-center items-center w-[100%] -5 flex-row gap- 4">
+                     <Text className="text-sm text-gray-100 font-semibold">
+                       Already have an account ? {' '}
+                     </Text>
+                     <TouchableOpacity 
+                        onPress={()=>{
+                          router.replace('/login')
+                        }}
+                        className=" text-center"
+                           >
+                          <Text className=" text-md text-blue-300 font-semibold">
+                              Login
+                          </Text>
+                        </TouchableOpacity>
+                 </View>
 
                  {/* <View className="justify-start items-center w-[90%] -5 flex-row gap-4">
                      <Text className="text-sm text-gray-100 font-semibold">

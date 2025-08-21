@@ -36,10 +36,9 @@ export default function Talent() {
         return () => {
           setLoaded(false)
           setSelectedBox(0)
-          console.log("clean up")
         };
     }, [])
-);
+  );
  
 
   return (
@@ -57,7 +56,7 @@ export default function Talent() {
                   resizeMode = 'cover'
               />
         </View>
-         <View className="  w-[100%] h-[10%] flex-row px- border-b-2  border-[#306c99] b g-[#e2eaef] rounde-tl-xl  rounde-tr-xl items-end  bg[#0a144b] justify-between"
+         {/* <View className="  w-[100%] h-[10%] flex-row px- border-b-2  border-[#306c99] b g-[#e2eaef] rounde-tl-xl  rounde-tr-xl items-end  bg[#0a144b] justify-between"
                   >
                         <View
                             className="justify-start rotate- 45 px-1 py-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#230d10] rounded-tr-full rounde-tr-3xl  ">
@@ -95,18 +94,7 @@ export default function Talent() {
                                             className="w-[40px] h-[40px] rounded-full "
                                             source={{uri :  (user.profile_img? user.profile_img  : "")}}
                                         />
-                                    </View>   
-                                  
-                                    {/* <View className="justify-center rounded-b-xl gap- -auto items-center b b g-[#faf9f7] p-2 w-[100%] flex-col ">
-                                            <Text className="font-pmedium  text-sm text-gray-800">
-                                                <Text 
-                                                style={{fontSize:width<= 330? 8:10}}
-                                                className="font-bold text-sm text-gray-100">
-                                                    { (user.name.length > 13 ?  user.name.slice(0,13)+ "..." : user.name)}
-                                                </Text> 
-                                            </Text>
-                                    </View>     */}
-                                  
+                                    </View>            
                         </View>
                         
                         <View
@@ -131,10 +119,87 @@ export default function Talent() {
                                       </TouchableOpacity>
                         </View>
                   
+          </View> */}
+
+           <View className="  w-[100%] h-[10%] flex-row px- border-b-2  border-[#306c99] b g-[#e2eaef] rounde-tl-xl  rounde-tr-xl items-end  bg-[#000000] justify-between"
+                  >
+                        <View
+                            className="justify-start rotate- 45 px-1 py-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#efe8e8] rounded-tr-3xl rounde-tr-3xl  ">
+                                      <TouchableOpacity 
+                                          onPress={()=> {setDisplayNotificationsModal(true)}}
+                                            className="justify-start items-start w- [50%] h- [80%] pb- 6  p-2 rounded-full  bg-[#0a0a0a] flex-col">
+                                                    <Image
+                                                        style={{width:height * 0.03 ,height: height * 0.03}}
+                                                        className="w-[25px]  h-[25px]  rounded-full g-white"
+                                                        source={icons.notification}
+                                                        resizeMethod='cover' />
+                                                    <Text 
+                                                          style={{fontSize:8}}
+                                                          className="absolute top-0 p- right-0 w-5 h-5 rounded-full text-center bg-white font-black text-sm text-red-500">
+                                                              {notifications.filter(not=>not.isRead == false).length}
+                                                    </Text> 
+                                      </TouchableOpacity>
+                                      <TouchableOpacity 
+                                          onPress={()=> {router.navigate("/SearchFriend")}}
+                                            className="justify-start items- rounded-full p-2 w- [50%] h-[100%]  borde-[#0a144b] bg-[#000000] flex-col">
+                                                    <Image
+                                                        style={{width:height* 0.03 ,height: height * 0.03}}
+                                                        className="w-[30px] h-[30px] rounded-full b g-white"
+                                                        source={icons.search_people}
+                                                        resizeMethod='cover' />
+                                      </TouchableOpacity>
+                        </View>
+
+                        <View
+                            className="justify-center py- 2  px- 4 gap- 2 w-[40%] items-end h- [100%] flex-row  b g-[#042a6c] rounde d-t-full b g-[#efe8e8] ">
+                                      
+                                      <View 
+                                       style={{minWidth: width * 0.4 - height * 0.13 }}
+                                       className="justify-center flex- 1 p y-2 items-center min-h-[50%] min-w-[20%] bg-[#efe8e8]  rounde-t-3xl flex-row "></View>
+
+                                    <View className="justify-center pb-2   items-center w- [80%] bg-[#efe8e8] rounded-t-full flex-row ">
+                                        <View
+                                        className="flex-col p-2 bg-black rounded-full justify-center items-center">
+                                                 <Image 
+                                                      style={{width:height * 0.065 ,height: height * 0.065}}
+                                                      className="w-[40px] h-[40px]  rounded-full "
+                                                      source={{uri :  (user.profile_img? user.profile_img  : "")}}
+                                                  />
+                                        </View>
+                                        
+                                    </View>  
+                                    <View
+                                     style={{minWidth: width * 0.4 - height * 0.13 }}
+                                     className="justify-center p y-2 items-center flex-1 min-h-[50%]  bg-[#efe8e8]  rounded -t-3xl flex-row "></View>
+          
+                        </View>
+                        
+                        <View
+                            className="justify-end rotate- 45 px-1 p-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#efe8e8] rounded-tl-3xl rounde-tr-3xl  ">
+                                      <TouchableOpacity 
+                                          onPress={()=> {router.navigate("/ProfilePage")}}
+                                            className="justify-start items- center  rounded-full p-2 h-[100%] border-  bg-[#000000] g-[#fcfdff] flex-col">
+                                                     <Image
+                                                        style={{width:height * 0.03 , height: height * 0.03}}
+                                                        className="w-[30px] h-[30px] rounded-full b g-[#fefefe]"
+                                                        source={icons.profile}
+                                                        resizeMethod='cover' />                                    
+                                      </TouchableOpacity>
+                                      <TouchableOpacity 
+                                          onPress={()=> {router.navigate("/SearchFriend")}}
+                                            className="justify-start items-start w- [50%] h- [80%] pb- 6  p-2 rounded-full  bg-[#000000] flex-col">
+                                                    <Image
+                                                        style={{width:height * 0.03 ,height: height * 0.03}}
+                                                        className="w-[30px] h-[30px] rounded-full bg-black"
+                                                        source={icons.watchlist}
+                                                        resizeMethod='cover'/>
+                                      </TouchableOpacity>
+                        </View>
+                  
           </View>
 
           <View className="flex-row justify-center w-[100%] py- 2 h-[6%] items-center">
-            <ShuffleLetters text={"Track your talents"} textSize={14} />
+            <ShuffleLetters text={"Track your talents"} textSize={12} />
             <TouchableOpacity
                 onPress={handleRefresh}
                 className=" absolute left-2  items-center ">
@@ -160,7 +225,7 @@ export default function Talent() {
                             className="flex-col justify-center  items-center w-[32%] h-[90%] bg-[#10152d] border-2 rounded-md">
                                       
                                         <View
-                                            // style={{width:width/5}}
+                                        
                                             className=" flex-col  justify-start  border-gray-500 rounded-lg items-center "
                                            >
                                             <Image
@@ -230,34 +295,11 @@ export default function Talent() {
                                         </Text>  
                          </TouchableOpacity>
 
-                         {/* <TouchableOpacity
-                            onPress={()=>{setSelectedBox(4)}}
-                            style={{ backgroundColor:selectedBox == 4 ?"#cee1e2":"black" }}
-                            className="flex-col justify-center  items-center w-[24%] border-2 h-[90%] bg-[#cee1e2] rounded-md">
-                                        <Text 
-                                            style={{fontSize:width/47,
-                                              color:selectedBox == 4 ?"black": "white"}}
-                                            className="font-bold text-sm text-white">
-                                                Friend's Challenge
-                                            
-                                        </Text>   
-                                        <View
-                                            style={{width:width/5}}
-                                            className=" flex-col  justify-center  border-gray-500 rounded-lg items-center "
-                                            >
-                                            <Image
-                                              style={{height:width/22,width:width/22}}
-                                              className ="w-[20px] h-[20px]"
-                                              source={selectedBox == 4 ?icons.down_arrow:icons.up_arrow}
-                                              resizeMethod='contain'
-                                            />
-                                  
-                                        </View>
-                         </TouchableOpacity> */}
+                      
                   </View>
         {loaded && (
           <ScrollView className="bg- gray-100 flex-1 px-1 border-b-2 border-white max-w- [100%] max-h- [69%] rounded- xl bg-[#dad1d1] [#6a7c83]">
-                <View className="min-w-[100%] max- min-h -[100%] flex-1 py- 1 px- gap-x-1 flex-row flex-wrap justify-start items-center gap-y- 1 b b g-white">
+                <View className="min-w- [100%] max- min-h -[100%] flex-1 py- 1 px- gap-x-1 flex-row flex-wrap justify-start items-center gap-y- 1 b b g-white">
                         {selectedBox == 1 && userTalents.map((userTalent,index)=>  {
                                   let userPost = userTalent.contestants.find(c => c.user_id === user._id) 
                                   if(userPost) {
@@ -284,7 +326,7 @@ export default function Talent() {
         )}
 
           <View
-          style={{ minHeight: Platform.OS =="ios" ? width/7+7: width/7+1, width:"100%"}}
+          style={{ minHeight: Platform.OS =="ios" ? width/ 7 + 10: width/7+5, width:"100%"}}
           className="bg-[#dad1d1]"></View>
 
           {displayNotificationsModal && 

@@ -6,7 +6,7 @@ import { icons } from '../../constants';
 // const { width } = Dimensions.get('window');
 
 const TopBar = ({ show, onClose , height, width ,top ,bottom,left ,right , region , regionIcon, selectedTalent, selectedIcon, handleParticipate}) => {
-//   const sidebarWidth = width * 0.8; 
+
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  -height)).current;
 
   useEffect(() => {

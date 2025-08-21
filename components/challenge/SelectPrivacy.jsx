@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import { icons } from '../../constants';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function SelectPrivacy({data,height,width ,setIsPrivacySelectorVisible , selectedPrivacy ,setSelectedPrivacy}) {
     
@@ -66,21 +67,18 @@ export default function SelectPrivacy({data,height,width ,setIsPrivacySelectorVi
 
   return (
 
-  <View className="w-full min-h-[85%] absolute bottom-0 flex-col justify-start items-center rounded-t-xl bg-black ">
+  <View className="w-full min-h -[85%] absolute bott om-0 flex-col justify-center items-center rounded-t-xl b g-black ">
   
     <TouchableOpacity
-                    className="absolute top-0  justify-center items-center  w-12 h-12 border-2 border-white  rounded-full"
+                    className="justify-center items-center  w-12 h-12 border-2 border-white  rounded-full"
                     onPressIn={()=>{setIsPrivacySelectorVisible(false)}}
                     >
-                        <Image   
-                        source={icons.x}
-                        className=" w-12 h-12 bg-white rounded-full"
-                        resizeMethod='contain'
-                        />
+                      <AntDesign name="closecircle" size={35} color="white" /> 
+
     </TouchableOpacity>
     <View 
-      style={{left:(width * 0.4/2) ,top:height * 0.45/2}}
-      className= "absolute w-[60%] h-[15%] flex-row flex-wrap justify-between items-center p-4 gap-4  bg-gray-800 rounded-lg border-2 border-white">
+      // style={{left:(width * 0.4/2) ,top:height * 0.45/2}}
+      className= " flex-row px-12  justify-between items-center p-24 gap-4  bg-gray-800 rounded-lg borde r-2 bor der-white">
         
          {data.map((element,index)=>
           {
@@ -90,15 +88,15 @@ export default function SelectPrivacy({data,height,width ,setIsPrivacySelectorVi
                      style={{backgroundColor: selectedPrivacy == element.value && "black"}}
                      onPress={()=>setIsPrivacySelectorVisible(false)}
                      onPressIn={()=>{setSelectedPrivacy(element.value)}}
-                     className="w-[40%] h-[100%] flex-col justify-center rounded-lg px-2 py-2 gap-2 items-center">
+                     className="w- [40%] h- [100%] flex-col justify-center rounded-lg px-2 py-2 gap-2 items-center">
                        
                         <Image
                         source={getIcon(element.value)}
                         resizeMethod='contain'
                         // style={{width:width/6, height:width/6}}
-                        className="w-[70%] h-[65%]" />
+                        className="w-[70px] h-[65px]" />
                          <View
-                                className="w-[100%] h-[25%] flex-row justify-center items-center">
+                                className="w- [100%] h- [25%] flex-row justify-center items-center">
                 
                                 <Text 
                                     style={{fontSize:10}}
@@ -114,9 +112,8 @@ export default function SelectPrivacy({data,height,width ,setIsPrivacySelectorVi
          }
     </View>
 
-    <View 
-       style={{left:(width * 0.4/2) ,bottom:height * 0.25/2}}
-       className="absolute w-[60%] h-[15%] px-2   flex-row justify-center gap-2 items-center">
+    {/* <View 
+       className="abso lute w- [60%] h- 15%] px-2   flex-row justify-center gap-2 items-center">
                                
                                 <View  className=" w-[100%] flex-col justify-start px-2 py-2 items-start   bg-white
                                          rounded-lg   ">
@@ -131,9 +128,9 @@ export default function SelectPrivacy({data,height,width ,setIsPrivacySelectorVi
                                           "Only Invited friends can Participate in your challenge ":
                                            "Everyone can Participate in your challenge Public is Selected"} 
                                            
-                                      </Text>                       
+                                    </Text>                       
                                 </View>   
-                        </View>
+      </View> */}
 
   </View>
   )

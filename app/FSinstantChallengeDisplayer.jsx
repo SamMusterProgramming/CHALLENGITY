@@ -1,4 +1,4 @@
-import { View, Text, FlatList, useWindowDimensions, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, FlatList, useWindowDimensions, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 // import SwingingTitle from '../custom/SwingingTitle'
 // import InstantPlayer from './InstantPlayer';
@@ -10,7 +10,7 @@ import { getInition, sortChallengeByVotes } from '../helper';
 import { icons } from '../constants';
 import InstantPlayer from '../components/challenge/InstantPlayer';
 import SwingingTitle from '../components/custom/SwingingTitle';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import FSinstantPlayer from '../components/challenge/FSinstantPlayer';
 import ChallengeAction from '../components/modal/ChallengeAction';
 import ButtonChallengeAction from '../components/challenge/ButtonChallengeAction';
@@ -21,6 +21,21 @@ import ChallengeExpired from '../components/challenge/ChallengeExpired';
 import PostPlayerModal from '../components/modal/PostPlayerModal';
 import ChallengeDescriptionModal from '../components/modal/ChallengeDescriptionModal';
 import ProfileDisplayModal from '../components/modal/ProfileDisplayModal';
+import { useEvent } from 'expo';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { MotiView } from 'moti';
+import ContestantPostDetails from '../components/talent/ContestantPostDetails';
+import ProgresssBarVideo from '../components/custom/ProgresssBarVideo';
+import TopBarChallenge from '../components/challenge/TopBarChallenge';
+import LeftBarChallenge from '../components/challenge/LeftBarChallenge';
+import RightBarChallenge from '../components/challenge/RightBarChallenge';
+import BottomBarChallenge from '../components/challenge/BottomBarChallenge';
+import ParticipantPostData from '../components/challenge/ParticipantPostData';
+import CommentModal from '../components/talent/modal/CommentModal';
+import ParticipantRoom from '../components/challenge/ParticipantRoom';
+import ChallengeParticipation from '../components/challenge/ChallengeParticipation';
+import TopBarParticipants from '../components/challenge/TopBarParticipants';
+import BottomBarParticipants from '../components/challenge/BottomBarParticipants';
 
 
 
@@ -47,14 +62,50 @@ export default function FSinstantChallengeDisplay() {
     const[isExpired,setIsExpired] = useState(false)
     const [isPlayerModalVisible, setIsPlayerModalVisible] = useState(false)
     const [selectedPost ,setSelectedPost] = useState(null)
-    const [selectedRank ,setSelectedRank] = useState(0)
-    const [isDescriptionrModalVisible, setIsDescriptionModalVisible] = useState(false)
+  
     const [descriptionType,setDescriptionType] = useState(null)
     const [icon,setIcon] = useState("")
-    const [isProfileDisplayerModalVisible, setIsProfileDisplayerModalVisible] = useState(false)
-    const [selectedProfile , setSelectedProfile] = useState(null)
+    
+    
+    const insets = useSafeAreaInsets();
+    const [selectedParticipant,setSelectedParticipant] = useState(null)
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [matric , setMatric] = useState(null)
+    const [displayComment,setDisplayComment] = useState(false)
+    const [isRefreshing , setIsRefreshing] = useState(false)
+    const [stage , setStage] = useState(false)
+    const [participationType,setParticipationType] = useState("")
+    const [newChallenge,setNewChallenge] = useState(false)
+    const [replayRecording,setReplayRecording] = useState(false)
+
+  
+
+    //*************************************  player */
+
+    const player = useVideoPlayer
+      (
+        null
+        , (player) => {
+        player.loop = false;
+        player.volume = 0.1
+        player.pause() ;
+        player.timeUpdateEventInterval = 0.1;
+      });
+  
+    const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
+
+    const toggleVideoPlaying = () =>{
+      if(isPlaying){
+        player.pause()
+        setIsPlaying(false)
+      }else {
+        player.play()
+        setIsPlaying(true)
+      }
+  }
 
 
+      //************** */
     
     useEffect(() => {
       if(challenge_id) getChallengeById(challenge_id, setChallenge , setIsExpired)
@@ -99,68 +150,41 @@ export default function FSinstantChallengeDisplay() {
 
     useEffect(() => {
      if(challenge){
-       if(challenge.privacy == "Public") {
-           let data = []
-           challenge.participants.forEach(participant => {
-             data.push({...participant , status:"PA"})
-           })
-           data = sortChallengeByVotes(data)
-           setData({posts:sortChallengeByVotes(data)})
-           setDisplayData(data.slice(0,6))
-           setMoreRight(data.length > 6 ? true:false)
-       }else {
-             let data = []
-             challenge.participants.forEach(participant => {
-             data.push({...participant , status:"PA"})
-            })
-            challenge.invited_friends.forEach (invite => {
-                if(!challenge.participants.find(participant => participant.user_id == invite.sender_id))
-                {
-                    data.push(
-                        {
-                         _id:invite.sender_id,
-                         name:invite.name,
-                         status:"NP",
-                         profile_img:invite.profile_img,
-                         email:invite.email
-                        }
-                    )
-                }
-            })
-            data = sortChallengeByVotes(data)
-            setData({posts:data})
-            setDisplayData(data.slice(0,6))
-            setMoreRight(data.length > 6 ? true:false)
-       }
+      let d = [...challenge.participants] ; 
+      let invites = [] 
+      if(challenge.privacy == "Private")(
+         challenge.invited_friends.forEach((friend) =>{ 
+           if(!challenge.participants.find(p => p.user_id === friend.user_id))  invites.push(
+               {...friend , 
+                video_url : null,
+                _id:friend.user_id
+               })
+         })
+      )
+      d.push(...invites)
+      setData(d)
+      let m = {
+         col:0,
+         row:0
       }
+      if(d.length == 1) {
+        m.col = 1
+      } else m.col = 2
+
+      if(d.length <= 2 ){ m.row = 1 }
+      if(d.length <= 4 && d.length >= 3  ){ m.row = 2 }
+      if(d.length >= 5  ){ m.row = 3 }
+      setMatric({...m})
+
+    }
     }, [challenge])
 
-    
-
-    
-    const handleNext = ()=> {
-        const newData = data.posts.slice( indexList * 6 , (indexList + 1)* 6);
-        setDisplayData([ ...newData]);
-        setIndexList(prev => prev + 1 )
-     }
-
-     const handleBack = ()=> {
-        const newData = data.posts.slice((indexList - 2) * 6 , (indexList - 1 ) * 6);
-         setDisplayData([...newData]);
-        setIndexList(prev => prev - 1 )
-     }
-
-    useEffect(() => {
-       if(data){
-        (indexList -1 >= 1)? setMoreLeft(true):setMoreLeft(false);
-        (data.posts.length < (indexList) * 6)? setMoreRight(false) :setMoreRight(true)
-       }
-      }, [indexList])
 
 //****************************** confirm challenge action */
         const joinChallenge = () => {
             setIsModalVisible(false)
-            router.push({ pathname: '/CreateParticipateChallenge', params: {challenge_id:challenge._id} })
+            setNewChallenge(true)
+            // router.push({ pathname: '/CreateParticipateChallenge', params: {challenge_id:challenge._id} })
          }
         
          const resignChallenge = async() => {
@@ -169,56 +193,28 @@ export default function FSinstantChallengeDisplay() {
           await quitChallenge(challenge._id,user._id).
           then(res => {
             if(challenge.origin_id == user._id) {
-              challenge.privacy == "Public"? getUserPublicChallenges(user._id,setUserPublicChallenges)
-              : getUserPrivateChallenges(user._id,setUserPrivateChallenges)
-              setTimeout(() => {
-                router.push({ pathname: '/UserChallenges',params: {
-                  publ:challenge.privacy === "Public"? "true":"false",
-                  priv:challenge.privacy === "Private" && challenge.audience !== "Strict" ? "true":"false",
-                  strict :challenge.privacy === "Private" && challenge.audience === "Strict"  ?"true":"false" ,
-                  userChallenges:"true",
-                  userParticipations:"false"
-                   }})    
-              }, 1000);
+              getUserPublicChallenges(user._id,setUserPublicChallenges)
+              getUserPrivateChallenges(user._id,setUserPrivateChallenges)
             }else {
-              challenge.privacy == "Public"? getUserPublicParticipateChallenges(user._id,setPublicParticipateChallenges)
-              :getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
-              setTimeout(() => {
-                router.push({ pathname: '/UserChallenges',params: {
-                  publ:challenge.privacy === "Public"? "true":"false",
-                  priv:challenge.privacy === "Private" && challenge.audience !== "Strict" ? "true":"false",
-                  strict :challenge.privacy === "Private" && challenge.audience === "Strict"  ?"true":"false" ,
-                  userChallenges:"false",
-                  userParticipations:"true"
-                   }})    
-              }, 1000);
+              getUserPublicParticipateChallenges(user._id,setPublicParticipateChallenges)
+              getUserPrivateParticipateChallenges(user._id,setPrivateParticipateChallenges)
+              
             }
-            // setTimeout(() => {
-            //   router.back()
-            //  }, 500);
-           
-        
-            //  setTimeout(() => {
-            //   router.push({ pathname: '/ParticipationManagement',params: {
-            //     priv:challenge.privacy === "Private" &&  challenge.audience !== "Strict" ? "true":"false", 
-            //     publ:challenge.privacy === "Public"  ? "true":"false",
-            //     strict : challenge.privacy=="Private" && challenge.audience == "Strict"?"true":"false"
-            //      }})    
-            // }, 1200);
+            handleRefresh()
+            setStage(true)
             setTimeout(() => {
-              // setVisible(false)
+            // setVisible(false)
             }, 1000);
-            const you = challenge.participants.find(participant => participant.user_id == user._id)
-             const videoRef = ref(storage,you.video_url); 
-             const thumbnailRef = ref(storage,you.thumbNail_URL); 
-             Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
+             const you = challenge.participants.find(participant => participant.user_id == user._id)
+             const videoRef = ref(storage,you.video_url);
+             const thumbnailRef = ref(storage,you.thumbNail_URL);
+             Promise.all([deleteObject(videoRef),deleteObject(thumbnailRef)])
               .then(() => {
                console.log("both deleted successfully!");
-        
                })
               .catch((error) => {
               console.error("Error deleting file:", error);
-               });  
+               });
           })
         }
         
@@ -233,39 +229,17 @@ export default function FSinstantChallengeDisplay() {
                 
                 if(user._id == challenge.origin_id) 
                   { 
-                   challenge.privacy === "Public"? getUserPublicChallenges(user._id , setUserPublicChallenges)
-                   :getUserPrivateChallenges(user._id , setUserPrivateChallenges)
-                //    setTimeout(() => {
-                //     router.back()
-                //    }, 500);
-                   setTimeout(() => {
-                    router.push({ pathname: '/UserChallenges',params: {
-                      publ:challenge.privacy === "Public"? "true":"false",
-                      priv:challenge.privacy === "Private" && challenge.audience !== "Strict" ? "true":"false",
-                      strict :challenge.privacy === "Private" && challenge.audience === "Strict"  ?"true":"false" ,
-                      userChallenges:"true",
-                      userParticipations:"false"
-                       }})    
-                  }, 1000);
-                  //  router.push({ pathname: '/profile',params: {
-                  //   priv:challenge.privacy == "Private"?"true":"false", publ:challenge.privacy === "Public"? "true":"false",
-                  //   participate:"false" , invited:"false" , strict :"false" 
-                  //    }})    
+                   getUserPublicChallenges(user._id , setUserPublicChallenges)
+                   getUserPrivateChallenges(user._id , setUserPrivateChallenges)
+                   router.back() 
+              
                    }              
                 else {
                      challenge.privacy === "Public"? getUserPublicParticipateChallenges(user._id , setPublicParticipateChallenges)
                      :getUserPrivateParticipateChallenges(user._id , setPrivateParticipateChallenges)
-                    //  setTimeout(() => {
-                    //   router.back()
-                    //  }, 500);
+                   
                     setTimeout(() => {
-                        router.push({ pathname: '/UserChallenges',params: {
-                          publ:challenge.privacy === "Public"? "true":"false",
-                          priv:challenge.privacy === "Private" && challenge.audience !== "Strict" ? "true":"false",
-                          strict :challenge.privacy === "Private" && challenge.audience === "Strict"  ?"true":"false" ,
-                           userChallenges:"false",
-                          userParticipations:"true"
-                           }})    
+                        router.back()
                       }, 1000);
                   
                    }
@@ -287,9 +261,9 @@ export default function FSinstantChallengeDisplay() {
         }
     
     
-        const confirmAction  = ()=> {
+      const confirmAction  = ()=> {
             setIsModalVisible(true)
-            switch (participantStatus) {
+            switch (participationType) {
               case "Join":
                 setAction("JN")
                 setText("Are you sure you want to join the challenge")
@@ -297,6 +271,10 @@ export default function FSinstantChallengeDisplay() {
               case "Invited":
                 setAction("JN")
                 setText("Are you sure you want to join the challenge")
+                break;
+                case "Uninvited":
+                setAction("OK")
+                setText("you are not invited to the challenge")
                 break;
               case "Resign":
                 setAction("RS")
@@ -368,7 +346,7 @@ const getIcon = (type) => {
       case "invite":
             return icons.invites
       default:
-        // setIcon("gray")
+    
     }
 }
 
@@ -411,533 +389,355 @@ const handleAudienceDescrition = ()=> {
 
 
 
-    if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} /> 
+if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} /> 
+
+
+const renderItem = ({ item ,index }) => (
+      <MotiView
+      key={index}
+      from={{ opacity: 0, translateY: 40 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{ delay: 100 * index , type: 'timing', duration: 300  }}
+      className ="min w-[49%] h-[32%] shadow-lg elevation-2xl black pb-2 ml-1 justify-center rounded-xl items-center" 
+      style ={{ 
+          height: (width * (1.14) ) /  3 ,
+          // marginLeft : index % 3 == 2 && "auto",
+          width : matric.col == 1  ? "32%" :"32%"
+          // marginRight : index % 2 == 0 && 3,
+        // borderColor:generateNewMatches(challenge,notifications) !== " "? "white" :""
+         }}
+      >
+           <TouchableOpacity
+               onPress={
+                () =>  {setSelectedParticipant(item) }}
+                style ={{ 
+    
+              }}
+                className="min w-[100%] h-[100%] rounded-lg  bg-black border- borde-[white] flex-col justify-start items-center rounde gap-  ">
+                <View
+                    className=" flex-col w-[100%] h-[100%] -2 bg-black  h- 8 g-black opacity-100 rounded-lg justify-center items-center gap- 1 ">
+                       {item.video_url ? (
+                        <>
+                         <Image
+                           className="w-[100%] h-[100%] shadow-lg elevation-2xl rounded-xl"
+                           source={{uri:item.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                           resizeMethod='cover' /> 
+                         <Image
+                           className="absolute w-7 h-7 rounded-xl"
+                           source={icons.play}
+                           resizeMethod='cover' /> 
+                        </>
+                        ):(
+                         <View
+                          className=" w-[100%]  h-[100%] flex-col justify-between    items-center">  
+                                <View
+                                  className=" w-[100%] py-1 h- [10%] flex-row justify-center gap- py-  b g-white rounded-t-xl items-center">  
+                                  <Text 
+                                        style ={{fontSize:6}}
+                                        className="text-white mt-aut text-sm font-bold">
+                                          has not joined  yet
+                                  </Text>
+                                </View>
+      
+                               <View
+                               className=" w-[100%]  h- [75%] flex-col justify-center gap-2  b g-[#0c1b51] items-center">  
+                                 <Image
+                                  className="rounded-full w-7 h-7"
+                                  // style={{with:80,height:80}}
+                                  contentFit='cover'
+                                  source={{uri:item.profile_img || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                   />
+                                 <Text 
+                                      style ={{fontSize:7}}
+                                      className="text-white mt-aut text-sm font-bold">
+                                        {item.name}
+                                 </Text>
+                               </View>
+      
+      
+                               <View
+                                  className=" w-[100%]  h- [15%] py-1 flex-row justify-center gap- b g-white g-black rounded-b-xl items-center">  
+                                 <Image
+                                  className="rounded-full w-3 h-3"
+                                  // style={{with:80,height:80}}
+                                  contentFit='cover'
+                                  source={icons.invites}
+                                   />
+                                  <View className = "w-[60%]  h- [100%] flex-col justify-center gap- px-2 py-2 g-black items-center">
+                                      <Text 
+                                          style ={{fontSize:7}}
+                                          className="text-white m text-sm font-bold">
+                                          { item._id == user._id ? " You are invited" :"is Invited"} 
+                                      </Text>
+                                  </View>
+                                 
+                               </View>
+      
+                             
+                              
+                          </View>
+                        )} 
+                </View>
+           </TouchableOpacity>
+       </MotiView>
+    )
+
+    useEffect(() => {
+      if(selectedParticipant) {
+    
+           player.replaceAsync(selectedParticipant.video_url).then(()=> {setIsPlaying(true)});
+           player.play();
+       }
+   }, [selectedParticipant])
+
+
+   const handleRefresh =()=> {
+    setIsRefreshing(true)
+    getChallengeById(challenge_id, setChallenge , setIsExpired)
+    // setSelectedContestant(null)
+    setTimeout(() => {
+         setIsRefreshing(false)
+    }, 1500);
+  }
 
   return (
-    <SafeAreaView className="bg-primary min-h-full min-w-full ">
-   {data && challenge && (
-        <KeyboardAvoidingView
-        keyboardVerticalOffset={60}
-        behavior={Platform.OS === 'ios' ? 'padding' :  undefined}
-        className = " flex-1 flex-col justify-start items-center px- rounded-x g-white">
-             <View
-              className = "min-w-[100%] h-[6%] gap- rounded-tl-x rounded-tr-x flex-row justify-start items-center px-1 bg-[#373738]">
-                  
-                  <TouchableOpacity
-                      className="w-[10%] h-[100%] justify-center g-[#eb0a0a] px-1 py-1 rounded-xl items-center opacity  "
-                      onPressIn={()=> router.back()}
-                      >
-                        <Image   
-                         source={icons.x}
-                         className=" w-10 h-10 g-white rounded-full"
-                         />
-                 </TouchableOpacity>
-                 <View
-                 className = "w-[35%] h-[80%] rounded-xl flex-row justify-center items-center px- g-[#fffefd]">
-                        <TouchableOpacity
-                         onPress={ ()=> {
-                            if (challenge.origin_id !== user._id){
-                              setIsProfileDisplayerModalVisible(true)
-                              setSelectedProfile(challenge.origin_id)
-                            }
-                         }}
-                        className = "px-2 py-1 w-[100%] flex-row justify-center gap-2 items-center">
-                               <Image 
-                                className={ "rounded-full w-7 h-7"}
-                                source={ {uri:challenge.profile_img} }
-                                resizeMode='cover'
+    <View
+    style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top  }}
+    className=" flex-1  min-w-[100vw] min-h-full flex-row justify-center items-center   b g-[#000000]"
+    >
+    <View
+    className=" flex-1  min-w-[100%] min-h-[100%] flex-row justify-center items-center   bg-[#786d6d]">
+
+      {data && challenge && (
+        <>
+                     {stage ? (
+                       <>
+                          {selectedParticipant ? (
+                            <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={toggleVideoPlaying}
+                            className={ "w-[100vw] h-[100%] b g-white flex-col justify-center items-center opacity-100"}
+                                > 
+                                
+                                <VideoView 
+                                              style={{ width:'100%' ,height:'100%',opacity:100}}
+                                              player={player}
+                                              contentFit='cover'
+                                              nativeControls ={false}
+                                              pointerEvents='box-only'
                                 />
-                                 <View className="justify-end py-  items-start h-[100%] flex-col ">
-                                               
-                                               <Text className="font-pmedium  text-sm text-black">
-                                                   <Text 
-                                                   style={{fontSize:width<= 330? 8:9}}
-                                                   className="font-bold text-sm text-white">
-                                                       {challenge.name.length > 13 ?challenge.name.slice(0,13)+"..." : challenge.name}
-                                                   </Text> 
-                                               </Text>
-                                               {/* <Text 
-                                                   style={{fontSize:width<= 330? 8:7}}
-                                                   className=" text-sm text-blue-400 font-black">
-                                                   {getInition(challenge.name)}Challenger
-                                               </Text> */}
-                                 </View>
-                        </TouchableOpacity>
-                     
-                 </View>
-                 <View
-                 className = "w-[55%] h-[100%] flex-row justify-between items-center px- g-[#de8124]">
-                       <TouchableOpacity
-                            onPress={
-                            () =>  router.push({ pathname: '/ChallengeDisplayer', params: {
-                                challenge_id:challenge._id
-                               } }) }
-                            className = "px-2 py-1 flex-row justify-center gap-1 items-center">
-                                     <Text  className="text-blue-400 font-black "
-                                                style={{fontSize:width/23}}>
-                                            PL
-                                    </Text>
+                                <ParticipantPostData user={user} show = {!isPlaying} displayComment ={displayComment}
+                                    setDisplayComment = {setDisplayComment} selectedParticipant={selectedParticipant} setIsExpired={setIsExpired} challenge={challenge}
+                                    rank={5}
+                                    handleRefresh ={handleRefresh}
+                                    width ={width } height={height} top = { height/4} />       
+                              
+                                <TouchableOpacity 
+                                    hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
+                                
+                                    onPress={ () => { (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )} }
+                                    className={
+                                            "w-full h-full flex-col absolute top-  justify-center items-center"
+                                    } >
                                     <Image 
-                                        className={ "rounded-full bg-black w-7 h-7"}
-                                        source={icons.play }
-                                        resizeMode='cover'
-                                        />
-                                    <Text  className="text-blue-400 font-black "
-                                                style={{fontSize: width/23}}>
-                                            AY
-                                    </Text>
-                                
-                      </TouchableOpacity>
-                      <TouchableOpacity className = "px-2 py-1 flex-row justify-center gap-2 items-center">
-                                <Image 
-                                        className={ "rounded-full bg-white w-7 h-7"}
-                                        source={ icons.fullscreen }
-                                        resizeMode='cover'
-                                        />
-                                
-                      </TouchableOpacity>
-                      <TouchableOpacity 
-                        onPress={ confirmAction }
-                        className = "px- py- w-[25%] h-[80%] flex-row  justify-center gap- items-center"> 
-                             <ButtonChallengeAction challenge ={challenge} participantStatus ={participantStatus}   setParticipantStatus ={setParticipantStatus} />
-                      </TouchableOpacity>
-                 </View>
+                                    className="w-14 h-14 opacity-100"
+                                    source={!isPlaying && icons.play}/>
+                                </TouchableOpacity>
 
-             </View>
+                                {/* <DisplayContestant show = {isContestantVisible} setIsContestantVisible = {setIsContestantVisible} selectedContestant={selectedContestant} 
+                                width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} /> */}
 
-            <View
-            className = "w-[100%] h-[94%] flex-col justify-start items-center px- g-white">
-                <View 
-                className = "min-w-[100%] h-[31%] flex-row justify-between rounded- items-center  bg-[#2f2c2c]">
-                        
-                        <View
-                         className = "w-[12%] h-[100%] flex-col justify-start items-center px- py-4 g-white">
-                            <View
-                                className = "w-[98%] h-[100%] flex-col rounde-tl-xl rounde-tr-xl  justify-between items-center py-2 px- ">
-                                    <TouchableOpacity 
-                                        onPress={handleParticipationDescrition}
-                                        className = " w-[100%] h-[18%] flex-col justify-center gap- items-center">
-                                        <Image 
-                                                className={ "rounded-full w-7 h-7"}
-                                                source={ icons.participate }
-                                                resizeMode='cover'
-                                                />
-                                        <Text 
-                                                        style={{fontSize:width<= 330? 8:10}}
-                                                        className=" text-sm text-blue-400 mt- font-black">
-                                                        {challenge.participants.length }
-                                        </Text>
-                                    </TouchableOpacity>
+                                {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedParticipant}  />)}
 
-                                    <ScrollView className = "w-[90%] h-[82%] py-1 flex-col justi-enter gap- rounded-lg bg-[#000000] ite-center">
-                                              {challenge.participants.map((participant, index)=> {
-                                                    return(
-                                                    <TouchableOpacity
-                                                    onPress={ ()=> {
-                                                        if(user._id !== participant.user_id){
-                                                        setIsProfileDisplayerModalVisible(true)
-                                                        setSelectedProfile(participant.user_id)
-                                                        }
-                                                       }}
-                                                    key={index} className = " w-[100%]  flex-col justify-center py-1 items-center">
-                                                            <Image 
-                                                              className={ "rounded-full w-7 h-7"}
-                                                              source={ {uri:participant.profile_img} }
-                                                              resizeMode='cover'
-                                                            />
-                                                            <Text 
-                                                              style={{fontSize:width<= 330? 7:7}}
-                                                              className=" text-sm text-white mt- font-bold">
-                                                             {participant.name.slice(0,6)}
-                                                            </Text>
-                                                    </TouchableOpacity>
-                                                    )
-                                              })}   
-                                    </ScrollView>
-                            </View>
-                        
-                        </View>
+                                {isPlaying && (<ProgresssBarVideo player={player} visible={!isPlaying} bottom={82} />)}
+                                {/* {isPlaying && ! isContestantVisible && (
+                                <VolumeControl volume = {volume} setVolume={setVolume} bottom = {95} right ={4} />
+                                )} */}
+                            </TouchableOpacity>
+                          ) : (
 
-                        <View
-                        className = "w-[38%] h-[100%] rounded--xl flex-col border-r-2 border-b-2 order-blue-500 justify-center items-center py-1 px- bg-[#131314]">
-                            {displayData.length > 0 && (
-                            <FSinstantPlayer 
-                            participant = {displayData[0]} 
-                            isVisible={true}
-                            challenge ={challenge}
-                            rank = {1 + (indexList -1) * 6}
-                            setSelectedPost ={setSelectedPost}
-                            setSelectedRank = {setSelectedRank}
-                            setSelectedProfile={setSelectedProfile}
-                            setIsProfileDisplayerModalVisible = {setIsProfileDisplayerModalVisible}
-                                />
-                            )}
-                            
-                        </View>
-                      
-                        <View
-                        className = "w-[38%] h-[100%] rounded--xl border-b-2 order-blue-500  flex-col justify-center items-center py-1 px- bg-[#0b0b0b]">
-                            {displayData.length > 1 ? (
-                            <FSinstantPlayer 
-                            participant = { displayData[1]} 
-                            isVisible={true}
-                            challenge ={challenge}
-                            rank ={2 + (indexList -1) * 6}
-                            setSelectedPost ={setSelectedPost}
-                            setSelectedRank = {setSelectedRank}
-                            setSelectedProfile={setSelectedProfile}
-                            setIsProfileDisplayerModalVisible = {setIsProfileDisplayerModalVisible}
-                                />
-                            ): 
-                            (
-                            <View
-                             className=" min-w-[94%]  h-[100%] flex-col justify-center rounded-xl mr-[3%] mt-[3%] bg-[#0f43dd] items-center">  
-                                    <Text 
-                                      style ={{fontSize:9}}
-                                       className="text-white  font-bold">
-                                         Empty Post
-                                    </Text>
-                            </View>
-                            )
+                          <View
+                          style={{
+                            height: width * (1.14) ,
+                            width:  width * 0.64,
+                            top : width * 0.18 + insets.top + 1
+                            }}
+                          className="absolute w- [100vw] full b g-[#162142] p-2 shadow-lg flex-row justify-center items-center "
+                          > 
+                            { data.length >= 1 && data.length < 3 && renderItem({item:data[0] , index:0}) 
                             }
-                        </View>
-                        <View
-                        className = "min-w-[12%] h-[100%] flex-col justify-end items-center py-4 px- g-[#f8f1f1]">
-                            <View
-                                className = "w-[90%] h-[100%] flex-col rounde-tl-xl rounde-tr-xl  justify-between items-center py-2 px- ">
-                                    <TouchableOpacity
-                                    onPress={handleInviteDescrition}
-                                    className = " w-[100%] h-[15%] flex-col justify-center gap- items-center">
-                                        <Image 
-                                                className={ "rounded-full w-7 h-7"}
-                                                source={ icons.invites }
-                                                resizeMode='cover'
-                                                />
-                                        <Text 
-                                                        style={{fontSize:width<= 330? 8:8}}
-                                                        className=" text-sm text-blue-400 mt- font-black">
-                                                        {challenge.invited_friends.length }
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <ScrollView className = "w-[100%] max-h-[82%] flex-col justif-center gap- rounded-lg bg-[#040505] ite-center">
-                                              {challenge.invited_friends.map((participant, index)=> {
-                                                    return(
-                                                    <TouchableOpacity
-                                                    onPress={ ()=> {
-                                                        if(user._id !== participant.sender_id){
-                                                        setIsProfileDisplayerModalVisible(true)
-                                                        setSelectedProfile(participant.sender_id)
-                                                        }
-                                                       }}
-                                                    key={index} className = " w-[100%]  flex-col justify-center py-1 items-center">
-                                                            <Image 
-                                                              className={ "rounded-full w-7 h-7"}
-                                                              source={ {uri:participant.profile_img} }
-                                                              resizeMode='cover'
-                                                            />
-                                                            <Text 
-                                                              style={{fontSize:width<= 330? 7:7}}
-                                                              className=" text-sm text-white mt- font-black">
-                                                             {participant.name.slice(0,6)}
-                                                            </Text>
-                                                    </TouchableOpacity>)
-                                              })}   
-                                    </ScrollView>
-                            </View>
-                        </View>
-                </View>
+                            { 
+                            data.length == 2 && renderItem({item:data[1] , index:1}) 
+                            }
 
-               
+                          {data.length >= 3 && 
+                            <FlatList
+                            style={{width:"100%" ,height:"100%"}}
+                            data={data}
+                            numColumns={3}
+                            keyExtractor={(item) => item._id}
+                            renderItem={renderItem}
+                            removeClippedSubviews={true} 
+                            scrollEventThrottle = {16}
+                            showsHorizontalScrollIndicator ={false}
+                            showsVerticalScrollIndicator ={false}
+                          /> 
+                            }
 
-                <View 
-                className = "min-w-[100%] h-[31%] flex-row justify-start  items-center px- bg-[#2f2c2c]">
+
+                            {/* <FlatList
+                              style={{width:"100%" ,height:"100%"}}
+                              data={data}
+                              numColumns={2}
+                              keyExtractor={(item) => item._id}
+                              renderItem={renderItem}
+                              removeClippedSubviews={true} 
+                              scrollEventThrottle = {16}
+                            />   */}
+                          </View>
                        
-                       <View
-                         className = "w-[12%] h-[100%] flex-col justify-evenly items-center px- py-4 g-white">
-                           
+                          )}
+                        </>
+                        ): (
+                           <>
+                           {!newChallenge ? (
+                          <ParticipantRoom  user={user} confirmAction={confirmAction} setStage = {setStage}
+                          setSelectedParticipant={setSelectedParticipant}  
+                          setParticipationType = {setParticipationType} challenge={challenge}/>
+                          ):(
+                          <ChallengeParticipation challenge= {challenge} setReplayRecording={setReplayRecording} setNewChallenge={setNewChallenge}
+                          user={user} setSelectedParticipant={setSelectedParticipant} setStage={setStage} setChallenge={setChallenge} setIsExpired={setIsExpired}/>
+                          )}
 
-                                       
-                                        <TouchableOpacity 
-                                           onPress={ handleTypeDescrition }
-                                           className = "px-0 py- h-[25%] flex-col justify-start gap- items-center">
-                                          
-                                                <Image
-                                                source={getIcon(challenge.type)}
-                                                resizeMethod='contain'
-                                                // style={{width:width/8, height:width/8}}
-                                                className="w-7 h-7 rounded-full" /> 
-                                                <Text 
-                                                    style={{fontSize:6}}
-                                                    className="text-white mt-1 font-black"> 
-                                                        {challenge.type}
-                                               </Text>
- 
-                                        </TouchableOpacity>
-                                       
-                                        <TouchableOpacity 
-                                           onPress={ handlePrivacyDescrition }
-                                           className = "px- py- h-[25%] flex-col justify-center gap- items-center">
-                                                <Image 
-                                                        className={ "rounded-full w-7 h-7"}
-                                                        source={challenge.privacy == "Public" ?icons.publi : icons.priv }
-                                                        resizeMode='contain'
-                                                        />
-                                                <Text 
-                                                                style={{fontSize:width<= 330? 6:7}}
-                                                                className=" text-sm text-white mt-1 font-black">
-                                                                {challenge.privacy == "Public" ? "Public" : "Private" }
-                                                </Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity 
-                                            onPress={handleAudienceDescrition}
-                                            className = "px- py- h-[25%] flex-col justify-center gap- items-center">
-                                                <Image 
-                                                        className={ "rounded-full w-7 h-7"}
-                                                        source={challenge.audience == "Open" ? icons.open:
-                                                            challenge.audience == "Restricted" ? icons.restricted : icons.strict }
-                                                        resizeMode='cover'
-                                                        />
-                                                <Text 
-                                                                style={{fontSize:width<= 330? 6:7}}
-                                                                className=" text-sm text-white mt-1 font-black">
-                                                                {challenge.audience}
-                                                </Text>
-                                        </TouchableOpacity>
-                        
-                        </View>
-                        <View
-                        className = "w-[38%] h-[100%] rounded--xl g-[#0a98eb] border-r-2 border-b-2 order-blue-500 flex-col justify-center items-center py-1 px- bg-[#050505]">
-                            {displayData.length > 2 ? (
-                            <FSinstantPlayer 
-                            participant = { displayData[2]} 
-                            isVisible={true}
-                            challenge ={challenge}
-                            rank ={ 3 + (indexList -1) * 6}
-                            setSelectedPost ={setSelectedPost}
-                            setSelectedRank = {setSelectedRank}
-                            setSelectedProfile={setSelectedProfile}
-                            setIsProfileDisplayerModalVisible = {setIsProfileDisplayerModalVisible}
-                                />
-                            ): 
-                            (
-                            <View
-                             className=" w-[94%]  h-[100%] flex-row justify-center rounded-xl  ml-[3%] -[3%] bg-[#0f43dd] items-center">  
-                                  <Text 
-                                      style ={{fontSize:9}}
-                                       className="text-white  font-bold">
-                                         Empty Post
-                                  </Text>
-                            </View>
-                            )}
-                        </View>
-                       
-                        <View
-                        className = "w-[38%] h-[100%] rounded--xl g-[#0a98eb] border-b-2 order-blue-500 flex-col justify-start items-center py-1 px- bg-[#070808]">
-                            {displayData.length > 3 ? (
-                            <FSinstantPlayer 
-                            participant = { displayData[3]} 
-                            isVisible={true}
-                            challenge ={challenge}
-                            rank ={4 + (indexList -1) * 6}
-                            setSelectedPost ={setSelectedPost}
-                            setSelectedRank = {setSelectedRank}
-                            setSelectedProfile={setSelectedProfile}
-                            setIsProfileDisplayerModalVisible = {setIsProfileDisplayerModalVisible}
-                                />
-                            ): 
-                            (
-                            <View
-                             className=" w-[94%]  h-[100%] flex-row justify-center rounded-xl  mr-[3%] -[3%] bg-[#0f43dd] items-center">  
-                                 <Text 
-                                      style ={{fontSize:9}}
-                                       className="text-white font-bold">
-                                         Empty Post
-                                </Text>
-                            </View>
-                            )}
-                        </View>
-                        <View
-                        className = "min-w-[12%] h-[100%] flex-col justify-start items-center py- px- g-white">
-                            <View
-                                className = "w-[90%] h-[100%] flex-col rounde-tl-xl rounde-tr-xl  justify-between items-center py-2 px- ">
-                                    
-                                    <TouchableOpacity
-                                            onPress={handleChallengeCompetitionDescrition}
-                                            className = "px-0 py- h-[25%] flex-col justify-start gap- items-center">
-                                                <Image 
-                                                        className={ "rounded-full w-7 h-7"}
-                                                        source={icons.newChallenge }
-                                                        resizeMode='cover'
-                                                        />
-                                                <Text 
-                                                                style={{fontSize:width<= 330? 6:6}}
-                                                                className=" text-sm text-blue-400 mt-1 font-black">
-                                                                Challenge
-                                                </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity 
-                                        onPress={!isFavourite?confirmAddToFavourite:confirmRemoveFromFavourite}
-                                        className = " w-[100%] -[20%]  py-1 flex-col rounded-lg bg-[#134854] justify-center gap- items-center">
-                                       
-                                        <Image 
-                                                className={ "rounded-full w-7 h-7"}
-                                                source={ icons.watchlist }
-                                                resizeMode='cover'
-                                                />
-                                        <Text 
-                                                        style={{fontSize:width<= 330? 8:6}}
-                                                        className=" text-sm text-white mt- font-black">
-                                                        {isFavourite?"Remove":"Add"}
+                          </>
+                        )}
+      
 
-                                        </Text>
-                                    </TouchableOpacity>
-                                    
-                            </View>
-                        </View>
+
+
+
+           {!isPlaying  && !displayComment && !replayRecording && !newChallenge && (
+                <MotiView
+                  from={{ opacity: 0, translateY: 40 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ delay: 800, type: 'timing', duration: 600 }}
+                  style = {{
+                    height: Platform.OS == "ios" ? height - width * 1.49 - insets.top - 28 :height - width * 1.49 - 30 - 28,
+                    width : width ,
+                    bottom: 0,
+                    backgroundColor: stage? 'rgba(0,0, 0 , 0.1)' :'rgba(0,0 , 0 , 0.1)'
+                  }}
+                  className ="absolute  flex-col b g-[#120564] rounded-xl  justify-center items-center"
+                >
                 
+
+                <View
+                  className ="w- [100%] absolute h- 7 top-0   gap- 2 g-white rounded-xl flex-col justify-center items-center">
+                    <Text 
+                            style ={{fontSize:12 ,fontStyle:"italic"}}
+                            className="text-xl font-black -auto text-white"> 
+                            {challenge.participants.length} 
+                    </Text>
+                  
+                    <Text 
+                            style ={{fontSize:11}}
+                            className="text-xl font-black -auto text-white"> 
+                                Participants
+                    </Text>
                 </View>
 
-                        {/* last panel  */}
-                <View 
-                className = "min-w-[100%] h-[31%] flex-row justify-start rounded-bl-xl rounded-br-xl items-center px- bg-[#2f2c2c]">
-                       
-                       <View
-                         className = "w-[12%] h-[100%] flex-col justify-start items-center px- py-4 g-white">
-                           
-                        
-                        </View>
-                        <View
-                        className = "w-[38%] h-[100%] rounded--xl g-[#0a98eb] border-r-2 order-blue-500 flex-col justify-center items-center py-1 px- bg-[#050505]">
-                            {displayData.length > 4 ? (
-                            <FSinstantPlayer 
-                            participant = { displayData[4]} 
-                            isVisible={true}
-                            challenge ={challenge}
-                            rank ={ 5 + (indexList -1) * 6}
-                            setSelectedPost ={setSelectedPost}
-                            setSelectedRank = {setSelectedRank}
-                            setSelectedProfile={setSelectedProfile}
-                            setIsProfileDisplayerModalVisible = {setIsProfileDisplayerModalVisible}
-                                />
-                            ): 
-                            (
-                            <View
-                             className=" w-[94%]  h-[100%] flex-row justify-center rounded-xl  ml-[3%] mb-[3%] bg-[#0f43dd] items-center">  
-                                  <Text 
-                                      style ={{fontSize:9}}
-                                       className="text-white  font-bold">
-                                         Empty Post
-                                  </Text>
-                            </View>
-                            )}
-                        </View>
-                       
-                        <View
-                        className = "w-[38%] h-[100%] rounded--xl g-[#0a98eb] flex-col justify-center items-center py-1 px- bg-[#030303]">
-                            {displayData.length > 5 ? (
-                            <FSinstantPlayer 
-                            participant = { displayData[5]} 
-                            isVisible={true}
-                            challenge ={challenge}
-                            rank ={6 + (indexList -1) * 6}
-                            setSelectedPost ={setSelectedPost}
-                            setSelectedRank = {setSelectedRank}
-                            setSelectedProfile={setSelectedProfile}
-                            setIsProfileDisplayerModalVisible = {setIsProfileDisplayerModalVisible}
+                <TouchableOpacity
+                    onPress={()=> {
+                        setSelectedParticipant(null)
+                        setStage(!stage)
+                        // createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation,setEdition, setIsLoading)
+                       }
+                    }
+                    className ="w- [100%] -[40%] p-2  mb-12 g-white rounded-lg flex-row justify-center items-center">
+                     <View
+                       className ="w- [98%] -[94%] px-4 bg-white  rounded-lg flex-row justify-center items-center">
+                           <Text 
+                                style ={{fontSize:7}}
+                                className="text-xl font-black -auto text-black"> 
+                                  {stage? "EXIT STAGE" :"ENTER STAGE"} 
+                           </Text>
+                     </View>
+                </TouchableOpacity>
 
-                                />
-                            ): 
-                            (
-                            <View
-                             className=" w-[94%]  h-[100%] flex-row justify-center rounded-xl  mr-[3%] mb-[3%] bg-[#0f43dd] items-center">  
-                                 <Text 
-                                      style ={{fontSize:9}}
-                                       className="text-white  font-bold">
-                                         Empty Post
-                                </Text>
-                            </View>
-                            )}
-                        </View>
-                        <View
-                        className = "min-w-[12%] h-[100%] flex-col justify-start items-center py- px- g-white">
-                            <View
-                                className = "w-[98%] h-[100%] flex-col rounde-tl-xl rounde-tr-xl  justify-between items-center py-2 px- ">
-                                   
-                                    
-                            </View>
-                        </View>
-                
+              
+              
+                <View
+                className = "flex-row absolute h-7 left-0 ml-1 top-2 justify-start items-end gap-2">
+                    <Image
+                          source={getIcon(challenge.type)}
+                          className = "w-7 h-7"
+                          />
+                    <Text 
+                          style ={{fontSize:11}}
+                          className="text-xl mt-2 font-black  text-white"> 
+                              {challenge.type} 
+                    </Text>
                 </View>
 
-
-                <View 
-                className = "min-w-[100%] h-[6%] rounded-br-xl rounded-bl-xl px-1 flex-row justify-start items-center py- g-white">
-                        <View
-                        className = "w-[100%] h-[100%] flex-row rounde-xl rounde-br-xl border-none justify-between items-center py- px- g-[#121313]">
-                                        <TouchableOpacity
-                                                className=" justify-center items-center opacity   "
-                                                onPressIn={moreLeft? handleBack :()=>{}}
-                                                >
-                                                    <Image   
-                                                    source={moreLeft ?icons.back_arrow:""}
-                                                    className="  w-9 h-9 rounded-full"
-                                                    resizeMethod='cover'
-                                                    />
-                                        </TouchableOpacity>
-                                        <View
-                                        className = "w-[78%] h-[100%] px- py- flex-row rounded-bl-xl rounded-br-xl justify-center items-center px- g-[#2f2c2c]">
-                                                <View className = "w-[90%] h-[80%] px-2 py-1 flex-row justify-center rounded-lg items-center bg-[#080807]">
-                                                <SwingingTitle text={challenge.desc} color="white" fontSize={9} />
-                                                </View>
-                                        </View>
-                                        <TouchableOpacity
-                                            className=" justify-center items-center opacity  "
-                                            onPressIn={moreRight? handleNext :()=>{}}
-                                            >
-                                                <Image   
-                                                source={moreRight ?icons.next_arrow:""}
-                                                className=" w-9 h-9 rounded-full"
-                                                />
-                                        </TouchableOpacity>
-                        </View>
+                <View
+                className = "flex-row absolute h-7 right-0 mr-2 top-2 justify-start items-end gap-2">
+                    <Text  
+                          style ={{fontSize:11}}
+                          className="text-xl font-black mt-2 text-white"> 
+                              {challenge.privacy} 
+                    </Text>
+                    <Image
+                          source={getIcon(challenge.privacy)}
+                          className ="w-7 h-7"
+                          />
                 </View>
+              
+            </MotiView>
+
+            )}
 
 
-                
-        
-                                        
-            </View>
+           
+            {/* <TopBarChallenge show = {!isPlaying && !replayRecording } width ={width} height={ height * 0.07 } top = { width * 1.5 + insets.top  + 7 }
+             challenge={challenge} typeIcon = {getIcon(challenge.type)} privacyIcon = {getIcon(challenge.privacy)}
+             left ={0} right ={null} user ={user}
+             />   */}
 
-            {isPlayerModalVisible && (  
-                     <PostPlayerModal isPlayerModalVisible={isPlayerModalVisible}  selectedPost ={selectedPost} challenge = {challenge}
-                     setIsPlayerModalVisible={setIsPlayerModalVisible} selectedRank ={selectedRank}
-                       />
-                 )}
-            {isDescriptionrModalVisible && (  
-                     <ChallengeDescriptionModal isDescriptionrModalVisible={isDescriptionrModalVisible} descriptionType ={descriptionType}
-                     setIsDescriptionModalVisible={setIsDescriptionModalVisible} text={text} icon ={icon}
-                       />
-                 )}
-            {isModalVisible && (  
+             <TopBarParticipants show = {!isPlaying && stage && !replayRecording } width ={width} height={ width * 0.18  } top={7 }
+             left ={0} right ={null}   participants = {challenge.participants.slice(0,4)} selectedParticipant={selectedParticipant} setSelectedParticipant={setSelectedParticipant}/>
+
+            <LeftBarChallenge show = {!isPlaying && stage && !replayRecording } width ={width * 0.19} height= {width * 1.13 } top= { width * 0.18  + 14 }
+             left ={0} right ={null} participants ={challenge.participants.slice(0,12).filter((element, index) => {
+              return index % 2 !== 10;
+            })} selectedParticipant={selectedParticipant} setSelectedParticipant={setSelectedParticipant}
+             />
+
+            <RightBarChallenge show = {!isPlaying && stage && !replayRecording} width ={width * 0.19} height={width * 1.13} top={width * 0.18 + 14 }
+              left ={null} right ={0} participants ={challenge.participants.slice(0,12).filter((element, index) => {
+              return index % 2 !== 10;
+            })} selectedParticipant={selectedParticipant} setSelectedParticipant={setSelectedParticipant}
+             />
+
+            <BottomBarParticipants show = {!isPlaying && stage && !replayRecording } width ={width} height = { width * 0.18  } top ={width * 1.31  + 21 }
+             left ={0} right ={null}   participants = {challenge.participants.slice(0,4)} selectedParticipant={selectedParticipant} setSelectedParticipant={setSelectedParticipant}/>
+
+
+            <BottomBarChallenge show = {!isPlaying  && !replayRecording } width ={width} height={height * 0.10 } bottom={0} left ={null} right ={null} user = {user}
+                 confirmAction = {confirmAction}  challenge={challenge} handleRefresh={handleRefresh} setSelectedParticipant={setSelectedParticipant} isRefreshing={isRefreshing}/>          
+      
+         
+
+            
+           {isModalVisible && (  
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible}  removeChallenge = {removeChallenge} removeFromFavourite={removeFromFavourite}
                      addToFavourite={ addToFavourite} setIsModalVisible={setIsModalVisible}  joinChallenge={joinChallenge} resignChallenge={resignChallenge}
                        />
-                 )}
-            {isProfileDisplayerModalVisible && (  
-                     <ProfileDisplayModal isProfileDisplayerModalVisible={isProfileDisplayerModalVisible} selectedProfile={selectedProfile}
-                     setIsProfileDisplayerModalVisible={setIsProfileDisplayerModalVisible} 
-                       />
-                 )}
-        </KeyboardAvoidingView>
- )}
- 
- {/* {isPlayerModalVisible && (  
-                     <PostPlayerModal isPlayerModalVisible={isPlayerModalVisible}  selectedPost ={selectedPost} challenge = {challenge}
-                     setIsPlayerModalVisible={setIsPlayerModalVisible} selectedRank ={selectedRank}
-                       />
-                 )} */}
+           )}
+
      
-     
-  </SafeAreaView>
+     </>
+  )}     
+   </View>
+  </View>
   )
 }

@@ -28,6 +28,7 @@ import BottomContestantBar from '../components/talent/BottomContestantBar';
 import { deleteObject, getStorage, ref } from 'firebase/storage'
 import { storage } from '../firebase';
 import ContestantList from '../components/talent/ContestantList';
+import { useKeepAwake } from 'expo-keep-awake';
 
 
 
@@ -59,11 +60,10 @@ const [numberOfContestants , setNumberOfContestants] = useState(0)
 const [participationType , setParticipationType] = useState("")
 
 const [edition,setEdition] = useState(null)
-
+useKeepAwake();
 //************************************ Player set up  */
 const player = useVideoPlayer
 (
-  // demo
   null
   , (player) => {
   player.loop = false;
@@ -324,7 +324,7 @@ return (
                                           <TouchableOpacity
                                           activeOpacity={1}
                                           onPress={toggleVideoPlaying}
-                                          className={ "w-[100vw] h-[100vh] b g-white flex-col justify-center items-center opacity-100"}
+                                          className={ "w-[100vw] h-[100%] b g-white flex-col justify-center items-center opacity-100"}
                                               > 
                                               
                                               <VideoView 
@@ -354,7 +354,7 @@ return (
                                               </TouchableOpacity>
 
                                               <DisplayContestant show = {isContestantVisible} setIsContestantVisible = {setIsContestantVisible} selectedContestant={selectedContestant} 
-                                              width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} />
+                                              width ={width } height={height-insets.top} top = { insets.top} setIsExpired={setIsExpired} />
 
                                               {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedContestant}  />)}
 
@@ -401,7 +401,7 @@ return (
                 from={{ opacity: 0, translateY: 40 }}
                 animate={{ opacity: 1, translateY: 0 }}
                 transition={{ delay: 800, type: 'timing', duration: 600 }}
-                style ={{bottom: !show? height * 0.12 + insets.bottom : height * 0.12 + insets.bottom}}
+                style ={{bottom: !show? height * 0.08 + insets.bottom : height * 0.12 + insets.bottom}}
                 className ="w-[40%] -[10%] p-2  absolute bottom-36 flex-col bg-[#0f1457] rounded-xl  justify-start items-center">
                 <TouchableOpacity
                        onPress={handleRefresh}

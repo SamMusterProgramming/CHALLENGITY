@@ -41,40 +41,40 @@ export default function tabsLayout() {
         // tabBarHideOnKeyboard: true ,
         // tabBarHideOnKeyboard: true,
         unmountOnBlur: true,
-        tabBarActiveTintColor: 'blue',
-        tabBarInactiveTintColor: 'caramel',
+        // tabBarActiveTintColor: 'blue',
+        // tabBarInactiveTintColor: 'caramel',
         // tabBarIconStyle:{
           
         // },
           tabBarStyle: {
             // display: hideTabBar ? 'none' : 'none',
-          // marginLeft:"6%",
-          bottom:Platform.OS =="ios" ? 0:0,
-          backgroundColor: "#051846",
+          marginLeft:"10%",
+          bottom:Platform.OS =="ios" ? 5:5,
+          backgroundColor: "black",
           // borderTopWidth:12,
           // borderTopColor:"white",
           // '#fcba03',
           position:"absolute",
-          width:'100%',
+          width:'80%',
           height: Platform.OS =="ios" ? width/7: width/7,
           // borderBottomRadius: 50,
-          // borderRadius:50,
+          borderRadius:50,
           alignItems:'center',
           justifyContent:"center",
           display:'flex',
           flexWrap:"wrap",
           // elevation: 12,
-          shadowOpacity: 10,
+          // shadowOpacity: 10,
           // border: 3,
           flexDirection:'row',
-          // marginBottom:10
+          // marginBottom:5
         },
-        tabBarLabelStyle: {
+        // tabBarLabelStyle: {
           
-          fontSize: 1,
-          fontWeight: "800",
-          },
-      tabBarShowLabel:true
+        //   fontSize: 1,
+        //   fontWeight: "800",
+        //   },
+      tabBarShowLabel:false
     }}>
       <Tabs.Screen 
         name='Home'
@@ -82,16 +82,21 @@ export default function tabsLayout() {
           tabBarLabel: '',
           title:"Home",
           headerShown:false,
+          tabBarShowLabel:false,
           tabBarIcon:({color,focused,size}) => (
             <View
-            className ="rounded-full borde-2 borde-[#56617a]  [#15181e] justify-center items-center "
-            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
-          >
-              <Image
-                source={focused ? icons.home : icons.home}
-                style={{ width: size+width/30-10, height:size+width/30-10, tintColor: "none"}}
-              />
-          </View>
+                className ="rounded-full borde-2 borde-[#56617a]  [#15181e] flex-row justify-center items-center "
+                style={{
+                  width:size+width/25 ,height:size+width/25,
+                  marginTop:width/25+3 ,
+                   backgroundColor: focused?"white": "lightgray"}}
+                  >
+                  <Image
+                    className="rounded-full"
+                    source={focused ? icons.home : icons.home}
+                    style={{ width: size + width/30-10, height:size + width/30-10, tintColor: "none"}}
+                  />
+            </View>
           )
         }}
        />
@@ -107,7 +112,7 @@ export default function tabsLayout() {
               className ="rounded-full borde-2 borde-[#092969] justify-center items-center "
               style={{width:size+width/25 ,height:size+width/25,
                 marginTop:width/25+3 ,
-                 backgroundColor: focused?"white": "black"}}
+                 backgroundColor: focused?"white": "lightgray"}}
             >
                 <Image
                   source={focused ? icons.challenge : icons.challenge}
@@ -126,14 +131,16 @@ export default function tabsLayout() {
           headerShown:false,
           tabBarIcon:({color,focused,size}) => (
             <View
-            className ="rounded-full borde-2 borde-[#092969]  justify-center items-center "
-            style={{width:size+width/25 ,height:size+width/25,marginTop:width/25+3 , backgroundColor: focused?"white": "black"}}
-             >
-              <Image
-              source={focused ? icons.talent : icons.talent}
-              style={{ width: size+width/30-10, height:size+width/30-3-10, tintColor: "none"}}
-              />
-        </View>
+                className ="rounded-full borde-2 borde-[#092969]  justify-center items-center "
+                style={{width:size+width/25 ,height:size+width/25,
+                  marginTop:width/25+3 ,
+                  backgroundColor: focused?"white": "lightgray"}}
+                >
+                  <Image
+                  source={focused ? icons.talent : icons.talent}
+                  style={{ width: size + width/30-10, height:size + width/30-3-10 , tintColor: "none"}}
+                  />
+            </View>
           )
         }}
        />
@@ -147,7 +154,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full borde-2 borde-[#092969] justify-center items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "black"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "lightgray"}}
             >
             { user && (
               <Image
@@ -170,7 +177,7 @@ export default function tabsLayout() {
           tabBarIcon:({color,focused,size}) => ( 
             <View
               className ="rounded-full justify-center borde-2 borde-[#092969] items-center "
-              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "black"}}
+              style={{width:size+width/25 ,height:size+width/25,marginTop:+width/25+3 , backgroundColor: focused?"white": "lightgray"}}
             >
               <Image
               source={icons.setting}

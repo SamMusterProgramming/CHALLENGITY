@@ -2,13 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Button, Animated, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { icons } from '../../constants';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // const { width } = Dimensions.get('window');
 
-const BottomBar = ({ show, onClose , height, width ,top ,bottom,left ,right, user , region , regionIcon, selectedTalent,
+const BottomBar = ({ show,  height, width ,top ,bottom,left ,right, user , region , regionIcon, selectedTalent,
      selectedIcon,userContestantStatus , talentRoom , confirmAction}) => {
 //   const sidebarWidth = width * 0.8; 
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  height)).current;
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     
@@ -23,7 +25,7 @@ const BottomBar = ({ show, onClose , height, width ,top ,bottom,left ,right, use
 
   return (
     <Animated.View 
-     className=" w-full h-[5%] absolute top-0 flex-row justify-start items-start borde-t-2 borde-b-2 border-white g-[#182e2e]"
+     className=" w-full h-[5%] absolute top-0 flex-col justify-start items-start borde-t-2 borde-b-2 border-white g-[#182e2e]"
      style={[
         // styles.sidebar
         {
@@ -42,8 +44,12 @@ const BottomBar = ({ show, onClose , height, width ,top ,bottom,left ,right, use
         , 
     { transform: [{ translateY: sidebarAnimation }] }]}>
                         
-                       
-                <View
+             <View
+                style={{height : height}} 
+                className="w-[100%] flex-row justify-between items-end"
+                >
+                        
+                        <View
                          className = "w-[13%] h-[80%] flex-col justify-center borde-2 borde-white rounded-tl-lg g-[#022f2f] items-center ">
                                <TouchableOpacity
                                     // onPress={() =>  router.back()}
@@ -130,8 +136,11 @@ const BottomBar = ({ show, onClose , height, width ,top ,bottom,left ,right, use
                                                     source={icons.x}/>
                                </TouchableOpacity>
                          </View>
+                  
+                  </View>
+                
 
-                       
+                 
     </Animated.View>
   );
 };

@@ -64,7 +64,9 @@ export default function Home() {
   return (
 
         <View
-           style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top}}
+           style={{ 
+            paddingTop:Platform.OS == "ios" ? insets.top : insets.top
+          }}
            className=" flex-1 borde-4 borde r -b-4  -white borde-white flex-col justify-start items-center py- bg-[#0f1010]">
         
           <View className="justify-center items-center w-full h-[7%] flex-row ">
@@ -76,17 +78,17 @@ export default function Home() {
                                         />
           </View>
                  
-          {/* <View className="  w-[100%] h-[17%] flex-row px- border-2  borde-[#306c99] g-[#272d31] rounde-tl-xl  rounde-tr-xl items-center  bg[#0a144b] justify-between"
+       
+          <View className="  w-[100%] h-[15%] flex-row px- border-b-2  b order-[#306c99] b g-[#e2eaef] rounde-tl-xl  rounde-tr-lg items-end  bg[#0a144b] justify-between"
                   >
-          
                         <View
-                            className="justify-between  px- 6 gap-4 w-[30%] items-center borde-2  borde-white h-[70%] flex-row g-[#fefefe] rounde-tr-3xl  ">
+                            className="justify-start rotate- 45 px-1 py-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#e3d9d9] rounded-tr-3xl rounde-tr-3xl  ">
                                       <TouchableOpacity 
                                           onPress={()=> {setDisplayNotificationsModal(true)}}
-                                            className="justify-start items-start w- [50%] h-[80%] pb- 6  py- rounded-full  g-[#d5daf6] flex-col">
+                                            className="justify-start items-start w- [50%] h- [80%] pb- 6  p-2 rounded-full  bg-black g-[#d5daf6] flex-col">
                                                     <Image
-                                                        style={{width:height * 0.05 ,height: height * 0.05}}
-                                                        className="w-[30px]  h-[30px]  rounded-full g-white"
+                                                        style={{width:height * 0.03 ,height: height * 0.03}}
+                                                        className="w-[20px]  h-[20px]  rounded-full"
                                                         source={icons.notification}
                                                         resizeMethod='cover' />
                                                     <Text 
@@ -97,103 +99,31 @@ export default function Home() {
                                       </TouchableOpacity>
                                       <TouchableOpacity 
                                           onPress={()=> {router.navigate("/SearchFriend")}}
-                                            className="justify-end items- rounded-full p-1 w- [50%] h-[100%]  borde-[#0a144b] g-[#c0c2c9] flex-col">
+                                            className="justify-start items- rounded-full p-2 w- [50%] h- [100%] bg-black  borde-[#0a144b] g-[#c0c2c9] flex-col">
                                                     <Image
-                                                        style={{width:height* 0.05 ,height: height * 0.05}}
-                                                        className="w-[30px] h-[30px] rounded-full bg-white"
-                                                        source={icons.search_people}
-                                                        resizeMethod='cover' />
-                                      </TouchableOpacity>
-                        </View>
-                        <View
-                            className="justify-center  px- 4 gap-4 w-[40%] items-center h-[100%] flex-col  g-[#fefefe] rounde-tr-3xl  ">
-                                    <View className="justify-center items-center -[100%] flex-row ">
-                                        <Image 
-                                            style={{width:height * 0.076 ,height: height * 0.076}}
-                                            className="w-[40px] h-[40px] rounded-full "
-                                            source={{uri :  (user.profile_img? user.profile_img  : "")}}
-                                        />
-                                           
-                                    </View>
-                                    <View className="justify-center rounded-xl gap- -auto items-start b g-[#01132e] p-2 -[100%] flex-col ">
-                                            <Text className="font-pmedium  text-sm text-white">
-                                                <Text 
-                                                style={{fontSize:width<= 330? 8:12}}
-                                                className="font-bold text-sm text-white">
-                                                    { (user.name.length > 13 ?  user.name.slice(0,13)+ "..." : user.name)}
-                                                </Text> 
-                                            </Text>
-                                          
-                                    </View>  
-                        </View>
-                        <View
-                            className="justify-between  px- 6 gap-4 w-[30%] items-center borde-2  borde-white h-[70%] flex-row g-[#fefefe] rounde-tr-3xl  ">
-                                      <TouchableOpacity 
-                                          onPress={()=> {router.navigate("/ProfilePage")}}
-                                            className="justify-end items- center  rounded-full p- 1 h-[100%] border-  g-[#2039c4] g-[#fcfdff] flex-col">
-                                                     <Image
-                                                        style={{width:height * 0.05 , height: height * 0.05}}
-                                                        className="w-[30px] h-[30px] rounded-full bg-[#fefefe]"
-                                                        source={icons.profile}
-                                                        resizeMethod='cover' />                                    
-                                      </TouchableOpacity>
-                                      <TouchableOpacity 
-                                          onPress={()=> {router.navigate("/SearchFriend")}}
-                                            className="justify-start items-start w- [50%] h-[80%] pb- 6  py- rounded-full  g-[#d5daf6] flex-col">
-                                                    <Image
-                                                        style={{width:height * 0.05 ,height: height * 0.05}}
-                                                        className="w-[30px] h-[30px] rounded-full bg-black"
-                                                        source={icons.watchlist}
-                                                        resizeMethod='cover'/>
-                                      </TouchableOpacity>
-                        </View>
-                  
-            </View> */}
-
-<View className="  w-[100%] h-[15%] flex-row px- border-b-2  b order-[#306c99] b g-[#e2eaef] rounde-tl-xl  rounde-tr-xl items-end  bg[#0a144b] justify-between"
-                  >
-                        <View
-                            className="justify-start rotate- 45 px-1 py-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#230d10] rounded-tr-full rounde-tr-3xl  ">
-                                      <TouchableOpacity 
-                                          onPress={()=> {setDisplayNotificationsModal(true)}}
-                                            className="justify-start items-start w- [50%] h- [80%] pb- 6  py- rounded-full  g-[#d5daf6] flex-col">
-                                                    <Image
-                                                        style={{width:height * 0.04 ,height: height * 0.04}}
-                                                        className="w-[30px]  h-[30px]  rounded-full g-white"
-                                                        source={icons.notification}
-                                                        resizeMethod='cover' />
-                                                    <Text 
-                                                          style={{fontSize:8}}
-                                                          className="absolute top-0 p- right-0 w-5 h-5 rounded-full text-center bg-white font-black text-sm text-red-500">
-                                                              {notifications.filter(not=>not.isRead == false).length}
-                                                    </Text> 
-                                      </TouchableOpacity>
-                                      <TouchableOpacity 
-                                          onPress={()=> {router.navigate("/SearchFriend")}}
-                                            className="justify-start items- rounded-full p-1 w- [50%] h-[100%]  borde-[#0a144b] g-[#c0c2c9] flex-col">
-                                                    <Image
-                                                        style={{width:height* 0.04 ,height: height * 0.04}}
-                                                        className="w-[30px] h-[30px] rounded-full b g-white"
+                                                        style={{width:height* 0.03 ,height: height * 0.03}}
+                                                        className="w-[30px] h-[30px] rounded-full "
                                                         source={icons.search_people}
                                                         resizeMethod='cover' />
                                       </TouchableOpacity>
                         </View>
 
                         <View
-                            className="justify-end py- 2  px- 4 gap- 2 w-[40%] items-center h- [100%] flex-col  b g-[#042a6c] rounded-t-full bg-[#230d10] ">
+                            className="justify-end py- 2  px- 4 gap- 2 w-[40%] items-center h-[95%] flex-col  b g-[#ffffff] rounded-t-xl full b g-[#1f252b] ">
                                       
-                                    <View className="justify-center py-2 items-center w-[100%] b g-[#230d10]  rounded-t-3xl flex-row ">
+                                    <View className="justify-center p-2 items-center w- [100%] bg-[#e3d9d9]  rounded-t-xl full flex-row ">
+                                       
                                         <Image 
-                                            style={{width:height * 0.065 ,height: height * 0.065}}
-                                            className="w-[40px] h-[40px] rounded-full "
+                                            style={{width:height * 0.1 ,height: height * 0.07}}
+                                            className="w-[0px] h-[40px] rounded-xl full"
                                             source={{uri :  (user.profile_img? user.profile_img  : "")}}
                                         />
                                     </View>   
                                   
-                                    <View className="justify-center rounded-b-xl gap- -auto items-center b b g-[#faf9f7] p-2 w-[100%] flex-col ">
-                                            <Text className="font-pmedium  text-sm text-gray-800">
+                                    <View className="justify-center bg-[#e3d9d9] -xl gap- -auto items-center b b  py-1 w-[100%] flex-col ">
+                                            <Text className="font-pmedium bg-[#010101] rounded-lg px-3 p-1 text-sm text-gray-800">
                                                 <Text 
-                                                style={{fontSize:width<= 330? 8:10}}
+                                                style={{fontSize:width<= 330? 8:9}}
                                                 className="font-black text-sm text-gray-100">
                                                     { (user.name.length > 13 ?  user.name.slice(0,13)+ "..." : user.name)}
                                                 </Text> 
@@ -203,35 +133,35 @@ export default function Home() {
                         </View>
                         
                         <View
-                            className="justify-end rotate- 45 px-1 p-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#230d10] rounded-tl-full  rounde-tr-3xl  ">
+                            className="justify-end rotate- 45 px-1 p-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#e3d9d9] rounded-tl-3xl  rounde-tr-3xl  ">
                                       <TouchableOpacity 
                                           onPress={()=> {router.navigate("/ProfilePage")}}
-                                            className="justify-start items- center  rounded-full p- 1 h-[100%] border-  g-[#2039c4] g-[#fcfdff] flex-col">
+                                            className="justify-start items- center  rounded-full p-2 h-[100%] border-  g-[#2039c4] bg-black flex-col">
                                                      <Image
-                                                        style={{width:height * 0.04 , height: height * 0.04}}
-                                                        className="w-[30px] h-[30px] rounded-full b g-[#fefefe]"
+                                                        style={{width:height * 0.03 , height: height * 0.03}}
+                                                        className="w-[20px] h-[20px] rounded-full b g-[#fefefe]"
                                                         source={icons.profile}
                                                         resizeMethod='cover' />                                    
                                       </TouchableOpacity>
                                       <TouchableOpacity 
                                           onPress={()=> {router.navigate("/SearchFriend")}}
-                                            className="justify-start items-start w- [50%] h- [80%] pb- 6  py- rounded-full  g-[#d5daf6] flex-col">
+                                            className="justify-start items-start w- [50%] h- [80%] p-2  py- rounded-full  bg-black flex-col">
                                                     <Image
-                                                        style={{width:height * 0.04 ,height: height * 0.04}}
+                                                        style={{width:height * 0.03 ,height: height * 0.03}}
                                                         className="w-[30px] h-[30px] rounded-full bg-black"
                                                         source={icons.watchlist}
                                                         resizeMethod='cover'/>
                                       </TouchableOpacity>
                         </View>
                   
-          </View>
+        </View>
        
 
        {!selectedPage && (
             <View
-             className="w-full h-[7%]  py-1 borde-2 rder-[#fefefe]  borde-l-[10px] borde-r-[10px] borde--[10px] borde-[#272d31] ] g-[#95c3e6]
+             className="w-full h-[6%]  p-1 borde-2 rder-[#fefefe]  borde-l-[10px] borde-r-[10px] borde--[10px] borde-[#272d31]  b g-[#c3bdbd] [#3b4348]
                 flex-row justify-center items-center">
-                 <View className=" w-[95%] h-[100%] px- borde-gray-200 borde-2 bg-[#fffcfc]   rounded-xl
+                 <View className=" w-[100%] h-[100%] px- borde-gray-200 borde-2 bg-[#fffcfc]   rounded-lg
                      flex-row justify-center items-center">
                     <TextInput
                         className=" text-gray-700 -[100%]   -[100%] px-3
@@ -249,93 +179,71 @@ export default function Home() {
        )}
 
             {!selectedPage ? (
-                     <View
+            <View
                     
-                     className="w-[100%] h-[71%] flex-1 py-2 px- -auto border-r-[10px] border-l-[10px] border-b-[10px] rounde-xl borde-[#272d31]  g-[#3b4348] 
-                        flex-col justify-end items-center">
+                     className="w-[100%] h- [71%] flex-1 py-2 px-1 -auto borde r-r- [10px] borde-l- [10px] borde- b -[10px] rounde-xl borde-[#272d31]  bg-[#3b4348] 
+                        flex-col justify-center items-center">
                             
                             <View
-                            
-                                    className="w-[96%] h-[48%] pb-3 py- borde-l-[20px] rounde-t-xl g-[#423636] borde-[#2a2e2e] g-[#cae4f5]
-                                    flex-row justify-center gap-3 items-center">
-                                           <TouchableOpacity
-                                            className="w-[50%] h-[100%] py- elevation-2xl  gap- rounded-xl borde-2 borde-[#000000] bg-[white]
+                                    className="w-[100%] h-[50%] pb- 3 pt-1 borde-l-[20px]  round-xl g-[#423636] borde-[#2a2e2e] g-[#cae4f5]
+                                    flex-row justify-evenly gap- 1 items-center">
+                                       
+                                        <TouchableOpacity
+                                            className="w-[50%] h-[100%] px -1 py- elevation-2xl pt -1  gap-  borde-2 borde-[#000000] g-[white]
                                             flex-row justify-center items-center">
-                                                {/* <Image
-                                                  
-                                                      className ="w-[25%] h-[40%] roun-full"
-                                                      source={icons.challenge}
-                                                      resizeMethod='contain'
-                                                      resizeMode='contain'
-                                                    /> */}
                                               <View
-                                               className="w-[95%] h-[95%] p- justify-center items-center "
+                                               className="w-[97%] h-[100%] p- justify-center rounded-xl items-center "
                                                 >
                                                 <Image
-                                                    //   style={{height:width/6,width:width/6}}
-                                                      className ="w-[100%] h-[100%] bg-black rounde-full"
+                                                      className ="w-[100%] h-[100%] bg-black rounded-lg"
                                                       source={icons.challenge}
                                                       resizeMode='contain'
                                                     />
+                                                <View
+                                                  className="p-2 absolute  rounded-br-xl top-0 left-0 bg-[#3b4348]  ">
+                                                    <Text 
+                                                            style={{fontSize:width/42,
+                                                            color:'white'}}
+                                                            className="  font-black text-sm text-black">
+                                                            Challenges
+                                                    </Text>  
+                                                </View> 
                                             </View>
-                                             <View
-                                               className="p-2 absolute rounded-tr-xl bottom-0 left-0 bg-[#0a0a0a]  ">
-                                                <Text 
-                                                        style={{fontSize:width/37,
-                                                        color:'white'}}
-                                                    className="  font-black text-sm text-black">
-                                                        Challenges
-                                                    
-                                                </Text>  
-                                             </View>
-                                                
-                                         </TouchableOpacity>
-                                        
+                                               
+                                        </TouchableOpacity>
                                          <TouchableOpacity
                                             onPress={()=> setSelectedPage("talent")}
-                                            className="w-[50%] h-[100%] py-  gap- elevation-xl rounded-xl bord-[#6a7c83] bg-[white]
+                                            className="w-[50%] h-[100%] py-  gap- elevation-xl pt -1 rounded-xl bord-[#6a7c83] b g-[white]
                                              flex-row justify-center items-center">
-                                                {/* <Image
-                                                  
-                                                      className ="w-[25%] h-[30%] bottom-10 roun-full"
-                                                      source={icons.home}
-                                                      resizeMode='contain'
-                                                    /> */}
                                                 <View
-                                               className="w-[95%] h-[95%] p- justify-center items-center "
+                                               className="w-[97%] h-[100%] p- justify-center items-center "
                                                 >
                                                       <Image
-                                                    //   style={{height:width/6,width:width/6}}
-                                                      className ="w-[100%] h-[100%] bg-black rounde-full"
+                                                      className ="w-[100%] h-[100%] bg-black rounded-lg"
                                                       source={icons.home}
                                                       resizeMode='contain'
-                                                    />
-                                                </View>
-                                               
-                                                <View
-                                                  className="p-2 px-4 absolute rounded-tr-xl bottom-0 left-0 bg-[#000000]  ">
-                                                    <Text 
-                                                        style={{fontSize:width/37,
-                                                        color:"white"}}
-                                                        className=" font-black text-sm text-black">
-                                                        Talent
-                                                        
-                                                    </Text>  
-                                                </View>
+                                                    />  
+                                                    <View
+                                                      className="p-2 px-4 absolute rounded-bl-xl top-0 right-0 bg-[#3b4348]  ">
+                                                        <Text 
+                                                            style={{fontSize:width/42,
+                                                            color:"white"}}
+                                                            className=" font-black text-sm text-black">
+                                                            Talent
+                                                        </Text>  
+                                                    </View>
+                                                </View>   
+                                                
                                          </TouchableOpacity>
                             </View>
         
-                            {/* <View
-                                className="w-[100%] h-[34%] p-2 borde-2 border-t-4 border-b-4 rounded-xl bord-[#6a7c83] g-[#0a0b0b]
-                               flex-col justify-center items-end">
-                                  <ChallengifyHeader /> 
-                            </View> */}
+                         
 
                             <View
-                                    className="w-[96%] h-[48%] pb-3 borde-2 rounded-b-xl g-[#423636] bord-[#6a7c83] g-[#0a0b0b]
-                                    flex-row justify-center  gap-3 items-center">
+                                    className="w-[100%] h-[49%] py- 1 pb- 3 borde-2 mt-auto rounded-b-xl g-[#423636] bord-[#6a7c83] b g-[#0a0b0b]
+                                    flex-row justify-center  gap -3 items-center">
                                            <TouchableOpacity
-                                            className="w-[50%] h-[100%] p-  gap- rounded-xl bord-[#6a7c83] bg-[white]
+                                            className="w-[50%] h-[100%] p- pb -1  gap- rounded-xl bord-[#6a7c83] b g-[white]
                                             flex-row justify-center items-center">
                                                 {/* <Image
                                                   
@@ -344,29 +252,30 @@ export default function Home() {
                                                       resizeMethod='fill'
                                                     /> */}
                                                 <View
-                                                className="w-[95%] h-[95%] p- justify-center items-center "
+                                                className="w-[97%] h-[100%] p- justify-center items-center "
                                                 >
                                                    <Image
                                                    
-                                                   className ="w-[100%] h-[100%] bg-black roun-full"
+                                                   className ="w-[100%] h-[100%] bg-black rounded-lg"
                                                    source={icons.trophy}
                                                    resizeMethod='contain'
                                                  />
-                                                </View>
-                                                
-                                                <View
-                                                  className="p-2 absolute rounded-tr-xl bottom-0 left-0 bg-[#050505]  ">
+                                                 <View
+                                                  className="p-2 absolute rounded-tr-xl bottom-0 left-0 bg-[#3b4348]  ">
                                                     <Text 
-                                                        style={{fontSize:width/37,
+                                                        style={{fontSize:width/42,
                                                         color:"white"}}
                                                         className=" font-black text-sm text-black">
                                                         Guiness  
                                                     </Text>  
                                                 </View>
+                                                </View>
+                                                
+                                                
                                          </TouchableOpacity>
         
                                          <TouchableOpacity
-                                            className="w-[50%] h-[100%] p-  gap- rounded-xl  bord-[#6a7c83] bg-[white]
+                                            className="w-[50%] h-[100%] p-  pb -1 gap- rounded-xl  bord-[#6a7c83] b g-[white]
                                             flex-row justify-center items-center">
                                                 {/* <Image
                                               
@@ -375,25 +284,26 @@ export default function Home() {
                                                       resizeMethod='contain'
                                                     /> */}
                                                 <View
-                                                className="w-[95%] h-[95%] p- justify-center items-center "
+                                                className="w-[97%] h-[100%] p- justify-center items-center "
                                                 >
                                                      <Image
-                                                        className ="w-[100%] h-[100%] bg-black roun-full"
+                                                        className ="w-[100%] h-[100%] bg-black rounded-lg"
                                                         source={icons.competition}
                                                         resizeMode='cover'
                                                       />
+                                                      <View
+                                                        className="p-2 absolute rounded-tl-xl bottom-0 right-0 bg-[#3b4348] flex-col  justify-end ">
+                                                          <Text 
+                                                                  style={{fontSize:width/42,
+                                                                  color:'white'}}
+                                                              className="  font-black text-sm text-white">
+                                                                  Training
+                                                              
+                                                          </Text>  
+                                                      </View>
                                                 </View>
                                                
-                                             <View
-                                               className="p-2 absolute rounded-tr-xl bottom-0 left-0 bg-[#000000] flex-col  justify-end ">
-                                                <Text 
-                                                        style={{fontSize:width/37,
-                                                        color:'white'}}
-                                                    className="  font-black text-sm text-white">
-                                                        Training
-                                                    
-                                                </Text>  
-                                             </View>
+                                             
                                                 
                                          </TouchableOpacity>
         
@@ -403,25 +313,25 @@ export default function Home() {
 
           
                             
-                    </View>
+            </View>
         
             ) : (
        
-                <View     
-                    className="w-[100%] h-[78%] flex-1 py-2 px- bg -[#051846] -auto border-r-[10px] border-l-[10px] border-b-[10px] rounde-xl borde-[#272d31]  g-[#3b4348] 
-                       flex-col justify-end items-center">
-                      <View  className = "bg-[#70b2f9]  w-full h-1 borde-r-[10px] borde-[#272d31]"></View>
+            <View     
+                    className="w-[100%] h-[79%] flex-1 py- px- bg-[#3b4348]  rounde-xl borde-[#272d31]  g-[#3b4348] 
+                       flex-col justify-center items-center">
+                      {/* <View  className = "g-[#70b2f9]  w-full h-1 borde-r-[10px] borde-[#272d31]"></View> */}
                       {selectedPage == "talent" &&  (
                           <TalentHomePage setSelectedPage={setSelectedPage} />
                         )}
-                </View>
+            </View>
             
             )}
 
           
           <View
-          style={{ minHeight: Platform.OS =="ios" ? width/7 : width/7, width:"100%"}}
-          className=""></View>
+          style={{ minHeight: Platform.OS =="ios" ? width/7 + 5 : width/7 + 5, width:"100%"}}
+          className="bg-[#3b4348]"></View>
                  
           {displayNotificationsModal && 
           <NotificationsModal user={user} displayNotificationsModal={displayNotificationsModal}

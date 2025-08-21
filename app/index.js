@@ -69,7 +69,7 @@ export default function app() {
 
   return (
    
-    // <SafeAreaProvider> 
+    <SafeAreaProvider> 
       <ImageBackground
       style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
         paddingBottom:Platform.OS == "ios" ? insets.bottom : insets.bottom
@@ -77,10 +77,29 @@ export default function app() {
       source={images.night_bg}
       className="w-[100%]  h-[100%] justify-center items-center ">
                 <View className="w-[100%]  h-[100%] flex-col justify-between items-center b b g-black py- 6 " >   
-                      
-                      <ChallengifyHeader /> 
+                   <View className="justify-center items-center w-full h-[7vh] flex-row ">
+                                        <Image 
+                                  
+                                            className="w-[100%] h-[100%]  "
+                                            source={icons.headline}
+                                            resizeMode = 'cover'
+                                        />
+                   </View>
+                      {/* <ChallengifyHeader />  */}
+                    
+                      <View
+                    className ="g-[#f29756] w-full text-center m -[40px] gap- 2 items-center px- flex-col">
+                  
+                    
+                    <Text style={ {fontSize: 14,fontStyle: 'italic',color: '#5ca9f0', marginTop : 10 ,marginBottom: 8,textAlign:"center"}}>
+                        Unleash Talent. Share Challenges. Break Records.
+                    </Text>
+                    <Text style={{fontSize: 12,color: '#fff',lineHeight: 18,textAlign:"center"}}>
+                        Step into the spotlight with <Text >Challengify</Text> — the ultimate stage where everyday legends rise!
+                    </Text>
 
-                      <View className=" w-[80%] h-[40%] mt- auto rounded-xl  justify-between items-center p-6 b b g-white">
+                   </View>
+                    <View className=" w-[80%] h-[40%] mt- auto rounded-xl  justify-between items-center p-6 b b g-white">
                             <View className=" w-[90%]  h-[100%] gap-2 flex-row flex-wrap justify-center items-center p-2 bg-black ">
                                   
                                   <View
@@ -122,7 +141,7 @@ export default function app() {
                             </View>
                             
                             
-                            <View
+                            {/* <View
                                  className="p- 4 absolute -rotate-45 rounded-tr-xl top-0 left-0 b bg-[#000000] flex-col  justify-center ">
                                     <Text 
                                         style={{fontSize:width/30,
@@ -157,7 +176,7 @@ export default function app() {
                                                     className="  font-black text-sm text-white">
                                                       Talent                 
                                               </Text>  
-                            </View>
+                            </View> */}
                            
                             
                       </View>
@@ -171,13 +190,13 @@ export default function app() {
                                         <Text style={{
                                             fontSize: 14,
                                             color: '#fff',
-                                            fontWeight: '800',
+                                            fontWeight: '600',
                                             // marginTop:"auto"
                                            }}> Start your challenge today</Text>
                                       
 
                                         <TouchableOpacity onPress={()=> router.replace('/login')}
-                                          className="bg-white mt- auto rounded-xl min-w-[90%] min-h-[47px] justify-center items-center">
+                                          className="bg-white mt- auto rounded-xl min-w-[60%] min-h-[47px] justify-center items-center">
                                           {isFetching ? (
                                           <View >
                                             <ActivityIndicator size="large" color="#030202" />
@@ -197,7 +216,7 @@ export default function app() {
     
 
         
-    //  </SafeAreaProvider>
+      </SafeAreaProvider>
 
       
  

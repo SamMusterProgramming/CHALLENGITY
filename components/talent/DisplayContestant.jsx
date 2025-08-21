@@ -72,11 +72,11 @@ export default function DisplayContestant({show , height, width ,top ,bottom,lef
         <>
            <View
           
-                className = "absolute flex-row justify-center items-center g-white"
+                className = "absolute flex- 1 flex-row justify-center items-center g-white"
                 style={{
                     height : height,
                     width : width  ,   
-                    // top: top && top,
+                    top: top && top,
                 justifyContent: 'center', 
                 alignItems: 'center', 
                 }}>
@@ -84,7 +84,7 @@ export default function DisplayContestant({show , height, width ,top ,bottom,lef
                                     source={{uri:selectedContestant.
                                     thumbNail_URL}}
                                     className ="w-[100%] h-[100%] rounde-full"
-                                    resizeMethod='contain'
+                                    resizeMethod='cover'
                                     />
            
             <Animated.View

@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity, Image, useWindowDimensions, TextInput, Platform, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, Image, useWindowDimensions, TextInput, Platform, ScrollView, StyleSheet } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { icons } from '../constants';
 import { router } from 'expo-router';
 import SelectType from '../components/challenge/SelectType';
@@ -11,14 +11,28 @@ import { useGlobalContext } from '../context/GlobalProvider';
 import SelectFriends from '../components/challenge/SelectFriends';
 import CustomAlert from '../components/custom/CustomAlert';
 import MakeSelectionChallengeModal from '../components/modal/MakeSelectionChallengeModel';
-import { getInition } from '../helper';
+import { formatTime, getInition } from '../helper';
+import TopBarChallenge from '../components/challenge/TopBarChallenge';
+import BottomBarChallenge from '../components/challenge/BottomBarChallenge';
+import ShuffleLetters from '../components/custom/ShuffleLetters';
+import { useKeepAwake } from 'expo-keep-awake';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
+import { useEvent } from 'expo';
+import { generateThumbnail, saveVideoLocally } from '../videoFiles';
+import { AntDesign } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from '../firebase';
+import axios from 'axios';
+import { BASE_URL, getUserPrivateChallenges, getUserPublicChallenges } from '../apiCalls';
+
 
 export default function CoverNewChallenge() {
 
     const{user,setParticipateChallenges,setUserPublicChallenges,setUserPrivateChallenges,userFriendData} = useGlobalContext()
 
-    const [selectedType,setSelectedType] = useState('Adventure')
-    const [selectedPrivacy,setSelectedPrivacy] = useState('Public')
+    const [selectedType,setSelectedType] = useState(null)
+    const [selectedPrivacy,setSelectedPrivacy] = useState(null)
     const [selectedAudience, setSelectedAudience] = useState("Open");
     const [isSelectorVisible,setIsSelectorVisible] = useState(false)
     const [isPrivacySelectorVisible,setIsPrivacySelectorVisible] = useState(false)
@@ -37,7 +51,137 @@ export default function CoverNewChallenge() {
     const [isSelectionModalVisible, setIsSelectionModalVisible] = useState(false)
     const [selectionType, setSelectionType] = useState(false)
     const [data, setData] = useState([])
+    const insets = useSafeAreaInsets();
 
+
+    const cameraRef = useRef(null);
+    const [facing, setFacing] = useState('back');
+    const [permission, requestPermission] = useCameraPermissions()
+    const [audioPermission, requestAudioPermission] = useMicrophonePermissions();
+    const [videoUri, setVideoUri] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [timer, setTimer] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(false)
+    const [visible, setVisible] = useState(false);
+    const [thumbNailURL,setThumbNailURL] = useState(null)
+    const [replayRecording , setReplayRecording] = useState(false)
+
+
+//****************************** video player , camera ,  */
+
+useKeepAwake();
+
+const player = useVideoPlayer
+(
+  videoUri
+  , (player) => {
+  player.loop = true;
+  player.volume = 0.5
+  player.pause() ;
+  player.timeUpdateEventInterval = 0.1;
+});
+
+const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
+
+
+useEffect(() => {
+ if(videoUri){
+  player.replaceAsync(videoUri).then(()=> {setIsPlaying(true)});
+  player.play()
+ }
+ const makeThumbNail = async () => {
+  if(videoUri)
+    {
+     const imageUrl = await generateThumbnail(videoUri)
+     setThumbNailURL(imageUrl.uri)
+    }
+ }
+ makeThumbNail()
+}, [videoUri])
+
+const toggleVideoPlaying = () =>{
+  if(isPlaying){
+    player.pause()
+    setIsPlaying(false)
+    setReplayRecording(false)
+  }else {
+    player.play()
+    setIsPlaying(true)
+    setReplayRecording(true)
+  }
+}
+
+
+const requestMediaPermissions = async () => {
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (status !== 'granted') {
+    alert('Permission to access media library is required!');
+    return false;
+  }
+  return true;
+};
+
+useEffect(() => {
+  requestPermission()
+  requestAudioPermission()
+}, [])
+
+function toggleCameraFacing() {
+  setFacing(current => (current === 'back' ? 'front' : 'back'));
+}
+
+const startRecording = async() =>{
+  setVideoUri(null)
+  setReplayRecording(true)
+try {
+  setIsRecording(true)
+  let options ={
+    maxDuration: 120,
+  }
+   await cameraRef.current.recordAsync(options)
+  .then((video)=>{
+    setVideoUri(video.uri)
+    setIsRecording(false)
+  })
+} catch (err) {
+  console.log(err)
+}
+ }
+
+ const stopRecording = async()=>{
+  await  cameraRef.current.stopRecording();
+    setIsRecording(false)
+    setReplayRecording(false)
+
+   }
+
+ const uploadVideo =async()=>{
+  try {
+    const permissionGranted = await requestMediaPermissions();
+    if (!permissionGranted) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 1,
+    });
+    setVideoUri(result.assets[0].uri)
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}    
+
+//**************************** challenge object data */
+
+    const [challenge , setChallenge] = useState({
+       type:null,
+       privacy:null,
+       desc : "",
+       invited_friends:[]
+    })
+    const [step ,setStep] = useState(0)
 
 
 
@@ -93,64 +237,8 @@ export default function CoverNewChallenge() {
               break;
           default:
             return true;
-            // setIcon("gray")
         }
       }
-
-      const handleContinue = ()=> {
-         if(description == ""){
-            setText("Add a Description to your challenge to continue")
-            setIsModalVisible(true)
-            setAction("OK")
-            return true;
-         }
-         if(selectedPrivacy == "Private" && selectedFriends.length == 0){
-            setText("Invite at least one friend to Continue ")
-            setIsModalVisible(true)
-            setAction("OK")
-            return true;
-         }
-         router.replace({ pathname: '/RecordChallenge',params: {
-            description:description,
-            challengeType:selectedType , 
-            challengePrivacy:selectedPrivacy  ,
-            challengeMode : selectedAudience ,
-            invited_friends: JSON.stringify(selectedFriends)
-          } }) 
-      }
-
-      useEffect(() => {
-        if(isSelectorVisible) {
-            setIsFriendListVisible(false)
-            setIsModeVisible(false)
-            setIsPrivacySelectorVisible(false)
-        }
-      }, [isSelectorVisible])
-      
-      useEffect(() => {
-        if(isPrivacySelectorVisible) {
-            setIsFriendListVisible(false)
-            setIsModeVisible(false)
-            setIsSelectorVisible(false)
-        }
-      }, [isPrivacySelectorVisible])
-
-      useEffect(() => {
-        if(isFriendListVisible) {
-            setIsSelectorVisible(false)
-            setIsModeVisible(false)
-            setIsPrivacySelectorVisible(false)
-        }
-      }, [isFriendListVisible])
-      
-      useEffect(() => {
-        if(isModeVisible) {
-            setIsFriendListVisible(false)
-            setIsPrivacySelectorVisible(false)
-            setIsSelectorVisible(false)
-            setSelectedFriends([])
-        }
-      }, [isModeVisible])
 
       useEffect(() => {
        return() => {
@@ -159,306 +247,542 @@ export default function CoverNewChallenge() {
        }
       }, [])
 
-  return (
-    
-    <SafeAreaView className="flex-1 bg-primary" >
-              <View className=" h-full flex-col justify-start gap- border-l-2 border-r-2 border-[#f6f8f9] items-center">
-                         
-                          <View
-                            className = "min-w-[100%] h-[5%] gap- rounded-tl-x rounded-tr-x flex-row justify-start items-center px-1 bg-[white]">
-                                
-                                <TouchableOpacity
-                                    className="w-[8%] h-[100%] justify-center g-[#eb0a0a] px-1 py-1 rounded-xl items-center opacity  "
-                                    onPressIn={()=> router.back()}
-                                    >
-                                      <Image   
-                                      source={icons.x}
-                                      className=" w-10 h-10 rounded-full"
-                                      />
-                              </TouchableOpacity>
-                              <View
-                              className = "w-[35%] h-[80%] rounded-xl flex-row justify-center items-center px- g-[#fffefd]">
-                                      <View className = "px-2 py-1 w-[100%] flex-row justify-center gap-2 items-center">
-                                            <Image 
-                                              className={ "rounded-full w-7 h-7"}
-                                              source={ {uri:user.profile_img} }
-                                              resizeMode='cover'
-                                              />
-                                              <View className="justify-center py-1  items-start h-[80%] flex-col ">
-                                                            
-                                                            <Text className="font-pmedium  text-sm text-black">
-                                                                <Text 
-                                                                style={{fontSize:width<= 330? 7:7}}
-                                                                className="font-black text-sm text-black">
-                                                                    {user.name.length > 13 ?user.name.slice(0,13)+"..." : user.name}
-                                                                </Text> 
-                                                            </Text>
-                                                            <Text 
-                                                                style={{fontSize:width<= 330? 8:7}}
-                                                                className=" text-sm text-blue-400 font-black">
-                                                                {getInition(user.name)}Challenger
-                                                            </Text>
-                                              </View>
-                                      </View>
-                                  
-                              </View>
-                              <View
-                              className = "w-[55%] h-[100%] flex-row justify-center items-center px- g-[#de8124]">
-                                  
-                                  <Text 
-                                        style={{fontSize:16}}
-                                        className=" text-sm text-blue-900 mt-1 font-black">
-                                            NEW CHALLENGE
-                                    </Text>
-                                  
-                              </View>
-              
-                          </View>
+      useEffect(() => {
+       selectedType && setChallenge({...challenge, type:selectedType})
+      }, [selectedType])
 
-
-                          <View
-                          // style={Platform.OS == "android" && {borderTopRightRadius:5,borderTopLeftRadius:5}}
-                          className =" w-[100%] h-[7vh] flex-col g-[#0b2c4d] mb-8 justify-evenly rounde-tl-[50px] borde-4 border-white rouned-tr-[50px] items-center">
-                                 
-                                 {/* <View
-                                          style={Platform.OS == "android" && {borderTopRightRadius:5,borderTopLeftRadius:5}}
-                                          className="w-[100%] h-[40%]  rounded-tl-[50px] rounded-tr-[50px] flex-row  justify-between items-end  ">
-                                            
-                                             
-                                  </View> */}
-
-                                  <View
-                                          className="w-[100%] h-[50%]   flex-row justify-center items-center  ">
-                                          <View 
-                                          style={{  height:width/9 }}  
-                                          className=" w-[95%] h-[30%] px-4 border-gray-200 border-2  bg-white rounded-lg
-                                          flex-row justify-center items-center">
-                                              <TextInput
-                                                  style={{fontSize:width/30}}
-                                                  className=" text-gray-600 w-[100%] text-center font-bold bg- h-[100%] px-3 rounded-lg
-                                                       "
-                                                  onChangeText={text => setDescription(text)}
-                                                  placeholder={currentPlaceholder}
-                                                      //  onFocus={()=>{setCurrentPlaceholder("")}}
-                                                       onBlur={()=>{if(description === "" ) setCurrentPlaceholder("Add a description ")}}
-                                                       placeholderTextColor='#242625'
-                                                  value={description !== "" ? description: currentPlaceholder}
-                                                  keyboardType= "default"
-                                                  onFocus={() => currentPlaceholder === "Add a description" && setCurrentPlaceholder("")}
-                                                  // onChangeText={(text)=> setSearchText(text)}
-                                                />
-                                              <TouchableOpacity onPress={()=> {}}>
-                                                      <Image 
-                                                      className ="w-8 h-8 "
-                                                      resizeMode='contain'
-                                                      source={icons.search} />
-                                              </TouchableOpacity>                
-                                          </View >
-                                  </View>      
-                        </View>
-                         
-
+      useEffect(() => {
+        selectedPrivacy &&  setChallenge({...challenge, privacy:selectedPrivacy})
+      }, [selectedPrivacy])
       
-
-                        <View className="w-[100%] h-[13%] px-2  g-[#071b2c]  flex-row justify-center gap-2 items-center">
-                                 <TouchableOpacity
-                                 onPress={() =>{
-                                  setIsSelectionModalVisible(true)
-                                  setSelectionType("type")
-                                  setData([...challengeType])
-                                  // setIsSelectorVisible(true)
-                                 }
-                                 }
-                                  className="w-[30%] h-[100%] flex-col rounded-xl border-b-2 border-t-2 border-l-4 border-r-4 border-white justify-center gap-1 items-center">
-                                     <View
-                                            className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                            <Text 
-                                                style={{fontSize:9}}
-                                                className="text-gray-500 text-sm font-bold">
-                                                Select Type
-                                            </Text>
-                                          
-
-                                    </View>
-                                     
-                                     <Image
-                                     source={getIcon(selectedType)}
-                                     resizeMethod='contain'
-                                     style={{width:width/10, height:width/10}}
-                                     className="w-[75%] h-[50%]" />
-                                      <View
-                                            className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                         
-                                            <Text 
-                                              style={{fontSize:9}}
-                                              className="text-white font-black"> 
-                                                {selectedType}
-                                            </Text>
-
-                                    </View>
-                                 </TouchableOpacity>
-
-                                 <TouchableOpacity
-                                  onPress={()=>
-                                    // setIsPrivacySelectorVisible(true)
-                                    {
-                                      setIsSelectionModalVisible(true)
-                                      setSelectionType("privacy")
-                                      setData([...privacyData])
-                                      // setIsSelectorVisible(true)
-                                    }
-                                     
-                                  }
-                                  className="w-[30%] h-[100%] flex-col justify-center py-2 rounded-xl border-b-2 border-t-2 border-l-4 border-r-4 border-white gap-2 items-center">
-                                     <View
-                                            className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                            <Text 
-                                                style={{fontSize:9}}
-                                                className="text-gray-500 text-sm font-bold">
-                                                Select Privacy
-                                            </Text>
-                                    </View>          
-                                     <Image
-                                     source={getIcon(selectedPrivacy)}
-                                     resizeMethod='contain'
-                                     style={{width:width/10, height:width/10}}
-                                     className="w-[75%] h-[50%]" />
-                                     <Text 
-                                        style={{fontSize:9}}
-                                        className="text-white font-black"> 
-                                        {selectedPrivacy}
-                                     </Text>
-                                 </TouchableOpacity>
-
-                                 {selectedPrivacy == "Private" && (
-
-                                 <TouchableOpacity
-                                        onPress={()=>
-                                          // setIsModeVisible(true)
-                                          {
-                                            setIsSelectionModalVisible(true)
-                                            setSelectionType("audience")
-                                            setData([...Audience])
-                                            // setIsSelectorVisible(true)
-                                          }
-                                        }
-                                        className="w-[33%] h-[100%] py-2 rounded-xl border-t-2 border-b-2 border-l-4 border-r-4 border-white  flex-col justify-center gap-2 items-center">
-                                        <View
-                                                className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                                <Text 
-                                                  style={{fontSize:9}}
-                                                  className="text-gray-500 text-sm font-bold">
-                                                    Select Audience
-                                                </Text>
-                                        </View>          
-                                        <Image
-                                        source={getIcon(selectedAudience)}
-                                        resizeMethod='contain'
-                                        style={{width:width/10, height:width/10}}
-                                        className="w-[95%] h-[70%]" />
-                                        <Text 
-                                            style={{fontSize:9}}
-                                            className="text-white font-black"> 
-                                            {selectedAudience}
-                                        </Text>
-                                 </TouchableOpacity>
-                                 )}
-                        </View>
-
-                       
+      useEffect(() => {
+         setChallenge({...challenge, desc:description})
+      }, [description])
 
 
-                      {selectedPrivacy == "Private" && (
-                        <>
-                           
+  //**************** submit the challenge  */
+    
+   const handleSumitChallenge =  async() => {
+
+        if(videoUri ) { 
+          setVisible(true)  
+         
+          setTimeout(() => {
+            router.back()
+                    }, 1200);  
+    
+          setTimeout(() => {
+            setVisible(false)
+          }, 1000);
+          
+        //  const imageThumbnailUri = await uploadThumbnail(thumbNailURL, user.email)
+          Promise.all([compressVideo(videoUri),compressImage(thumbNailURL)]).then(results => {
+            setThumbNailURL(null)
+            setVideoUri(null)
+            Promise.all([_uploadVideoAsync(results[0] , user.email,user.name),uploadThumbnail(results[1], user.email)])  //_uploadVideoAsync(results[0] , user.email,user.name)
+              .then(async(urls) => {
+                await saveVideoLocally(urls[0])
+                // videoUri && await  deleteVideo(videoUri)
+                let challengeBody = {
+                  origin_id : user._id ,
+                  description: challenge.desc,
+                  profile_img:user.profile_img,
+                  user_id : user._id,
+                  type:challenge.type,
+                  privacy:challenge.privacy,
+                  name:user.name,
+                  video_url : urls[0],
+                  email:user.email,
+                  friendList: challenge.invited_friends ,
+                  thumbNail: urls[1]
+  
+                }
+      
+                axios.post( BASE_URL + '/challenges/uploads', challengeBody).then( 
+                    res =>  {   
+    
+                      getUserPublicChallenges(user._id ,setUserPublicChallenges)               
+                      getUserPrivateChallenges(user._id ,setUserPrivateChallenges)                
+                      setTimeout(() => {
+                            setVideoUri(null)
+                            router.push({ pathname: '/FSinstantChallengeDisplayer', params: {
+                              challenge_id:res.data._id
+                             } })
+    
+                      }, 1000);
+                          
+    
+                    } )
+    
+    
+              }).catch(error => {
+                     console.log(error)
+              }).finally (async()=>{
+                FileSystem.deleteAsync(results[0], { idempotent: true }).then(res => console.log("file deleted "));
+                FileSystem.deleteAsync(results[1], { idempotent: true }).then(res => console.log("file deleted "));
+                // await clearCache();
+              }
+              )
+    
+         })
+    
+            }; 
+     }
+
+
+
+
+  return (
+  
+    <View
+    style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top,
+      // minWidth:width , minHeight:height
+    }}
+    className=" flex-1   flex-col justify-center items-center   bg-[#413d3d]">
+
+                <TopBarChallenge show = {!replayRecording} width ={width} height={ height * 0.07  } top={height * 0.0 + insets.top  }
+                   challenge={challenge} typeIcon = {getIcon(challenge.type)} privacyIcon = {getIcon( challenge.privacy)}
+                   left ={0} right ={null}  user ={user}
+                  />       
+                        
+  
+                 {step == 0 && (
+                  <View
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center items-center gap-2 p-2">
+                      <Text 
+                          style={{fontSize:12}}
+                          className="font-black text-sm text-gray-200">
+                           Description 
+                      </Text> 
+                      <TextInput
+                      className="text-xs mt-4"
+                      style={styles.textarea}
+                      multiline={true} 
+                      numberOfLines={2} 
+                      value={ description}
+                      // placeholder="Enter your text here..."
+                      onChangeText={text => setDescription(text)}
+                      placeholder={currentPlaceholder}
+                      />
+                      <View
+                      style ={{ width:200}}
+                       className="flex-row justify-between items-center  py-2">
+                         <TouchableOpacity 
+                           style={{backgroundColor:step !== 0 ? "red" : "gray" }}
+                           className="py-2 px-4  bg-red-500 rounded-lg" >
+                              <Text style={styles.buttonText}>Back</Text>
+                         </TouchableOpacity>
+                         <TouchableOpacity 
+                         onPress={() => {
+                          if(description.length >15){
+                          setChallenge({...challenge,desc:description})
+                          setStep(prev => prev +1)
+                           }
+                          }}
+                          style={{backgroundColor: description.length > 15 ? "blue" : "gray" }}
+                           className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
+                              <Text style={styles.buttonText}>Next</Text>
+                         </TouchableOpacity>
+                      </View>
+                      
+                  </View>
                   
-                            <View className="w-[100%] h-[53%]  px-2 mt-4 flex-col justify-center gap-2 items-center">
-                                    <TouchableOpacity
+                 )}
+
+              {step == 1 && (
+                  <View
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center mt -auto items-center gap-2 p-2">
+                        <TouchableOpacity
+                          onPress={() =>{
+                            setIsSelectorVisible(true)
+                          }
+                          }
+                          className="w- [30%] h- [100%] mb-4 flex-col rounded-xl  justify-center gap-4 items-center">
+                            <View
+                                  className="w- [100%] h- [20%] flex-row justify-center items-center">
+                                    <ShuffleLetters text={"Select Type"} textSize={12} /> 
+                            </View>
+                            
+                            <Image
+                            source={selectedType ? getIcon(selectedType) : icons.adventure}
+                            resizeMethod='contain'
+                            // style={{width:width/10, height:width/10}}
+                            className="w-[100px] h-[100px] rounded-full p-4 bg-white mt -2 mb -2" />
+                            <View
+                                  className="w- [100%] h -[20%] p-2 flex-row justify-center items-center">
+                                
+                                  <Text 
+                                    style={{fontSize:12}}
+                                    className="text-white font-black"> 
+                                      {selectedType}
+                                  </Text>
+
+                           </View>
+                        </TouchableOpacity>
+                        <View
+                          style ={{ width:150}}
+                          className="flex-row justify-between items-center  py-2">
+                            <TouchableOpacity 
+                              onPress={() => {
+                                // setChallenge({...challenge,desc:description})
+                                setStep(prev => prev - 1)
+                               }}
+                              style={{backgroundColor:step !==0 ? "red" : "gray" }}
+                              className="py-2 px-4  bg-red-500 rounded-lg" >
+                                  <Text style={styles.buttonText}>Back</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                             onPress={() => {
+                              if(selectedType){
+                              setChallenge({...challenge,desc:description})
+                              setStep(prev => prev + 1)
+                              }
+                               }}
+                               style={{backgroundColor: selectedType ? "blue" : "gray" }}
+                              className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
+                                  <Text style={styles.buttonText}>Next</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                 )}
+                 
+
+                 {step == 2 && (
+                  <View
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center mt -auto items-center gap-2 p-2">
+
+                        <TouchableOpacity
+                          onPress={() =>{
+                            setIsPrivacySelectorVisible(true)
+                          }
+                          }
+                          className="w- [30%] h- [100%] mb-4 flex-col rounded-xl  justify-center gap-4 items-center">
+                            <View
+                                  className="w- [100%] h- [20%] flex-row justify-center items-center">
+                                     <ShuffleLetters text={"Select Privacy"} textSize={12} /> 
+                            </View>
+                            
+                            <Image
+                            source={selectedPrivacy ? getIcon(selectedPrivacy) : icons.publi}
+                            resizeMethod='contain'
+                            // style={{width:width/10, height:width/10}}
+                            className="w-[100px] h-[100px] rounded-full p-4 bg-white " />
+                            <View
+                                  className="w- [100%] h -[20%] p-2 flex-row justify-center items-center">
+                                  <Text 
+                                    style={{fontSize:11}}
+                                    className="text-white font-black"> 
+                                      {selectedPrivacy}
+                                  </Text>
+                          </View>
+                        </TouchableOpacity>
+
+                         <View
+                          style ={{ width:150}}
+                          className="flex-row justify-between items-center  py-2">
+                            <TouchableOpacity 
+                              onPress={() => {
+                                // setChallenge({...challenge,desc:description})
+                                setStep(prev => prev - 1)
+                               }}
+                              style={{backgroundColor:step !==0 ? "red" : "gray" }}
+                              className="py-2 px-4  bg-red-500 rounded-lg" >
+                                  <Text style={styles.buttonText}>Back</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                             onPress={() => {
+                              if(selectedPrivacy){
+                              setChallenge({...challenge,privacy:selectedPrivacy})
+                              setStep(prev => prev + 1)
+                              }
+                               }}
+                              style={{backgroundColor: selectedPrivacy ? "blue" : "gray" }}
+                              className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
+                                  <Text style={styles.buttonText}>Next</Text>
+                            </TouchableOpacity>
+                         </View>
+                    </View>
+                 )}
+
+
+                {step == 3 && (
+                  <View
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center mt -auto items-center gap-2 p-2">
+                              <TouchableOpacity
                                         onPress={()=>{
-                                          // setIsFriendListVisible(!isFriendListVisible)
-                                          setIsSelectionModalVisible(true)
-                                          setSelectionType("invite")
+                                          setIsFriendListVisible(true)
                                           setData(friendList)
                                          }
                                         }
-                                        className="w-[100%] h-[25%] flex-col justify-evenly  gap- items-center">
+                                        className="w- [100%] h- [25%] flex-col justify-evenly  gap-4 items-center">
                                         <View
-                                                className="w-[100%] h-[20%] flex-row justify-center items-center">
-                                                <Text
-                                                style={{fontSize:9}}
-                                                className="text-gray-400 text-sm font-bold">
-                                                    Invite Friends
-                                                </Text>
-                                        </View>
-                                        
+                                                className="w- [100%] h- [20%] flex-row justify-center items-center">
+                                                <ShuffleLetters text={"Invite Friends"} textSize={12} /> 
+                                              
+                                        </View>     
                                         <Image
                                         source={icons.invites}
                                         resizeMethod='contain'
-                                        style={{width:width/10, height:width/10}}
-                                        className="w-[95%] h-[70%]" />
+                                        className="w-[100px] h-[100px] p-2" />
                                         <View
                                                 style={{fontSize:9}}
-                                                className="w-[100%] h-[20%] flex-row justify-center items-center">
+                                                className="w- [100%] h- [20%] flex-row justify-center items-center">
                                                 <Text 
                                                 style={{fontSize:10}}
                                                 className="text-white font-black"> 
                                                     {selectedFriends.length}{' '}Invites
                                                 </Text>
                                         </View>
-                                    </TouchableOpacity>
+                              </TouchableOpacity>
 
-                                    <View
-                                        className="w-[100%] h-[75%]  borde-blue-300 borde-4 rounded-xl ">
+                              <View
+                                        className="w-[100%] pt-2 h-[250px] mt-4 k rounded-xl ">
                                        <ScrollView  className=" flex-1">
-                                       <View
-                                        className="min-w-[100%] min-h-[100%] flex-row flex-wrap px-2  py-2 gap-y-4  justify-center  items-center">
-                                        {selectedFriends.map((friend,index) => {
-                                             return (<View
-                                                key={index}
-                                                className="w-[23%] h-[30%] px- flex-col justify-center gap-2 items-center">
-                                                        <Image
-                                                        source={{uri:friend.profile_img}}
-                                                        resizeMethod='contain'
-                                                        style={{width:width/10, height:width/10}}
-                                                        className="w-[40px] h-[40px] rounded-full" />
-                                                        <Text 
-                                                           style={{fontSize:8}}
-                                                           className="text-gray-200 text-sm font-bold">
-                                                            {friend.name.slice(0,12)}
-                                                        </Text>
-                                               </View>  )  
-                                        })}
-                                        </View>
+                                          <View
+                                            className="min-w- [100%] min-h -[100%] bg-black flex-row flex-wrap px -2  py -2 ga  justify-center  items-center">
+                                            {selectedFriends.map((friend,index) => {
+                                                return (<View 
+                                                    key={index}
+                                                    className="w-[23%] pt-4 pb-4 h- [30%] px- flex-col justify-center gap-2 items-center">
+                                                            <Image
+                                                            source={{uri:friend.profile_img}} 
+                                                            resizeMethod='contain'
+                                                            style={{width:width/10, height:width/10}}
+                                                            className="w-[40px] h-[40px] rounded-full" />
+                                                            <Text 
+                                                              style={{fontSize:8}}
+                                                              className="text-gray-200 text-sm font-bold">
+                                                                {friend.name.slice(0,12)}
+                                                            </Text>
+                                                  </View>  )  
+                                            })}
+                                            </View>
                                       </ScrollView>     
+                              </View>
+
+                              <View
+                                style ={{ width:width}}
+                                className="flex-row px-4 justify-between items-center  py-2">
+                                  <TouchableOpacity 
+                                    onPress={() => {
+                                      // setChallenge({...challenge,desc:description})
+                                      setStep(prev => prev - 1)
+                                    }}
+                                    style={{backgroundColor:step !==0 ? "red" : "gray" }}
+                                    className="py-2 px-4  bg-red-500 rounded-lg" >
+                                        <Text style={styles.buttonText}>Back</Text>
+                                  </TouchableOpacity>
+                                  <TouchableOpacity 
+                                  onPress={() => {
+                                    if(selectedFriends.length > 0){
+                                    setChallenge({...challenge,invited_friends:selectedFriends})
+                                    setStep(prev => prev + 1)
+                                    }
+                                    }}
+                                    style={{backgroundColor: selectedFriends.length > 0 ? "blue" : "gray" }}
+                                    className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
+                                        <Text style={styles.buttonText}>Next</Text>
+                                  </TouchableOpacity>
+                              </View>
+                        
+                   </View>
+                )}
+
+
+
+                {step == 4 && (
+                  <>
+                        {videoUri ? (
+                             <>
+                                  <VideoView 
+                                          style={{ width:'100%' ,height:'100%',opacity:100}}
+                                          player={player}
+                                          contentFit='cover'
+                                          nativeControls ={false}
+                                          pointerEvents='box-only'
+                                              />
+                                  <TouchableOpacity 
+                                                  hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
+                                                  onPress={ 
+                                                      toggleVideoPlaying
+                                                      // () => { (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )} 
+                                                  }
+                                                  className={
+                                                          "w-full h-full flex-col absolute top-  justify-center items-center"
+                                                  }
+                                                  >
+                                                  <Image 
+                                                  className="w-14 h-14 opacity-100"
+                                                  source={!isPlaying && icons.play}/>
+                                  </TouchableOpacity>
+                                  {!isPlaying && (
+                                  <View className="absolute bottom-[25vh] px-4 flex-row min-w-full -auto  justify-between  items-center  opacity-85  h-[5vh]">
+                                          <View className="flex-row w-[30%] mt-auto  bg-wh mb- justify-center  items-center   h- [99%]">   
+                                              <TouchableOpacity
+                                              className=" flex-row py-4 justify-center bg-[#920412] gap-2 items-center h- [95%] w-[95%] rounded-bl-[38px] "
+                                              // onPress={goBack}  
+                                              onPress={()=>setIsRecording(false)}   
+                                              onPressOut={()=> {setVideoUri(null)}}
+                                                  >
+                                              <Text
+                                              style={{fontSize:10}}
+                                              className="text-white text-xs font-black">Cancel</Text>
+                                              <Image      
+                                              className="w-7 h-7 "
+                                              source={icons.back}
+                                              resizeMode='contain'
+                                              />  
+                                              </TouchableOpacity>
+                                          </View>
+                                          <View className="flex-row w-[30%]  bg-whi  mb- justify-center  items-center   h- first-letter: [99%]">
+                                              <TouchableOpacity
+                                              className="flex-row justify-center py-4 bg-[#04198e] gap-2 items-center h-[95%] w-[95%] rounded-br-[38px]"
+                                                onPress={handleSumitChallenge}
+                                                  >
+                                              <Image      
+                                              className="w-7 h-7 "
+                                              source={isRecording ? icons.submit : icons.submit}
+                                              resizeMode='contain'
+                                              />  
+                                              <Text 
+                                              style={{fontSize:10}}
+                                              className="text-white text-xs font-black">{isRecording? "Submit":"Submit"}</Text>
+                                              </TouchableOpacity>
+                                          </View>  
+                                  </View>
+                                  )}
+                             </>
+                              ):
+                              (     
+                              <>
+                                <CameraView ref={cameraRef} videoQuality="720p"
+                                      mode='video'
+                                      facing={facing}
+                                      style={{width:'100%',height:'100%',opacity:0.5}}   
+                                        />   
+                                      {!isRecording && (
+                                        <View 
+                                        style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
+                                        className="absolute bottom-[20vh] w-[100%] flex-col justify-start items-center -auto bg- opacity-100 ">
+                                            <View className="flex-row min-w-full mt-auto  px-4 justify-between  items-center  opacity-85  h-[7vh]">       
+                                            {!isRecording && (
+                                              <TouchableOpacity
+                                                  className="flex-col justify-center gap-1 items-center h-[100%]  g-green-500 -[33%] "
+                                                  onPress={isRecording? stopRecording : startRecording}
+                                                  onPressIn={()=>{setReplayRecording(true)}}
+
+                                                    >
+                                                  <Image    
+                                                  className="w-8 h-8 "
+                                                  source={isRecording ? icons.camera_recording : icons.camera}
+                                                  resizeMode='contain'
+                                                  />
+                                                  <View className="h- [50%] flex-col justify-end  ">
+                                                      <Text
+                                                      style={{fontSize:8}}
+                                                      className="text-white text-xs font-black">
+                                                        {isRecording? "Recording":"Record "}
+                                                      </Text>
+                                                  </View>      
+                                              </TouchableOpacity>
+                                              )}   
+
+                                              {!isRecording && (
+                                              <TouchableOpacity
+                                                  className="flex-col justify-center gap-1 items-center  g-blue-500 h-[100%] -[33%] "
+                                                  onPress={uploadVideo}
+                                                  >     
+                                                  <Image    
+                                                  className="w-9 h-9"
+                                                  source={icons.upload}
+                                                  resizeMode='contain'
+                                                  />
+                                                  <View className="h- [50%] flex-col justify-end  ">
+                                                      <Text 
+                                                    style={{fontSize:8}}
+                                                    className="text-white text-xs font-black">
+                                                      Upload
+                                                    </Text>
+                                                  </View>        
+                                              </TouchableOpacity>
+                                              )}    
+
+                                            </View>
+
+                                      </View>
+                                    )}
+
+                                    {!isRecording && (  
+                                        <>
+                                                      <TouchableOpacity
+                                                          className=" absolute   flex-row justify-center    items-center  "
+                                                          onPress={toggleCameraFacing}
+                                                            >
+                                                          <Image
+                                                          className="w-10 h-10"
+                                                          source ={icons.flip}
+                                                          resizeMode='contain'
+                                                          />
+                                                      </TouchableOpacity>
+
+                                                      <TouchableOpacity style={styles.buttonContainer} 
+                                                      className="absolute top-[25vh]"
+                                                        onPress={()=> {setStep(1)}}>
+                                                            <View style={styles.iconWrapper}>
+                                                            <AntDesign name="closecircle" size={30} color="white" /> 
+                                                            </View>
+                                                      </TouchableOpacity>
+                                        </>
+                                                    )}
+
+
+                                    {isRecording && ( 
+                                    <View 
+                                            style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
+                                            className="absolute bottom-[15vh] w-[100%] flex-col justify-start items-center  bg- opacity-100 ">
+                                                  {isRecording && (   
+                                                    <View
+                                                      className="flex-row justify-center   items-end h-[100%] w-[33%] ">   
+                                                      <Text 
+                                                        style={{fontSize:10}}
+                                                        className="text-white text-xl">Recording</Text>
+                                                  </View>
+                                                  )}
+                                                  {isRecording && (   
+                                                    <TouchableOpacity
+                                                      className="flex-row justify-center gap-2 items-center h-[100%] w-[33%] "
+                                                      onPress={ stopRecording }
+                                                        >
+                                                      <Image    
+                                                      className="w-10 h-10 "
+                                                      source={ icons.camera_recording }
+                                                      resizeMode='contain'
+                                                      />
+                                                    </TouchableOpacity>
+                                                  )}  
+                                            
+                                                  {isRecording && ( 
+                                                  <View
+                                                      className="flex-row justify-center   items-end h-[100%] w-[33%] ">   
+                                                      <Text 
+                                                          style={{fontSize:10}}
+                                                          className="text-white text-xl">{formatTime(timer)}</Text>
+                                                  </View>
+                                                  )}
                                     </View>
-                            </View>
+                                    )}
+                              </>
+                    )}
+                   </>
+                )}
+                 
 
-                  </>
-                      )}
 
+       
 
+          <BottomBarChallenge show = {!replayRecording} width ={width} height={height * 0.07 + insets.bottom} bottom={0} left ={null} right ={null} user = {user}
+               challenge={challenge} />  
 
-                            
-                            <View className="w-[100%] h-[6%]  mt-auto  flex-row justify-center bg-[#f5f7fa] items-center">
-                                 <TouchableOpacity
-                                    onPress={handleContinue}
-                                    className="w-[46%] h-[90%] flex-row mb-4 justify-center rounded-lg gap-2 items-end">
-                                     <Text 
-                                       style={{fontSize:18}}
-                                       className="text-blue-800 text-sm mb-2 font-black">
-                                                Next
-                                     </Text>
-                                     <Image
-                                                        source={icons.forward}
-                                                        resizeMethod='contain'
-                                                        // style={{width:width/12, height:width/12}}
-                                                        className="w-7 h-7 mb-1 rounded-full" />
-                                 </TouchableOpacity>
-                               
-                        </View>
-
-                     
-              </View>
 
           {isSelectorVisible && (
             <SelectType height={height} width={width} data ={challengeType} selectedType={selectedType} setIsSelectorVisible={setIsSelectorVisible} setSelectedType={setSelectedType}/>
@@ -482,7 +806,44 @@ export default function CoverNewChallenge() {
           {isModalVisible && (
                     <CustomAlert text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
                )}
-   </SafeAreaView>
+   </View>
+     
+  
    
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor:"white"
+  },
+  textarea: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 10,
+    width:200,
+    height: 50, // Ensures a minimum height for the textarea
+    textAlignVertical: 'top',
+    backgroundColor:"white"
+  },
+  button: {
+    backgroundColor: '#4CAF50', // Example color
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5, // Rounded corners
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000', // Shadow for a "fancy" look
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+});

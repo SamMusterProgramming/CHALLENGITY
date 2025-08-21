@@ -401,58 +401,127 @@ export const updateThumbNail = async(challenge_id , body ,setThumb)=>{
 
 
 
-   // *********************************** likes and votes data *************************
+   // *********************************** likes and votes postdata challenge *************************
+  
+   export const getChallengePostData = async(post_id ,body, setPostData  , setIsExpired) =>{
+    try { 
+    await axios.post( BASE_URL + `/challenges/post/${post_id}`,body )
+    .then(res =>  {
+      if(res.data === "expired") {
+          setIsExpired(true)
+       } else setPostData(res.data)
+      } )
+      .finally(()=>{
+        // setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+  }
+
+
+  export const likeChallengePost = async(post_id , body, setPostData , setIsLoading , setIsExpired) =>{
+    try { 
+    await axios.post( BASE_URL + `/challenges/likes/${post_id}`,body )
+    .then(res =>  {
+         if(res.data === "expired") {
+          return setIsExpired(true)
+         } else
+         setPostData(res.data)
+      } )
+      .finally(()=>{
+        // setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+
+ export const voteChallengePost = async(post_id , body, setPostData ,setIsExpired) =>{
+  try { 
+  await axios.post( BASE_URL + `/challenges/votes/${post_id}`, body )
+  .then(res =>  {
+      if(res.data === "expired") {
+      return setIsExpired(true)
+      } else
+       setPostData(res.data)
+    } )
+    .finally(()=>{
+      // setIsLoading(false)
+    })
+} catch (error) {
+  console.log(error)
+}
+}
+
+export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired) =>{
+  try { 
+  await axios.post( BASE_URL + `/challenges/flags/${post_id}`, body )
+  .then(res =>  {
+      if(res.data === "expired") {
+      return setIsExpired(true)
+      } else
+       setPostData(res.data)
+    } )
+    .finally(()=>{
+      // setIsLoading(false)
+    })
+} catch (error) {
+  console.log(error)
+}
+}
 
      
-    export const loadLikeVoteData= async(ids,setLikesVotesData,likesVotesData,setIsExpired)=> {
+  // export const loadLikeVoteData= async(ids,setLikesVotesData,likesVotesData,setIsExpired)=> {
 
-    try {
-      await axios.get( BASE_URL + '/challenges/load/like/', {
-        params:{
-            ids: ids.join(',')
-        }
-     } )
-      .then(res => {
-        //  console.log(res.data)
-         if(res.data === "post expired") setIsExpired(true)
-         else setLikesVotesData({...likesVotesData,isLiked:res.data.isLiked,like_count:res.data.like_count,
-        isVoted:res.data.isVoted,vote_count:res.data.vote_count}) 
-    })
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  //   try {
+  //     await axios.get( BASE_URL + '/challenges/load/like/', {
+  //       params:{
+  //           ids: ids.join(',')
+  //       }
+  //    } )
+  //     .then(res => {
+       
+  //        if(res.data === "post expired") setIsExpired(true)
+  //        else setLikesVotesData({...likesVotesData,isLiked:res.data.isLiked,like_count:res.data.like_count,
+  //       isVoted:res.data.isVoted,vote_count:res.data.vote_count}) 
+  //   })
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
-  export const liked = async(ids,setLikesVotesData,likesVotesData, setIsExpired)=>{
-    try {
-        await axios.get( BASE_URL + `/challenges/challenge/like/`, {
-          params:{
-              ids: ids.join(',')
-          }
-       } )
-        .then(res => { if(res.data === "post expired") setIsExpired(true)
-          else
-          setLikesVotesData({...likesVotesData,isLiked:res.data.isLiked,like_count:res.data.like_count})
-        } )
-      } catch (error) {
-        console.log(error)
-      }
-  }
+  // export const liked = async(ids,setLikesVotesData,likesVotesData, setIsExpired)=>{
+  //   try {
+  //       await axios.get( BASE_URL + `/challenges/challenge/like/`, {
+  //         params:{
+  //             ids: ids.join(',')
+  //         }
+  //      } )
+  //       .then(res => { if(res.data === "post expired") setIsExpired(true)
+  //         else
+  //         setLikesVotesData({...likesVotesData,isLiked:res.data.isLiked,like_count:res.data.like_count})
+  //       } )
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  // }
 
-  export const voted = async(ids,setLikesVotesData,likesVotesData,setIsExpired)=>{
-    try {
-        await axios.get( BASE_URL + `/challenges/challenge/vote/`, {
-          params:{
-              ids: ids.join(',')
-          }
-       } )
-        .then(res =>  { if(res.data === "post expired") setIsExpired(true)
-          else
-          setLikesVotesData({...likesVotesData,isVoted:res.data.isVoted,vote_count:res.data.vote_count})} )
-      } catch (error) {
-        console.log(error)
-      }
-  }
+  // export const voted = async(ids,setLikesVotesData,likesVotesData,setIsExpired)=>{
+  //   try {
+  //       await axios.get( BASE_URL + `/challenges/challenge/vote/`, {
+  //         params:{
+  //             ids: ids.join(',')
+  //         }
+  //      } )
+  //       .then(res =>  { if(res.data === "post expired") setIsExpired(true)
+  //         else
+  //         setLikesVotesData({...likesVotesData,isVoted:res.data.isVoted,vote_count:res.data.vote_count})} )
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  // }
 
   // *********************************** follower and following *************************
 
@@ -518,7 +587,9 @@ export const updateThumbNail = async(challenge_id , body ,setThumb)=>{
       }
      }
 
-  //*********************** Friends request , adding */
+  //*********************** Friends request , adding , postdata  */
+
+  
    
   export const friendRequest = async(receiver_id , rawBody , setFriendRequest , setExist) =>{
     try {
@@ -631,7 +702,8 @@ export const updateThumbNail = async(challenge_id , body ,setThumb)=>{
     }
    }
    
-// *********************************** comments *************************
+// *********************************** comments , postdata , likes votes *************************
+
 
 export const getCommentsByPost = async(post_id,setComments) =>{
   try {

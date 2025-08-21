@@ -112,7 +112,6 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
        case "Magic":
            return icons.magic
            break;
-       
        case "Asia":
            return icons.asia
            break;
@@ -125,18 +124,15 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
         case "America":
             return icons.america
             break;
-
        case "Fitness":
             return icons.fitness
             break;
        case "Art":
             return icons.art
             break;
-
       case "Food":
             return icons.eating
             break;
-
       case "Dancing":
             return icons.dance
               break;
@@ -157,7 +153,13 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
               break;
        case "Comedy":
               return icons.comedy
-           break;
+              break;
+
+      case "Public":
+                return icons.publi
+                break;
+      case "Private":
+                return icons.priv
        default:
            break;
     }

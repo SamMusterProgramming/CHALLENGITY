@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Image, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { icons } from '../../constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function SelectFriends({data,height,width ,setIsFriendListVisible ,setSelectedFriends , selectedFriends}) {
 
@@ -41,29 +42,19 @@ export default function SelectFriends({data,height,width ,setIsFriendListVisible
     return (
 
     <View 
-    style={{top:Platform.OS == "ios"?50:0}}
-    className="w-full h-[35%] absolute  flex-col justify-start items-center rounded-3xl border-4 border-blue-400 bg-[#74a0e7]">
+    // style={{top:Platform.OS == "ios"?50:0}}
+    className="w-full h- [35%] absolute  flex-col justify-start items-center gap  b g-[#74a0e7]">
      
      <TouchableOpacity
-                    className="absolute top-0 left-0  justify-center items-center  w-12 h-12    rounded-full"
+                    className="abso lute justify-center items-center  w-12 h-12    rounded-full"
                     onPressIn={()=>{setIsFriendListVisible(false)}}
                     >
-                        <Image   
-                        source={icons.x}
-                        className=" w-10 h-10 bg-white rounded-full"
-                        />
+                       <AntDesign name="closecircle" size={35} color="white" /> 
      </TouchableOpacity>
-     <View 
-      className= " w-[95%] h-[20%] flex-row  justify-center items-center  ">
-           <Text
-             style={{fontSize:width/35}}
-             className= "text-gray-800 font-black" >
-                  Invite friends to challenge you 
-           </Text>
-     </View>
+     
       <View 
         // style={{left:(width * 0.05/2) ,top:height * 0.9/2}}
-        className= " w-[95%] h-[60%] flex-row flex-wrap justify-center items-center  gap-2 py-2  bg-gray-700 rounded-lg border-4 border-blue-600">
+        className= " w-[95%] py-24 flex-row flex-wrap justify-center items-center  gap-2   bg-gray-700 rounded-lg bord er-4 borde r-blue-600">
         
            
            {displayData.map((element,index)=>
@@ -72,13 +63,13 @@ export default function SelectFriends({data,height,width ,setIsFriendListVisible
                       <TouchableOpacity
                        key={index}
                    
-                       style={{backgroundColor: selectedFriends.find(friend => friend.sender_id == element.sender_id) && "black"
+                       style={{backgroundColor: selectedFriends.find(friend => friend.user_id == element.user_id) && "black"
                         ,width:width/6, height:width/6
                        }}
                        onPress={()=> {
-                        if(selectedFriends.find(friend => friend.sender_id == element.sender_id) )
+                        if(selectedFriends.find(friend => friend.user_id == element.user_id) )
                              {
-                                 const fds = selectedFriends.filter(friend => friend.sender_id !== element.sender_id) 
+                                 const fds = selectedFriends.filter(friend => friend.user_id !== element.user_id) 
                                  setSelectedFriends(fds)
                              }
                         else {
@@ -116,7 +107,7 @@ export default function SelectFriends({data,height,width ,setIsFriendListVisible
       </View>
 
       <View 
-      className= " w-[95%] h-[20%] flex-row px-4 justify-between items-center  ">
+      className= " w- [95%] h- [20%] flex-row px-4 justify-between items-center  ">
           
           {/* {moreLeft && ( */}
               <TouchableOpacity

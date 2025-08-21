@@ -69,12 +69,12 @@ const TalentHomePage = ({ setSelectedPage }) => {
 
   return (
     <View
-    className="flex-1 borde-t-2 borde-blue-100 ">
+    className="flex-1    ">
     {!selectedTalent ?  (
         <>
            
             <View
-            className="flex-row w-full -[5%] border-l-[10px] borde-r-[10px] borde-b-[10px] order-[#272d31] justify-center g-[#bdc2c4] items-center pt-5 py- px-4">
+            className="flex-row w-full -[5%] border-l- [10px] borde-r-[10px] borde-b-[10px] order-[#272d31] justify-center g-[#bdc2c4] items-center pt-4 py- px-4">
                 <TouchableOpacity
                 onPress={() => setSelectedPage(null)}
                 className=" p- g-white flex-col justify-center items-center" >     
@@ -83,13 +83,13 @@ const TalentHomePage = ({ setSelectedPage }) => {
                 <ShuffleLetters textSize={14} text = "Talent Rooms" />
                 <TouchableOpacity
                  onPress={() => setSelectedPage(null)}
-                 className=" absolute top-4 left-0 p- g-white flex-col justify-end items-center" >
-                    <Icon name="arrow-back" size={35} color="#fff" />
+                 className=" absolute top-3 left-4 p- g-white flex-col justify-end items-center" >
+                    <Icon name="arrow-back" size={30} color="#fff" />
                 </TouchableOpacity>   
             </View>
 
             <View 
-                className = "g-[#e1d6d6] flex-1 -full -[93%] flex-row flex-wrap gap-2 py-3 mt-2 justify-center items-center borde-l-[10px] borde-r-[10px] borde-[#272d31]"
+                className = "g-[#e1d6d6] flex-1 -full -[93%] flex-row flex-wrap gap-2 py-3 mt- 2 justify-center items-center borde-l-[10px] borde-r-[10px] borde-[#272d31]"
      
                 >
                   {talentRooms.map((item,index )=>{
@@ -100,7 +100,7 @@ const TalentHomePage = ({ setSelectedPage }) => {
                               animate={{ opacity: 1, translateY: 0 }}
                               transition={{ delay: 100 * item.id , type: 'timing', duration: 600  }}
                               // style={{backgroundColor:item.color}}
-                              className ="bg-[#dee2e3]  w-[30%]  h-[24%]  rounded-lg justify-center items-center" 
+                              className ="b g-[#dee2e3]  w-[30%]  h-[24%]  rounded-lg justify-center items-center" 
                               >
                                     <TouchableOpacity 
                                       onPress ={()=> setSelectedTalent({name:item.name , icon:item.icon})}
@@ -178,9 +178,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color:  "white",
     textAlign: 'center',
-    backgroundColor:"black",
+    backgroundColor:"#3b4348",
     borderTopRightRadius : 5,
-    elevation: 10,
+    // elevation: 10,
 
   },
 });

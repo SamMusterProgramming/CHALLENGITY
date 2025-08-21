@@ -1,4 +1,4 @@
-import { View, Text, FlatList, useWindowDimensions, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, FlatList, useWindowDimensions, TouchableOpacity, Image, ScrollView, Platform } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import SwingingTitle from '../custom/SwingingTitle'
 import InstantPlayer from './InstantPlayer';
@@ -13,6 +13,9 @@ import { deleteObject, getStorage, ref } from 'firebase/storage'
 import { storage } from '../../firebase';
 import ChallengeDescriptionModal from '../modal/ChallengeDescriptionModal';
 import ProfileDisplayModal from '../modal/ProfileDisplayModal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { useEvent } from 'react-native-reanimated';
 
 
 
@@ -46,6 +49,25 @@ export default function InstantChallengeDisplay({challenge , setSelectedChalleng
     const [icon,setIcon] = useState("")
     const [isProfileDisplayerModalVisible, setIsProfileDisplayerModalVisible] = useState(false)
     const [selectedProfile , setSelectedProfile] = useState(null)
+
+    const insets = useSafeAreaInsets();
+    const [selectedParticipant,setSelectedParticipant] = useState(null)
+    const [isPlaying, setIsPlaying] = useState(false);
+    
+
+    //*************************************  player */
+
+    const player = useVideoPlayer
+    (
+      null
+      , (player) => {
+      player.loop = false;
+      player.volume = volume
+      player.pause() ;
+      player.timeUpdateEventInterval = 0.1;
+    });
+
+    const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
 
 
     //************************************ favourites */
@@ -373,11 +395,72 @@ const handleAudienceDescrition = ()=> {
   return (
     <>
    {data && (
-        <View
-        className = "w-[100%] h-[101%] flex-col  justify-start items-center px-1 rounded-xl g-white">
+         <View
+         style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top}}
+         className=" flex-1  flex-col justify-center items-center   bg-[#060606]">
+                                 
+
+                                 {selectedParticipant ? (
+                                          <TouchableOpacity
+                                          activeOpacity={1}
+                                          onPress={toggleVideoPlaying}
+                                          className={ "w-[100vw] h-[100vh] b g-white flex-col justify-center items-center opacity-100"}
+                                              > 
+                                              
+                                              <VideoView 
+                                                             style={{ width:'100%' ,height:'100%',opacity:100}}
+                                                             player={player}
+                                                             contentFit='cover'
+                                                             nativeControls ={false}
+                                                             pointerEvents='box-only'
+                                              />
+                                              <ContestantPostDetails user={user} show = {!isContestantVisible && !isPlaying && selectedContestant} displayComment ={displayComment}
+                                                  setDisplayComment = {setDisplayComment} selectedContestant={selectedContestant} setIsExpired={setIsExpired} talentRoom={talentRoom}
+                                                  // confirmAction = {confirmAction} setAction ={setAction} setText ={setText}
+                                                  rank={selectedContestant.rank}
+                                                  handleRefresh ={handleRefresh}
+                                                  width ={width } height={height} top = { height/4} />       
+                                             
+                                              <TouchableOpacity 
+                                                  hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
+                                               
+                                                  onPress={ () => {!isContestantVisible && (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )} }
+                                                  className={
+                                                          "w-full h-full flex-col absolute top-  justify-center items-center"
+                                                  }>
+                                                  {/* <Image 
+                                                  className="w-14 h-14 opacity-100"
+                                                  source={!isPlaying && icons.play}/> */}
+                                              </TouchableOpacity>
+
+                                              <DisplayContestant show = {isContestantVisible} setIsContestantVisible = {setIsContestantVisible} selectedContestant={selectedContestant} 
+                                              width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} />
+
+                                              {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedContestant}  />)}
+
+                                              {isPlaying && ! isContestantVisible && (<ProgresssBarVideo player={player} visible={!isPlaying} bottom={82} />)}
+                                              {isPlaying && ! isContestantVisible && (
+                                              <VolumeControl volume = {volume} setVolume={setVolume} bottom = {95} right ={4} />
+                                              )}
+                                          </TouchableOpacity>
+                                    ) : (
+                                        // <TouchableOpacity
+                                        //  activeOpacity={1}
+                                        //  className={ "w-[100vw] h-[100vh] bg-[#050505] justify-center items-center opacity-100"}
+                                        //     >    
+                                        //             <Text 
+                                        //                 style ={{fontSize:12}}
+                                        //                     className="text-xl font-base mb- text-gray-300"> 
+                                        //                     select a contestant 
+                                        //             </Text>
+                                        // </TouchableOpacity>
+                                        <ContestantList contestants={talentRoom.contestants}  selectedIcon ={selectedIcon} selectedTalent={selectedTalent} setSelectedContestant={setSelectedContestant}
+                                        talentRoom={talentRoom} edition={edition} region={region} regionIcon ={regionIcon} h={height * 0.5} w ={width * 0.5} top = { height * 0.11 + insets.top   } />
+                                    )}
+                                      
+
              <View
              className = "min-w-[100%] h-[7%] gap- rounded-tl-xl rounded-tr-xl flex-row justify-start items-center px- bg-[#2f2c2c]">
-                  
                   <TouchableOpacity
                       className="w-[10%] h-[100%] justify-center g-[#eb0a0a] px-1 py-1 rounded-xl items-center opacity  "
                       onPressIn={()=>{setSelectedChallenge(null)}}

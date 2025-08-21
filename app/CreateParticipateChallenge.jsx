@@ -366,7 +366,7 @@ export default function CreateParticipateChallenge() {
                 <>
            
            {videoUri ? (
-               <View className="w-[100vw] h-[100%] flex-column  justify-start  items-center ">
+               <View className="w-[100vw] h-[100%] flex-1 flex-column  justify-start  items-center ">
                  <Video
                    className={ play ? "opacity-100":"opacity-10 rounded-tl-full rounded-tr-full" }
                    style={{minWidth:'100%',minHeight:'100%',position:'relative' ,opacity: !play ? 0.3 :100 }}
@@ -831,7 +831,7 @@ export default function CreateParticipateChallenge() {
                 ):
                 (       
                   
-                     <View className="w-[100vw] h-[100%] justify-center  items-center ">       
+                     <View className="min-w-[100vw] h-[100%] justify-center  items-center ">       
                      <CameraView ref={cameraRef} videoQuality="720p"
                        mode='video'
                        facing={facing}
@@ -1120,7 +1120,7 @@ export default function CreateParticipateChallenge() {
                 )}
 
 
-                  {!isRecording && (  
+                {!isRecording && (  
                                       <TouchableOpacity
                                           className=" absolute bottom-[10vh] -[100%]  -[33%] flex-row justify-center    items-center  "
                                           onPress={toggleCameraFacing}

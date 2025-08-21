@@ -33,7 +33,7 @@ const RegionSelector = ({  selectedTalent }) => {
     return (
      
       <View 
-      className="flex-1 rounded-xl py-4 borde-2 order-white"
+      className="flex-1 rounded-xl py- borde-2 border-white bg-[#3b4348]"
       style={styles.regionGrid}>
        
         {! isLoading && regions.map((region) => (
@@ -46,7 +46,7 @@ const RegionSelector = ({  selectedTalent }) => {
               styles.regionButton
             ]}
             // style={{}}
-            className="w-[47%] h-[47%] g-[#0b273c]"
+            className="w-[49%] h-[49%] g-[#0b273c]"
               >
               <TouchableOpacity
                 style={{backgroundColor:region.color}}
@@ -67,7 +67,7 @@ const RegionSelector = ({  selectedTalent }) => {
               >
 
                  <View
-                   className="w-[95%] h-[95%] z- p- bg-black flex-row justify-start items-start " >
+                   className="min-w-[95%] min-h-[95%] z- p- bg-black flex-row justify-start items-start " >
                         <View
                         className ="w-[50%] h-[70%] g-[#f6f4f1] g-[#192037] rounded-lg flex-col justify-start gap- items-center py-4 ">
                                 <Image
@@ -111,7 +111,7 @@ const RegionSelector = ({  selectedTalent }) => {
               
               </TouchableOpacity>
               <View
-                className = "absolute bottom-0 left-0 p-4 rounded-tr-xl bg-black">
+                className = "absolute bottom-0 left-0 p-4 rounded-tr-xl bg-[#3b4348]">
                       <Text
                           style={[
                           styles.regionText

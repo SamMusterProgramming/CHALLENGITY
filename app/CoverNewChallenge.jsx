@@ -65,6 +65,7 @@ export default function CoverNewChallenge() {
     const [visible, setVisible] = useState(false);
     const [thumbNailURL,setThumbNailURL] = useState(null)
     const [replayRecording , setReplayRecording] = useState(false)
+    const [isFocused, setIsFocused] = useState(false);
 
 
 //****************************** video player , camera ,  */
@@ -355,8 +356,13 @@ try {
                            Description 
                       </Text> 
                       <TextInput
-                      className="text-xs mt-4"
-                      style={styles.textarea}
+                      className="mt-4 w-[70%]  bg-white dark:bg-gray-800 
+                        border-2 
+                        rounded-lg 
+                        px-4 py-3 "
+                      
+                      // style={styles.textarea}
+                      onFocus={() => setIsFocused(true)}
                       multiline={true} 
                       numberOfLines={2} 
                       value={ description}
@@ -466,9 +472,10 @@ try {
                             source={selectedPrivacy ? getIcon(selectedPrivacy) : icons.publi}
                             resizeMethod='contain'
                             // style={{width:width/10, height:width/10}}
-                            className="w-[100px] h-[100px] rounded-full p-4 bg-white " />
+                            className="w-[100px] h-[100px] rounded-full p-4 b g-white " />
+
                             <View
-                                  className="w- [100%] h -[20%] p-2 flex-row justify-center items-center">
+                                  className="w- [100%] h -[20%] p- 2 flex-row justify-center items-center">
                                   <Text 
                                     style={{fontSize:11}}
                                     className="text-white font-black"> 
@@ -493,7 +500,7 @@ try {
                              onPress={() => {
                               if(selectedPrivacy){
                               setChallenge({...challenge,privacy:selectedPrivacy})
-                              setStep(prev => prev + 1)
+                              selectedPrivacy == "Public" ? setStep(prev => prev + 2) : setStep(prev => prev + 1)
                               }
                                }}
                               style={{backgroundColor: selectedPrivacy ? "blue" : "gray" }}
@@ -522,8 +529,8 @@ try {
                                         </View>     
                                         <Image
                                         source={icons.invites}
-                                        resizeMethod='contain'
-                                        className="w-[100px] h-[100px] p-2" />
+                                        resizeMethod='cover'
+                                        className="w-[100px] h-[100px] p- 2" />
                                         <View
                                                 style={{fontSize:9}}
                                                 className="w- [100%] h- [20%] flex-row justify-center items-center">
@@ -663,8 +670,8 @@ try {
                                       {!isRecording && (
                                         <View 
                                         style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
-                                        className="absolute bottom-[20vh] w-[100%] flex-col justify-start items-center -auto bg- opacity-100 ">
-                                            <View className="flex-row min-w-full mt-auto  px-4 justify-between  items-center  opacity-85  h-[7vh]">       
+                                        className="absolute bottom-[35vh]  w-[100%] flex-col justify-start items-center -auto bg- opacity-100 ">
+                                            <View className="flex-row min-w-full mt-auto  px-8 justify-evenly  items-center  opacity-85  h-[7vh]">       
                                             {!isRecording && (
                                               <TouchableOpacity
                                                   className="flex-col justify-center gap-1 items-center h-[100%]  g-green-500 -[33%] "
@@ -780,8 +787,8 @@ try {
 
        
 
-          <BottomBarChallenge show = {!replayRecording} width ={width} height={height * 0.07 + insets.bottom} bottom={0} left ={null} right ={null} user = {user}
-               challenge={challenge} />  
+          {/* <BottomBarChallenge show = {!replayRecording} width ={width} height={height * 0.07 + insets.bottom} bottom={0} left ={null} right ={null} user = {user}
+               challenge={challenge} />   */}
 
 
           {isSelectorVisible && (
@@ -819,9 +826,9 @@ const styles = StyleSheet.create({
     backgroundColor:"white"
   },
   textarea: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
+    // borderWidth: 1,
+    // borderColor: '#ccc',
+    // borderRadius: 4,
     padding: 10,
     width:200,
     height: 50, // Ensures a minimum height for the textarea

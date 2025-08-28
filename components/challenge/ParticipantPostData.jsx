@@ -10,7 +10,8 @@ import { router } from 'expo-router'
 
 
 
-export default function ParticipantPostData({user,show , height, width ,top ,bottom,left ,right,selectedParticipant ,displayComment ,setDisplayComment,challenge
+export default function ParticipantPostData({user,show , height, width ,top ,bottom,left ,right,selectedParticipant ,displayComment ,
+   setSelectedParticipant,setDisplayComment, challenge
     ,rank,handleRefresh, setIsExpired }) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
@@ -61,7 +62,7 @@ export default function ParticipantPostData({user,show , height, width ,top ,bot
        }
     voteChallengePost(selectedParticipant._id,body,setPostData, setIsExpired)
     setVoted(true)
-   //  handleRefresh()
+    handleRefresh()
   }
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function ParticipantPostData({user,show , height, width ,top ,bot
              }}
              >
                    <TouchableOpacity
-                     onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
+                     onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedParticipant.user_id} })}}
                      // style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
                      className = "w-[100%]  h-[20%] px-4 flex-col g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
                                        <Image

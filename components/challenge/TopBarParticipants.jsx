@@ -2,7 +2,8 @@ import { View, Text, Animated, StyleSheet } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import Participant from './Participant';
 
-export default function TopBarParticipants({show, height, width ,top ,bottom,left ,right, participants,selectedParticipant , setSelectedParticipant}) {
+export default function TopBarParticipants({show, height, width ,top , bottom, left ,right, participants, selectedParticipant ,
+     setSelectedParticipant, participantTrackerId}) {
 
     const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  -width )).current;
 
@@ -49,9 +50,10 @@ export default function TopBarParticipants({show, height, width ,top ,bottom,lef
        className ="w-[100%] h-[100%] py -2 px- flex-row g-[#04283c] gap-[7] -2 rounde-tr-xl rounded-br-xl borde-t-4 justify-center items-center">
           {participants.map((participant , index) => {
                return (
-                <Participant key={index} participant={participant} index={index * 2 +1}
+                <Participant key={index} participant={participant} index={index}
                 selectedParticipant={selectedParticipant} w={"18%"} h={"100%"}
                 setSelectedParticipant={setSelectedParticipant} 
+                participantTrackerId={participantTrackerId}
                 // talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index = {(index + 1)* 2 + 4} w={"93%"} h={"13.7%"}
                 />
               

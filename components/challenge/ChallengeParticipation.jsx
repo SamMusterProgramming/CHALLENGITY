@@ -161,7 +161,7 @@ const toggleVideoPlaying = () =>{
         // setVisible(false)
         setNewChallenge(false)
         setStage(true)
-      }, 200); 
+      }, 100); 
 
       Promise.all([compressVideo(videoUri),compressImage(thumbNailURL)]).then(results => { 
         Promise.all([_uploadVideoAsync(results[0], user.email,user.name),uploadThumbnail(results[1], user.email)])
@@ -184,14 +184,17 @@ const toggleVideoPlaying = () =>{
             res =>  {
             if(res.data === "challenge expired") return setIsExpired(true) 
 
-            getUserPublicParticipateChallenges(user._id ,setPrivateParticipateChallenges)
-           
+            // getUserPublicParticipateChallenges(user._id ,setPrivateParticipateChallenges)
+            // getChallengeById(challenge._id, setChallenge , setIsExpired)
+            setChallenge(res.data)
+            // setSelectedParticipant({...res.data.participants.find( c => c.user_id == user._id),rank:res.data.participants.length + 1})
             setTimeout(() => {
-                getChallengeById(challenge._id, setChallenge , setIsExpired)
                 // setNewChallenge(false)
                 // setStage(true)
-                setSelectedParticipant(res.data.participants.find( c => c.user_id == user._id))
-                }
+                // setSelectedParticipant({...res.data.participants.find( c => c.user_id == user._id),rank:res.data.participants.length + 1})
+                // getChallengeById(challenge._id, setChallenge , setIsExpired)
+                setSelectedParticipant({...res.data.participants.find( c => c.user_id == user._id),rank:res.data.participants.length})
+              }
             , 500);
             }
              
@@ -277,8 +280,8 @@ const toggleVideoPlaying = () =>{
                       {!isRecording && (
                         <View 
                         style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
-                        className="absolute bottom-[20vh] w-[100%] flex-col justify-start items-center -auto bg- opacity-100 ">
-                            <View className="flex-row min-w-full mt-auto  px-4 justify-between  items-center  opacity-85  h-[7vh]">       
+                        className="absolute bottom-[25vh] w-[100%] flex-col justify-start items-center -auto bg- opacity-100 ">
+                            <View className="flex-row min-w-full mt-auto  px-8 justify-between  items-center  opacity-85  h-[7vh]">       
                             {!isRecording && (
                               <TouchableOpacity
                                   className="flex-col justify-center gap-1 items-center h-[100%]  g-green-500 -[33%] "

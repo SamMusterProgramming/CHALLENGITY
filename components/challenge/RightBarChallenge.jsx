@@ -2,7 +2,8 @@ import { View, Text, Animated, StyleSheet } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import Participant from './Participant';
 
-export default function RightBarChallenge({show, height, width ,top ,bottom,left ,right, participants,selectedParticipant , setSelectedParticipant}) {
+export default function RightBarChallenge({show, height, width ,top ,bottom,left ,right, participants,selectedParticipant , 
+  participantTrackerId,setSelectedParticipant}) {
 
     const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  width )).current;
 
@@ -51,6 +52,7 @@ export default function RightBarChallenge({show, height, width ,top ,bottom,left
                 <Participant key={index} participant={participant} index={ (index+1) * 2 }
                 selectedParticipant={selectedParticipant} w={"100%"} h={"19.7%"}
                 setSelectedParticipant={setSelectedParticipant} 
+                participantTrackerId={participantTrackerId}
                 />
               
                 )

@@ -2,7 +2,8 @@ import { View, Text, Animated, StyleSheet } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import Participant from './Participant';
 
-export default function BottomBarParticipants({show, height, width ,top ,bottom,left ,right, participants,selectedParticipant , setSelectedParticipant}) {
+export default function BottomBarParticipants({show, height, width ,top ,bottom,left ,right, participants,selectedParticipant ,
+  participantTrackerId, setSelectedParticipant}) {
 
     const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  -width )).current;
 
@@ -52,6 +53,7 @@ export default function BottomBarParticipants({show, height, width ,top ,bottom,
                 <Participant key={index} participant={participant} index={index * 2 +1}
                 selectedParticipant={selectedParticipant} w={"18%"} h={"100%"}
                 setSelectedParticipant={setSelectedParticipant} 
+                participantTrackerId={participantTrackerId}
                 // talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index = {(index + 1)* 2 + 4} w={"93%"} h={"13.7%"}
                 />
               

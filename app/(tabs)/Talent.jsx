@@ -56,70 +56,7 @@ export default function Talent() {
                   resizeMode = 'cover'
               />
         </View>
-         {/* <View className="  w-[100%] h-[10%] flex-row px- border-b-2  border-[#306c99] b g-[#e2eaef] rounde-tl-xl  rounde-tr-xl items-end  bg[#0a144b] justify-between"
-                  >
-                        <View
-                            className="justify-start rotate- 45 px-1 py-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#230d10] rounded-tr-full rounde-tr-3xl  ">
-                                      <TouchableOpacity 
-                                          onPress={()=> {setDisplayNotificationsModal(true)}}
-                                            className="justify-start items-start w- [50%] h- [80%] pb- 6  py- rounded-full  g-[#d5daf6] flex-col">
-                                                    <Image
-                                                        style={{width:height * 0.04 ,height: height * 0.04}}
-                                                        className="w-[30px]  h-[30px]  rounded-full g-white"
-                                                        source={icons.notification}
-                                                        resizeMethod='cover' />
-                                                    <Text 
-                                                          style={{fontSize:8}}
-                                                          className="absolute top-0 p- right-0 w-5 h-5 rounded-full text-center bg-white font-black text-sm text-red-500">
-                                                              {notifications.filter(not=>not.isRead == false).length}
-                                                    </Text> 
-                                      </TouchableOpacity>
-                                      <TouchableOpacity 
-                                          onPress={()=> {router.navigate("/SearchFriend")}}
-                                            className="justify-start items- rounded-full p-1 w- [50%] h-[100%]  borde-[#0a144b] g-[#c0c2c9] flex-col">
-                                                    <Image
-                                                        style={{width:height* 0.04 ,height: height * 0.04}}
-                                                        className="w-[30px] h-[30px] rounded-full b g-white"
-                                                        source={icons.search_people}
-                                                        resizeMethod='cover' />
-                                      </TouchableOpacity>
-                        </View>
-
-                        <View
-                            className="justify-end py- 2  px- 4 gap- 2 w-[40%] items-center h- [100%] flex-col  b g-[#042a6c] rounded-t-full bg-[#230d10] ">
-                                      
-                                    <View className="justify-center py-2 items-center w-[100%] b g-[#230d10]  rounded-t-3xl flex-row ">
-                                        <Image 
-                                            style={{width:height * 0.065 ,height: height * 0.065}}
-                                            className="w-[40px] h-[40px] rounded-full "
-                                            source={{uri :  (user.profile_img? user.profile_img  : "")}}
-                                        />
-                                    </View>            
-                        </View>
-                        
-                        <View
-                            className="justify-end rotate- 45 px-1 p-2 gap-4 w-[30%] items-center borde-2  borde-white h- [70%] flex-row bg-[#230d10] rounded-tl-full  rounde-tr-3xl  ">
-                                      <TouchableOpacity 
-                                          onPress={()=> {router.navigate("/ProfilePage")}}
-                                            className="justify-start items- center  rounded-full p- 1 h-[100%] border-  g-[#2039c4] g-[#fcfdff] flex-col">
-                                                     <Image
-                                                        style={{width:height * 0.04 , height: height * 0.04}}
-                                                        className="w-[30px] h-[30px] rounded-full b g-[#fefefe]"
-                                                        source={icons.profile}
-                                                        resizeMethod='cover' />                                    
-                                      </TouchableOpacity>
-                                      <TouchableOpacity 
-                                          onPress={()=> {router.navigate("/SearchFriend")}}
-                                            className="justify-start items-start w- [50%] h- [80%] pb- 6  py- rounded-full  g-[#d5daf6] flex-col">
-                                                    <Image
-                                                        style={{width:height * 0.04 ,height: height * 0.04}}
-                                                        className="w-[30px] h-[30px] rounded-full bg-black"
-                                                        source={icons.watchlist}
-                                                        resizeMethod='cover'/>
-                                      </TouchableOpacity>
-                        </View>
-                  
-          </View> */}
+     
 
            <View className="  w-[100%] h-[10%] flex-row px- border-b-2  border-[#306c99] b g-[#e2eaef] rounde-tl-xl  rounde-tr-xl items-end  bg-[#000000] justify-between"
                   >
@@ -303,14 +240,14 @@ export default function Talent() {
                         {selectedBox == 1 && userTalents.map((userTalent,index)=>  {
                                   let userPost = userTalent.contestants.find(c => c.user_id === user._id) 
                                   if(userPost) {
-                                       userPost.status = "stage"
+                                       userPost.status = "YOU ARE ON STAGE"
                                   }else{
                                     userPost = userTalent.queue.find(c => c.user_id === user._id)
                                     if(userPost){
-                                           userPost.status = "queue"
+                                           userPost.status = "YOU ARE IN QUEUE"
                                     }else{
                                       userPost = userTalent.eliminations.find(c => c.user_id === user._id)
-                                      userPost.status = "eliminated"
+                                      userPost.status = "YOU ARE ELIMINATED"
                                     }
                                   }
                                   return(<UserTalentEntry key={index} userTalent={userTalent} user={user} userPost={userPost} />)

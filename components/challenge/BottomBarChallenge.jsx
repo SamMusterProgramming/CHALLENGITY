@@ -8,8 +8,8 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 
-export default function BottomBarChallenge({show,  height, width ,top ,bottom,left ,right, user ,challenge,
-   setSelectedParticipant ,handleRefresh,isRefreshing}) {
+export default function BottomBarChallenge({show,  height, width ,top ,bottom,left ,right, user ,challenge,setStage,stage,
+  setSelectedParticipant ,handleRefresh,isRefreshing}) {
     const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  height)).current;
     const insets = useSafeAreaInsets();
 
@@ -52,69 +52,52 @@ export default function BottomBarChallenge({show,  height, width ,top ,bottom,le
                 className="w-[100%] flex-row justify-between items-end"
                 >         
                           <View
-                           className = "w-[21%]  h-[70%] flex-row justify-center rounded-tr-full px- py-  g-[#0ddddd] bg-[#070707] items-center ">
-                                
+                           className = "w-[21%]  h-[100%] flex-row justify-center rounded-tr-full px- py-  g-[#0ddddd] b g-[#f6e9e9] items-center ">
                                  <TouchableOpacity
                                   onPress={handleRefresh}
                                   onPressIn={() =>{setSelectedParticipant(null)}}
-                                  className="w- [100%] h- [100%] flex-row g-green-600 -rotate-45   justify-center items-start">
+                                  className="w-[100%] h-[60%] b g-[#f6e9e9] rounded-tr-full flex-row g-green-600 -rota te-45   justify-center items-center">
                                       {isRefreshing ?(
                                             <ActivityIndicator size={32} color="white" />
                                       ):(
                                             <Image 
                                             source={icons.refresh} 
-                                            className="w-9 h-9"/>
+                                            className="w-8 h-8 b g-black rounded-full"/>
                                       )}
                                  </TouchableOpacity>
                            </View>
                      
   
                           <View
-                           className = "w-[58%] h-[100%]  px -4   flex-col justify-end px- rounded-t-full b g-[#000000]  items-center ">
+                           className = "w-[58%] h-[100%]  px -4   flex-col justify-center px- rounded-t-full b g-[#f6e9e9]  items-center ">
                                           
-                                          {/* <View
-                                           className = "w- [100%] h- [70%] px-8 py-1 gap- flex-row text-center rounded-b-xl justify-center b bg-[#000000] items-center ">
-                                               
-                                                     <Text 
-                                                          style ={{fontSize:8}}
-                                                          className="text-xl font-black -auto text-gray-300"> 
-                                                            {user.name}
-                                                    </Text>
-                                          </View> */}
-                                          <View
-                                           className = "w-[100%] h-[60%]  gap- flex-row mb- rounded-t-full justify-center bg-black items-center ">     
-                                               
+                                           <TouchableOpacity
+                                                onPress={()=> {
+                                                    setSelectedParticipant(null)
+                                                    setStage(!stage)
+                                                  }
+                                                }
+                                                className ="w-[100%] h-[70%] p- 2 bg-[#043551] rounded-xl  g-white  flex-row justify-center items-center">
                                                 <View
-                                                className = "w-[20%] h-[100%] flex-col rounde d-t-3xl justify-center bg-[#110e1c] items-center ">
-                                                  <View
-                                                   className = "w- [100%] h- [100%] p- 2 flex-col rounded-full justify-center b g-white items-center ">
-                                                          <Image 
-                                                            className="w-10 h-10 rounded-full"
-                                                            resizeMethod='contain'
-                                                            source={{uri:user.profile_img}}/>  
-                                                  </View> 
+                                                  className ="w-[97%] h-[95%] px-4 bg-[#031f3b] rounded-lg flex-row justify-center items-center">
+                                                      <Text 
+                                                            style ={{fontSize:11}}
+                                                            className="text-xl font-black -auto text-white"> 
+                                                              {stage? "YOUR POSITION" :"BACK TO STAGE"} 
+                                                      </Text>
                                                 </View>
-                                                  
-                                          </View>
-                                         
+                                            </TouchableOpacity>
                           </View>
   
                           <View
-                           className = "w-[21%]  h-[70%] flex-row p- 12 justify-center rounded-tl-full px- py-  bg-black bg- items-center ">
+                           className = "w-[21%]  h-[100%] flex-row p- 12 justify-center rounded-tl-full px- py-  b g-[#f6e9e9] bg- items-center ">
                                  <TouchableOpacity
                                       onPress={() => router.back()}
-                                      className="w-[ 100%] h- [100%] p- 8 flex-row g-green-600 rot ate-45   justify-center items-end">
-                                            {/* <View className=""> */}
+                                      className="w-[ 100%] h-[60%] p- 8 flex-row g-green-600 rot ate-45   justify-center items-center">
                                                  <AntDesign name="closecircle" size={30} color="white" /> 
-                                            {/* </View> */}
                                  </TouchableOpacity>
                            </View>
             </View>
-
-            {/* <View
-                    style={{ minHeight : insets.bottom}} 
-                    className="w-[100%] min-h-[40px] bg-[#110e1c] flex-col justify-between items-end"
-            ></View> */}
 
                          
       </Animated.View>

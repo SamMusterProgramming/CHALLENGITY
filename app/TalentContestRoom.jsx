@@ -480,7 +480,8 @@ return (
              <DisplayContestant show = {isContestantVisible} setIsContestantVisible = {setIsContestantVisible} selectedContestant={selectedContestant} 
              width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} /> 
            
-            <TopContestantBar show = {!isPlaying && show && !isContestantVisible} width ={width} height={ height * 0.11  } top={height * 0.0 + insets.top  } selectedIcon={selectedIcon} talentRoom={talentRoom}
+            <TopContestantBar show = {!isPlaying && show && !isContestantVisible} width ={width} height={ width * 0.18  } top={7 }
+             selectedIcon={selectedIcon} talentRoom={talentRoom}
              left ={0} right ={null} regionIcon ={regionIcon}  contestants = {talentRoom.contestants.slice(0,4)} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/>
             <SideBarLeft show = {!isPlaying && show && !isContestantVisible} width ={width * 0.25} height={height - height * 0.22 -  insets.top - insets.bottom } top={height * 0.10 + insets.top + height * 0.01 }
              left ={0} right ={null} regionIcon ={regionIcon} selectedIcon={selectedIcon}  contestants = {talentRoom.contestants.slice(4,18).filter((element, index) => {

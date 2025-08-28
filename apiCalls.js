@@ -217,6 +217,20 @@ export const getUserAllChallenges = async( user_id , setChallenges)=>{
   }
 }  
 
+
+export const getUserChallengeInvites = async( user_id , setChallenges)=>{
+ 
+  try {
+      await axios.get( BASE_URL + `/challenges/invites/${user_id}`)
+      .then(res => {
+          setChallenges(res.data) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+} 
+
 export const getUserPublicChallenges = async( user_id , setChallenges)=>{
  
     try {

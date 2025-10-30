@@ -1,6 +1,5 @@
 import { View, Text, Image, TouchableOpacity, Platform, Alert, KeyboardAvoidingView, Pressable, Animated, Easing } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { Video ,ResizeMode } from 'expo-av'
 import { Dimensions } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent, useEventListener } from 'expo';

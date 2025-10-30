@@ -37,7 +37,6 @@ export default function MakeSelectionChallengeModal
     const [index,setIndex] = useState(1)
     const [moreLeft,setMoreLeft] = useState(false)
     const [moreRight,setMoreRight] = useState(data.length > 10 ? true:false)
-
     const slideAnim = useRef(new Animated.Value(height)).current;
 
     //*********************************************** player handling section */
@@ -174,43 +173,28 @@ useEffect(() => {
              
                   useNativeDriverForBackdrop={true}
                   transparent={true}
+                  style={{margin:0}}
                   onBackdropPress={()=>{setIsSelectionModalVisible(false)}}
                   visible={isSelectionModalVisible}  animationType="slide" onRequestClose={closeModal}>
                    
-                  <View 
-                    style={styles.modalOverlay} >
-                       
+           
                     <Animated.View 
                       className="  borde-2 borde-orange-400 rounded-lg flex-col justify-start items-center "
                       style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
-                        
-                    
-                    
-                    {selectionType == "type" && (
+                     
+                     
+                      {selectionType === "type" && (
                         <>
-                           <View
-                           className="w-[100%] -[7%] rounded-t-xl py-2 flex-row justify-center items-center  bg-[#eeeae9]">
-                               
-                             <Text 
-                                 style ={{fontSize:9}}
-                                 className="text-black mb-  text-sm font-bold">
-                                 Select challenge type Bellow
-                             </Text>
-                        
- 
-                         </View>
  
                          <View  
-                             className={"w-[100%]  -[93%]  flex-row flex-wrap justify-start items-center p-4 gap-1  bg-[#a7a0a0]  [#fffbfb] rounde"} >
+                             className={"w-[100%]  -[93%]  flex-row flex-wrap justify-center items-center p-4 gap-1  b g-[#a7a0a0]  [#fffbfb] rounde"} >
                                  {data.map((element,index)=>
                                             {
                                                     return  (
-                                                        <TouchableOpacity
+                                                      <TouchableOpacity
                                                         key={index}
-                                                        style={{backgroundColor: selectedType == element.value ? "black" :"#fffbfb",width:width/6, height:width/6}}
-                                                        // onPress={()=>setIsSelectorVisible(false)}
+                                                        style={{backgroundColor: selectedType == element.value ? "lightblue" :"#fffbfb",width:width/6, height:width/6}}
                                                         onPressIn={()=>{setSelectedType(element.value)}}
-                                                        //  style={{}}
                                                         className="  flex-col px-2 py-2 rounded-lg justify-center gap-2 items-center">
                                                         
                                                             <Image
@@ -223,8 +207,8 @@ useEffect(() => {
                                                                     className="w-[100%] h-[20%] flex-row justify-center items-center">
                                                     
                                                                     <Text 
-                                                                        style={{fontSize:8 , color:selectedType == element.value ? "white" :"black"}}
-                                                                        className="text-black font-bold"> 
+                                                                        style={{fontSize:8 , color:selectedType == element.value ? "black" :"black"}}
+                                                                        className="text-black font-black"> 
                                                                         {element.value}
                                                                     </Text>
 
@@ -237,24 +221,27 @@ useEffect(() => {
                              </View>
 
                              <View
-                               className="w-[100%]  rounded-b-lg flex-row justify-start gap-2 px-2 items-end py-2  bg-[#e1dedd]">
-                                     <Image
-                                           source={getIcon(selectedType)}
-                                           resizeMethod='contain'
-                                            // style={{width:width/6, height:width/6}}
-                                           className="w-9 h-9" />
-                                     <Text 
-                                        style ={{fontSize:9}}
-                                        className="text-black mb-  text-sm font-black">
-                                         {selectedType}
-                                    </Text>
+                               className="w-[100%]  rounded-b-lg flex-col mt-8 justify-center gap-2 px-2 items-center py-2  b g-[#e1dedd]">
+                                    <View
+                                     className=" p-2 bg-[lightblue] rounded-lg flex-col  justify-center gap-2 px-8 items-center ">
+                                        <Image
+                                              source={getIcon(selectedType)}
+                                              resizeMethod='contain'
+                                                // style={{width:width/6, height:width/6}}
+                                              className="w-9 h-9" />
+                                        <Text 
+                                            style ={{fontSize:9}}
+                                            className="text-black mb-  text-sm font-black">
+                                            {selectedType}
+                                        </Text>
+                                    </View>   
                                     <TouchableOpacity
                                     onPress={() => setIsSelectionModalVisible(false)}
-                                    className="px-2 py-2  ml-auto rounded-lg bg-green-600 ">
+                                    className="px-8 py-2 mt-4 rounded-lg bg-blue-600 ">
                                        <Text 
                                         style ={{fontSize:11}}
                                         className="text-white mb- text-sm font-bold">
-                                         OK
+                                         DONE
                                         </Text>
                                     </TouchableOpacity>
                              </View>
@@ -266,26 +253,16 @@ useEffect(() => {
                         
                     {selectionType == "privacy" && (
                         <>
-                           <View
-                           className="w-[100%] -[7%] py-2 rounded-t-xl flex-row justify-center items-center  bg-[#065c7b]">
-                               
-                             <Text 
-                                 style ={{fontSize:9}}
-                                 className="text-gray-200 mb-  text-sm font-bold">
-                                 Select challenge privacy Bellow
-                             </Text>
-                        
- 
-                         </View>
+                           
  
                          <View  
-                             className={"w-[100%]  -[93%]  flex-row fl-wrap justify-between items-center p-4 gap-  bg-[#88cbe6] rounde"} >
-                                 {selection && data.map((element,index)=>
+                             className={"w-[100%]  -[93%]  flex-row fl-wrap justify-between items-center p-4 gap-  b g-[#88cbe6] rounde"} >
+                                 { data.map((element,index)=>
                                             {
                                                     return  (
                                                         <TouchableOpacity
                                                         key={index}
-                                                        style={{backgroundColor: selection == element.value ? "white" :"#d6d6d6"
+                                                        style={{backgroundColor: selection == element.value ? "lightblue" :"#d6d6d6"
                                                             // ,width:width/6, height:width/6
                                                         }}
                                                         // onPress={()=>setIsSelectorVisible(false)}
@@ -305,7 +282,7 @@ useEffect(() => {
                                                                         className="w-[100%] -[20%] flex-row justify-center items-center">
                                                         
                                                                         <Text 
-                                                                            style={{fontSize:9}}
+                                                                            style={{fontSize:10}}
                                                                             className="text-black font-black"> 
                                                                             {element.value}
                                                                         </Text>
@@ -317,7 +294,7 @@ useEffect(() => {
                                                             <View
                                                              className="w-[100%] min-h-[13vh] p-2 flex-col bg-[#dee2eb] rounded-lg justify-center gap-2 items-center">
                                                                         <Text 
-                                                                            style={{fontSize:7}}
+                                                                            style={{fontSize:9}}
                                                                             className="text-black font-semibold"> 
                                                                             {element.value == "Public" ?
                                                                              `Public 🌍 Open to everyone! Join community challenges where anyone can participate,like, and vote.compete and share with others. It’s all about collective motivation and friendly competition!`
@@ -334,27 +311,31 @@ useEffect(() => {
                              </View>
 
                              <View
-                               className="w-[100%]  rounded-b-lg flex-row justify-start gap-2 px-2 items-end py-2  bg-[#84b4c8]">
-                                     <Image
-                                           source={getIcon(selection)}
-                                           resizeMethod='contain'
-                                            // style={{width:width/6, height:width/6}}
-                                           className="w-9 h-9" />
-                                     <Text 
-                                        style ={{fontSize:9}}
-                                        className="text-black mb-  text-sm font-black">
-                                         {selectedPrivacy}
-                                    </Text>
+                               className="w-[100%]   flex-col justify-center mt-4 gap-2 px-2 items-center py-2  b g-[#84b4c8]">
+                                    <View
+                                       className=" p-2 bg-[lightblue] rounded-lg flex-col  justify-center gap-2 px-6 items-center ">
+                                          <Image
+                                                source={getIcon(selection)}
+                                                resizeMethod='contain'
+                                                  // style={{width:width/6, height:width/6}}
+                                                className="w-12 h-12" />
+                                          <Text 
+                                              style ={{fontSize:9}}
+                                              className="text-black mb-  text-sm font-black">
+                                              {selection}
+                                          </Text>
+                                    </View>
+
                                     <TouchableOpacity
                                     onPress={() => {
                                         setSelectedPrivacy(selection)
                                         setIsSelectionModalVisible(false)
                                     }}
-                                    className="px-2 py-2  ml-auto rounded-lg bg-green-600 ">
+                                    className="px-8 py-2 mt-2  rounded-lg bg-blue-600 ">
                                        <Text 
-                                        style ={{fontSize:9}}
+                                        style ={{fontSize:11}}
                                         className="text-white mb- text-sm font-bold">
-                                         OK
+                                          Done
                                         </Text>
                                     </TouchableOpacity>
                              </View>
@@ -466,17 +447,10 @@ useEffect(() => {
 
                    {selectionType == "invite" && (
                         <>
-                           <View
-                           className="w-[100%] -[7%] px-2 py-2 rounded-t-xl flex-row justify-center items-center  bg-[#fbf8f6]">
-                                <Text 
-                                        style ={{fontSize:9}}
-                                        className="text-gray-900 mb-  text-sm font-bold">
-                                        Select friends Bellow
-                                </Text>
-                         </View>
+                          
  
                          <View  
-                             className={"w-[100%]  min-h-[40%]  flex-row flex-wrap justify-center items-center p-1 gap-2 py-4  bg-[#868181] [#afabab] rounde"} >
+                             className={"w-[100%]  min- h-[40%]  flex-row flex-wrap justify-center items-center p-1 gap-2 py-4  b g-[#868181] [#afabab] rounde"} >
                                    
                                    {displayData.map((element,index)=>
                                         {
@@ -484,13 +458,13 @@ useEffect(() => {
                                                 <TouchableOpacity
                                                 key={index}
                                             
-                                                style={{backgroundColor: selectedFriends.find(friend => friend.sender_id == element.sender_id) ? "white" :"#322e2e"
+                                                style={{backgroundColor: selectedFriends.find(friend => friend.user_id == element.user_id) ? "lightblue" :"white"
                                                     ,width:width/6, height:width/6
                                                 }}
                                                 onPress={()=> {
-                                                    if(selectedFriends.find(friend => friend.sender_id == element.sender_id) )
+                                                    if(selectedFriends.find(friend => friend.user_id == element.user_id) )
                                                         {
-                                                            const fds = selectedFriends.filter(friend => friend.sender_id !== element.sender_id) 
+                                                            const fds = selectedFriends.filter(friend => friend.user_id !== element.user_id) 
                                                             setSelectedFriends(fds)
                                                         }
                                                     else {
@@ -502,7 +476,6 @@ useEffect(() => {
                                                     }     
                                                         
                                                 }}
-                                                //    onPressIn={()=>{setSelectedType(element.value)}}
                                                 className="-[60px] -[40%] flex-col px-2 py-2 rounded-lg justify-center gap-2 items-center">  
                                                     <Image
                                                     source={{uri:element.profile_img}}
@@ -514,15 +487,15 @@ useEffect(() => {
                                             
                                                             <Text 
                                                                 style={{fontSize:6 ,
-                                                                    color: selectedFriends.find(friend => friend.sender_id == element.sender_id)?"black":"white"
+                                                                    color: selectedFriends.find(friend => friend.user_id == element.user_id)?"black":"black"
                                                                 }}
-                                                                className="text-black font-semibold"> 
+                                                                className="text-black font-black"> 
                                                                 {element.name.slice(0,13)}
                                                             </Text>
                             
                                                     </View>
 
-                                                    {selectedFriends.find(friend => friend.sender_id == element.sender_id) &&  (
+                                                    {selectedFriends.find(friend => friend.user_id == element.user_id) &&  (
                                                           <Image
                                                           source={icons.check}
                                                           resizeMethod='contain'
@@ -537,7 +510,7 @@ useEffect(() => {
              
                          </View>
                          <View
-                             className="w-[100%] px-2 py-2 bg-[#868181] mt-[-3px] flex-row -auto justify-between items-center">
+                             className="w-[100%] px-2 py-2 b g-[#868181] mt-[-3px] flex-row -auto justify-between items-center">
                                         <TouchableOpacity
                                                 className=" justify-center items-center   "
                                                 onPressIn={handleBack}
@@ -546,11 +519,11 @@ useEffect(() => {
                                                     source={moreLeft?icons.back_arrow:""}
                                                     className=" w-8 h-8 rounded-full"
                                                     />
-                                            </TouchableOpacity>
-                                        {/* )} */}
+                                        </TouchableOpacity>
+                      
                                      
                                         {moreRight && (
-                                            <TouchableOpacity
+                                        <TouchableOpacity
                                             className=" justify-center items-center   "
                                             onPressIn={handleNext}
                                             >
@@ -558,30 +531,21 @@ useEffect(() => {
                                                 source={icons.next_arrow}
                                                 className=" w-8 h-8 rounded-full"
                                                 />
-                                            </TouchableOpacity>
+                                        </TouchableOpacity>
                                         )}
 
-                                    </View>
+                         </View>
 
-                        <View
-                               className="w-[100%]  rounded-b-lg flex-row justify-center gap-2 px-2 items-end py-2  bg-[#eceff3]">
-                                     {/* <Image
-                                           source={getIcon(selectedAudience)}
-                                           resizeMethod='contain'
+                         <View
+                               className="w-[100%]  rounded-b-lg flex-row justify-center gap-2 px-2 items-end py-2  b g-[#eceff3]">
                                     
-                                           className="w-9 h-9" />
-                                     <Text 
-                                        style ={{fontSize:9}}
-                                        className="text-black mb-  text-sm font-bold">
-                                         {selectedAudience}
-                                    </Text> */}
                                     <TouchableOpacity
                                     onPress={() => setIsSelectionModalVisible(false)}
-                                    className="px-4 py-2   rounded-lg bg-black-100 ">
+                                    className="px-8 py-2   rounded-lg bg-blue-600 ">
                                        <Text 
                                         style ={{fontSize:11}}
                                         className="text-white mb- text-sm font-bold">
-                                         OK
+                                         Done
                                         </Text>
                                     </TouchableOpacity>
                          </View>
@@ -594,7 +558,7 @@ useEffect(() => {
                     </Animated.View>
                 
                     
-                  </View>
+                  {/* </View> */}
                 </Modal>
                 <StatusBar    backgroundColor={"transparent"}/>
             </View>
@@ -608,10 +572,10 @@ useEffect(() => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'white',
-      justifyContent: 'center',
-      alignItems: 'center',
-    //   opacity:0.9
+      display : "flex" ,
+      // backgroundColor : 'rgb(0 , 0 , 0 )' ,
+      justifyContent: 'center' ,
+      alignItems: 'center' ,
     },
     button: {
       backgroundColor: 'lightblue',
@@ -629,20 +593,17 @@ useEffect(() => {
        height:"80%"
     },
     modalContainer: {
-      position: 'absolute',
-    //   bottom: "40%",
-       top:"10%",
-      left: "7%",
-    //   right: 0,
-    //   backgroundColor: "#202836",
-    //   padding: 15,
+      flex : 1,
+      backgroundColor: 'rgba(0, 0, 0 , 0.7)',
+      padding: 25,
       borderTopLeftRadius: 10,
       borderRadius: 10,
       justifyContent:"center",
       alignItems: 'center',
       width:"100%",
-      height:"82%"
+      margin:0
     },
+
     modalText: {
       fontSize: 8,
     //   marginBottom: 20,

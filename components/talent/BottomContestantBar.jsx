@@ -12,7 +12,7 @@ import Contestant from './Contestant';
 
 // const { width } = Dimensions.get('window');
 
-const BottomContestantBar = ({ show, height, width ,top ,bottom,left ,right, regionIcon,selectedIcon , talentRoom,
+const BottomContestantBar = ({ show, height, width ,top ,bottom,left ,right, regionIcon,selectedIcon , talentRoom, participantTrackerId ,
    contestants ,selectedContestant, setSelectedContestant}) => {
 //   const sidebarWidth = width * 0.8; 
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  -width )).current;
@@ -48,17 +48,17 @@ const BottomContestantBar = ({ show, height, width ,top ,bottom,left ,right, reg
             // padding: 20,
             width:width ,
             zIndex: 1,
-            elevation:12
+            // elevation:12
         }
         , 
     { transform: [{ translateX: sidebarAnimation }] }]}>
-
 
        <View
        className ="w-[100%] h-[100%] py-2 px- flex-row g-[#04283c] gap-2 -2 rounde-tr-xl rounded-br-xl borde-t-4 justify-center items-start">
           {contestants.map((contestant , index) => {
                return (
-                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} setSelectedContestant={setSelectedContestant} 
+                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
                 talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +19} w={"23%"} h={"100%"}/> 
                 )
           })}

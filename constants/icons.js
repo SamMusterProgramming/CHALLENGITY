@@ -11,7 +11,7 @@ import logout from "../assets/icons/logout.png";
 import eyeHide from "../assets/icons/eye-hide.png";
 import eye from "../assets/icons/eye.png";
 import play from "../assets/icons/play.png";
-import challenge from "../assets/icons/challenge-logo.png"
+import challenge from "../assets/icons/challenge.png"
 import notification from "../assets/icons/notification.png"
 import heart from "../assets/icons/heart.png";
 import white_heart from "../assets/icons/white-heart.png";
@@ -79,7 +79,7 @@ import playmode from '../assets/icons/playmode.png'
 import fullscreen from '../assets/icons/fullscreen.png'
 import guiness from '../assets/icons/guiness.png'
 import talent from '../assets/icons/talent.png'
-import challenge_competition from '../assets/icons/challenge_competition.png'
+// import challenge from '../assets/icons/competition.png'
 import art from '../assets/icons/art.png'
 import tech from '../assets/icons/tech.png'
 import comedy from '../assets/icons/comedy.png'
@@ -98,12 +98,17 @@ import available from '../assets/icons/available.png'
 import you from '../assets/icons/you.png'
 import headline from '../assets/icons/logo1.png'
 import big_heart from '../assets/icons/big_heart.png'
-
-
-
+import favourite from '../assets/icons/favourite.png'
+import trending from '../assets/icons/trending.png'
+import top from '../assets/icons/top.png'
+import accept from '../assets/icons/accept.png'
 
 
 export default {
+  accept,
+  top,
+  trending,
+  favourite,
   down_arrow ,
   big_heart,
   instrument,
@@ -123,7 +128,7 @@ export default {
   comedy,
   tech,
   art,
-  challenge_competition,
+  // challenge_competition,
   talent,
   guiness,
   fullscreen,

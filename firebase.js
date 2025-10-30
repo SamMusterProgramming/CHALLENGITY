@@ -3,9 +3,9 @@ import { initializeApp } from "firebase/app";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 import { generateRandomString, getRandomInt } from "./helper";
-// import { Image, Video } from "react-native-compressor";
+import { Image, Video } from "react-native-compressor";
 
-
+//npx expo start -c    eas update --channel preview 
 
 
 const firebaseConfig = {

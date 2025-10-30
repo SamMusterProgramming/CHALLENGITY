@@ -78,18 +78,18 @@ export default function Invites({selectedParticipant ,data, w,h , top ,user,  se
       width:  w,
       top : Platform.OS == "ios" ?  w * 0.18 + top + 1 : w * 0.18 + 50 + 1 
       }}
-    className="absolute  b g-[#162142]  shadow-lg flex- row justify-center items-center rounded-3xl "
+    className="absolute  b g-[#162142]   flex- row justify-center items-center rounded-3xl "
     > 
                     <View
-                          className="w- [100%] h- [15%] p-2 4 flex-col  justify-center bg-[#0f0830] items-center ">
+                          className="w- [100%] h- [15%] p-2 4 flex-row gap-2  justify-center b g-[#0f0830] items-center ">
                                 <Text 
-                                    style ={{fontSize:12 ,fontStyle:"italic"}}
+                                    style ={{fontSize:10 ,fontStyle:"italic"}}
                                     className="text-xl font-black -auto text-white"> 
                                     {challenge.invited_friends.length} 
                                 </Text>
                                 <Text 
-                                    style ={{fontSize:9 ,fontStyle:"italic"}}
-                                    className="text-xl font-black -auto text-white"> 
+                                    style ={{fontSize:10 ,fontStyle:"italic"}}
+                                    className="text-xl font-black -auto text-yellow-400"> 
                                        Invites
                                 </Text>
                     </View>

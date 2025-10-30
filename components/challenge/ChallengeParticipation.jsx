@@ -12,7 +12,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from '../../firebase';
 import axios from 'axios';
 import { generateThumbnail } from '../../videoFiles';
-import { BASE_URL, getChallengeById, getUserPublicParticipateChallenges } from '../../apiCalls';
+import { BASE_URL, getChallengeById, getUserPrivateParticipateChallenges, getUserPublicParticipateChallenges } from '../../apiCalls';
 import { useGlobalContext } from '../../context/GlobalProvider';
 
 
@@ -140,22 +140,7 @@ const toggleVideoPlaying = () =>{
 
   const handleSumitChallenge =  () => {
     if(videoUri ){
-      // setVisible(true)
-    //   setTimeout(() => {
-    //     router.replace({ pathname: '/UserChallenges',params: {
-    //     userChallenges:"false",
-    //     userParticipations:"true",
-    //     publ:challenge.privacy === "Public"? "true":"false",
-    //     priv:challenge.privacy == "Private" && challenge.audience !== "Strict" ?"true":"false",
-    //     strict :challenge.privacy === "Private" && challenge.audience === "Strict"  ?"true":"false" , 
-    //    } }) 
-    //    }, 100); 
-      // setTimeout(() => {
-      //    router.navigate({ pathname: '/ParticipationManagement',params: {
-      //    publ:challenge.privacy === "Public"? "true":"false",
-      //    priv:challenge.privacy == "Private" && challenge.audience !== "Strict" ?"true":"false",
-      //    strict :challenge.privacy === "Private" && challenge.audience === "Strict"  ?"true":"false" , 
-      //   } }) 
+  
 
       setTimeout(() => {
         // setVisible(false)
@@ -184,15 +169,11 @@ const toggleVideoPlaying = () =>{
             res =>  {
             if(res.data === "challenge expired") return setIsExpired(true) 
 
-            // getUserPublicParticipateChallenges(user._id ,setPrivateParticipateChallenges)
-            // getChallengeById(challenge._id, setChallenge , setIsExpired)
+            getUserPublicParticipateChallenges(user._id ,setPrivateParticipateChallenges)
+            getUserPrivateParticipateChallenges(user._id ,setPrivateParticipateChallenges)
+            
             setChallenge(res.data)
-            // setSelectedParticipant({...res.data.participants.find( c => c.user_id == user._id),rank:res.data.participants.length + 1})
             setTimeout(() => {
-                // setNewChallenge(false)
-                // setStage(true)
-                // setSelectedParticipant({...res.data.participants.find( c => c.user_id == user._id),rank:res.data.participants.length + 1})
-                // getChallengeById(challenge._id, setChallenge , setIsExpired)
                 setSelectedParticipant({...res.data.participants.find( c => c.user_id == user._id),rank:res.data.participants.length})
               }
             , 500);
@@ -236,16 +217,16 @@ const toggleVideoPlaying = () =>{
                     <View className="absolute bottom-[25vh] px-4 flex-row min-w-full -auto  justify-between  items-center  opacity-85  h-[5vh]">
                             <View className="flex-row w-[30%] mt-auto  bg-wh mb- justify-center  items-center   h- [99%]">   
                                 <TouchableOpacity
-                                className=" flex-row py-4 justify-center bg-[#920412] gap-2 items-center h- [95%] w-[95%] rounded-bl-[38px] "
+                                className=" flex-row py-2 justify-center bg-[#920412] gap-2 items-center h- [95%] w-[95%] rounded-xl "
                                 // onPress={goBack}  
                                 onPress={()=>setIsRecording(false)}   
                                 onPressOut={()=> {setVideoUri(null)}}
                                     >
                                 <Text
-                                style={{fontSize:10}}
+                                style={{fontSize:9}}
                                 className="text-white text-xs font-black">Cancel</Text>
                                 <Image      
-                                className="w-7 h-7 "
+                                className="w-5 h-5 "
                                 source={icons.back}
                                 resizeMode='contain'
                                 />  
@@ -253,16 +234,16 @@ const toggleVideoPlaying = () =>{
                             </View>
                             <View className="flex-row w-[30%]  bg-whi  mb- justify-center  items-center   h- first-letter: [99%]">
                                 <TouchableOpacity
-                                className="flex-row justify-center py-4 bg-[#04198e] gap-2 items-center h-[95%] w-[95%] rounded-br-[38px]"
+                                className="flex-row justify-center py-2 bg-[#04198e] gap-2 items-center h- [95%] w-[95%] rounded-xl"
                                   onPress={handleSumitChallenge}
                                     >
                                 <Image      
-                                className="w-7 h-7 "
+                                className="w-5 h-5 "
                                 source={isRecording ? icons.submit : icons.submit}
                                 resizeMode='contain'
                                 />  
                                 <Text 
-                                style={{fontSize:10}}
+                                style={{fontSize:9}}
                                 className="text-white text-xs font-black">{isRecording? "Submit":"Submit"}</Text>
                                 </TouchableOpacity>
                             </View>  

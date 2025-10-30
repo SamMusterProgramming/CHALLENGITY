@@ -13,9 +13,9 @@ export default function FollowButton({userProfile}) {
   useEffect(() => {
       const getStatus = ()=> {
          if(follow.followings.find(f => f.user_id == userProfile._id)) {
-                 setStatus("following")
+                 setStatus("Following")
          }else {
-                 setStatus("follow")
+                 setStatus("Follow")
          }
       }
       getStatus()
@@ -46,10 +46,10 @@ const handleUnFollowing =  ()=> {
 
 const handleRequest =() => {
   switch (status) {
-    case "follow":
+    case "Follow":
         handleFollowing()
         break;
-    case "following":
+    case "Following":
         handleUnFollowing()
         break;  
     default:
@@ -62,29 +62,32 @@ return (
     {status && (
     <TouchableOpacity
                             onPress={handleRequest}
-                            className=" w-[30%]  gap-2 flex-col  justify-end h-[100%] items-center">
-                           
-                          <View
-                            className="flex-row items-center justify-center gap-1  w-[100%]">
+                            className=" flex-row rounded-lg gap-4 justify-start py-2 px-8 bg-gray-200 items-center">
+                          {/* <View
+                            className="flex-row items-start justify-center gap- 1  w- [100%]">
                                  <Image    
-                                    className="w-7 h-7"
-                                    resizeMode='fill'
+                                    className="w-4 h-4"
+                                    resizeMode='contain'
                                     source={icons.follow} 
                                   />
-                               
-                          </View>
+                          </View> */}
+                          {status =="Following" && (
+                              <Image  
+                                        className={ "w-4 h-4   rounded-xl"}
+                                        resizeMode='contain'
+                                        source={ icons.check}
+                              />
+                            )}
                           <View
-                          className="flex-row  justify-center mt-1  items-center w-[100%]">
-                                <Text className={"text-gray-200  text-base font-semiBold"}>
-                                 {status} 
+                          className="flex-row  justify-center  items-end h-[100%]">
+                                <Text
+                                 style={{fontSize:12}}
+                                 className={"text-black  font-bold"}>
+                                    {status} 
                                 </Text>
                           </View>
-                          <Image  
-                                    className={ "w-6 h-6 absolute top-6 right-6  rounded-xl"}
-                                    resizeMode='contain'
-                                    source={status =="following"? icons.check_red:""}
-                                    />
-                        
+                         
+                          
     </TouchableOpacity>
   )}
   </>

@@ -12,7 +12,8 @@ import Contestant from './Contestant';
 
 // const { width } = Dimensions.get('window');
 
-const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, regionIcon,selectedIcon , contestants ,selectedContestant,talentRoom, setSelectedContestant}) => {
+const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, regionIcon,selectedIcon ,participantTrackerId,
+   contestants ,selectedContestant,talentRoom, setSelectedContestant}) => {
 //   const sidebarWidth = width * 0.8; 
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  -width )).current;
 
@@ -46,8 +47,8 @@ const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, region
             // backgroundColor: '#022f2f',
             // padding: 20,
             width:width ,
-            zIndex: 1,
-            elevation:12
+            // zIndex: 1,
+            // elevation:12
         }
         , 
     { transform: [{ translateX: sidebarAnimation }] }]}>
@@ -58,115 +59,10 @@ const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, region
           {contestants.map((contestant , index) => {
                return (
                
-                // <TouchableOpacity
-                //   onPress={ ()=> {setSelectedContestant({...contestant, rank:index + 1})}}
-                //   key ={index}
-                //   style ={{borderColor : selectedContestant && selectedContestant._id === contestant._id ? "green" : "transparent",
-                //     backgroundColor: 'rgba(0, 0, 0, 0.4)'
-                //   }}
-                //   className ="w-[23%] h-[100%] py- flex-col g-black rounded-lg borde-b-4 border-2 borde-white justify-start items-center">
-                //         <View
-                //           className ="w-[100%] h-[33%] py- flex-row g-white rounde-t-xl borde-t-4 justify-evenly items-center">
-                //              <Image
-                //               source={regionIcon}
-                //               className ="w-[30%] h-[90%] m- g-white rounded-full"
-                //               resizeMethod='contain'
-                //               />
-                //               <View
-                //                 className="w-[20%] h-[100%]  flex-col justify-center items-center">
-                //                   < CountryFlag
-                //                             isoCode={"DZ"}
-                //                             size={8}
-                                       
-                //                   />
-                //                    <Text style={ {
-                //                             fontWeight:"800",
-                //                             color: "white",
-                //                             fontSize: 7,
-                //                             fontWeight:900
-                //                           }}>{ "DZ"}</Text>
-                //               </View>
-                          
-                //               <Image
-                //               source={selectedIcon}
-                //               className ="w-[30%] h-[90%] m- rounded-full"
-                //               resizeMethod='fill'
-                //               />
-                             
-                //         </View>
 
-
-                //         <View
-                //           className ="w-[100%] h-[40%] py- flex-row g-white rounde-t-xl borde-t-4 justify-between items-center">
-                //               <View
-                //                   className ="w-[33%] h-[100%]  flex-col justify-start items-center   g-white rounded-t-lg g-blue-700 text-pretty">
-                //                      <View
-                //                       className ="w-[100%] h-[50%] -1   g-white rounded-t-lg g-blue-700 text-center">
-                //                             <Text 
-                //                                 style ={{fontSize:7}}
-                //                                 className="text-xl text-center p-0 font-black text-white"> 
-                //                                 Votes 
-                                              
-                //                             </Text>
-                //                       </View>
-                //                       <View
-                //                       className ="min-w-[100%] h-[50%]  px flex-row justify-center item-center g-white rounded-t-lg g-blue-700 text-center">
-                //                             <Text 
-                //                                 style ={{fontSize:7}}
-                //                                 className="text-xl  font-black text-white"> 
-                //                                 {contestant.votes }
-                //                             </Text>
-                //                       </View>
-                //               </View>
-
-                //               <Image
-                //               source={{uri:contestant.profile_img}}
-                //               className ="w-[20px] h-[20px] m- rounded-full"
-                //               resizeMethod='fill'
-                //               />
-
-                //               <View
-                //                 className ="w-[33%] h-[100%]  flex-col justify-start items-center   g-white rounded-t-lg g-blue-700 text-pretty">
-                //                    <View
-                //                     className ="w-[100%] h-[50%] -1   g-white rounded-t-lg g-blue-700 text-center">
-                //                           <Text 
-                //                               style ={{fontSize:7}}
-                //                               className="text-xl text-center p-0 font-black text-white"> 
-                //                               TOP
-                                            
-                //                           </Text>
-                //                     </View>
-                //                     <View
-                //                     className ="min-w-[100%] h-[50%]  px flex-row justify-center item-center g-white rounded-t-lg g-blue-700 text-center">
-                //                           <Text 
-                //                               style ={{fontSize:7}}
-                //                               className="text-xl  font-black text-white"> 
-                //                               {index + 1 }
-                //                           </Text>
-                //                     </View>
-                //             </View>
-                               
-                             
-                //         </View>
-
-                //         <View
-                //         className ="w-[90%] h-[26%] py- flex-col mt-auto g-white rounded-t-xl g-white justify-center items-center">
-                //               <View
-                //                   className ="w-[100%] h-[100%]  flex-row g-white rounde-tr-xl  justify-center items-start ">
-                //                     <Text 
-                //                     style ={{fontSize:7}}
-                //                     className="text-xl font-black  text-white"> 
-                //                       {contestant.name.slice(0,13)}
-                //                   </Text>
-                //               </View>
-                             
-                //         </View>
-
-                     
-                // </TouchableOpacity>
-
-                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} setSelectedContestant={setSelectedContestant} 
-                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +1} w={"23%"} h={"100%"}/>
+                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} participantTrackerId={participantTrackerId}
+                 setSelectedContestant={setSelectedContestant} 
+                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +1} w={"18%"} h={"100%"}/>
 
                
                 )

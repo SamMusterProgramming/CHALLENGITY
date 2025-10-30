@@ -5,7 +5,7 @@ import { router } from 'expo-router'
 import { searchUsers } from '../apiCalls'
 import { useGlobalContext } from '../context/GlobalProvider'
 
-import DisplayUser from '../components/profile/DisplayUser'
+// import DisplayUser from '../components/profile/DisplayUser'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 
@@ -27,12 +27,12 @@ export default function SearchFriend() {
     <View
     className =" w-[100%] h-[15vh] flex-col bg-[#0d61de] mb-2 justify-start rounded-tl-[50px] rounded-tr-[50px] items-center">
           <View
-          // bg-[#e6eaf0]
+       
                   className="w-[100%] h-[50%]  rounded-tl-[50px] rounded-tr-[50px] flex-row bg-[#0d61de] justify-between items-center  ">
                      
                       <TouchableOpacity
                           onPress={()=> router.back()}
-                          // style={{height:heigh * 0.07}}
+                    
                           className= "w-[15%] h-[100%]  bg-[#11161d] rounded-tl-[50px] flex-row justify-center items-center ">
                           <Image
                               source={icons.back1} 
@@ -133,9 +133,9 @@ export default function SearchFriend() {
   ),[placeHold ,setPlaceHold ,searchText,setSearchText,width,heigh])
   
 
-  const renderItem = ({ item, index }) => {  
-    return  <DisplayUser key={index}  userData={item} />
-  };
+  // const renderItem = ({ item, index }) => {  
+  //   return  <DisplayUser key={index}  userData={item} />
+  // };
 
   const renderFooter= () => {  
     return isFetching ?
@@ -311,7 +311,7 @@ export default function SearchFriend() {
                               <FlatList 
                               data={searchData.users.length !==0 && searchData.users}
                               keyExtractor={(item)=> item._id}
-                              renderItem={ renderItem }
+                              // renderItem={ renderItem }
                               // ListHeaderComponent={renderHeader}
                               ListFooterComponent={renderFooter}
                               pagingEnabled={false}

@@ -14,7 +14,7 @@ import axios from 'axios'
  
 export const BASE_URL =  baseURL_PRODUCTION
 
-export const setLoadingBarAxios =(loadingRef) => {
+export const setLoadingBarAxios = (loadingRef) => {
   axios.interceptors.request.use(async(config) => {
     loadingRef.current.continuousStart();
    
@@ -311,6 +311,44 @@ export const getUserPublicChallenges = async( user_id , setChallenges)=>{
     }
 }
 
+export const getUserActivities = async( user_id , setData)=>{
+  try {
+
+    Promise.all([axios.get( BASE_URL + `/challenges/user/${user_id}`), axios.get( BASE_URL + `/talents/user/${user_id}`)]) 
+    .then(res =>  {
+      const data = []
+      if(res[0].data.length > 0) {
+           res[0].data.forEach(element => {
+                data.push({...element , dataType:"challenge" })
+           });
+       } 
+      if(res[1].data.length > 0) {
+          res[1].data.forEach(element => {
+             data.push({...element , dataType:"talent" })
+          });  
+      } 
+      data.sort((a, b) => 
+        new Date(b.updatedAt) - new Date(a.updatedAt) )
+      data.forEach(e => console.log(e.updatedAt))
+      setData(data)
+      } )
+
+      // await axios.get( BASE_URL + `/challenges/user/${user_id}`)
+      // .then(res => {
+      //   const data = []
+      //   if(res.data.length > 0) {
+      //        res.data.forEach(element => {
+      //             data.push({...element , dataType:"challenge" })
+      //        });
+      //    } 
+      //     setChallenges(data) 
+      // }
+      //  )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
 // *********************************** viewers *************************
 
 export const getPostViewers = async( post_id , setViewers)=>{
@@ -346,35 +384,62 @@ export const addViewer = async( post_id , rawBody, setViewersList)=>{
 // *********************************** favourites *************************
 
 
-export const addChallengeToFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
+// export const addToFavourite = async(user_id ,body, setData,setIsExpired)=>{
+ 
+//   try {
+//       await axios.post( BASE_URL + `/challenges/favourite/${user_id}`,body)
+//       .then(res => {
+//          if(res.data === "challenge expired") return setIsExpired(true)
+//           setData(res.data) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
+
+// export const removeFromFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
+ 
+//   try {
+//       await axios.patch( BASE_URL + `/challenges/favourite/${user_id}`,body)
+//       .then(res => {
+//           if(res.data === "challenge expired") return setIsExpired(true)
+//           setChallenges(res.data) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
+
+export const addChallengeToFavourite = async(user_id ,body, setData,setIsExpired)=>{
  
   try {
       await axios.post( BASE_URL + `/challenges/favourite/${user_id}`,body)
       .then(res => {
          if(res.data === "challenge expired") return setIsExpired(true)
-          setChallenges(res.data) 
+          setData(res.data) 
       }
        )
   } catch (error) {
       console.log(error)
   }
-}  
+} 
 
-export const removeChallengeFromFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
+export const removeChallengeFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
  
   try {
       await axios.patch( BASE_URL + `/challenges/favourite/${user_id}`,body)
       .then(res => {
           if(res.data === "challenge expired") return setIsExpired(true)
-          setChallenges(res.data) 
-      }
-       )
+          setData(res.data) 
+      } )
   } catch (error) {
       console.log(error)
   }
 }  
 
-export const getFavouriteChallenges = async(user_id ,setChallenges)=>{
+export const getFavouriteList = async(user_id ,setChallenges)=>{
  
   try {
       await axios.get( BASE_URL + `/challenges/favourite/${user_id}`)
@@ -572,7 +637,6 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
         .then(res =>  { 
           setFollow({...res.data});
           } )
-       
       } catch (error) {
         console.log(error)
       }
@@ -777,19 +841,19 @@ export const getCommentsByPost = async(post_id,setComments) =>{
               edition.title  = "Elimination-Round 3"
               break;
           case 4:
-            edition.title  = "1/8 Final"
+            edition.title  = "Eighth-finals"
             break;
           case 5:
-              edition.title = "1/4 Quarter Final"
+              edition.title = "Quarter Final"
               break;
          case 6:
-              edition.title  = "1/2 Semi Final"
+              edition.title  = "Semi Final"
               break;
          case 7:
                 edition.title  = "Grand Final "
               break;
          case 8:
-                edition.title  = " Winner"
+                edition.title  = "Winner"
               break;
           default:
             break;
@@ -849,7 +913,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 
  export const getUserTalent = async(user_id , setUserTalents ) =>{
   try {
-    await axios.get( BASE_URL + `/talents/user/${user_id}` )
+    await axios.get( BASE_URL + `/talents/user/talent/${user_id}` )
     .then(res =>  {
         setUserTalents(res.data)  
       })
@@ -925,7 +989,48 @@ export const getCommentsByPost = async(post_id,setComments) =>{
  }
  
 
-  // ***********************************like Talent posts *************************
+ export const getTopTalents = async(user_id, setTalentRooms) =>{
+  try {
+    await axios.get( BASE_URL + `/talents/top/${user_id}` )
+    .then(res =>  {
+         setTalentRooms(res.data)
+      } )
+      .finally(()=>{
+        // setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const addTalentRoomToFavourite = async(user_id ,body, setData,setIsExpired)=>{
+ 
+  try {
+      await axios.post( BASE_URL + `/talents/favourite/${user_id}`,body)
+      .then(res => {
+         if(res.data === "talent expired") return setIsExpired(true)
+          setData(res.data) 
+      }
+       )
+  } catch (error) {
+      console.log(error)
+  }
+} 
+
+export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
+ 
+  try {
+      await axios.patch( BASE_URL + `/talents/favourite/${user_id}`,body)
+      .then(res => {
+          if(res.data === "talent expired") return setIsExpired(true)
+          setData(res.data) 
+      } )
+  } catch (error) {
+      console.log(error)
+  }
+}  
+
+// ***********************************like Talent posts *************************
 
 
    export const likeTalentPost = async(post_id , body, setPostData , setIsLoading , setIsExpired) =>{
@@ -1021,3 +1126,62 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
     console.log(error)
   }
  }
+
+    // *********************************** general challenge , talent  *************************
+  
+  export const generateChallengeTalentGuinessData = async(user_id , setData ) =>{
+      try { 
+      await 
+      Promise.all([axios.get( BASE_URL + `/challenges/general/${user_id}`), axios.get( BASE_URL + `/talents/general/${user_id}`)]) 
+      .then(res =>  {
+        const data = []
+        if(res[0].data.length > 0) {
+             res[0].data.forEach(element => {
+                  data.push({...element , dataType:"challenge" })
+             });
+         } 
+        if(res[1].data.length > 0) {
+            res[1].data.forEach(element => {
+               data.push({...element , dataType:"talent" })
+            });
+        } 
+        data.sort((a, b) => 
+          new Date(b.updatedAt) - new Date(a.updatedAt) )
+        setData(data)
+
+        } )
+        .finally(()=>{
+          // setIsLoading(false)
+        })
+    } catch (error) {
+      console.log(error)
+    }
+    }
+  
+
+    export const getFavouriteTalents = async( user_id , data  , setFavourites) =>{
+      try { 
+      await axios.post( BASE_URL + `/talents/favourites/${user_id}` , data)
+      .then(res =>  {
+           setFavourites(res.data)
+        } )
+        .finally(()=>{
+          // setIsLoading(false)
+        })
+    } catch (error) {
+      console.log(error)
+    }
+    }
+    export const getFavouriteChallenges = async( user_id , data  , setFavourites) =>{
+      try { 
+      await axios.post( BASE_URL + `/challenges/favourites/${user_id}` , data)
+      .then(res =>  {
+           setFavourites(res.data)
+        } )
+        .finally(()=>{
+          // setIsLoading(false)
+        })
+    } catch (error) {
+      console.log(error)
+    }
+    }

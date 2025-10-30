@@ -9,10 +9,10 @@ import Contestant from './Contestant';
 
 
 
-// const { width } = Dimensions.get('window');
+
 
 const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon, selectedIcon , talentRoom,
-  contestants ,selectedContestant, setSelectedContestant}) => {
+  participantTrackerId,contestants ,selectedContestant, setSelectedContestant}) => {
 //   const sidebarWidth = width * 0.8; 
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  -width )).current;
 
@@ -30,12 +30,9 @@ const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon,
   }, [show]);
 
   return (
-
- 
     <Animated.View 
-    className=" flex-col justify-evenly rounded-tr-xl rounded-br-xl items-start py- px- borde-t-2 borde-b-2 borde-white g-[#1f2026]"
+    className=" flex-col justify-evenly rounded-tr-xl rounded-br-xl items-start  "
     style={[
-        // styles.sidebar
         {
             top:top && top,
             bottom:bottom && bottom,
@@ -43,14 +40,14 @@ const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon,
             right:right && right,
             position: 'absolute',
             height: height, // Adjust the width as needed
-            // backgroundColor: '#022f2f',
+            backgroundColor: 'transparent',
             // padding: 20,
             width:width ,
-            zIndex: 1,
-            elevation:12
+            // zIndex: 1,
+            // elevation:12
         }
         , 
-    { transform: [{ translateX: sidebarAnimation }] }]}>
+        { transform: [{ translateX: sidebarAnimation }] }]}>
 
         
        
@@ -59,8 +56,9 @@ const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon,
        className ="w-[99%] h-[100%] pl-1 px- flex-col g-[#055783] gap-1 -2 rounde-tr-xl rounded-br-xl borde-t-4 justify-start items-center">
           {contestants.map((contestant , index) => {
                return (
-                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} setSelectedContestant={setSelectedContestant} 
-                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index = {(index + 1)* 2 + 4} w={"93%"} h={"13.7%"}/>
+                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
+                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index = {(index + 1)* 2 + 4} w={"93%"} h={"19.7%"}/>
               
                 )
           })}

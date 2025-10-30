@@ -6,8 +6,9 @@ import { addCommentContestant, getPostData } from '../../../apiCalls';
 import WelcomeComment from '../../comments/WelcomeComment';
 import Comment from '../../comments/Comment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AntDesign } from '@expo/vector-icons';
 
-const CommentModal = ({user , displayComment , setDisplayComment , selectedContestant}) => {
+const CommentModal = ({user , h, displayComment , setDisplayComment , selectedContestant , top}) => {
   const scaleAnim = useRef(new Animated.Value(0)).current; 
   const { width, height } = useWindowDimensions();
   const [postData , setPostData] = useState(null)
@@ -76,7 +77,7 @@ const getItemLayout = (data, index) => ({
     scaleAnim.setValue(0);
     Animated.timing(scaleAnim, {
         toValue: 1, // Animate to full scale (1)
-        duration: 500, // Animation duration (in milliseconds)
+        duration: 1000, // Animation duration (in milliseconds)
         useNativeDriver: true, // Use native driver for performance
       }).start();
     }
@@ -85,33 +86,47 @@ const getItemLayout = (data, index) => ({
   return (
     <View
     // style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top}}
-    //      className=" flex- 1 w-full h-full   bg-[#060606]"
-    style={styles.container}
+    className=" flex-1    bg-[#060606]"
+    style={{ 
+      flexDirection :"col",
+      // backgroundColor: 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowpacity: 0,
+      // height: h,
+      shadowRadius: 4,
+      elevation: 5,
+    }}
      >
     {displayComment && postData && (
         <Modal
         style={{margin:0}}
-        animationType="none" // No built-in animation for custom animation
+        animationType="none" 
         transparent={true}
         isVisible={displayComment}
         onBackdropPress={()=>{setDisplayComment(false)}}
         onRequestClose={() =>setDisplayComment(false)}     
         >
         <Animated.View
-        className="rounded-t-lg mt-auto bg-white"
-          style={[
-            styles.modalContent,
-            {
+        className="rounded-t-xl mt -auto gap-1 py- 1 px- 1 rounded-b-xl bg-[#d8dbe3]"
+          style={
+            {  
+              position:"absolute",
+              bottom : 0 ,
+              height : h,
+              minWidth :"100%",
+              justifyContent: 'start',
+              alignItems: 'center',
+              // backgroundColor:'#06132b',
               transform: [{ scale: scaleAnim }],
-            },
-            // {minWidth:width}
-          ]}
+            }
+        }
         >
           
             <View 
-            style={{backgroundColor:'rgba(0,0 , 0, 0.8)'}}
-                     className="flex-row bg-black justify-between w-full  h-[50px]  rounded-t-lg order-pink-300 borde-2 g-white mb-2 px-2 items-center">
-                      <View  className="flex-row justify-start items-center gap-2" >
+            // style={{backgroundColor:'rgba(0,0 , 0, 1)'}}
+                     className="flex-row bg-[#2b2c2d] justify-between w-full py-2 h -[50px]  rounded-t-xl order-pink-300 borde-2 g-white mb-1 px-2 items-center">
+                      <View  className="flex-row justify-start items-end gap-2" >
                             <Text
                              className=" text-xs font-black text-white"
                               >
@@ -119,32 +134,28 @@ const getItemLayout = (data, index) => ({
                             </Text>
                             {/* <Ionicons name='heart' color="red" side={15}/> */}
                             <Text 
-                              className="text-xs  font-black text-white"
+                              className="text-xs  font-black text-red-500"
                                >
-                              VOTES
+                              Votes
                             </Text>
                       </View>
-                     <TouchableOpacity
+                      <TouchableOpacity
                         onPress={()=>{setDisplayComment(false)}}>
-                        <Image  
-                         className="w-10 h-10"
-                         source={icons.x}/>
-                     </TouchableOpacity>
-                     <View  className="flex-row justify-start items-center gap-1" >
+                         <AntDesign name="closecircle" size={30} color="white" /> 
+                      </TouchableOpacity>
+                      <View  className="flex-row justify-start  items-end gap-1" >
                             <Text
-                             className="text-xs  font-bold"
-                              >
+                             className="text-xs text-gray-100 font-black" >
                               {postData.likes.length}
                             </Text>
                             <Image
-                            className="w-7 h-7"
+                            className="w-6 h-6"
                              source={icons.like}
                              />
-                            <Text 
-                              className="text-xs text-white font-black"
-                               >
-                              LIKES
-                            </Text>
+                            {/* <Text 
+                              className="text-xs text-white font-black">
+                              likes
+                            </Text> */}
                       </View>           
             </View>
 
@@ -152,8 +163,8 @@ const getItemLayout = (data, index) => ({
             ( <WelcomeComment/> )}
 
             <View
-            style={{backgroundColor:"white"}}
-            className="flex-1 w-full h- [80%]">
+            style={{backgroundColor:""}}
+            className="flex-1 w-full px-2 h- [80%]">
                   <FlatList
                     ref={flatListRef}
                     scrollEnabled={true}
@@ -167,8 +178,6 @@ const getItemLayout = (data, index) => ({
                     keyExtractor={item => item._id}
                     ListHeaderComponent={
                         ( <>
-                          
-                      
                         </> )
                     }
                     onRefresh={handleRefresh}
@@ -177,18 +186,19 @@ const getItemLayout = (data, index) => ({
                     extraData={refreshing}
 
                     />
-            </View>
+          </View>
 
            <View
 
-                className="w-[95%] min- h-[50px] px-2 flex-row  border-gray-600 border-2 border-b-2  border-l- 4  border-r- 4 mt-1 mb- justify-start items-center rounded-lg"
+                className="bg-white w-[98%] min- h-[45px]  px-1  rounded-lg flex-row  border-gray-200 border-2  justify-center items-center "
                 >
               <TextInput  
               // style={styles.input}
-              className="px-2 text-gray-700 bg-gray-100 w-[100%] min-h-[95%] border-r-2 border-gray"
-              placeholderTextColor={"white"}
+              className="px-2 text-gray-900 font-base pt-4 flex-row justify-start items-center  w-[82%] min-h-[100%] "
+              placeholderTextColor={"black"}
               placeholder="Add a comment..."
               returnKeyType="send"
+              multiline={true}
               removeClippedSubviews={false}
               value={newComment}
               keyboardType='email-address'
@@ -200,7 +210,7 @@ const getItemLayout = (data, index) => ({
               />
               <TouchableOpacity
                onPress={addComment} 
-               className="absolute right-0 w-[18%] h-[95%] flex-row justify-center rounded-lg mr- items-center bg-blue-200 ">
+               className=" w-[18%] h-[92%] flex-row justify-center rounded-lg items-center bg-blue-500 ">
                   <Text>
                       send
                   </Text>
@@ -208,12 +218,13 @@ const getItemLayout = (data, index) => ({
         
            </View>
            <View
-                className="w-[98%] h-[5%] flex-row bg-white borde-2 mt- mb-1 justify-center items-center rounded-xl"
-                >
-                    <Text>
-                      Comment
-                  </Text>
-                </View>
+               style={{height:30}}
+               className="w-[100%] h-[1%] flex-row bg- white borde-2   justify-center items-center rounde d-xl" >
+                    <Text
+                             className="text-md text-gray-700 font-black" >
+                              
+                    </Text>
+           </View>
 
         </Animated.View>
       </Modal>
@@ -225,14 +236,18 @@ const getItemLayout = (data, index) => ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     // margin:0,
     // display:"flex",
-    // flexDirection :"col",
+    flexDirection :"col",
     // backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
+    opacity: 1,
+    shadowRadius: 4,
+    elevation: 5,
   },
+
   modalContent: {
     // flex: 1, 
     // position: "absolute",

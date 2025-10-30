@@ -68,7 +68,7 @@
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
     <key>RCTRootViewBackgroundColor</key>
-    <integer>4281637083</integer>
+    <integer>4278190080</integer>
     <key>UIBackgroundModes</key>
     <array>
       <string>audio</string>

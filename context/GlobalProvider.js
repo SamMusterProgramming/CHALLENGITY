@@ -20,10 +20,19 @@ export const GlobalProvider =({children}) => {
     const [followings,setFollowings] = useState ([])
     const [userFriendData,setUserFriendData] = useState(null)
     const [follow , setFollow ] = useState(null)
-    const [favouriteChallenge , setFavouriteChallenge] = useState(null)
+    const [favouriteList , setFavouriteList] = useState(null)
     const [smallScreen , setSmallScreen] = useState (false)
     const [userTalents, setUserTalents] = useState ([])
-   const[ userTalentPerformances , setUserTalentPerformances ] = useState([])
+    const [topTalents, setTopTalents] = useState ([])
+
+   const [userTalentPerformances , setUserTalentPerformances] = useState([])
+   const [isLoggingOut, setIsLoggingOut] = useState(false);
+   const [globalRefresh, setGlobalRefresh] = useState(false);
+   const [menuPanelBgColor, setMenuPanelBgColor] = useState("#2f3e42");
+   const [boxBgColor,setBoxBgcolor] = useState("##0e121a") //("#d4d4d4")//("#d1d8eb")//useState("#f0f1f7")
+   const [contestantBgColor,setContestantBgColor] = useState("#35383d")//("#1f1f21")
+//    const [topTalents, setTopTalents] = useState([])
+
 
     useEffect(() => {
           
@@ -49,10 +58,16 @@ export const GlobalProvider =({children}) => {
             followings,setFollowings,
             userFriendData,setUserFriendData,
             follow , setFollow ,
-            favouriteChallenge , setFavouriteChallenge,
+            favouriteList , setFavouriteList,
             smallScreen , setSmallScreen,
             userTalents, setUserTalents,
-            userTalentPerformances , setUserTalentPerformances 
+            userTalentPerformances , setUserTalentPerformances ,
+            isLoggingOut, setIsLoggingOut,
+            globalRefresh, setGlobalRefresh,
+            menuPanelBgColor, setMenuPanelBgColor,
+            boxBgColor,setBoxBgcolor,
+            contestantBgColor,setContestantBgColor ,
+            topTalents, setTopTalents
             }
             } >
             {children}

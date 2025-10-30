@@ -114,14 +114,14 @@ export default function ParticipantPostData({user,show , height, width ,top ,bot
                      // style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
                      className = "w-[100%]  h-[20%] px-4 flex-col g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
                                        <Image
-                                      style ={{height : width * 0.8 /6 ,
-                                                       width :width * 0.8 /6 }}
+                                      style ={{height : width * 0.8 /7 ,
+                                                       width :width * 0.8 /7 }}
                                       source={{uri:selectedParticipant.profile_img}}
-                                      className ="w-[70px] h-[70px] rounded-full"
+                                      className ="w-[60px] h-[60px] rounded-full"
                                       resizeMethod='fill'
                                                          />
                                      <Text 
-                                         style ={{fontSize:11 ,
+                                         style ={{fontSize:10 ,
                                           fontStyle:"italic"
                                          }}
                                          className="text-xl font-black  text-white"> 
@@ -282,23 +282,23 @@ export default function ParticipantPostData({user,show , height, width ,top ,bot
 
                   <View
                      // style={{backgroundColor: 'rgba(0, 0, 0, 0.2)'}}
-                     className = "w-[100%]  h-[20%] px-2 flex-row g-[#12aaf1] rounded-xl  g-blue-500  justify-between items-start">
-                                     <Text 
+                     className = "w-[100%]  h-[20%] px-2 flex-row g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-start">
+                                     {/* <Text 
                                          style ={{fontSize:13 ,
                                           fontStyle:"italic"
                                          }}
                                          className="text-xl font-black  text-white"> 
                                              Ranked
-                                     </Text>
+                                     </Text> */}
 
                                      <Text 
-                                         style ={{fontSize:13 ,
+                                         style ={{fontSize:11 ,
                                           fontStyle:"italic"
                                          }}
                                          className="text-xl font-black  text-white"> 
-                                          {rank < 4 ? "TOP" : "#"}  {rank}
+                                          {rank < 4 ? "TOP" : "RANKED"}  {rank}
                                      </Text>
-                   </View>
+                  </View>
 
                 
          </View>
@@ -307,8 +307,6 @@ export default function ParticipantPostData({user,show , height, width ,top ,bot
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}
                      // handleTalentParticipation  = {handleTalentParticipation} handleTalentResignition = {handleTalentResignition}
                      handleVotePost ={handleVotePost} handleFlagPost ={handleFlagPost}
-
-              
                        />
                  )}
 

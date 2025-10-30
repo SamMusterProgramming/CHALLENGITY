@@ -6,27 +6,24 @@ import React, { useEffect, useRef, useState } from 'react'
 // import { getInition, sortChallengeByVotes } from '../../helper';
 import { router, useLocalSearchParams } from 'expo-router';
 import { addChallengeToFavourite, deleteChallenge, getChallengeById, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, quitChallenge, removeChallengeFromFavourite } from '../apiCalls';
-import { getInition, sortChallengeByVotes } from '../helper';
+
 import { icons } from '../constants';
-import InstantPlayer from '../components/challenge/InstantPlayer';
 import SwingingTitle from '../components/custom/SwingingTitle';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import FSinstantPlayer from '../components/challenge/FSinstantPlayer';
+import {  useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import ChallengeAction from '../components/modal/ChallengeAction';
-import ButtonChallengeAction from '../components/challenge/ButtonChallengeAction';
+
 import { useGlobalContext } from '../context/GlobalProvider';
-import { deleteObject, getStorage, ref } from 'firebase/storage'
+import { deleteObject,  ref } from 'firebase/storage'
 import { storage } from '../firebase';
 import ChallengeExpired from '../components/challenge/ChallengeExpired';
-import PostPlayerModal from '../components/modal/PostPlayerModal';
-import ChallengeDescriptionModal from '../components/modal/ChallengeDescriptionModal';
-import ProfileDisplayModal from '../components/modal/ProfileDisplayModal';
+
 import { useEvent } from 'expo';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { MotiView } from 'moti';
-import ContestantPostDetails from '../components/talent/ContestantPostDetails';
+
 import ProgresssBarVideo from '../components/custom/ProgresssBarVideo';
-import TopBarChallenge from '../components/challenge/TopBarChallenge';
+
 import LeftBarChallenge from '../components/challenge/LeftBarChallenge';
 import RightBarChallenge from '../components/challenge/RightBarChallenge';
 import BottomBarChallenge from '../components/challenge/BottomBarChallenge';
@@ -37,13 +34,13 @@ import ChallengeParticipation from '../components/challenge/ChallengeParticipati
 import TopBarParticipants from '../components/challenge/TopBarParticipants';
 import BottomBarParticipants from '../components/challenge/BottomBarParticipants';
 import CentralParticipantPlayer from '../components/challenge/CentralParticipantPlayer';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import Invites from '../components/challenge/Invites';
 
 
 
 export default function FSinstantChallengeDisplay() {
-   
+
     const flatRef = useRef()
     const [viewableItems, setViewableItems] = useState([]);
     const [finishPlaying ,setFinishPlaying] = useState(false)
@@ -61,7 +58,7 @@ export default function FSinstantChallengeDisplay() {
     const [participantStatus,setParticipantStatus] = useState("")
     const [text,setText] = useState("")
     const [action,setAction] = useState("")
-    const[isFavourite,setIsFavourite] = useState(false)
+    const[isFavourite,setIsFavourite] = useState(null)
     const[isExpired,setIsExpired] = useState(false)
     const [isPlayerModalVisible, setIsPlayerModalVisible] = useState(false)
     const [selectedPost ,setSelectedPost] = useState(null)
@@ -84,6 +81,17 @@ export default function FSinstantChallengeDisplay() {
     const [selectedPostIndex , setSelectedPostIndex] = useState(0)
     const [isScrolling , setIsScrolling] = useState(false)
     const [selection , setSelection] = useState("participants")
+
+    const { participant_id } =  useLocalSearchParams(); 
+    const [isParamed , setIsParamed] = useState(false)
+
+
+
+    // useEffect(() => {
+     
+    // }, [])
+    
+
     //*************************************  player */
 
     const player = useVideoPlayer
@@ -115,7 +123,7 @@ export default function FSinstantChallengeDisplay() {
       if(challenge_id) getChallengeById(challenge_id, setChallenge , setIsExpired)
     }, [])
     
-    const {user,setUser,userChallenges,setUserChallenges,favouriteChallenge , setFavouriteChallenge,setPublicParticipateChallenges,setPrivateParticipateChallenges,
+    const {user,favouriteList,favouriteChallenge , setFavouriteList,setPublicParticipateChallenges,setPrivateParticipateChallenges,
         setUserPrivateChallenges,setUserPublicChallenges,userFriendData,participateChallenges,setParticipateChallenges,notifications,setNotifications} = useGlobalContext()
     
     
@@ -125,30 +133,26 @@ export default function FSinstantChallengeDisplay() {
    
     //************************************ favourites */
 
-    useEffect(() => {
-        challenge && favouriteChallenge &&  setIsFavourite(favouriteChallenge.favourites.find(chall=>chall._id === challenge._id))  
-    }, [favouriteChallenge,challenge]) 
+    // useEffect(() => {
+    //     challenge && favouriteChallenge &&  setIsFavourite(favouriteChallenge.favourites.find(chall=>chall._id === challenge._id))  
+    // }, [favouriteChallenge,challenge]) 
     
-    const addToFavourite  = ()=> {
-        setIsModalVisible(false)
-        addChallengeToFavourite(user._id,challenge,setFavouriteChallenge,setIsExpired)
-      }
+    // const addToFavourite  = ()=> {
+    //     setIsModalVisible(false)
+    //     addChallengeToFavourite(user._id,challenge,setFavouriteChallenge,setIsExpired)
+    //   }
       
-      const removeFromFavourite = ()=> {
-        setIsModalVisible(false)
-        removeChallengeFromFavourite(user._id,challenge,setFavouriteChallenge,setIsExpired)
-     }
+    //   const removeFromFavourite = ()=> {
+    //     setIsModalVisible(false)
+    //     removeChallengeFromFavourite(user._id,challenge,setFavouriteChallenge,setIsExpired)
+    //  }
 
     const confirmAddToFavourite  = ()=> {
         setIsModalVisible(true)
         setAction("FA")
         setText("You are about to add the challenge to your Watchlist list")
         }
-    const confirmRemoveFromFavourite  = ()=> {
-          setIsModalVisible(true)
-          setAction("RF")
-          setText("You are  about to remove  the challenge from your Watchlist list")
-        }
+   
 
     //************************************ restructure challenge based on participants and invites */
 
@@ -174,8 +178,22 @@ export default function FSinstantChallengeDisplay() {
      !setParticipantTrackerId ?  setParticipantTrackerId(challenge.participants[0]._id) :
                                  setParticipantTrackerId(selectedParticipant)
      selectedParticipant && setSelectedParticipant(d.find(p => p.user_id ===  selectedParticipant.user_id))
+     if(participant_id && !isParamed){
+      setSelectedParticipant(d.find(p => p.user_id === participant_id))
+      setIsParamed(true)
+    }
+    if(favouriteList){
+      setIsFavourite({status:favouriteList.favourites.find(f=> f._id == challenge._id)})
+    }else setIsFavourite(false)
     }
     }, [challenge])
+
+
+    useEffect(() => {
+      favouriteList && challenge &&  setIsFavourite(
+            {status:favouriteList.favourites.find(f=> f._id == challenge._id)}
+             )
+    }, [favouriteList])
 
 
 //****************************** confirm challenge action */
@@ -257,11 +275,32 @@ export default function FSinstantChallengeDisplay() {
            })
          
         }
+
+      
+      const addFavourite  = () => {
+          setIsModalVisible(false)
+          addChallengeToFavourite(user._id,{challenge_id:challenge._id},setFavouriteList,setIsExpired)
+          setIsFavourite(null)
+      }
+      const removeFromFavourite = ()=> {
+          setIsModalVisible(false)
+          removeChallengeFromFavourite(user._id,{challenge_id:challenge._id},setFavouriteList,setIsExpired)
+          setIsFavourite(null)
+       }
     
     
-      const confirmAction  = ()=> {
+       useEffect(() => {
+        if(participationType) {
             setIsModalVisible(true)
             switch (participationType) {
+              case "addFavourite":
+                setAction("FA")
+                setText("Are you sure you want to add the contest to your favourite list")
+                break;
+              case "removeFavourite":
+                setAction("RF")
+                setText("Are you sure you want to remove the contest from your favourite list")
+                break;
               case "Join":
                 setAction("JN")
                 setText("Are you sure you want to join the challenge")
@@ -286,6 +325,7 @@ export default function FSinstantChallengeDisplay() {
                 break;
             }
         }
+      }, [participationType])
 //*************************************** challenge description */
         
 const getIcon = (type) => {
@@ -415,7 +455,10 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
     style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top  }}
     className=" flex-1  min-w-[100vw] min-h-full flex-row justify-center items-center   bg-[#000000]" >
     <View
-    className=" flex-1  min-w-[100%] min-h-[100%] flex-row justify-center items-center   bg-[#041539]   [#786d6d]">
+    style ={{
+      // backgroundColor : 'rgb(173, 216, 230)'
+    }}
+    className=" flex-1  min-w-[100%] min-h-[100%] flex-row justify-center items-center   bg-black -[#363c4a]   [#786d6d]">
 
       {data && challenge && (
         <>
@@ -427,14 +470,16 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
                             onPress={toggleVideoPlaying}
                             className={ "w-[100vw] h-[100%] b g-white flex-col justify-center items-center opacity-100"}
                                 > 
-                                
-                                <VideoView 
-                                              style={{ width:'100%' ,height:'100%',opacity:100}}
-                                              player={player}
-                                              contentFit='cover'
-                                              nativeControls ={false}
-                                              pointerEvents='box-only'
-                                />
+                                 <View
+                                    className = {!isPlaying ? "opacity-50 w-[100%]" : "w-[100vw] opacity-100"}>
+                                    <VideoView 
+                                                  style={{ width:'100%' ,height:'100%',opacity:100}}
+                                                  player={player}
+                                                  contentFit='cover'
+                                                  nativeControls ={false}
+                                                  pointerEvents='box-only'
+                                    />
+                                </View>
                                 <ParticipantPostData user={user} show = {!isPlaying} displayComment ={displayComment}
                                     setDisplayComment = {setDisplayComment} selectedParticipant={selectedParticipant} setIsExpired={setIsExpired} challenge={challenge}
                                     setSelectedParticipant={setSelectedParticipant}
@@ -449,15 +494,18 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
                                     className={
                                             "w-full h-full flex-col absolute top-  justify-center items-center"
                                     } >
-                                    <Image 
+                                    {/* <Image 
                                     className="w-14 h-14 opacity-100"
-                                    source={!isPlaying && icons.play}/>
+                                    source={!isPlaying && icons.play}/> */}
                                 </TouchableOpacity>
 
                                 {/* <DisplayContestant show = {isContestantVisible} setIsContestantVisible = {setIsContestantVisible} selectedContestant={selectedContestant} 
                                 width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} /> */}
 
-                                {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedParticipant}  />)}
+                                {displayComment && (<CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedParticipant}
+                                 h = { Platform.OS == "ios" ?  width * 1.49 + insets.bottom/2 : 
+                                  width * 1.49  } 
+                                  top = {insets.top}  />)}
 
                                 {isPlaying && (<ProgresssBarVideo player={player} visible={!isPlaying} bottom={82} />)}
                                 {/* {isPlaying && ! isContestantVisible && (
@@ -477,7 +525,7 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
                         ): (
                            <>
                            {!newChallenge ? (
-                          <ParticipantRoom  user={user} confirmAction={confirmAction} setStage = {setStage}
+                          <ParticipantRoom  user={user}  setStage = {setStage}
                           setSelectedParticipant={setSelectedParticipant}  challenge ={challenge}
                           setParticipationType = {setParticipationType} data={data}   h={width * (1.05)} w={width * 0.57} top={insets.top + width * 0.01}/>
                           ):(
@@ -493,7 +541,7 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
 
 
 
-           {!isPlaying  && !displayComment && !replayRecording &&  (
+                {!isPlaying  && !displayComment && !replayRecording &&  (
                 <MotiView
                   from={{ opacity: 0, translateY: 40 }}
                   animate={{ opacity: 1, translateY: 0 }}
@@ -503,9 +551,9 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
                     height - width * 1.49 - 30 - 28 -height * 0.07 ,
                     width : width ,
                     bottom: !newChallenge? height * 0.07 : 0,
-                    backgroundColor: stage? 'rgba(0,0, 0 , 0.5)' :'rgba(0,0 , 0 , 0.1)'
-                  }}
-                  className ="absolute  flex-col b g-[#120564] rounded-xl  justify-start p-1  items-center"
+                    backgroundColor: stage? 'rgba(0,0, 0 , 0.7)' :'rgba(0,0 , 0 , 0.7)'
+                }}
+                  className ="absolute  flex-col b g-[#120564] rounded-t-xl  justify-start p-1  items-center"
                 >
                 
 
@@ -548,8 +596,6 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
                            </View>
                 </View>
 
-              
-              
                 <View
                 className = "flex-row absolute h-7 left-0 ml-1 top-2 justify-start items-end gap-2">
                     <Image
@@ -575,6 +621,30 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
                           className ="w-7 h-7"
                           />
                 </View>
+                
+                {isFavourite && (
+                <TouchableOpacity
+                                      onPress={() =>
+                                        {
+                                         !isFavourite.status ? setParticipationType("addFavourite") : setParticipationType("removeFavourite")
+                                        }}
+                                   
+                                      className = "absolute b g-white gap-1 rounded-full top-14 left-8 flex-row justify-center items-end ">
+                                              {isFavourite.status ?
+                                               (
+                                                <MaterialCommunityIcons name="heart" size={20} color = "#EC4899"  />
+                                               ) : 
+                                               (
+                                                <MaterialCommunityIcons name="heart-outline" size={20} color = "#EC4899"  />
+                                               )}
+                                              <Text  
+                                                    style ={{fontSize:8}}
+                                                    className="tex t-xl font-black p- 1  text-white"> 
+                                                       {isFavourite.status ? "Fav" : "Add"} 
+                                              </Text>
+                                         
+                </TouchableOpacity>
+                )}
               
             </MotiView>
 
@@ -631,7 +701,7 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
                 setIsScrolling(true)
                 setSelectedParticipant(null)}}
                className = "absolute top-36 ">
-                       <AntDesign name="closecircle" size={45} color="black" /> 
+                       <AntDesign name="closecircle" size={45} color="white" /> 
               </TouchableOpacity>
             )}
 
@@ -669,11 +739,13 @@ if(isExpired) return <ChallengeExpired challenge_id = {challenge_id} />
              selectedParticipant={selectedParticipant} setSelectedParticipant={setSelectedParticipant}/>
 
             <BottomBarChallenge show = {!isPlaying  && !newChallenge && !replayRecording } width ={width} height={height * 0.07 } bottom={0} left ={null} right ={null} user = {user} setStage={setStage}
-               stage={stage}  confirmAction = {confirmAction}  challenge={challenge} handleRefresh={handleRefresh} setSelectedParticipant={setSelectedParticipant} isRefreshing={isRefreshing}/>          
+               stage={stage}    challenge={challenge} handleRefresh={handleRefresh} setSelectedParticipant={setSelectedParticipant} isRefreshing={isRefreshing}/>          
             
+          
            {isModalVisible && (  
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible}  removeChallenge = {removeChallenge} removeFromFavourite={removeFromFavourite}
-                     addToFavourite={ addToFavourite} setIsModalVisible={setIsModalVisible}  joinChallenge={joinChallenge} resignChallenge={resignChallenge}
+                     addFavourite={addFavourite} setIsModalVisible={setIsModalVisible}  joinChallenge={joinChallenge} resignChallenge={resignChallenge} 
+                     setParticipationType = {setParticipationType}
                        />
            )}
 

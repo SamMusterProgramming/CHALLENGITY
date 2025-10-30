@@ -63,13 +63,13 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
     } else if (minutes < 60) {
       return  `${minutes} Min`;
     } else if (hours < 24) {
-      return `${hours} hr`;
+      return `${hours} Hours`;
     } else if (days < 30) {
-      return `${days} d `;
+      return `${days} Day `;
     } else if (months < 12) {
-      return `${months} Mon`;
+      return `${months} Month`;
     } else {
-      return `${years} Y`;
+      return `${years} Years`;
     }
   }
 
@@ -139,6 +139,9 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
       case "Tech":
             return icons.tech
             break;
+      case "Gaming":
+            return icons.game
+            break;
       case "Adventure":
             return icons.adventure
             break;
@@ -151,8 +154,30 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
       case "Sport":
               return icons.sport
               break;
-       case "Comedy":
+      case "Science":
+              return icons.science
+              break;
+      case "Comedy":
               return icons.comedy
+              break;
+      case "Diet":
+              return icons.diet
+              break;
+
+      case "home":
+              return icons.home
+              break;
+      case "talent":
+              return icons.talent
+              break;
+      case "challenge":
+              return icons.challenge
+              break;
+      case "notification":
+              return icons.notification
+              break;
+      case "profile":
+              return icons.profile
               break;
 
       case "Public":
@@ -164,3 +189,74 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
            break;
     }
  }
+
+ export const countryCodes = {
+  'US': 'United States',
+  'CA': 'Canada',
+  'GB': 'United Kingdom',
+  'DE': 'Germany',
+  'FR': 'France',
+  'JP': 'Japan',
+  'AU': 'Australia',
+  'IN': 'India',
+  'CN': 'China',
+  "DZ": 'Algeria'
+};
+
+
+export function selectIcon(name){
+  switch (name) {
+        case "home":
+           return "home"
+           break;
+        case "talent":
+           return "star"
+           break;
+        case "challenge":
+           return "sword-cross"
+           break;
+        case "notification":
+            return "bell-ring"
+            break;
+        case "profile":
+            return "account"
+            break;
+        case "favourite":
+            return "heart"
+            break;
+        case "stats":
+            return "poll"
+            break;
+        case "trophy":
+            return "trophy"
+            break;
+  }
+}
+export function selectIconColor(name){
+  switch (name) {
+      case "home":
+           return "#3B82F6"
+           break;
+      case "talent":
+           return "#edc153"
+           break;
+      case "challenge":
+           return "#F97316"
+           break;
+      case "notification":
+          return "#07a8e3"
+          break;
+       case "profile":
+            return "#6366F1"
+            break;
+       case "favourite":
+            return "#EC4899"
+            break;
+      case "stats":
+            return "#10B981"
+            break;
+      case "trophy":
+            return "#F59E0B"
+            break;
+  }
+}

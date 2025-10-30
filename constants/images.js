@@ -9,7 +9,7 @@ import challenge  from "../assets/images/challenge.png";
 // import sky_bg from "../assets/images/sky-bg.webp";
 import night_bg from "../assets/images/dark.jpeg";
 import empty from "../assets/images/empty.png";
-import sky_bg from "../assets/images/star-sky.jpg";
+import sky_bg from "../assets/icons/bg.jpg";
 
 
 

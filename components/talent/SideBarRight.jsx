@@ -12,7 +12,7 @@ import Contestant from './Contestant';
 // const { width } = Dimensions.get('window');
 
 const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regionIcon, selectedIcon ,talentRoom,
-   contestants ,selectedContestant, setSelectedContestant}) => {
+   participantTrackerId,  contestants ,selectedContestant, setSelectedContestant}) => {
 //   const sidebarWidth = width * 0.8; 
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  width )).current;
 
@@ -45,8 +45,8 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
             // backgroundColor: '',
             // padding: 20,
             width:width ,
-            zIndex: 1,
-            elevation:12
+            // zIndex: 1,
+            // elevation:12
         }
         , 
     { transform: [{ translateX: sidebarAnimation }] }]}>
@@ -57,9 +57,10 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
        className ="w-[100%] h-[100%] pr-1 px- flex-col g-[#178bea] gap-1 -2 rounded-bl-xl borde-t-4 justify-start items-center">
           {contestants.map((contestant , index) => {
                return (
-                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} setSelectedContestant={setSelectedContestant} 
+                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} 
+                participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
                 talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={(index + 1 ) * 2 + 3 } w={"93%"} h={"13.7%"}/>
-               
+                
                 )
           })}
        </View>

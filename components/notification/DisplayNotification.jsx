@@ -1,15 +1,15 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { getInition } from '../../helper'
+import { getIcon, getInition } from '../../helper'
 import { acceptFriendRequest, deleteUserNotification, getNotificationByUser, removeFriendRequest, updateNotificationByUser } from '../../apiCalls';
 import { router } from 'expo-router';
 import { icons } from '../../constants';
 import { useGlobalContext } from '../../context/GlobalProvider';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function DisplayNotification({notification,setNotifications,user,setDisplayNotificationsModal }) {
 
   const {userFriendData,setUserFriendData } = useGlobalContext()
-  const name = notification.content.name;  
   const isRead = notification.isRead;
   let friendRequestNotif = false;
   let friendRequestAcceptNotif = false;
@@ -25,6 +25,16 @@ export default function DisplayNotification({notification,setNotifications,user,
 
   const [type,setType] = useState(notification.type)
 
+  const [name , setName] = useState(null)
+
+
+  useEffect(() => {
+      const splitName = notification.content.name.split(" ")
+      setName({
+      part1 : splitName[0],
+      part2: splitName[1]
+       })
+  }, [])
 
  
   const deleteNotification =()=>{
@@ -39,10 +49,9 @@ export default function DisplayNotification({notification,setNotifications,user,
 
    const handleViewTalent = ()=> {   
     updateNotificationByUser(notification._id,setNot)
-    setDisplayNotificationsModal(false)
     router.push({ pathname:'TalentContestRoom', params:{
       region:notification.content.region,
-      selectedTalent:notification.content.talentName , 
+      selectedTalent:notification.content.talentName,
       selectedIcon: icons.dance,
       regionIcon : icons.africa,
       startIntroduction :"true",
@@ -78,10 +87,12 @@ export default function DisplayNotification({notification,setNotifications,user,
 
 
   const handleAction = ()=> {
-    setDisplayNotificationsModal(false)
      switch (notification.type) {
       case "talent":
         handleViewTalent();
+        break;
+      case "followers":
+        handleViewChallenge();
         break;
       case "friends":
           router.navigate({ pathname: '/ViewProfile', params: {user_id:notification.content.sender_id} })
@@ -91,102 +102,289 @@ export default function DisplayNotification({notification,setNotifications,user,
      }
   }
 
+  
   return (
     <View
       style={{
         // backgroundColor:isRead ?'rgba(250,250 , 250 , 0.5)' :'rgba(255,255 , 255 ,1)'
       }}
-      className={isRead ? "w-[48vw] px-2 py-1 m-1 mb-2  bg-[#0f0438] flex-col justify-between  rounded-lg rounde-tr-xl items-center "
-            :"w-[48vw] px-2 py-1 m-1 mb-2 bg-[#0f1166] flex-col justify-between  py- rounded-tl-xl rounded-lg items-center"}>
+      className={isRead ? "w-[100%] h-[60px] bg-[#000000] border-b-2 border-white mb-1 shad ow-xl  elevation-lg  flex-row justify-between    items-center "
+                        :"w-[100%] h-[60px] bg-[#2b2c2e] mb-1 shad ow-xl elevation-lg flex-row justify-between     items-center"}>
+         
+         <TouchableOpacity
+                onPress={()=> {router.push({ pathname: '/ViewProfile', params: {user_id:notification.content.sender_id} })}}
+                style ={{
+                  // backgroundColor : notification.isRead ? "#050505" : "#a3a5a8"
+                }}
+                 className="h-[100%] flex-col  items-center justify-center bg -white px-2 py- 1 shadow-xl">
+                   <Image
+                                style={{ width:45 , height:45}}
+                                className="w-5 h-5 rounded-full"
+                                source={{uri:notification.content.profile_img }}
+                                    />   
+                   {/* <Image
+                                style={{ width:30 , height:30}}
+                                className="w-10 h-10 absolute right-0 bottom-2 rounded-full b g-blue-500"
+                                source={ (notification.type == "friends" || notification.type == "friend request") ?
+                                  icons.accept :  notification.type == "talent" ? icons.talent :
+                                  icons.challenge}
+                                    /> */}
+                     <View
+                          className="w- 0 h- 0 absolute right-0 bottom-2 b g-black">
+                                <MaterialCommunityIcons name={notification.type == "friends" || notification.type == "friend request" ?
+                                  "account" :  notification.type == "talent" ? "star" :
+                                  "sword-cross"} size={25} color = "lightblue" />
+                     </View>
+         </TouchableOpacity>
+         
          <View
-         className="w-[100%] px-1 flex-row justify-between items-end ">
+         className={isRead ? "h- [100%] flex-1 px-1 flex-col sha dow-xl  justify-center items-center  bg -[#ffffff]  "
+          :"h- [100%] flex-1 px- 1 flex-col sha dow-xl  justify-center items-center  b g-[#cfe3f2] "}
+         >
+              {/* <View
+              className="w-[100%] h-[100%] b g-[#fddcdc] flex-col justify-center items-start "> */}
+                          <View
+                              className=" w-[100%] h- [100%] b g-[#ffffff]  flex-row   gap-2 px-2 py-1 justify-start items-center">  
+                                
+                                <Text className=" text-white  font-black"
+                                style={{ fontSize:9 }}
+                                >
+                                    {notification.content.name}
+                                </Text> 
 
-             <TouchableOpacity 
-              onPress={notification.type == "friend request" && !notification.isRead ? acceptFRequest : handleAction }
-              className="w- [20%] p-2 flex-col bg-green-200 rounded-lg  justify-center items-center">
-                  <Text className=" text- black font-bold"
-                      style={{fontSize:8}} >
-                      {notification.type == "friend request" && !notification.isRead ? "Accept" :"View"} 
-                  </Text> 
-             </TouchableOpacity>  
+                                {notification.type == "talent" && (
+                                <View
+                                  className = "flex-row w- [100%] px- 12 flex-1 gap-2 justify-start items-center">
+                                   
+                                    <Text className=" text-yellow-400   font-black"
+                                            style={{fontSize:9}}
+                                             >
+                                            {notification.content.talentName} Contest
+                                    </Text> 
+                                    <TouchableOpacity 
+                                        onPress={handleAction}
+                                        className=" h- [100%] ml-auto bg- [#eeeded] flex-row-reverse rounded-br-3xl  gap-2 px-2 py- 1 justify-center items-center">  
+                                            <Image
+                                            style={{ width:15 , height:15}}
+                                            className="w-8 h-8 rounded-full bg-blue-500"
+                                            source={icons.play}
+                                                />
+                                            <Text className=" text-white  font-black"
+                                            style={{ fontSize:9 }}
+                                            >
+                                                Play 
+                                            </Text> 
+                                      </TouchableOpacity>  
+                                   
+                                </View>
+                                )}
+                                {notification.type == "followers" && (
+                                <View
+                                  className = "flex-row w-[100%] px- 12 flex-1 gap-2 justify-start items-center">
+                                  
+                                    <Text className=" text-yellow-400   font-black"
+                                            style={{fontSize:9}}
+                                             >
+                                            challenge Contest
+                                    </Text> 
 
-            <View className="flex-1 -12 flex-col gap-2 py- justify-center px- items-center">
-              <Image
-              className="w-6 h-6 rounded-full"
-              source={{uri:notification.content.profile_img}}
-                  />
-              <View className="justify-end gap-1 items-start -[80%] flex-col">
-                  <Text className=" text-black elevation-2xl font-black"
-                    style={{fontSize:8 ,color: isRead ? "white":"white"}} >
-                    {name.length > 15 ? name.slice(0,15) + '...': name}
-              </Text> 
-            
-              </View>            
-            </View> 
+                                    <TouchableOpacity 
+                                        onPress={handleAction}
+                                        className=" h- [100%] b g-[#ffffff] ml-auto flex-row-reverse rounded-br-3xl  gap-2 px-2 py- 1 justify-center items-center">  
+                                            <Image
+                                            style={{ width:15 , height:15}}
+                                            className="w-8 h-8 rounded-full bg-blue-500"
+                                            source={icons.play}
+                                                />
+                                            <Text className=" text-white  font-black"
+                                            style={{ fontSize:9 }}
+                                            >
+                                                Play 
+                                            </Text> 
+                                    </TouchableOpacity>  
+                                   
+                                </View>
+                                )}
+                                 {(notification.type == "friend request" && !notification.isRead) && (
+                                <TouchableOpacity
+                                  onPress={acceptFRequest}
+                                  className = "flex-row w-[100%] px- 12 flex-1 gap-2 justify-start items-center"> 
+                                      <Image
+                                      style={{ width:20 , height:20}}
+                                      className="w-8 h-8 rounded-full b g-blue-500"
+                                      source={icons.accept}
+                                          />
+                                      <Text className=" text-white  font-black"
+                                      style={{ fontSize:9 }}
+                                      >
+                                          Accept Request
+                                      </Text> 
+                                </TouchableOpacity>  
+                                )}
 
-            <TouchableOpacity 
-            onPress={notification.type == "friend request" && !notification.isRead ? denyFriendRequest:deleteNotification }
-            className=" [20%]  py-2 px-2 flex-col  bg-red-200 rounded-lg  justify-center items-center">
-                <Text className=" text-black font-bold"
-                    style={{fontSize:8}} >
-                       {notification.type == "friend request" && !notification.isRead ? "Ignore" : "Delete"} 
-                </Text> 
-           </TouchableOpacity>  
+                          </View> 
 
-          
+                           <View
+                           className="flex- 1 w-[100%] px-2 flex-col justify-center items-start">
+                                <Text className=" text-gray-100   font-bold"
+                                  style={{fontSize:10,color: isRead ? "white":"white"}} >
+                                  {notification.message}
+                                </Text> 
+
+                                {/* {notification.type == "talent" && (
+                                <View
+                                  className = "flex-row w-[100%] px- 12 flex-1 gap-2 justify-start items-center">
+                                   
+                                    <Text className=" text-yellow-400   font-black"
+                                            style={{fontSize:9}}
+                                             >
+                                            {notification.content.talentName} Contest
+                                    </Text> 
+                                    <TouchableOpacity 
+                                        onPress={handleAction}
+                                        className=" h- [100%] ml-auto bg- [#eeeded] flex-row-reverse rounded-br-3xl  gap-2 px-2 py-1 justify-center items-center">  
+                                            <Image
+                                            style={{ width:20 , height:20}}
+                                            className="w-8 h-8 rounded-full bg-blue-500"
+                                            source={icons.play}
+                                                />
+                                            <Text className=" text-white  font-black"
+                                            style={{ fontSize:10 }}
+                                            >
+                                                Play 
+                                            </Text> 
+                                      </TouchableOpacity>  
+                                   
+                                </View>
+                                )} */}
+
+                                {/* {notification.type == "followers" && (
+                                <View
+                                  className = "flex-row w-[100%] px- 12 flex-1 gap-2 justify-start items-center">
+                                  
+                                    <Text className=" text-yellow-400   font-black"
+                                            style={{fontSize:9}}
+                                             >
+                                            challenge Contest
+                                    </Text> 
+
+                                    <TouchableOpacity 
+                                        onPress={handleAction}
+                                        className=" h- [100%] b g-[#ffffff] ml-auto flex-row-reverse rounded-br-3xl  gap-2 px-2 py-1 justify-center items-center">  
+                                            <Image
+                                            style={{ width:20 , height:20}}
+                                            className="w-8 h-8 rounded-full bg-blue-500"
+                                            source={icons.play}
+                                                />
+                                            <Text className=" text-white  font-black"
+                                            style={{ fontSize:9 }}
+                                            >
+                                                Play 
+                                            </Text> 
+                                    </TouchableOpacity>  
+                                   
+                                </View>
+                                )} */}
+                                {/* {(notification.type == "friend request" && !notification.isRead) && (
+                                <TouchableOpacity
+                                  onPress={acceptFRequest}
+                                  className = "flex-row w-[100%] px- 12 flex-1 gap-2 justify-start items-center"> 
+                                      <Image
+                                      style={{ width:20 , height:20}}
+                                      className="w-8 h-8 rounded-full b g-blue-500"
+                                      source={icons.accept}
+                                          />
+                                      <Text className=" text-white  font-black"
+                                      style={{ fontSize:9 }}
+                                      >
+                                          Accept Request
+                                      </Text> 
+                                </TouchableOpacity>  
+                                )} */}
+
+                          </View>
+ 
+                          {/* {notification.type == "talent" && (
+                          <>
+                          <View
+                          className = "absolute left-1 top-1 flex-col justify-start items-center">
+                               <Image
+                                className="w-5 h-5 rounded-full b g-blue-500"
+                                source={getIcon(notification.content.talentName)}
+                                    />
+                                <Text className=" text-gray-100   font-black"
+                                  style={{fontSize:6,color: isRead ? "white":"white"}} >
+                                  {notification.content.talentName}
+                                </Text> 
+                          </View>
+                          <View
+                              className = "absolute right-1 bottom-1 flex-col justify-start items-center">
+                                         <Image
+                                          className="w-5 h-5 rounded-full b g-blue-500"
+                                          source={getIcon(notification.content.region)}
+                                              />
+                                          <Text className=" text-gray-100   font-black"
+                                            style={{fontSize:7,color: isRead ? "white":"white"}} >
+                                            {notification.content.region}
+                                          </Text> 
+                           </View>
+                           </>
+                          )} */}
+
+
+                          {/* {notification.type == "followers" && (
+                          <>
+                          <View
+                          className = "absolute left-1 top-1  flex-col justify-start items-center">
+                                          <Image
+                                          className="w-5 h-5 rounded-full b g-blue-500"
+                                          source={getIcon(notification.content.challengeType)}
+                                              />
+                                          <Text className=" text-gray-100   font-black"
+                                            style={{fontSize:6,color: isRead ? "black":"black"}} >
+                                            {notification.content.challengeType}
+                                          </Text> 
+                          </View>
+                          <View
+                              className = "absolute right-1 top-1 flex-col justify-start items-center">
+                                
+                                         <Image
+                                          className="w-5 h-5 rounded-full b g-blue-500"
+                                          source={getIcon(notification.content.challengePrivacy)}
+                                              />
+                                          <Text className=" text-gray-100   font-black"
+                                            style={{fontSize:6,color: isRead ? "black":"black"}} >
+                                            {notification.content.challengePrivacy}
+                                          </Text> 
+                                   
+                           </View>
+                           </>
+                          )} */}
+
+              {/* </View> */}
+             
         </View> 
-        <View className="w-[95%] min-h- mt-2 mb-1 min-h- [50px] py-2 px-2 bg-white mt  rounded-lg flex-row gap- justify-center items-center">
-                  <Text className=" text-black text-center  font-bold"
-                    style={{fontSize:8,color: isRead ? "gray":"black"}} >
-                    {notification.message}
-                  </Text> 
-        </View>
-      {/* <View className="w-[25%] h-12 flex-row gap- justify-evenly items-center">
-        {isRead ? (
-          <>
-    
-              <TouchableOpacity 
-              onPress={ challengeNotif? handleViewChallenge : talentNotif? handleViewTalent: ()=> {} }
-              className="w-[40%] h-8 flex-col bg-green-200 rounded-lg  justify-center items-center">
-                  <Text className=" text- black font-bold"
-                      style={{fontSize:8}} >
-                      {challengeNotif ? "Play" :"View"} 
-                  </Text> 
-             </TouchableOpacity>  
-    
-           <TouchableOpacity 
-            onPress={deleteNotification}
-            className="w-[40%] h-8 flex-col  bg-red-200 rounded-lg  justify-center items-center">
-                <Text className=" text-black font-bold"
-                    style={{fontSize:8}} >
-                        Delete
-                </Text> 
-           </TouchableOpacity>  
-          </>
-        ):(
-            <>
-            <TouchableOpacity 
-            onPress={friendRequestNotif ? acceptFRequest : challengeNotif ? handleViewChallenge : talentNotif? handleViewTalent: ()=>{} }
-            className="w-[40%] h-8 flex-col bg-green-500 rounded-lg  justify-center items-center">
-                <Text className=" text-black font-bold"
-                    style={{fontSize:7}} >
-                    {friendRequestNotif ? "Accept" : challengeNotif ? "Play" : "" }
-                </Text> 
-           </TouchableOpacity>  
-            <TouchableOpacity
-            onPress={friendRequestNotif ? denyFriendRequest : challengeNotif ? deleteNotification : ()=>{} }
-            className="w-[40%] h-8 flex-col bg-red-400 rounded-lg  justify-center items-center">
-                <Text className=" text-black font-bold"
-                    style={{fontSize:8}} >
-                    {friendRequestNotif ? "Deny" : challengeNotif ? "Ignore" : "Delete" }
-                </Text> 
-           </TouchableOpacity>  
-           </>
-        )
-        }
 
-  
-      </View> */}
+
+        <TouchableOpacity
+         onPress={notification.type == "friend request" && !notification.isRead ? denyFriendRequest:deleteNotification }
+         style = {{
+          // backgroundColor : notification.isRead ? "white" : "#cfe3f2"
+            }}
+          className="h-[100%] flex-col  items-center justify-center bg -white px-2 py- 1 elevation-lg sha dow-md">
+                <View className="h- [100%] p-1">
+                    <Ionicons name="notifications-outline" size={24} color="white" />
+                   {!notification.isRead && (<View className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500" />)} 
+                </View>
+                <TouchableOpacity 
+                      onPress={notification.type == "friend request" && !notification.isRead ? denyFriendRequest:deleteNotification }
+                      className="  justify-center items-center">
+                          <Text className=" font-bold text-white"
+                              style={{fontSize:9}} >
+                                {notification.type == "friend request" && !notification.isRead ? "Deny" : "Delete"} 
+                          </Text> 
+                </TouchableOpacity>  
+        </TouchableOpacity>
     
     </View>
   )

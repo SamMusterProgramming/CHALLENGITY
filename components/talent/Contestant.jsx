@@ -1,153 +1,119 @@
 import { View, Text, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import CountryFlag from 'react-native-country-flag'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { icons } from '../../constants'
 
-export default function Contestant({contestant , selectedContestant , setSelectedContestant ,talentRoom, regionIcon , selectedIcon ,index ,w,h}) {
+export default function Contestant({contestant , selectedContestant , setSelectedContestant ,talentRoom,
+   participantTrackerId, regionIcon , selectedIcon ,index ,w,h , f}) {
   const {user} = useGlobalContext()
   const{width , height} = useWindowDimensions()
+  const {contestantBgColor,setContestantBgColor} = useGlobalContext()
 
+  const bgColor = ( selectedContestant && selectedContestant._id === contestant._id) 
+    || ( participantTrackerId && participantTrackerId === contestant._id) ? 'white':
+   user._id === contestant.user_id ?'#2f241a':contestantBgColor
+   const textColor = 
+    ( selectedContestant && selectedContestant._id === contestant._id) 
+   || ( participantTrackerId && participantTrackerId === contestant._id) ? 'black' : 'white'
 
- 
   return (
     <TouchableOpacity
-                  onPress={ ()=> {setSelectedContestant({...contestant, rank:index})}}
+                  onPress={ ()=> {setSelectedContestant({...contestant})}}
                   key ={index}
                   style ={{
                     // borderColor : selectedContestant && selectedContestant._id === contestant._id ? "green" : "transparent" ,
-                    backgroundColor: 
-                        selectedContestant && selectedContestant._id === contestant._id ? 'rgba(255, 0, 0, 0.5)':
-                        user._id === contestant.user_id ?'rgba(0, 155, 0, 0.5)':'rgba(22, 33, 129, 1.0)',
-                    width :  w,
-                    height :  h
+                    // backgroundColor: 
+                    //     selectedContestant && selectedContestant._id === contestant._id ? 'rgba(255, 0, 0, 0.5)':
+                    //     user._id === contestant.user_id ?'rgba(0, 155, 0, 0.5)':'rgba(22, 33, 129, 1.0)',
+                        height : f?  f : width  * 0.18,
+                        width :f?  f : width * 0.18,
                   }}
-                
-                  className ="w-[23%] h-[100%] py- flex-col g-black rounded-lg borde-b-4 borde-2 borde-white justify-start items-center">
-                        <View
-                          className ="w-[100%] h-[33%] py- px-2 flex-row g-white rounde-t-xl borde-t-4 justify-end items-center">
-                            {talentRoom.voters.find(v =>  
-                                                         (v.post_id == contestant._id &&
-                                                         v.voter_id == user._id)
-                                                          ) && (
-                                                            <Text
-                                                             className="absolute bg-white p-1 rounded-sm top-0 left-0"
-                                                             style={ {
-                                                              fontWeight:"800",
-                                                              color: "red",
-                                                              fontSize: 7,
-                                                              fontWeight:900
-                                                            }}>VOTED</Text>
-                                                       )
-                                                      }
-                           
+          
+                  className =" flex-col bg- [#2f241a] justify-center items-center">
                               <View
-                                className="w-[50%] h-[100%] gap-2 flex-row justify-center items-center">
-                                  < CountryFlag
-                                            isoCode={contestant.country || "US"}
-                                            size={12}
-                                       
-                                  />
-                                   <Text style={ {
-                                            fontWeight:"800",
-                                            color: "white",
-                                            fontSize: 10,
-                                            fontWeight:900
-                                          }}>{ contestant.country || "US"}</Text>
-                              </View>
-                            
-                                     {/* <Image
-                                        source={selectedIcon}
-                                        className ="w-[30%] h-[70%] m- rounded-full"
+                                  style={{
+                                    height :f ?  f : width  * 0.18 ,
+                                    width : f ?  f : width * 0.18,
+                                    backgroundColor: 
+                                    bgColor,
+                                  }}
+                                  className="flex-col justify-center items-center b g-white rounded-md ">
+              
+                                        <Image
+                                        source={{uri:contestant.profile_img}}
+                                        className ={f? "w-[20px] h-[20px] m- rounded-full":"w-[40px] h-[40px] m- rounded-full"}
                                         resizeMethod='fill'
-                                        />  */}
-                             
-                            
-                             
-                        </View>
-
-
-                        <View
-                          className ="w-[100%] h-[40%] py- flex-row g-white rounde-t-xl borde-t-4 justify-between items-center">
-                              <View
-                                  className ="w-[33%] h-[100%]  flex-col justify-start items-center   g-white rounded-t-lg g-blue-700 text-pretty">
-                                     <View
-                                      className ="w-[100%] h-[50%] -1   g-white rounded-t-lg g-blue-700 text-center">
-                                            <Text 
-                                                style ={{fontSize:7}}
-                                                className="text-xl text-center p-0 font-black text-white"> 
-                                                Votes 
-                                              
-                                            </Text>
-                                      </View>
-                                      <View
-                                      className ="min-w-[100%] h-[50%]  px flex-row justify-center item-center g-white rounded-t-lg g-blue-700 text-center">
-                                            <Text 
-                                                style ={{fontSize:7}}
-                                                className="text-xl  font-black text-white"> 
-                                                {contestant.votes }
-                                            </Text>
-                                      </View>
+                                        />  
                               </View>
-
-                              <Image
-                              source={{uri:contestant.profile_img}}
-                              className ="w-[20px] h-[20px] m- rounded-full"
-                              resizeMethod='fill'
-                              />
-
-                              <View
-                                className ="w-[33%] h-[100%]  flex-col justify-start items-center   g-white rounded-t-lg g-blue-700 text-pretty">
-                                   <View
-                                    className ="w-[100%] h-[50%] -1   g-white rounded-t-lg g-blue-700 text-center">
-                                          <Text 
-                                              style ={{fontSize:7}}
-                                              className="text-xl text-center p-0 font-black text-white"> 
-                                              TOP
-                                            
-                                          </Text>
-                                    </View>
-                                    <View
-                                    className ="min-w-[100%] h-[50%]  px flex-row justify-center item-center g-white rounded-t-lg g-blue-700 text-center">
-                                          <Text 
-                                              style ={{fontSize:7}}
-                                              className="text-xl  font-black text-white"> 
-                                              {index }
-                                          </Text>
-                                    </View>
-                            </View>
-                               
-                             
-                        </View>
-
-                        <View
-                        className ="w-[90%] h-[26%] py- flex-col mt-auto g-white rounded-t-xl g-white justify-center items-center">
-                              <View
-                                  className ="w-[100%] h-[100%]  flex-row g-white rounde-tr-xl  justify-center items-start ">
-                                    <Text 
-                                    style ={{fontSize:7}}
-                                    className="text-xl font-black  text-white"> 
-                                      {contestant.name.slice(0,13)}
-                                  </Text>
-                              </View>
-                             
-                        </View>
-
-                        {user._id === contestant.user_id && (
-                                     <Image
+              
+                              {user._id === contestant.user_id && (
+                                    <Image
                                         source={icons.you}
-                                        className ="absolute top-[5px] right-[5px] w-6 h-6 m- rounded-full"
+                                        className ="absolute right-0  w-4 h-4 bottom-4 rounded-full"
                                         resizeMethod='fill'
                                         /> 
                               )}
+              
+                              <View
+                                  className ="absolute top-1 1 left-1 1 -rot ate-45 gap- 1  flex-row justify-center items-center   ">
+                                            <Text 
+                                                style ={{fontSize: f?6:8}}
+                                                className=" text-center p-0 font-black text-white"> 
+                                                    💙 
+                                            </Text>
+                                  
+                                            <Text 
+                                                style ={{fontSize:f?5:7,
+                                                  color:textColor
+                                                }}
+                                                className="  font-black text-white"> 
+                                                {contestant.votes }
+                                            </Text>
+                              </View>
 
-                        {/* {selectedContestant && selectedContestant._id === contestant._id && (
-                                  <Image  
-                                  source={icons.check_red}  
-                                  className ="absolute bottom-6 right-0 w-[20px] h-[20px]  rounded-full"  
-                                  resizeMethod='fill'  
+                              <View
+                                className = "absolute top-1 rotat e-45  right-1 1 gap- 1 flex-row justify-center items-center   ">
+                                  
+                                          <Text 
+                                              style ={{fontSize:f? 5 :7,
+                                                color:textColor
+                                              }}
+                                              className=" text-ce nter stroke-slate-50 p-0 font-black text-white"> 
+                                              {contestant.rank < 4 ? "TP" :"RK"}
+                                          </Text>
+                            
+                                  
+                                          <Text 
+                                              style ={{fontSize: f? 5 :7,
+                                                color:textColor
+                                              }}
+                                              className=" font-black text-white"> 
+                                              {contestant.rank }
+                                          </Text>
+                            </View>
+              
+                            <View
+                                className="absolute bottom-4 left-0 rota te-90 ga p- 1 flex-row justify-center items-center">
+                                  < CountryFlag
+                                            isoCode={contestant.country || "US"}
+                                            size={f?6:8}
                                   />
-                            )} */}
+                            </View>
+              
+                            <View
+                              className ="absolute bottom-[0.8px]    gap- flex-row  b g-white rounded-xl justify-center items-center">
+                                
+                                        <Text   
+                                          style ={{fontSize:f?6 :7,
+                                            color:textColor
+                                          }}
+                                          className="font-black mb- text-white ">
+                    
+                                            {contestant.name.slice(0,8)}
+                                        
+                                        </Text>
+                            </View>
                 </TouchableOpacity>
   )
 }

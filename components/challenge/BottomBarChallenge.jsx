@@ -40,7 +40,8 @@ export default function BottomBarChallenge({show,  height, width ,top ,bottom,le
               // padding: 20,
               width:width ,
               zIndex: 1,
-              elevation:12
+              elevation:12,
+              backgroundColor: 'rgba(0,0 , 0 , 0.7)'
           }
           , 
       { transform: [{ translateY: sidebarAnimation }] }]}>
@@ -58,7 +59,7 @@ export default function BottomBarChallenge({show,  height, width ,top ,bottom,le
                                   onPressIn={() =>{setSelectedParticipant(null)}}
                                   className="w-[100%] h-[60%] b g-[#f6e9e9] rounded-tr-full flex-row g-green-600 -rota te-45   justify-center items-center">
                                       {isRefreshing ?(
-                                            <ActivityIndicator size={32} color="white" />
+                                            <ActivityIndicator size={35} color="red" />
                                       ):(
                                             <Image 
                                             source={icons.refresh} 
@@ -69,7 +70,7 @@ export default function BottomBarChallenge({show,  height, width ,top ,bottom,le
                      
   
                           <View
-                           className = "w-[58%] h-[100%]  px -4   flex-col justify-center px- rounded-t-full b g-[#f6e9e9]  items-center ">
+                           className = "w-[58%] h-[100%]  px -4   flex-col justify-start px- rounded-t-full b g-[#f6e9e9]  items-center ">
                                           
                                            <TouchableOpacity
                                                 onPress={()=> {
@@ -77,9 +78,15 @@ export default function BottomBarChallenge({show,  height, width ,top ,bottom,le
                                                     setStage(!stage)
                                                   }
                                                 }
-                                                className ="w-[100%] h-[70%] p- 2 bg-[#043551] rounded-xl  g-white  flex-row justify-center items-center">
+                                                style ={{
+                                                  backgroundColor: stage? 'black' :'black'
+                                                }}
+                                                className ="w- [100%] h-[75%] py- 2 bg-[#043551] rounded-xl  g-white  flex-row justify-center items-center">
                                                 <View
-                                                  className ="w-[97%] h-[95%] px-4 bg-[#031f3b] rounded-lg flex-row justify-center items-center">
+                                                 style ={{
+                                                  backgroundColor: stage? 'blue' :'red'
+                                                  }}
+                                                  className ="w- [97%] h-[80%] px-4 bg-[#031f3b] rounded-lg flex-row justify-center items-center">
                                                       <Text 
                                                             style ={{fontSize:11}}
                                                             className="text-xl font-black -auto text-white"> 

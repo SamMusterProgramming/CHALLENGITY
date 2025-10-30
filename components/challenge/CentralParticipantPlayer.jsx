@@ -29,7 +29,7 @@ export default function CentralParticipantPlayer({selectedParticipant ,data, w,h
         setTimeout(() => {
             flatList.current &&  flatList.current.scrollToIndex({
                 index: selectedPostIndex,
-                animated:true
+                animated:false
               });
               setIsScrolling(false)
         }, 100);
@@ -89,45 +89,44 @@ export default function CentralParticipantPlayer({selectedParticipant ,data, w,h
                                 source={icons.play}
                                 resizeMethod='cover' /> 
                                 <View
-                                className="absolute top-8 left-4 flex-row justify-start items-center gap-2 ">
+                                className="absolute top-2 left-0 flex-row justify-start items-center gap-2 ">
                                                 <Text 
-                                                style ={{fontSize:13}}
-                                                className="text-xl text-center p-0 font-black text-white"> 
-                                                    💙 
+                                                style ={{fontSize:9}}
+                                                className="text-xl text-center p-0 font-black text-blue-400"> 
+                                                    VOTES 
                                                 </Text>
                                     
                                                <Text 
-                                                style ={{fontSize:11}}
+                                                style ={{fontSize:10}}
                                                 className="text-xl  font-black text-white"> 
                                                 {item.votes }
                                               </Text>
                                </View>
                              
-                               <View
-                                className="absolute right-4 top-8 flex-row justify-start items-center gap-2 ">
-                                               <Text 
-                                                    style ={{fontSize:13}}
+                             <View
+                                className="absolute right-0 top-2 flex-row justify-start items-center gap-2 ">
+                                                <Text 
+                                                    style ={{fontSize:9}}
                                                     className="text-xl text-ce nter  p-0 font-black text-red-400"> 
                                                     {item.rank < 4 ? "TOP" :"RK"}
                                                 </Text>
                                 
-                                        
                                                 <Text 
-                                                    style ={{fontSize:13}}
+                                                    style ={{fontSize:10}}
                                                     className="text-xl  font-black text-white"> 
                                                     {item.rank}
                                                 </Text>
                              </View>
                              <TouchableOpacity
                                onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:participant.user_id} })}}
-                                 className="absolute bottom-0  h-24 left-2 flex-row justify-center mt- auto items-end gap-6 ">
+                                 className="absolute bottom-0  h-24 left-0 flex-row justify-center mt- auto items-end gap-6 ">
                                         <Image
                                             source={{uri:item.profile_img}}
                                             className ="w-[40px] h-[40px] m- rounded-full"
                                             resizeMethod='cover'
                                             />  
-                                         <Text   
-                                            style ={{fontSize:12}}
+                                        <Text   
+                                            style ={{fontSize:11}}
                                             className="font-black text-xs   text-white">
                                             {item.name.slice(0,15)}  
                                         </Text>
@@ -148,17 +147,17 @@ export default function CentralParticipantPlayer({selectedParticipant ,data, w,h
       }}
     className="absolute  b g-[#162142]  shadow-lg flex- row justify-center items-center rounded-3xl "
     > 
-                     <View
-                          className="w- [100%] h- [15%] p-2 4 flex-col  justify-center bg-[#0f0830] items-center ">
+                    <View
+                          className="w- [100%] h- [15%] p-2 4 flex-row gap-2  justify-center b g-[#0f0830] items-center ">
                                 <Text 
-                                    style ={{fontSize:12 ,fontStyle:"italic"}}
+                                    style ={{fontSize:11 ,fontStyle:"italic"}}
                                     className="text-xl font-black -auto text-white"> 
                                     {challenge.participants.length} 
                                 </Text>
                                 <Text 
-                                    style ={{fontSize:9 ,fontStyle:"italic"}}
-                                    className="text-xl font-black -auto text-white"> 
-                                       PARTICIPANTS
+                                    style ={{fontSize:10 ,fontStyle:"italic"}}
+                                    className="text-xl font-black -auto text-yellow-400"> 
+                                       Participants
                                 </Text>
                     </View>
                     <FlatList

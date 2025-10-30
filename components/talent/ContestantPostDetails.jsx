@@ -10,7 +10,7 @@ import { router } from 'expo-router';
 import { createdAt } from 'expo-updates';
 
 export default function ContestantPostDetails({user,show , height, width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
-    ,rank,handleRefresh, setIsExpired }) {
+  ,setParticipationType  ,rank,handleRefresh, setIsExpired }) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
   const [voteTimeLaps,setVoteTimeLaps] = useState(30)
@@ -49,7 +49,6 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
    setIsModalVisible(false)
     const body =
        {
-        // post_id : selectedContestant._id,
         owner_id : selectedContestant.user_id,
         voter_id : user._id,
         room_id : talentRoom._id
@@ -92,15 +91,16 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
      <>
        
          <View
-             className = " absolute borde-4 flex-col justify-center gap-1 items-center borde g-black opacity-100 "
+             className = " absolute borde-4 flex-col justify-center gap-1 items-center borde b g-black opacity-100 "
              style={{ 
                         
-                             width: width * 0.45,height :width * 0.8,
+                             width: width * 0.55, height : width * 0.8,
                              elevation:22,  
                              justifyContent: 'center', 
                              alignItems: 'center', 
                              zIndex: 3 ,
-                             opacity:1
+                             opacity:1,
+                             top:top 
              }}
              >
                    <TouchableOpacity
@@ -108,15 +108,16 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                      // style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
                      className = "w-[100%]  h-[20%] px-4 flex-col g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
                                        <Image
-                                      style ={{height : width * 0.8 /6 ,
-                                                       width :width * 0.8 /6 }}
+                                      style ={{
+                                          height : width * 0.8 /8 ,
+                                          width :width * 0.8 /8 }}
                                       source={{uri:selectedContestant.profile_img}}
                                       className ="w-[70px] h-[70px] rounded-full"
                                       resizeMethod='fill'
                                                          />
                                      <Text 
-                                         style ={{fontSize:11 ,
-                                          fontStyle:"italic"
+                                         style ={{fontSize:9,
+                                          // fontStyle:"italic"
                                          }}
                                          className="text-xl font-black  text-white"> 
                                              {selectedContestant.name}
@@ -126,10 +127,10 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
         
                    <View
    
-                      className = "w-[100%]  h-[60%] py- flex-row flex-wrap g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
+                      className = "w-[100%] flex-1  h -[60%] py- flex-row flex-wrap g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
                          
                          <TouchableOpacity
-                         style={{backgroundColor:postData.votes.find(vote => vote.voter_id == user._id) ?'rgba(255,255 , 255 , 0.7)': 'rgba(255, 255, 255, 0.5)'}}
+                         style={{backgroundColor:postData.votes.find(vote => vote.voter_id == user._id) ?'rgba(61, 60, 58, 0.6)': 'rgba(61, 60, 58, 0.4)'}}
                          onPress={
                            ()=> {
                               setIsModalVisible(true);
@@ -151,44 +152,42 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                            }
                            // handleVotePost
                         }
-                         className = "w-[50%] h-[50%] p- l- gap- elevation-2xl rounded-br-full rounded-tl-xl order-4 border-white g-[#f0e9e9] flex-col justify-start items-start g-[#0c0c0c] ">
+                         className = "w-[50%] h-[50%]  elevation-2xl rounded-br-full rounded-tl-xl order-4 border-white g-[#f0e9e9] flex-col justify-start items-start g-[#0c0c0c] ">
                                  
                                  <View
-                                 className=" w-[70%] h-[50%] flex-row justify-center text-center items-center">
-                                     <Image
+                                 className=" w-[70%] h-[40%]  flex-row justify-center text-center items-center">
+                                     {/* <Image
                                         source={postData.votes.find(vote => vote.voter_id == user._id) ? icons.voted : icons.vote}
                                         className ="w-8 h-8 rounded-full"
                                         resizeMethod='fill'
-                                            />
+                                            /> */}
+                                           <Ionicons name="checkmark-circle" size={32} color={postData.votes.find(vote => vote.voter_id == user._id) ? "#4d5df0" : "white"} />
                                  </View>
                                  <View
-                                    className=" w-[70%] h-[50%] flex-row  justify-center  items-start">
+                                    className=" w-[70%] h-[60%]  flex-row  justify-center  items-start">
                                      <Text 
-                                         style ={{fontSize:13,
-                                          // color: postData.votes.find(like => like.voter_id == user._id) ?"white":"white"
-                                         }}
-                                         className="text-xl font-black  text-black"> 
+                                         style ={{fontSize:10}}
+                                         className="text-xl font-black  text-white"> 
                                              {postData.votes.length}
                                      </Text>
                                  </View>   
                          </TouchableOpacity>
 
                          <TouchableOpacity 
-                         style={{backgroundColor:postData.likes.find(vote => vote.liker_id == user._id) ?'rgba(255,255 , 255 , 0.7)': 'rgba(255, 255, 255, 0.5)'}}
+                         style={{backgroundColor:postData.likes.find(vote => vote.liker_id == user._id) ?'rgba(61, 60, 58 , 0.6)': 'rgba(61, 60, 58, 0.4)'}}
                          onPress={handleLikePost}
                           className = "w-[50%] h-[50%] -4 -8 gap- rounded-bl-full rounded-tr-3xl borde-4 order-white g-[#eaa47c] flex-col justify-start pr- items-end g-[#0c0c0c] ">
                                  
                                  <View
-                                 className=" w-[70%] h-[50%] flex-row justify-center  items-center">
-                                     <FontAwesome name="thumbs-up" size={24} color={postData.likes.find(like => like.liker_id == user._id) ?"#0c7beb":"white" }/>
+                                 className=" w-[70%] h-[40%] flex-row justify-center  items-center">
+                                     <FontAwesome name="thumbs-up" size={24} color={postData.likes.find(like => like.liker_id == user._id) ?"lightblue":"white" }/>
                                  </View>
                                  <View
-                                    className=" w-[70%] h-[50%] flex-row  justify-center items-start">
+                                    className=" w-[70%] h-[60%] flex-row  justify-center items-start">
                                     <Text 
-                                         style ={{fontSize:13,
-                                          //   color: postData.likes.find(like => like.liker_id == user._id) ?"white":"white"
+                                         style ={{fontSize:10,
                                          }}
-                                         className="text-xl font-black pr-2  text-gray-800"> 
+                                         className="text-xl font-black pr-2  text-white"> 
                                           {postData.likes.length}
                                     </Text>
                                  </View>          
@@ -196,25 +195,25 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
 
                          <TouchableOpacity
                          onPress ={()=>{setDisplayComment(true)}}
-                           style={{backgroundColor: postData.comments.find(c => c.commenter_id === user._id)? 'rgba(255,255 , 255 , 0.7)': 'rgba(255, 255, 255, 0.5)' }}
+                           style={{backgroundColor: postData.comments.find(c => c.commenter_id === user._id)? 'rgba(61, 60, 58, 0.6)': 'rgba(61, 60, 58, 0.4)' }}
                            className = "w-[50%] h-[50%] p pl- gap- rounded-tr-full bordr-4 borde-white rounded-bl-3xl  g-[#f0e9e9]  flex-col justify-start items-start g-[#0c0c0c] ">
                                          
                                     <View
-                                      className=" w-[70%] h-[50%] flex-row  justify-center items-end">
+                                      className=" w-[70%] h-[60%] flex-row  justify-center items-end">
                                         <Text 
-                                         style ={{fontSize:13}}
-                                         className="text-gray-600 text-sm  font-black">
+                                         style ={{fontSize:10}}
+                                         className="text-white text-sm  font-black">
                                             {postData.comments.length}
                                         </Text>
                                     </View>   
                                     <View
-                                      className=" w-[70%] h-[50%] flex-row justify-center  items-center">
-                                         <Ionicons name="chatbubble" size={24} color="orange"/>
+                                      className=" w-[70%] h-[40%] flex-row justify-center  items-center">
+                                         <Ionicons name="chatbubble" size={28} color="orange"/>
                                     </View>
                          </TouchableOpacity>
 
                           <TouchableOpacity
-                           style={{backgroundColor:postData.flags.find(vote => vote.flagger_id == user._id) ?'rgba(255,255 , 255 , 0.7)': 'rgba(255, 255, 255, 0.5)'}}
+                           style={{backgroundColor:postData.flags.find(vote => vote.flagger_id == user._id) ?'rgba(61, 60, 58 , 0.6)': 'rgba(61, 60, 58, 0.4)'}}
                            onPress={ ()=> {
                               setIsModalVisible(true)
                               setAction("FL")
@@ -226,27 +225,34 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                           
                            className = "w-[50%] h-[50%]  rounded-tl-full  rounded-br-3xl borde-4 borde-white g-[#f0e9e9]  flex-col justify-end items-end g-[#d61a1a] ">
                                  <View
-                                 className=" w-[70%] h-[70%] flex-row justify-center items-center">
-                                    {!postData.flags.find(flag => flag.flagger_id == user._id) && (
-                                        <Text 
-                                        style ={{fontSize:12}}
-                                        className="text-xl font-black    text-gray-700"> 
-                                          {!postData.flags.find(flag => flag.flagger_id == user._id) &&  "FLAG"}
-                                         </Text>
+                                 className=" w-[70%] h-[40%] flex-row justify-center items-center">
+                                    {!postData.flags.find(flag => flag.flagger_id == user._id) && (  
+                                       <Ionicons name="flag" size={32} color="white" />
                                     )}
-                                         {postData.flags.find(flag => flag.flagger_id == user._id) && (
-                                          <Image
-                                          source={ icons.flag }
-                                          className ="w-10 h-10 rounded-full"
-                                          resizeMethod='fill'
-                                           />
-                                      )}
-                                   
+                                    {postData.flags.find(flag => flag.flagger_id == user._id) && (
+                                       <Ionicons name="flag" size={32} color="red" />
+                                    )}
                                  </View>   
                                 
                               
                           </TouchableOpacity>
-                          <View
+                          {/* <View
+         
+                                className= "absolute z-0 bottom-0  opaci-50 flex-col px-4 justify-center items-center">
+                                     <Text 
+                                            style ={{fontSize:10,
+                                             // backgroundColor: 'rgba(0, 0, 0, 0.3)'
+                                            }}
+                                            className="text-xl font-black opacity-100 px-2 text-white"> 
+                                               {selectedContestant.country || "US"}
+                                    </Text>
+                                  < CountryFlag
+                                            isoCode={selectedContestant.country || "US"}
+                                            size={30}
+                                       
+                                  />
+                           </View> */}
+                            <View
                               //  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)'}}
                                 className= "absolute z-0 bottom-0  opaci-50 flex-col px-4 justify-center items-center">
                                      <Text 
@@ -275,24 +281,18 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                   </View>
 
                   <View
-                     // style={{backgroundColor: 'rgba(0, 0, 0, 0.2)'}}
-                     className = "w-[100%]  h-[20%] px-2 flex-row g-[#12aaf1] rounded-xl  g-blue-500  justify-between items-start">
+                     style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
+                     className = "w-[100%] mt-2 h- [20%] p-2 flex-row g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
                                      <Text 
-                                         style ={{fontSize:13 ,
+                                         style ={{fontSize:10 ,
                                           fontStyle:"italic"
                                          }}
                                          className="text-xl font-black  text-white"> 
-                                             Ranked
-                                     </Text>
-
-                                     <Text 
-                                         style ={{fontSize:13 ,
-                                          fontStyle:"italic"
-                                         }}
-                                         className="text-xl font-black  text-white"> 
-                                          {rank < 4 ? "TOP" : "#"}  {rank}
+                                          {rank < 4 ? "TOP" : "RANKED "}  {rank}
                                      </Text>
                    </View>
+
+                  
 
                 
          </View>
@@ -300,7 +300,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
          {isModalVisible && (  
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}
                      // handleTalentParticipation  = {handleTalentParticipation} handleTalentResignition = {handleTalentResignition}
-                     handleVotePost ={handleVotePost} handleFlagPost ={handleFlagPost}
+                     handleVotePost ={handleVotePost} handleFlagPost ={handleFlagPost} setParticipationType={setParticipationType}
 
               
                        />

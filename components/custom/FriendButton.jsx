@@ -11,23 +11,29 @@ export default function FriendButton({userProfile}) {
   const [status,setStatus] = useState(null)
   const [exist,setExist] = useState(null)
   const [expired,setExpired] = useState(null)
+  // const [userProfileFriendData,setUserProfileFriendData] = useState(null)
 
+
+  // useEffect(() => {
+    
+  // }, [])
+  
 
   useEffect(() => {
       const getStatus = ()=> {
          if(userFriendData.friends.find(f => f.user_id == userProfile._id )) {
-            return setStatus("friend")
+            return setStatus("Friend")
          }else {
             if(userFriendData.friend_request_sent.find(f => f.user_id == userProfile._id )){
-                return setStatus("pending")
+                return setStatus("Request is pending")
             }else{
                 const not = notifications.find(n => n.type === "friend request" && n.content.sender_id === userProfile._id )
 
                 if(not)
                 {
-                    return setStatus("accept")
+                    return setStatus("Accept request")
                 }else{
-                    return setStatus("add")
+                    return setStatus("Add Friend")
                 } 
      
             }
@@ -77,16 +83,16 @@ const cancelFriendRequest = () => {
 
 const handleRequest =() => {
   switch (status) {
-    case "add":
+    case "Add Friend":
         sendFriendRequest()
         break;
-    case "pending":
+    case "Request is pending":
         cancelFriendRequest()
         break;  
-    case "accept":
+    case "Accept request":
         okFriendRequest()
         break;  
-    case "friend":
+    case "Friend":
             unfriendFriendRequest()
             break;  
     default:
@@ -112,30 +118,36 @@ return (
     {status && (
     <TouchableOpacity
                             onPress={handleRequest}
-                            className=" w-[30%]  gap-2 flex-col  justify-end h-[100%] items-center">
+                            className=" flex-row rounded-lg gap-4 justify-start py-2 px-8 ml-auto bg-gray-200 items-center">
                            
-                          <View
-                            className="flex-row items-center justify-center gap-1  w-[100%]">
+                          {/* <View
+                            className="flex-row items-center justify-center gap-1  w- [100%]">
                                  <Image    
-                                    className="w-7 h-7"
+                                    className="w-4 h-4"
                                     resizeMode='fill'
                                     source={icons.friend} 
                                   />
                                
-                          </View>
+                          </View> */}
+                            {status === "Friend" && (
+                              <Image  
+                                    className={ "w-4 h-4 "  }
+                                    resizeMode='contain'
+                                    source={icons.check_red }
+                                    />
+                          )}
                           <View
-                          className="flex-row  justify-center mt-1  items-center w-[100%]">
-                                <Text className={"text-gray-200  text-base font-semiBold"}>
+                          className="flex-row  justify-center   items-center ">
+                                <Text 
+                                style={{fontSize:12 ,
+                                  color: status === "Friend" && "red"
+                                }}
+                                
+                                className={"text-gray-600   font-bold"}>
                                  {status} 
                                 </Text>
                           </View>
-                          {/* <Image  
-                                    className={isFriend?  "w-6 h-6 absolute top-5 right-5  rounded-xl" :
-                                              isPending ?  "w-6 h-6 absolute top-5 right-5  rounded-xl": 
-                                              isAccept?  "w-6 h-6 absolute top-5 right-5  rounded-xl":""}
-                                    resizeMode='contain'
-                                    source={isFriend? icons.check : isPending ? icons.pending: isAccept? icons.check_red:""}
-                                    /> */}
+                        
                         
     </TouchableOpacity>
   )}

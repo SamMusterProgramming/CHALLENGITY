@@ -1,213 +1,458 @@
-import { View, Text, Image, useWindowDimensions, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, Image, useWindowDimensions, TouchableOpacity, ScrollView, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { icons } from '../../constants';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getIcon } from '../../helper';
+import Contestant from './Contestant';
+import SwingingTitle from '../custom/SwingingTitle';
+import VacntSpotContestant from './VacntSpotContestant';
+import { useGlobalContext } from '../../context/GlobalProvider';
+import PostTalentHeader from '../activityHeader/PostTalentHeader';
+import TalentActivityHeader from '../activityHeader/TalentActivityHeader';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function UserTalentEntry({userTalent, user , userPost}) {
-    const[ userParticipation , setUserParticipation ] = useState(userPost)
-    const[ rank , setRank ] = useState(userTalent.contestants.findIndex(c => c.user_id === user._id) + 1)
+export default function UserTalentEntry({userTalent, user , userProfile ,activity}) {
+    const {boxBgColor} = useGlobalContext()
+    const[ userParticipation , setUserParticipation ] = useState(null)
+    const[ rank , setRank ] = useState(0)
+    const[ roundTitle , setRoundTitle ] = useState(null)
+    const[ name , setName ] = useState(null)
     const { width, height } = useWindowDimensions();
+    const participationStatus = userTalent.contestants.find( c => c.user_id === user._id ) ? "ON STAGE" :
+                                userTalent.queue.find( c => c.user_id === user._id ) ? "IN QUEUE":
+                                userTalent.eliminations.find( c => c.user_id === user._id ) ?  "ELIMINATED":"NOT CONTESTANT"
     const insets = useSafeAreaInsets();
+    const [selectedContestant , setSelectedContestant] = useState(userTalent.contestants[0] || null)
+    const [vacantSpots, setVacantSpots] = useState([])
+    
+    const h = width +  - 7
+    const contestants = userTalent.contestants 
+
+    useEffect(() => {
+        userTalent.contestants.find(c => c.user_id === user._id) && setUserParticipation(
+                      {...userTalent.contestants.find(c => c.user_id === user._id), status:participationStatus}
+                      )
+        userTalent.queue.find(c => c.user_id === user._id) && setUserParticipation(
+                        {...userTalent.queue.find(c => c.user_id === user._id), status:userParticipation}
+                      )
+        userTalent.eliminations.find(c => c.user_id === user._id) && setUserParticipation(
+                        {...userTalent.eliminations.find(c => c.user_id === user._id), status : userParticipation}
+                      )
+       setRank(userTalent.contestants.findIndex(c => c.user_id === user._id) + 1)
+       const edition = userTalent.editions.find(e => e.status == "open") || null
+       switch (edition && edition.round) {
+        case 1:
+            setRoundTitle("Elimination-Round 1")
+            break;
+        case 2:
+            setRoundTitle("Elimination-Round 2")
+            break;
+        case 3:
+            setRoundTitle("Elimination-Round 3")
+            break;
+        case 4:
+            setRoundTitle("Eighth-finals")
+            break;
+        case 5:
+            setRoundTitle("Quarter Final")
+            break;
+        case 6:
+            setRoundTitle("Semi Final")
+            break;
+        case 7:
+            setRoundTitle("Grand Final")
+            break;
+        case 8:
+            setRoundTitle("Winner")
+            break;
+        default:
+          break;
+       }
+    }, [])
+
+    useEffect(() => {
+        if(selectedContestant) { 
+           const splitName = selectedContestant.name.split(" ")
+           setName({
+           part1 : splitName[0],
+           part2: splitName[1] && splitName[1]
+            })
+          let vs = []
+          for (let index = 0; index < 22 - contestants.length; index++) {
+                vs.push({index : index})    
+          }
+          setVacantSpots(vs)
+          }
+    }, [selectedContestant])
 
   return (
-   
-        <TouchableOpacity
-        onPress={
-            ()=> {   
-                router.push({ pathname:'TalentContestRoom', params:{
-                  region:userTalent.region,
-                  selectedTalent:userTalent.name , 
-                  selectedIcon: getIcon(userTalent.name),
-                  regionIcon : getIcon(userTalent.region),
-                  startIntroduction :"true",
-                  showGo:"true",
-                  location : "contest",
-                  contestant_id : userParticipation.user_id
-                } })
-               }
-        }
-        style={{height: (height - (height * 0.3 + (width/7) + insets.top ) ) * 0.33 + 4 }}
-        className="bg-[#090908] w-[98.7%] p-1 min-h -[32.7%] flex-col mb-1 justify-start items-center rounded-md ">
-           
-             <View
-              className="w-[100%] h- [40%] b g-white flex-row p- 1 justify-between items-center rounded-xl ">
-                      <View
-                      className="w- [25%] h- [100%] p-1 gap- 1 flex-col justify-start items-center">
-                           <Image
-                            className="w-7 h-7"
-                            source={getIcon(userTalent.name)}
-                            resizeMode='cover'/>
-                            <Text
-                            style={{fontSize:8}}
-                            className="text-center text-sm font-black text-white">
-                                {userTalent.name}
-                            </Text>
-                      </View>
-                      <View
-                      className="w- [50%] h- [100%] gap- 1 flex-col justify-between items-center">
-                            <Text
-                            style={{fontSize:6}}
-                            className="text-center text-sm font-black text-yellow-400">
-                                {userPost.status}
-                            </Text>
-                            <Text
-                            style={{fontSize:9}}
-                            className="text-center text-sm font-black mt-auto text-white">
-                                {userTalent.name} Contest
-                            </Text>
-                            {/* <Text
-                            style={{fontSize:11}}
-                            className="text-center text-sm font-black mt-auto text-yellow-400">
-                                {userTalent.contestants.length}
-                            </Text>
-                            <Text
-                            style={{fontSize:8}}
-                            className="text-center text-sm font-black text-white">
-                                Contestants
-                            </Text> */}
-                      </View>
-                      <View
-                      className="w- [25%] h- [100%] p-1 gap- 1 flex-col justify-start items-center">
-                           <Image
-                            className="w-7 h-7"
-                            source={getIcon(userTalent.region)}
-                            resizeMode='cover'/>
-                            <Text
-                            style={{fontSize:8}}
-                            className="text-center text-sm font-black text-white">
-                                {userTalent.region}
-                            </Text>
-                      </View>
-                     
-              </View>
+   <>
+    {name &&  (   
+    <>
+     {activity ? (
+         <TalentActivityHeader data={userTalent} userProfile = {userProfile} activity = {true} user = {user} type = "talent"/>
+      ):(
+         <PostTalentHeader data={userTalent} user={user}/>
+     )}
+    <View
+        style={{height: h + 50 }}
+        className="bg-primary  black [#616262] mt- 2  w-[100%]  h-[100%] flex-col  justify-start items-center  ">
+            
+            <View
+              style={{ height: h * 0.13}}
+              className="w-[100%] bg- [#fefeff]  flex-row py -1   px- 2 justify-between  items-center">
+                           
+                           <View
+                            style={{ minWidth: h * 0.26 , backgroundColor : boxBgColor}}
+                            className=" h-[100%] bg-[#fefeff] flex -1 px-2 bg- black rounded-br-md flex-row   gap-2 justify-start py-1  items-center ">
+                                 {contestants.slice(0,2).map((contestant , index) =>{
+                                    return(
+                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.105}
+                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
+                                        )
+                                 })}
+                                 {contestants.length < 2 && vacantSpots.slice(contestants.length,2).map((element , index) =>{
+                                    return (
+                                        <VacntSpotContestant key={index} f={h * 0.105} /> 
+                                        )
+                                 }) }
+                            </View>
+                            <TouchableOpacity
+                                                                onPress={
+                                                                    ()=> {   
+                                                                        router.push({ pathname:'TalentContestRoom', params:{
+                                                                        region:userTalent.region,
+                                                                        selectedTalent:userTalent.name , 
+                                                                        selectedIcon: getIcon(userTalent.name),
+                                                                        regionIcon : getIcon(userTalent.region),
+                                                                        startIntroduction :"true",
+                                                                        showGo:participationStatus == "ON STAGE" ?"true" :"false",
+                                                                        location : participationStatus == "ON STAGE" ? "contest" :"condidate",
+                                                                        contestant_id :userParticipation && userParticipation.user_id 
+                                                                        } })
+                                                                    }
+                                                                }
+                                                                className=" bg-black border-l-4 border-r-4 border-green-400 rounded-lg w- [20%]  gap-1 flex-col px-2 py-1  justify-center items-center">
+                                                                    <Text
+                                                                        style={{fontSize:7}}
+                                                                        className="text-center font-black mt- auto text-white">
+                                                                           {participationStatus !== "NOT CONTESTANT" ? "YOU ARE" : "JOIN"}
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={{fontSize:7}}
+                                                                        className="text-center font-black mt- auto text-blue-200">
+                                                                            {participationStatus !== "NOT CONTESTANT" ? participationStatus :"CONTEST"}
+                                                                    </Text>
+                                                                    
+                        </TouchableOpacity>
+                    
+                        {/* <View
+                            className=" h-[100%] bg-[#fefeff] flex -1 px-2 bg- black rounded-b-xl flex-row   gap-2 justify-center py-1  items-center ">
+                                {contestants.slice(0,4).map((contestant , index) =>{
+                                    return(
+                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.105}
+                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
+                                        )
+                                 })}
+                        </View> */}
 
-              <View
-              className=" w-[100%] flex-1 bg-[#040404] flex-row px-1 py-1 justify-between items-center rounded-lg">
-                   
-                      <View
-                      className="w-[30%] h-[100%] b g-[#2f2828] flex-coltext-center justify-center ga4 items-center ">  
                        
-                        {userPost.status == "YOU ARE ON STAGE" &&  (
-                            <>
-                                <View
-                                    className="flex -1 bg-[#181717] flex-row text-center justify-center gap-4 items-center ">  
+                        <TouchableOpacity
+                                                        onPress={
+                                                            ()=> {   
+                                                                router.push({ pathname:'TalentContestRoom', params:{
+                                                                region:userTalent.region,
+                                                                selectedTalent:userTalent.name , 
+                                                                selectedIcon: getIcon(userTalent.name),
+                                                                regionIcon : getIcon(userTalent.region),
+                                                                startIntroduction :"true",
+                                                                showGo:participationStatus == "ON STAGE" ?"true" :"false",
+                                                                location : participationStatus == "ON STAGE" ? "contest" :"condidate",
+                                                                } })
+                                                            }
+                                                        }
+                                                        className=" bg-black border-l-4 border-r-4 border-blue-400 rounded-lg w- [23%]  gap-1 flex-col px-2 py-1  justify-center items-center">
+                                                                <Text
+                                                                 style={{fontSize:8}}
+                                                                 className="text-c enter font-black  text-white">
+                                                                    {userTalent.contestants.length}
+                                                                </Text>
+                                                                <Text
+                                                                style={{fontSize:8}}
+                                                                className="text-ce nter font-black  text-blue-200">
+                                                                    Contestants
+                                                                </Text>
+                        </TouchableOpacity>
+
+                        <View
+                            style={{ minWidth: h * 0.26 , backgroundColor : boxBgColor}}
+                            className=" h-[100%] bg-[#fefeff] flex -1 px-2 bg- black rounded-bl-md flex-row   gap-2 justify-center py-1  items-center ">
+                                {contestants.slice(2,4).map((contestant , index) =>{
+                                    return(
+                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.105}
+                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
+                                        )
+                                })}
+                                { vacantSpots.slice(contestants.slice(2,4).length,2).map((element , index) =>{
+                                    return (
+                                        <VacntSpotContestant key={index} f={h * 0.105} /> 
+                                        )
+                                 }) }
+                        </View>
+                        {/* <View
+                            className=" h- [100%] bg-[#3a3a3a]   flex-col    justify-start   items-center ">
                                     <View
-                                    className="flex-row w- [40%] h -[100%] py- 1 gap-1 justify-center items-center">
-                                            <Text
-                                                style={{fontSize:7}}
-                                                className="text-center text-sm font-black text-white">
-                                                {rank < 4 ? "TOP ":"Rank"}
-                                            </Text>
-                                            <Text
-                                                style={{fontSize:8}}
-                                                className="text-center border-b- 2 border-white text-sm font-black text-yellow-400">
-                                                {rank}
-                                            </Text>
+                                               style = {{minWidth:h * 0.10}}
+                                                className="w- [100%]  h- [100%] bg-[#3a3a3a] rounded-md p-1 px-2 gap-2 flex-col justify-center items-center">
+                                                     <Image
+                                                        className="w-5 h-5 "
+                                                        source={getIcon(userTalent.region)}
+                                                        resizeMode='cover'/>
+                                                    <Text
+                                                        style={{fontSize:7}}
+                                                        className="text-center   font-black text-gray-100">
+                                                            {userTalent.region.toUpperCase()}
+                                                    </Text>
                                     </View>
-                                    <View
-                                    className=" flex-row  gap-1 justify-center items-center">
-                                            <Text
-                                            style={{fontSize:8}}
-                                                className="text-center text-sm">
-                                                    💙 
-                                            </Text>
-                                            <Text
-                                                style={{fontSize:8}}
-                                                className="text-center text-sm font-black text-white">
-                                                    {userParticipation.votes}
-                                            </Text>
-                                            <Text
-                                                style={{fontSize:8}}
-                                                className="text-center text-sm font-black text-white">
-                                                    votes
-                                            </Text>
-                                    </View>
-                                </View>
-                           </>
-                        )} 
-                        
-                                <View
-                                className="w-[100%] flex-1 p-1 justify-center items-center rounded-md">
-                                <Image
-                                    className="w-[100%] h-[100%] rounded-lg"
-                                    source={{uri:userPost && userPost.thumbNail_URL}}
-                                    resizeMode='cover'/>
-                                        <Image
-                                        className="absolute w-4 h-4 rounded-xl"
-                                        source={icons.play}
-                                        resizeMode='cover'/>
-                                </View>
+                        </View> */}
+            </View>
 
-                                <View
-                                    className="flex-row w- [40%] h -[100%]  1 gap-1 justify-center items-center">
-                                            
-                                            <Text
-                                                style={{fontSize:8}}
-                                                className="text-center border-b- 2 border-white text-sm font-black text-yellow-400">
-                                                your Talent
-                                            </Text>
-                                </View>
-
-                      </View>
-
-                      <View
-                       className="w-[68%] h-[100%] b g-[#1d2436] flex-coltext-center justify-center gap -4 items-center "> 
-                                 <View
-                                  className="flex-row justify-center items-center gap-2 ">
-                                          <Text
-                                                style={{fontSize:8}}
-                                                className="text-center text-sm font-black  text-yellow-400">
-                                                    Stage
-                                            </Text>
-                                          
-                                 </View>
-                                 <ScrollView 
-                                    style={{}}
-                                    className ="w-[100%] flex-1 bg-[#302d2d] rounded-xl b g-[#222d37]"
-                                    horizontal={true} showsHorizontalScrollIndicator={false}>
-                                        <View
-                                        className="max-w-[100%] max-h-[100%] rounded-xl p- 1 flex-col justify-start gap -1 items-center">
+            <View
+            style={{ height:50}}
+            className=" gap-1 b g-[#fefeff] w-[100%] h-[100%] borde r-t-4 bord er-l-4 bor der-r-4 bo rder-[#deddd9] rounde d-t-xl flex-row justify-between items-end ">
+                 
+                 <View
+                 style={{width: width * 0.08  , backgroundColor : boxBgColor} }
+                    className=" h-[100%] bg-[#fefeff]   gap-2  flex-col justify-center items-center">
+                 </View>
+                 <View
+                 style={{width:width - width * 0.26 + 2}}
+                    className=" h-[100%] bg-primary  black  rounded-tr-full gap-2 rounded-tl-full flex-col justify-center items-center">
+                        <Text
+                            style={{fontSize:10}}
+                            className="text-center mb- 4 font-black  text-white">
+                                     {userTalent.name} Contest
+                        </Text>             
+                        <View
+                            className = "w-[100%]  h- [100%]  flex-col justify-start  gap-3 items-center">
                                             <View
-                                            className="w-[100%] min-h-[100%] flex-row flex-wrap justify-start gap- 2 items-center"> 
-                                                {userTalent.contestants.map((p,index) =>{
-                                                return(
-                                                <View 
-                                                key={index}
-                                                className="w- [20%] p-1 min-h- [30%] flex-row justify-center items-center">
+                                            className="  w-[100%] b g-[#3a3a3a]  py- 2 flex-col text-center  justify-center  items-center "> 
+                                                <SwingingTitle text={roundTitle} color={"orange"} fontSize={9} />
+                                            </View>           
+                        </View>
+                        <View
+                                               style = {{minWidth:h * 0.10}}
+                                                className="w- [100%] absolute top-2 right-0 h- [100%] b g-[#3a3a3a] rounded-md p-1 px-2 gap-1 flex-col justify-center items-center">
+                                                     <Image
+                                                        className="w-5 h-5 "
+                                                        source={getIcon(userTalent.region)}
+                                                        resizeMode='cover'/>
+                                                    <Text
+                                                        style={{fontSize:7}}
+                                                        className="text-center   font-black text-gray-100">
+                                                            {userTalent.region.toUpperCase()}
+                                                    </Text>
+                         </View>       
+                         <View
+                                               style = {{minWidth:h * 0.10}}
+                                                className="w- [100%] absolute top-2 left-0 h- [100%] b g-[#3a3a3a] rounded-md p-1 px-2 gap-1 flex-col justify-center items-center">
+                                                     <Image
+                                                        className="w-5 h-5 "
+                                                        source={getIcon(userTalent.name)}
+                                                        resizeMode='cover'/>
+                                                    <Text
+                                                        style={{fontSize:7}}
+                                                        className="text-center   font-black text-gray-100">
+                                                            {userTalent.name.toUpperCase()}
+                                                    </Text>
+                         </View>      
+                         <View
+                              className="absolute top-0 left-[20%] w- [30px] h- [30px] roun ded-full b g-black">
+                                 <MaterialCommunityIcons name="star" size={20} color = "#edc153"  />
+                         </View> 
+                 </View>
+                 <View
+                 style={{width: width * 0.08 , backgroundColor : boxBgColor }}
+                    className=" h-[100%] bg-[#fefeff]   gap-2  flex-col justify-center items-center">
+                 </View>
+                
+                
+        </View>
+
+       
+
+        <View
+        style={{ 
+            height:h - h * 0.32 - 0, 
+            width : width - h * 0.26 - 6 }}
+        className=" bg-primary   fle x-1 [#f6f4f4] [#4a4646] [#deddd9] [#333132] [#630d20] p- 1 [#3b4348] [#3b4348] w-[66%] gap-1 h-[56%] rounded-b-md flex-col justify-start items-center  ">
+                   <View
+                                className=" flex- 1 w-[100%] bg-[#f6f4f4] px-4 py-3 flex-row h- [10%] pb- 2 mt- 1 justify-between gap-8 items-center"> 
+                                    <View
+                                            className=" h- [100%] flex-row justify-center items-center gap-1 ">
+                                                        <Text 
+                                                         style ={{fontSize:8}}
+                                                         className="tex t-xl text-center p-0 font-black text-[#2439f4]"> 
+                                                            VOTES
+                                                        </Text>
+                                                                    
+                                                        <Text 
+                                                           style ={{fontSize:10}}
+                                                           className="tex t-xl  font-black text-end text-gray-800"> 
+                                                              {selectedContestant && selectedContestant.votes }
+                                                        </Text>
+                                    </View>
+                                    <View
+                                           className="flex- 1 h-[100%] flex-row justify-center items-center gap-1 ">
+                                                    <Text 
+                                                     style ={{fontSize:8}}
+                                                     className="tex t-xl text-ce nter  p-0 font-black text-red-600"> 
+                                                       {selectedContestant && selectedContestant.rank < 4 ? "TOP" :"RANKED"}
+                                                    </Text>
+                                                    <Text 
+                                                        style ={{fontSize:9}}
+                                                        className="tex t-xl  font-black text-gray-800"> 
+                                                           {selectedContestant && selectedContestant && selectedContestant.rank}
+                                                    </Text>
+                                    </View>
+                  </View>
+                  <View 
+                                    style={{}}
+                                    className ="w-[100%] flex-1 pb-1 "
+                                    >
+                                      
+                                        <TouchableOpacity
+                                                    onPress={
+                                                        ()=> {   
+                                                            router.push({ pathname:'TalentContestRoom', params:{
+                                                              region:userTalent.region,
+                                                              selectedTalent:userTalent.name , 
+                                                              selectedIcon: getIcon(userTalent.name),
+                                                              regionIcon : getIcon(userTalent.region),
+                                                              startIntroduction :"true",
+                                                              showGo:"true",
+                                                              location : "contest",
+                                                              contestant_id : selectedContestant.user_id
+                                                            } })
+                                                           }
+                                                    }
+                                                style ={{ 
+                                    
+                                                }}
+                                                className=" w-[100%] min-h-[100%] flex-1 rounde d-md bord er-t-8 border-black flex-row justify-center items-center   ">
+                                                
+                                                            <Image
+                                                                className="w-[100%] h-[100%]  round ed-xl"
+                                                                source={{uri: selectedContestant && selectedContestant.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                                                resizeMethod='contain' /> 
+                                                                <Image  
+                                                                className="absolute  w-10 h-10 rounded-xl"
+                                                                source={icons.play}
+                                                                resizeMethod='contain'/> 
+                                        </TouchableOpacity>
+                  </View>
+
+                  <TouchableOpacity
+                                                onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
+                                                className="absolute top-[12px] flex-col bg-[#000000] [#deddd9] [#333132] [#630d20]  [#3b4348]  rounded-full justify-center p-1 items-start gap-2 ">
                                                     <Image
-                                                        className="w-[40px] h-[30px] rounded-lg"
-                                                        source={{uri:p.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
-                                                        resizeMethod='contain' />
-                                                        <Image
-                                                        className="absolute w-3 h-3 rounded-full"
-                                                        source={icons.play}
-                                                        resizeMethod='cover' />
-                                                </View>)
-                                                })}
-                                            </View> 
-                                        </View>
-                                 </ScrollView>
-                                 <View
-                                 className="flex-row justify-center items-center gap-2 ">
-                                          <Text
-                                                style={{fontSize:8}}
-                                                className="text-center text-sm font-black  text-yellow-400">
-                                                    {userTalent.contestants.length}
-                                            </Text>
-                                            <Text
-                                                style={{fontSize:8}}
-                                                className="text-center text-sm font-black text-white">
-                                                    Contestants
-                                            </Text>
-                                 </View>
-                       </View>
-                      
-              </View>
+                                                    source={{uri:selectedContestant && selectedContestant.profile_img}}
+                                                    className ="w-[40px] h-[40px] m- rounded-full"
+                                                    esizeMethod='cover'
+                                                    />  
+                                                  
+                   </TouchableOpacity>
+                   <View
+                   className = "absolute w-[25%] top-5 left-[15%] flex-row justify-end items-center b g-white">
+                         <Text   
+                         style ={{fontSize:8}}
+                         className="font-black text-gray-800 ">
+                                  {name && name.part1}  
+                         </Text>
+                   </View>
+                   <View
+                   className = "absolute w-[25%] top-5 right-[15%] flex-row justify-start items-center b g-white">
+                        <Text   
+                            style ={{fontSize:8}}
+                            className="font-black text-gray-800">
+                                 {name && name.part2}  
+                        </Text>
+                   </View>
+        </View>
+        {/* <View
+              style={{ height: h * 0.06 }}
+              className="w-[100%] h-[50%] bg- [#f6f4f4] [#4a4646] flex-row   px -1 justify-center pt -1 items-center">
+                       <View
+                            className = "w-[60%]  h-[100%]  flex-col justify-start  gap-3 items-center">
+                                            <View
+                                            className="  w-[100%] bg-[#3a3a3a]  py-2 flex-col text-center  justify-center  items-center "> 
+                                                <SwingingTitle text={roundTitle} color={"orange"} fontSize={9} />
+                                            </View>           
+                        </View>
+         </View> */}
+
+        <View
+        style={{ height: h * 0.13 , width : width - h * 0.28 + 10 , backgroundColor : boxBgColor }}
+        className=" bg-[#fefeff] [#3b4348] [#676c73] w- [66%] py-2  rounded-b-md flex-row justify-center gap-2 items-center  ">
+              {contestants.slice(16,22).map((contestant , index) =>{
+                                    return(
+                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.109}
+                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
+                                        )
+              })}
+              { vacantSpots.slice(vacantSpots.length + contestants.slice(16,22).length - 6 ,vacantSpots.length).map((element , index) =>{
+                                    return (
+                                        <VacntSpotContestant key={index} f={h * 0.109} /> 
+                                        )
+              }) }
+        </View>
+
+        
+
+        <View
+        style={{ width : h * 0.13 , height : h - h * 0.24  , bottom: h * 0.14 , backgroundColor : boxBgColor}}
+        className=" bg-[#fefeff] [#43434a] [#3b4348] [#676c73] [#3b4348] w- [66%] py-1 absolute bottom-1 left-0 flex-col rounded-bl-md rounded-tr-md justify-start gap-2 items-center  ">
+              {contestants.slice(4,16).filter((element, index) => { return index % 2 === 0}).map((contestant , index) =>{
+                                    return(
+                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.108}
+                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
+                                        )
+              })}
+              { vacantSpots.slice(contestants.slice(4,16).filter((element, index) => { return index % 2 === 0}).length ,6).map((element , index) =>{
+                                    return (
+                                        <VacntSpotContestant key={index} f={h * 0.108} /> 
+                                        )
+              }) }
+        </View>
+
+        <View
+        style={{ width : h * 0.13 , height : h - h * 0.24  , bottom: h * 0.14 , backgroundColor : boxBgColor}}
+        className=" bg-[#f6f4f4] [#43434a] [#3b4348] [#676c73] [#3b4348] w- [66%] py-1 absolute bottom-1 right-0 flex-col rounded-br-md rounded-tl-md justify-start gap-2 items-center  ">
+              {contestants.slice(4,16).filter((element, index) => { return index % 2 === 1}).map((contestant , index) =>{
+                                    return(
+                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
+                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.108}
+                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
+                                        )
+              })}
+              { vacantSpots.slice(contestants.slice(4,16).filter((element, index) => { return index % 2 === 1}).length ,6).map((element , index) =>{
+                                    return (
+                                        <VacntSpotContestant key={index} f={h * 0.108} /> 
+                                        )
+              }) }
+        </View>
+
+        
            
-        </TouchableOpacity>
-          
-    // </View>
+     </View>
+    </>
+    )} 
+    </>
   )
 }

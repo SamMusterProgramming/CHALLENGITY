@@ -2,29 +2,29 @@ import { View, Text, TouchableOpacity, Image, useWindowDimensions, TextInput, Pl
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { icons } from '../constants';
-import { router } from 'expo-router';
-import SelectType from '../components/challenge/SelectType';
+import { router, useLocalSearchParams } from 'expo-router';
+// import SelectType from '../components/challenge/SelectType';
 import { Audience, challengeType  , privacyData } from '../utilities/TypeData'
-import SelectPrivacy from '../components/challenge/SelectPrivacy';
-import SelectMode from '../components/challenge/SelectMode';
+// import SelectPrivacy from '../components/challenge/SelectPrivacy';
+// import SelectMode from '../components/challenge/SelectMode';
 import { useGlobalContext } from '../context/GlobalProvider';
-import SelectFriends from '../components/challenge/SelectFriends';
+// import SelectFriends from '../components/challenge/SelectFriends';
 import CustomAlert from '../components/custom/CustomAlert';
 import MakeSelectionChallengeModal from '../components/modal/MakeSelectionChallengeModel';
 import { formatTime, getInition } from '../helper';
-import TopBarChallenge from '../components/challenge/TopBarChallenge';
-import BottomBarChallenge from '../components/challenge/BottomBarChallenge';
 import ShuffleLetters from '../components/custom/ShuffleLetters';
 import { useKeepAwake } from 'expo-keep-awake';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import { useEvent } from 'expo';
 import { generateThumbnail, saveVideoLocally } from '../videoFiles';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from '../firebase';
 import axios from 'axios';
 import { BASE_URL, getUserPrivateChallenges, getUserPublicChallenges } from '../apiCalls';
+import { MotiView } from 'moti';
+import SwingingTitle from '../components/custom/SwingingTitle';
 
 
 export default function CoverNewChallenge() {
@@ -52,6 +52,8 @@ export default function CoverNewChallenge() {
     const [selectionType, setSelectionType] = useState(false)
     const [data, setData] = useState([])
     const insets = useSafeAreaInsets();
+    const {desc} = useLocalSearchParams();
+
 
 
     const cameraRef = useRef(null);
@@ -84,6 +86,11 @@ const player = useVideoPlayer
 
 const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
 
+useEffect(() => {
+  if(desc){
+    setDescription(desc)
+  }
+}, [])
 
 useEffect(() => {
  if(videoUri){
@@ -270,7 +277,7 @@ try {
          
           setTimeout(() => {
             router.back()
-                    }, 1200);  
+                    }, 800);  
     
           setTimeout(() => {
             setVisible(false)
@@ -310,7 +317,7 @@ try {
                               challenge_id:res.data._id
                              } })
     
-                      }, 1000);
+                      }, 1200);
                           
     
                     } )
@@ -337,59 +344,57 @@ try {
   
     <View
     style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top,
-      // minWidth:width , minHeight:height
     }}
-    className=" flex-1   flex-col justify-center items-center   bg-[#413d3d]">
+    className=" flex-1   flex-col justify-center items-center   bg-[#2e2a27]">
 
-                <TopBarChallenge show = {!replayRecording} width ={width} height={ height * 0.07  } top={height * 0.0 + insets.top  }
-                   challenge={challenge} typeIcon = {getIcon(challenge.type)} privacyIcon = {getIcon( challenge.privacy)}
-                   left ={0} right ={null}  user ={user}
-                  />       
-                        
-  
+               
                  {step == 0 && (
                   <View
-                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center items-center gap-2 p-2">
-                      <Text 
-                          style={{fontSize:12}}
-                          className="font-black text-sm text-gray-200">
-                           Description 
-                      </Text> 
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center items-center pt-24 gap-2 p-2">
+                      <View
+                                  className="w- [100%] h-  mb-auto  [20%] flex-row justify-center items-center">
+                                    <ShuffleLetters text={"Description"} textSize={15} /> 
+                      </View>
                       <TextInput
-                      className="mt-4 w-[70%]  bg-white dark:bg-gray-800 
-                        border-2 
-                        rounded-lg 
-                        px-4 py-3 "
-                      
-                      // style={styles.textarea}
+                      className="mt-4 w-[80%] h-[70px] absolute text-center  bg-[lightgray] rounded-lg  px-2 py-3 "
+        
+                      style={{fontSize:15,color:"black"}}
                       onFocus={() => setIsFocused(true)}
                       multiline={true} 
                       numberOfLines={2} 
                       value={ description}
-                      // placeholder="Enter your text here..."
                       onChangeText={text => setDescription(text)}
                       placeholder={currentPlaceholder}
+                      placeholderTextColor="gray"
                       />
-                      <View
-                      style ={{ width:200}}
-                       className="flex-row justify-between items-center  py-2">
-                         <TouchableOpacity 
-                           style={{backgroundColor:step !== 0 ? "red" : "gray" }}
-                           className="py-2 px-4  bg-red-500 rounded-lg" >
-                              <Text style={styles.buttonText}>Back</Text>
-                         </TouchableOpacity>
-                         <TouchableOpacity 
-                         onPress={() => {
-                          if(description.length >15){
-                          setChallenge({...challenge,desc:description})
-                          setStep(prev => prev +1)
-                           }
-                          }}
-                          style={{backgroundColor: description.length > 15 ? "blue" : "gray" }}
-                           className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
-                              <Text style={styles.buttonText}>Next</Text>
-                         </TouchableOpacity>
-                      </View>
+                   
+                      { step !== 0 && (
+                      <TouchableOpacity 
+                           style={{backgroundColor:step !== 0 ? "red" : "gray",
+                            bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                            left:20
+                            }}
+                           className="py-2 px-4 absolute bg-red-500 rounded-lg" >
+                                <Ionicons name="chevron-back" size={32} color="white" />
+                      </TouchableOpacity> 
+                      )} 
+                      {description.length > 10 && (
+                      <TouchableOpacity 
+                            onPress={() => {
+                              if(description.length >15){
+                              setChallenge({...challenge,desc:description})
+                              setStep(prev => prev +1)
+                              }
+                              }}
+                              style={{
+                                bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                right:20
+                              }}
+                              className="py-1 px-2 absolute ml-auto bg-[#045e07] rounded-lg" >
+                                <Ionicons name="chevron-forward" size={32} color="white" />
+                      </TouchableOpacity>
+                      )}
+       
                       
                   </View>
                   
@@ -397,23 +402,30 @@ try {
 
               {step == 1 && (
                   <View
-                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center mt -auto items-center gap-2 p-2">
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center items-center  pt-24">
+                        <View
+                          className="w- [30%] h- [100%]  flex-col rounded-xl mb-auto  justify-center gap-4 items-center">
+                            <View
+                                  className="w- [100%] h-  [20%] flex-row justify-center items-center">
+                                    <ShuffleLetters text={"Select Type"} textSize={15} /> 
+                            </View>
+                        </View>
+
                         <TouchableOpacity
                           onPress={() =>{
-                            setIsSelectorVisible(true)
+                            setIsSelectionModalVisible(true)
+                            setSelectionType('type')
+                            setData(challengeType)
                           }
                           }
-                          className="w- [30%] h- [100%] mb-4 flex-col rounded-xl  justify-center gap-4 items-center">
+                          className="w- [30%] h- [100%]  absolute  flex-col rounded-xl  justify-center gap-4 items-center">
                             <View
-                                  className="w- [100%] h- [20%] flex-row justify-center items-center">
-                                    <ShuffleLetters text={"Select Type"} textSize={12} /> 
+                            className=" w-[150px] h-[150px] p-1 bg-white rounded-full justify-center items-center ">
+                                <Image
+                                source={selectedType ? getIcon(selectedType) : icons.adventure}
+                                resizeMethod='contain'
+                                className="w-[100px] h-[100px] " />
                             </View>
-                            
-                            <Image
-                            source={selectedType ? getIcon(selectedType) : icons.adventure}
-                            resizeMethod='contain'
-                            // style={{width:width/10, height:width/10}}
-                            className="w-[100px] h-[100px] rounded-full p-4 bg-white mt -2 mb -2" />
                             <View
                                   className="w- [100%] h -[20%] p-2 flex-row justify-center items-center">
                                 
@@ -425,18 +437,20 @@ try {
 
                            </View>
                         </TouchableOpacity>
-                        <View
-                          style ={{ width:150}}
-                          className="flex-row justify-between items-center  py-2">
+                       
                             <TouchableOpacity 
                               onPress={() => {
-                                // setChallenge({...challenge,desc:description})
                                 setStep(prev => prev - 1)
                                }}
-                              style={{backgroundColor:step !==0 ? "red" : "gray" }}
-                              className="py-2 px-4  bg-red-500 rounded-lg" >
-                                  <Text style={styles.buttonText}>Back</Text>
-                            </TouchableOpacity>
+                              style={{
+                                fontSize:12,
+                                backgroundColor:step !== 0 ? "red" : "gray",
+                                bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                left:20 }}
+                              className="py-1 px-2 absolute bg-red-500 rounded-lg" >
+                                      <Ionicons name="chevron-back" size={32} color="white" />
+                              </TouchableOpacity>
+                           {selectedType  && (
                             <TouchableOpacity 
                              onPress={() => {
                               if(selectedType){
@@ -444,36 +458,50 @@ try {
                               setStep(prev => prev + 1)
                               }
                                }}
-                               style={{backgroundColor: selectedType ? "blue" : "gray" }}
-                              className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
-                                  <Text style={styles.buttonText}>Next</Text>
+                               style={{
+                                fontSize:12,
+                                // backgroundColor: selectedType ? "blue" : "gray" ,
+                                bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                right:20 }}
+                              className="py-1 px-2 absolute ml-auto bg-[#045e07] rounded-lg" >
+                                <Ionicons name="chevron-forward" size={32} color="white" />
                             </TouchableOpacity>
+                          )}
+
                         </View>
-                    </View>
+                 
                  )}
                  
 
                  {step == 2 && (
                   <View
-                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center mt -auto items-center gap-2 p-2">
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center  items-center gap-2 pt-24">
+
+                        <View
+                          className="w- [30%] h- [100%] mb-auto flex-col rounded-xl  justify-center gap-4 items-center">
+                            <View
+                                  className="w- [100%] h- [20%] flex-row justify-center items-center">
+                                     <ShuffleLetters text={"Select Privacy"} textSize={14} /> 
+                            </View>
+                            
+                        </View>
 
                         <TouchableOpacity
                           onPress={() =>{
-                            setIsPrivacySelectorVisible(true)
+                            setIsSelectionModalVisible(true)
+                            setSelectionType('privacy')
+                            setData(privacyData)
                           }
                           }
-                          className="w- [30%] h- [100%] mb-4 flex-col rounded-xl  justify-center gap-4 items-center">
+                          className="w- [30%] h- [100%] absolute flex-col rounded-xl  justify-center gap-4 items-center">
+                           
                             <View
-                                  className="w- [100%] h- [20%] flex-row justify-center items-center">
-                                     <ShuffleLetters text={"Select Privacy"} textSize={12} /> 
+                            className="w-[150px] h-[150px] p-1 bg-white rounded-full justify-center items-center ">
+                              <Image
+                              source={selectedPrivacy ? getIcon(selectedPrivacy) : icons.publi}
+                              resizeMethod='cover'
+                              className="w-[100px] h-[100px] " />
                             </View>
-                            
-                            <Image
-                            source={selectedPrivacy ? getIcon(selectedPrivacy) : icons.publi}
-                            resizeMethod='contain'
-                            // style={{width:width/10, height:width/10}}
-                            className="w-[100px] h-[100px] rounded-full p-4 b g-white " />
-
                             <View
                                   className="w- [100%] h -[20%] p- 2 flex-row justify-center items-center">
                                   <Text 
@@ -484,18 +512,19 @@ try {
                           </View>
                         </TouchableOpacity>
 
-                         <View
-                          style ={{ width:150}}
-                          className="flex-row justify-between items-center  py-2">
-                            <TouchableOpacity 
+                  
+                        <TouchableOpacity 
                               onPress={() => {
                                 // setChallenge({...challenge,desc:description})
                                 setStep(prev => prev - 1)
                                }}
-                              style={{backgroundColor:step !==0 ? "red" : "gray" }}
-                              className="py-2 px-4  bg-red-500 rounded-lg" >
-                                  <Text style={styles.buttonText}>Back</Text>
-                            </TouchableOpacity>
+                              style={{backgroundColor:step !==0 ? "red" : "gray" ,
+                                bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                left:20}}
+                              className="py-1 px-2 absolute bg-red-500 rounded-lg" >
+                                <Ionicons name="chevron-back" size={32} color="white" />
+                          </TouchableOpacity>
+                          {selectedPrivacy && (
                             <TouchableOpacity 
                              onPress={() => {
                               if(selectedPrivacy){
@@ -503,25 +532,31 @@ try {
                               selectedPrivacy == "Public" ? setStep(prev => prev + 2) : setStep(prev => prev + 1)
                               }
                                }}
-                              style={{backgroundColor: selectedPrivacy ? "blue" : "gray" }}
-                              className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
-                                  <Text style={styles.buttonText}>Next</Text>
+                              style={{
+                                bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                right:20 }}
+                              className="py-1 px-2 absolute ml-auto bg-[#045e07] rounded-lg" >
+                                    <Ionicons name="chevron-forward" size={32} color="white" />
                             </TouchableOpacity>
+                            )}
+
                          </View>
-                    </View>
+                         
+                   
                  )}
 
 
                 {step == 3 && (
                   <View
-                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center mt -auto items-center gap-2 p-2">
+                  className="flex- 1 w-[100%] h-[100%] flex-col justify-center mt -auto items-center gap-2 pt-12">
                               <TouchableOpacity
                                         onPress={()=>{
-                                          setIsFriendListVisible(true)
+                                          setIsSelectionModalVisible(true)
+                                          setSelectionType('invite')
                                           setData(friendList)
                                          }
                                         }
-                                        className="w- [100%] h- [25%] flex-col justify-evenly  gap-4 items-center">
+                                        className="w- [100%] h- [25%] flex-col justify-evenly mb-auto gap-4 items-center">
                                         <View
                                                 className="w- [100%] h- [20%] flex-row justify-center items-center">
                                                 <ShuffleLetters text={"Invite Friends"} textSize={12} /> 
@@ -543,14 +578,15 @@ try {
                               </TouchableOpacity>
 
                               <View
-                                        className="w-[100%] pt-2 h-[250px] mt-4 k rounded-xl ">
-                                       <ScrollView  className=" flex-1">
+                                        className="w-[90%] pt-2 h-[270px] absolute  rounded-xl ">
+                                       <ScrollView  className=" flex-1 p-2 bg-[#33302d]">
                                           <View
-                                            className="min-w- [100%] min-h -[100%] bg-black flex-row flex-wrap px -2  py -2 ga  justify-center  items-center">
+                                            className="min-w- [100%] min-h -[100%] b g-black flex-row flex-wrap px-2  py -2 ga  justify-center  items-center">
                                             {selectedFriends.map((friend,index) => {
-                                                return (<View 
+                                                return (
+                                                  <View 
                                                     key={index}
-                                                    className="w-[23%] pt-4 pb-4 h- [30%] px- flex-col justify-center gap-2 items-center">
+                                                    className="w-[23%] pt-2 pb-2 h- [30%] px- flex-col justify-center gap-2 items-center">
                                                             <Image
                                                             source={{uri:friend.profile_img}} 
                                                             resizeMethod='contain'
@@ -564,21 +600,21 @@ try {
                                                   </View>  )  
                                             })}
                                             </View>
-                                      </ScrollView>     
+                                       </ScrollView>     
                               </View>
 
-                              <View
-                                style ={{ width:width}}
-                                className="flex-row px-4 justify-between items-center  py-2">
                                   <TouchableOpacity 
                                     onPress={() => {
                                       // setChallenge({...challenge,desc:description})
                                       setStep(prev => prev - 1)
                                     }}
-                                    style={{backgroundColor:step !==0 ? "red" : "gray" }}
-                                    className="py-2 px-4  bg-red-500 rounded-lg" >
-                                        <Text style={styles.buttonText}>Back</Text>
+                                    style={{backgroundColor:step !==0 ? "red" : "gray",
+                                      bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                      left:20 }}
+                                    className="py-1 px-2 absolute bg-red-500 rounded-lg" >
+                                             <Ionicons name="chevron-back" size={32} color="white" />
                                   </TouchableOpacity>
+                                {selectedFriends.length > 0 && (
                                   <TouchableOpacity 
                                   onPress={() => {
                                     if(selectedFriends.length > 0){
@@ -586,11 +622,13 @@ try {
                                     setStep(prev => prev + 1)
                                     }
                                     }}
-                                    style={{backgroundColor: selectedFriends.length > 0 ? "blue" : "gray" }}
-                                    className="py-2 px-4  ml-auto bg-blue-700 rounded-lg" >
-                                        <Text style={styles.buttonText}>Next</Text>
+                                    style={{
+                                      bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                      right:20 }}
+                                    className="py-1 px-2 absolute  ml-auto bg-[#045e07] rounded-lg" >
+                                         <Ionicons name="chevron-forward" size={32} color="white" />
                                   </TouchableOpacity>
-                              </View>
+                                )}
                         
                    </View>
                 )}
@@ -626,16 +664,16 @@ try {
                                   <View className="absolute bottom-[25vh] px-4 flex-row min-w-full -auto  justify-between  items-center  opacity-85  h-[5vh]">
                                           <View className="flex-row w-[30%] mt-auto  bg-wh mb- justify-center  items-center   h- [99%]">   
                                               <TouchableOpacity
-                                              className=" flex-row py-4 justify-center bg-[#920412] gap-2 items-center h- [95%] w-[95%] rounded-bl-[38px] "
+                                              className=" flex-row py-2 justify-center bg-[#920412] gap-2 items-center h- [95%] w-[95%] rounded-xl "
                                               // onPress={goBack}  
                                               onPress={()=>setIsRecording(false)}   
                                               onPressOut={()=> {setVideoUri(null)}}
                                                   >
                                               <Text
-                                              style={{fontSize:10}}
+                                              style={{fontSize:9}}
                                               className="text-white text-xs font-black">Cancel</Text>
                                               <Image      
-                                              className="w-7 h-7 "
+                                              className="w-5 h-5 "
                                               source={icons.back}
                                               resizeMode='contain'
                                               />  
@@ -643,16 +681,16 @@ try {
                                           </View>
                                           <View className="flex-row w-[30%]  bg-whi  mb- justify-center  items-center   h- first-letter: [99%]">
                                               <TouchableOpacity
-                                              className="flex-row justify-center py-4 bg-[#04198e] gap-2 items-center h-[95%] w-[95%] rounded-br-[38px]"
+                                              className="flex-row justify-center py-2 bg-[#04198e] gap-2 items-center h- [95%] w-[95%] rounded-xl"
                                                 onPress={handleSumitChallenge}
                                                   >
                                               <Image      
-                                              className="w-7 h-7 "
+                                              className="w-5 h-5 "
                                               source={isRecording ? icons.submit : icons.submit}
                                               resizeMode='contain'
                                               />  
                                               <Text 
-                                              style={{fontSize:10}}
+                                              style={{fontSize:9}}
                                               className="text-white text-xs font-black">{isRecording? "Submit":"Submit"}</Text>
                                               </TouchableOpacity>
                                           </View>  
@@ -669,12 +707,14 @@ try {
                                         />   
                                       {!isRecording && (
                                         <View 
-                                        style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
-                                        className="absolute bottom-[35vh]  w-[100%] flex-col justify-start items-center -auto bg- opacity-100 ">
-                                            <View className="flex-row min-w-full mt-auto  px-8 justify-evenly  items-center  opacity-85  h-[7vh]">       
+                                          style = {{
+                                          bottom: 50 +  height - width * 1.49 - insets.top - 28 - height * 0.07 ,
+                                           }}
+                                          className="absolute left-0 px-4 w-[100%] flex-row justify-between items-center py-1 opacity-100 ">
+                                      
                                             {!isRecording && (
                                               <TouchableOpacity
-                                                  className="flex-col justify-center gap-1 items-center h-[100%]  g-green-500 -[33%] "
+                                                  className="flex-col justify-center gap-1 items-center h- [100%]   "
                                                   onPress={isRecording? stopRecording : startRecording}
                                                   onPressIn={()=>{setReplayRecording(true)}}
 
@@ -696,7 +736,7 @@ try {
 
                                               {!isRecording && (
                                               <TouchableOpacity
-                                                  className="flex-col justify-center gap-1 items-center  g-blue-500 h-[100%] -[33%] "
+                                                  className="flex-col justify-center gap-1 items-center   "
                                                   onPress={uploadVideo}
                                                   >     
                                                   <Image    
@@ -714,7 +754,7 @@ try {
                                               </TouchableOpacity>
                                               )}    
 
-                                            </View>
+                          
 
                                       </View>
                                     )}
@@ -785,10 +825,109 @@ try {
                  
 
 
-       
+                {!isPlaying  && !isRecording && (
+                <MotiView
+                  from={{ opacity: 0, translateY: 40 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ delay: 800, type: 'timing', duration: 600 }}
+                  style = {{
+                    height: Platform.OS == "ios" ? height - width * 1.49 - insets.top - height * 0.07:
+                    height - width * 1.49 - 30 -height * 0.07 ,
+                    width : width ,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0,0, 0 , 0.5)' 
+                  }}
+                  className ="absolute  flex-col b g-[#120564] rounded-xl  justify-start p-1  items-center"
+                >
+                
 
-          {/* <BottomBarChallenge show = {!replayRecording} width ={width} height={height * 0.07 + insets.bottom} bottom={0} left ={null} right ={null} user = {user}
-               challenge={challenge} />   */}
+                <View
+                   
+                    className ="w-[100%] h-[100%] p- 2  mb- 12 g-white rounded-lg flex-col gap-2 justify-start items-center">
+                           <Text 
+                          style ={{fontSize:10}}
+                          className="text-xl mt-2 font-black  text-yellow-500"> 
+                             New Challenge 
+                           </Text>
+
+                           <View
+                           className = "w-[100%] min-h -[30%] flex-col text-end  justify-center items-center gap-1">
+                             
+                              
+                              <Image 
+                                   className="w-9 h-9 rounded-full"
+                                   resizeMethod='contain'
+                                   source={{uri:user.profile_img}}/>  
+                            
+                              <Text 
+                                style ={{fontSize:9}}
+                                className="text-xl  font-black  text-white"> 
+                                  {user.name}
+                              </Text>
+                          </View>
+                          <View
+                           className = "w-[100%] mt-auto py-3 flex-row text-end px-6 shad ow-white justify-center items-end ">
+                              <View
+                              style={{marginBottom:height * 0.07}}
+                              className = "flex-1 py-3 flex-row  rounded-xl text-end bg-[#065e7c]  justify-center items-end gap-2">
+                                      {description!=="" ?(
+                                            <SwingingTitle text={"Desc : "+challenge.desc} color={"white"} fontSize={10} />
+                                      ):(
+                                            <SwingingTitle text={"Add Desc to you challenge "} color={"lightgray"} fontSize={10} />
+
+                                      )}
+                                       
+                             </View>
+                          </View>
+                </View>
+
+              
+              {selectedType && (
+                <View
+                className = "flex-col absolute h- 7 left-1  top-2 justify-center items-center gap-">
+                    <Image
+                          source={getIcon(challenge.type)}
+                          className = "w-7 h-7"
+                          />
+                    <Text 
+                          style ={{fontSize:10}}
+                          className="text-xl font-black  text-white"> 
+                              {challenge.type} 
+                    </Text>
+                </View>
+              )}
+
+              {selectedPrivacy && (
+                <View
+                className = "flex-col absolute h- 7 right-1 mr-2 top-2 justify-center items-center gap- 2">
+                    
+                    <Image
+                          source={getIcon(challenge.privacy)}
+                          className ="w-7 h-7"
+                          />
+                    <Text  
+                          style ={{fontSize:10}}
+                          className="text-xl font-black  text-white"> 
+                              {challenge.privacy} 
+                    </Text>
+                </View>
+              )}
+
+            <TouchableOpacity
+                 className="flex-row justify-center bg-white rounded-xl py-1 px-4 top-[40%] right-12 items-center absolute "
+                 onPress={ () => {router.back()} }
+                   >
+
+                <Text  
+                          style ={{fontSize:12}}
+                          className="text-xl font-black  text-red-500"> 
+                              Quit 
+                </Text>
+            </TouchableOpacity>
+              
+            </MotiView>
+
+            )}
 
 
           {isSelectorVisible && (
@@ -850,7 +989,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 10,
-    fontWeight: 'bold',
+    fontSize: 12,
+    fontWeight: 900,
   },
 });

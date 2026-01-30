@@ -27,6 +27,7 @@
     },
     "preview": {
       "distribution": "internal",
+       "node": "20.20.0",
       "env": {
         "EXPO_PUBLIC_SERVER_URL": "https://capstone-wgt-server.onrender.com",
         "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyB12LtMOPw2OPeiUS3DB4wtlpQKtTQ-FU8",

@@ -1,38 +1,52 @@
 import { View, Text, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CountryFlag from 'react-native-country-flag'
 import { icons } from '../../constants'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import Svg, { Path, TextPath } from 'react-native-svg'
+import { getVideo } from '../../videoFiles'
 
 export default function Participant({participant ,selectedParticipant, setSelectedParticipant,participantTrackerId, w , h , f,index}) {
     const {user ,contestantBgColor} = useGlobalContext()
     const { width, height } = useWindowDimensions();
+    const [participantImg , setParticipantImg] = useState(null)
     const bgColor =  ( selectedParticipant && selectedParticipant._id === participant._id) 
     || ( participantTrackerId && participantTrackerId === participant._id) ? 'white':
    user._id === participant.user_id ?'#2f241a':contestantBgColor
    const textColor =  ( selectedParticipant && selectedParticipant._id === participant._id) 
    || ( participantTrackerId && participantTrackerId === participant._id) ? 'black':'white'
 
+  useEffect(() => {
+    const loadVideo = async () => {
+          await getVideo(participant.profile_img).then(path =>{
+              setParticipantImg(path)
+          });
+    };
+    loadVideo();
+  }, []);
   return (
     <TouchableOpacity
     onPress={ ()=> {setSelectedParticipant({...participant})}}
     style ={{
       height : f?  f : width  * 0.18 ,
       width : f?  f : width * 0.18,
+      backgroundColor: 
+      bgColor,
     }}
-    className =" flex-col b g-white justify-center items-center">
+    className =" flex-col b g-white justify-center items-center rounded-md">
                 <View
                     style={{
-                      height : f?  f : width  * 0.18 ,
-                      width : f?  f : width * 0.18,
+                      // height : f?  f : width  * 0.18 ,
+                      // width : f?  f : width * 0.18,
                       backgroundColor: 
-                      bgColor,
+                      "black",
                     }}
-                    className="flex-col justify-center items-center b g-white rounded-md ">
+                    className="flex-col justify-center items-center b g-white rounded-full ">
 
                           <Image
-                          source={{uri:participant.profile_img}}
+                          source={{uri:participantImg}}
+                          // source={{uri:participant.profile_img}}
+                          // source={icons.avatar}
                           className ={f? "w-[20px] h-[20px] m- rounded-full":"w-[40px] h-[40px] m- rounded-full"}
                           resizeMethod='fill'
                           />  

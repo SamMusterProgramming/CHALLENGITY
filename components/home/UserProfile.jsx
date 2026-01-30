@@ -13,7 +13,7 @@ import Friend from '../profile/Friend'
 export default function UserProfile({user}) {
   const {setUser,setFollowings ,setTrendingChallenges, setFollow,setPublicParticipateChallenges,userFriendData,follow,userPublicChallenges,
     userTalents, setUserFriendData,setIsViewed,setNotifications ,setUserTalents, notifications , isLoggingOut, setIsLoggingOut
-     } = useGlobalContext()
+    , userProfileImg , userCoverImg} = useGlobalContext()
   const { width, height } = useWindowDimensions();
   const [selection, setSelection] = useState("friends");
   const [displayList, setDisplayList] = useState(userFriendData && userFriendData.friends || null)
@@ -85,7 +85,7 @@ export default function UserProfile({user}) {
   return (
     <ScrollView
     showsVerticalScrollIndicator ={false}
-    className="w-[100vw] max-h-[100%] flex-1 bg-white py- 1" >
+    className="w-[100vw] max-h-[100%] flex-1 b g-white py- 1" >
         <View
         className="min-w-[100%] min-h-[100%] justify-start items-center" >
             
@@ -93,7 +93,7 @@ export default function UserProfile({user}) {
                     <Image 
                     resizeMode='stretch'
                     className="w-[100%] h-[200px]  roun ded-xl"
-                    source={{uri: user && user.cover_img}} 
+                    source={{uri: userCoverImg }} 
                     />
                     <View 
                 
@@ -101,15 +101,15 @@ export default function UserProfile({user}) {
                     <Image 
                     className="w-[80px] h-[80px] rounded-full"
                     resizeMode='cover'
-                    source={{uri: user && user.profile_img}} 
+                    source={{uri: userProfileImg }} 
                     />
                     </View>
                     <View
-                             className="absolute bottom-2 right-2 flex-col  justify-center items-center ">
-                                      < CountryFlag
-                                        isoCode={user && user.country || "us"}
-                                        size={45}
-                                            />
+                        className="absolute bottom-2 right-2 flex-col  justify-center items-center ">
+                            < CountryFlag
+                                isoCode={user && user.country || "us"}
+                                size={45}
+                            />
                     </View>
             </View> 
 
@@ -201,7 +201,7 @@ export default function UserProfile({user}) {
 
 
 
-            <View className="flex-row w-full px-2 py-2 mt-1 gap-8 bg-[#000000] bord er-b-4 justify-start items-end  h-[50px]">
+            <View className="flex-row w-full px-2 py-2 mt- 1 gap-8 bg-[#000000] bord er-b-4 justify-start items-end  h-[50px]">
                    <TouchableOpacity
                     onPress={() => {
                     setCompetitionSelection("challenges")}}
@@ -283,7 +283,7 @@ export default function UserProfile({user}) {
             </ScrollView>
            </View>
 
-           <View className="flex-row w-full bg-[#000000] px-2 py-0 mt-1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
+           <View className="flex-row w-full bg-[#000000] px-2 py-0 mt- 1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
                    
                    <TouchableOpacity
                     className="flex-row w- [30%] px- 4 -[100%] justify-center gap-2 py-1 px-  rounde d-t-xl items-center">
@@ -335,7 +335,7 @@ export default function UserProfile({user}) {
             <View className="flex-row w-full bg-[#000000] px-2 py-0    mt-[-1] justify-start items-center h-[50px]">
                        <Text
                        style={{fontSize:13,
-                        // color:"black",
+                        
                        }}
                        className="text-blue-200 font-bold text-base">
                            Show more
@@ -346,7 +346,7 @@ export default function UserProfile({user}) {
 
 
 
-           <View className="flex-row w-full bg-[#000000] px-2 py-0 mt-1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
+           <View className="flex-row w-full bg-[#000000] px-2 py-0 mt- 1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
                    
 
                    <TouchableOpacity
@@ -361,7 +361,7 @@ export default function UserProfile({user}) {
                        </Text>
                        <Text
                        style={{fontSize:12,
-                        // color:"white",
+                
                        }}
                        className="text-gray-100 font-bold text-base">
                            {follow && follow.followers.length}
@@ -400,7 +400,7 @@ export default function UserProfile({user}) {
             <View className="flex-row w-full bg-[#000000] px-2 py-0    mt-[-1] justify-start items-center h-[50px]">
                        <Text
                        style={{fontSize:13,
-                        // color:"black",
+                      
                        }}
                        className="text-blue-300 font-bold text-base">
                            Show more
@@ -409,7 +409,7 @@ export default function UserProfile({user}) {
 
 
 
-           <View className="flex-row w-full bg-[#000000] px-2 py-0 mt-1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
+           <View className="flex-row w-full bg-[#000000] px-2 py-0 mt- 1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
                    
                    <TouchableOpacity
                    
@@ -423,7 +423,7 @@ export default function UserProfile({user}) {
                        </Text>
                        <Text
                        style={{fontSize:12,
-                        // color:"white",
+                     
                        }}
                        className="text-gray-100 font-bold text-base">
                            {follow && follow.followings.length}
@@ -460,7 +460,7 @@ export default function UserProfile({user}) {
             <View className="flex-row w-full bg-[#000000] px-2 py-0    mt-[-1] justify-start items-center h-[50px]">
                        <Text
                        style={{fontSize:13,
-                        // color:"black",
+           
                        }}
                        className="text-blue-300 font-bold text-base">
                            Show more

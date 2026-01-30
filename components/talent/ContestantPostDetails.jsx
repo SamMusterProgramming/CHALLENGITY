@@ -67,7 +67,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
   useEffect(() => {
    if(voted){
       setTimeout(() => {
-         setVoterEntry(talentRoom.voters.find(v=> v.voter_id == user._id))
+         setVoterEntry(talentRoom.voters.find(v => v.voter_id == user._id))
          setVoted(false)
       }, 100);
      }
@@ -161,7 +161,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                         className ="w-8 h-8 rounded-full"
                                         resizeMethod='fill'
                                             /> */}
-                                           <Ionicons name="checkmark-circle" size={32} color={postData.votes.find(vote => vote.voter_id == user._id) ? "#4d5df0" : "white"} />
+                                           <Ionicons name="checkmark-circle" size={32} color={postData.votes.find(vote => vote.voter_id == user._id) ? "#f76f8d" : "white"} />
                                  </View>
                                  <View
                                     className=" w-[70%] h-[60%]  flex-row  justify-center  items-start">

@@ -11,6 +11,7 @@ import { useGlobalContext } from '../../context/GlobalProvider';
 import PostTalentHeader from '../activityHeader/PostTalentHeader';
 import TalentActivityHeader from '../activityHeader/TalentActivityHeader';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getVideo } from '../../videoFiles';
 
 export default function UserTalentEntry({userTalent, user , userProfile ,activity}) {
     const {boxBgColor} = useGlobalContext()
@@ -26,6 +27,9 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
     const [selectedContestant , setSelectedContestant] = useState(userTalent.contestants[0] || null)
     const [vacantSpots, setVacantSpots] = useState([])
     
+    const [selectedContestantImg , setSelectedContestantImg] = useState(null)
+    const [selectedContestantThumbNail , setSelectedContestantThumbNail] = useState(null)
+
     const h = width +  - 7
     const contestants = userTalent.contestants 
 
@@ -83,6 +87,14 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                 vs.push({index : index})    
           }
           setVacantSpots(vs)
+
+          getVideo(selectedContestant.profile_img).then(path =>{
+            setSelectedContestantImg(path)
+           });
+           getVideo(selectedContestant.thumbNail_URL).then(path =>{
+            setSelectedContestantThumbNail(path)
+           });
+
           }
     }, [selectedContestant])
 
@@ -97,13 +109,16 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
      )}
     <View
         style={{height: h + 50 }}
-        className="bg-primary  black [#616262] mt- 2  w-[100%]  h-[100%] flex-col  justify-start items-center  ">
+        className="bg-black [#616262] mt- 2  w-[100%]  h-[100%] flex-col  justify-start items-center  ">
             
             <View
               style={{ height: h * 0.13}}
-              className="w-[100%] bg- [#fefeff]  flex-row py -1   px- 2 justify-between  items-center">
+              className="w-[100%] bg- [#fefeff]  flex-row py -1   px- 2 justify-center  items-center">
+                       
                            
-                           <View
+                    
+                    
+                        <View
                             style={{ minWidth: h * 0.26 , backgroundColor : boxBgColor}}
                             className=" h-[100%] bg-[#fefeff] flex -1 px-2 bg- black rounded-br-md flex-row   gap-2 justify-start py-1  items-center ">
                                  {contestants.slice(0,2).map((contestant , index) =>{
@@ -118,76 +133,8 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                                         <VacntSpotContestant key={index} f={h * 0.105} /> 
                                         )
                                  }) }
-                            </View>
-                            <TouchableOpacity
-                                                                onPress={
-                                                                    ()=> {   
-                                                                        router.push({ pathname:'TalentContestRoom', params:{
-                                                                        region:userTalent.region,
-                                                                        selectedTalent:userTalent.name , 
-                                                                        selectedIcon: getIcon(userTalent.name),
-                                                                        regionIcon : getIcon(userTalent.region),
-                                                                        startIntroduction :"true",
-                                                                        showGo:participationStatus == "ON STAGE" ?"true" :"false",
-                                                                        location : participationStatus == "ON STAGE" ? "contest" :"condidate",
-                                                                        contestant_id :userParticipation && userParticipation.user_id 
-                                                                        } })
-                                                                    }
-                                                                }
-                                                                className=" bg-black border-l-4 border-r-4 border-green-400 rounded-lg w- [20%]  gap-1 flex-col px-2 py-1  justify-center items-center">
-                                                                    <Text
-                                                                        style={{fontSize:7}}
-                                                                        className="text-center font-black mt- auto text-white">
-                                                                           {participationStatus !== "NOT CONTESTANT" ? "YOU ARE" : "JOIN"}
-                                                                    </Text>
-                                                                    <Text
-                                                                        style={{fontSize:7}}
-                                                                        className="text-center font-black mt- auto text-blue-200">
-                                                                            {participationStatus !== "NOT CONTESTANT" ? participationStatus :"CONTEST"}
-                                                                    </Text>
-                                                                    
-                        </TouchableOpacity>
-                    
-                        {/* <View
-                            className=" h-[100%] bg-[#fefeff] flex -1 px-2 bg- black rounded-b-xl flex-row   gap-2 justify-center py-1  items-center ">
-                                {contestants.slice(0,4).map((contestant , index) =>{
-                                    return(
-                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
-                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.105}
-                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
-                                        )
-                                 })}
-                        </View> */}
-
-                       
-                        <TouchableOpacity
-                                                        onPress={
-                                                            ()=> {   
-                                                                router.push({ pathname:'TalentContestRoom', params:{
-                                                                region:userTalent.region,
-                                                                selectedTalent:userTalent.name , 
-                                                                selectedIcon: getIcon(userTalent.name),
-                                                                regionIcon : getIcon(userTalent.region),
-                                                                startIntroduction :"true",
-                                                                showGo:participationStatus == "ON STAGE" ?"true" :"false",
-                                                                location : participationStatus == "ON STAGE" ? "contest" :"condidate",
-                                                                } })
-                                                            }
-                                                        }
-                                                        className=" bg-black border-l-4 border-r-4 border-blue-400 rounded-lg w- [23%]  gap-1 flex-col px-2 py-1  justify-center items-center">
-                                                                <Text
-                                                                 style={{fontSize:8}}
-                                                                 className="text-c enter font-black  text-white">
-                                                                    {userTalent.contestants.length}
-                                                                </Text>
-                                                                <Text
-                                                                style={{fontSize:8}}
-                                                                className="text-ce nter font-black  text-blue-200">
-                                                                    Contestants
-                                                                </Text>
-                        </TouchableOpacity>
-
-                        <View
+                         </View>
+                         <View
                             style={{ minWidth: h * 0.26 , backgroundColor : boxBgColor}}
                             className=" h-[100%] bg-[#fefeff] flex -1 px-2 bg- black rounded-bl-md flex-row   gap-2 justify-center py-1  items-center ">
                                 {contestants.slice(2,4).map((contestant , index) =>{
@@ -203,22 +150,8 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                                         )
                                  }) }
                         </View>
-                        {/* <View
-                            className=" h- [100%] bg-[#3a3a3a]   flex-col    justify-start   items-center ">
-                                    <View
-                                               style = {{minWidth:h * 0.10}}
-                                                className="w- [100%]  h- [100%] bg-[#3a3a3a] rounded-md p-1 px-2 gap-2 flex-col justify-center items-center">
-                                                     <Image
-                                                        className="w-5 h-5 "
-                                                        source={getIcon(userTalent.region)}
-                                                        resizeMode='cover'/>
-                                                    <Text
-                                                        style={{fontSize:7}}
-                                                        className="text-center   font-black text-gray-100">
-                                                            {userTalent.region.toUpperCase()}
-                                                    </Text>
-                                    </View>
-                        </View> */}
+                       
+                    
             </View>
 
             <View
@@ -241,44 +174,75 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                             className = "w-[100%]  h- [100%]  flex-col justify-start  gap-3 items-center">
                                             <View
                                             className="  w-[100%] b g-[#3a3a3a]  py- 2 flex-col text-center  justify-center  items-center "> 
-                                                <SwingingTitle text={roundTitle} color={"orange"} fontSize={9} />
+                                                <SwingingTitle text={roundTitle} color={"yellow"} fontSize={9} />
                                             </View>           
                         </View>
-                        <View
-                                               style = {{minWidth:h * 0.10}}
-                                                className="w- [100%] absolute top-2 right-0 h- [100%] b g-[#3a3a3a] rounded-md p-1 px-2 gap-1 flex-col justify-center items-center">
-                                                     <Image
-                                                        className="w-5 h-5 "
-                                                        source={getIcon(userTalent.region)}
-                                                        resizeMode='cover'/>
-                                                    <Text
-                                                        style={{fontSize:7}}
-                                                        className="text-center   font-black text-gray-100">
-                                                            {userTalent.region.toUpperCase()}
-                                                    </Text>
-                         </View>       
-                         <View
-                                               style = {{minWidth:h * 0.10}}
-                                                className="w- [100%] absolute top-2 left-0 h- [100%] b g-[#3a3a3a] rounded-md p-1 px-2 gap-1 flex-col justify-center items-center">
-                                                     <Image
-                                                        className="w-5 h-5 "
-                                                        source={getIcon(userTalent.name)}
-                                                        resizeMode='cover'/>
-                                                    <Text
-                                                        style={{fontSize:7}}
-                                                        className="text-center   font-black text-gray-100">
-                                                            {userTalent.name.toUpperCase()}
-                                                    </Text>
-                         </View>      
+                       
                          <View
                               className="absolute top-0 left-[20%] w- [30px] h- [30px] roun ded-full b g-black">
-                                 <MaterialCommunityIcons name="star" size={20} color = "#edc153"  />
+                                 <MaterialCommunityIcons name="star" size={20} color = "yellow"  />
                          </View> 
                  </View>
                  <View
                  style={{width: width * 0.08 , backgroundColor : boxBgColor }}
                     className=" h-[100%] bg-[#fefeff]   gap-2  flex-col justify-center items-center">
                  </View>
+                 
+                        {/* <TouchableOpacity
+                                                                onPress={
+                                                                    ()=> {   
+                                                                        router.push({ pathname:'TalentContestRoom', params:{
+                                                                        region:userTalent.region,
+                                                                        selectedTalent:userTalent.name , 
+                                                                        selectedIcon: getIcon(userTalent.name),
+                                                                        regionIcon : getIcon(userTalent.region),
+                                                                        startIntroduction :"true",
+                                                                        showGo:participationStatus == "ON STAGE" ?"true" :"false",
+                                                                        location : participationStatus == "ON STAGE" ? "contest" :"condidate",
+                                                                        contestant_id :userParticipation && userParticipation.user_id 
+                                                                        } })
+                                                                    }
+                                                                }
+                                                                className=" bg-black absolute top-0 left-0 border-4 border-green-400 rounded-lg w- [20%]  gap-1 flex-col px-2 py-1  justify-center items-center">
+                                                                    <Text
+                                                                        style={{fontSize:7}}
+                                                                        className="text-center font-black mt- auto text-white">
+                                                                           {participationStatus !== "NOT CONTESTANT" ? "YOU ARE" : "JOIN"}
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={{fontSize:7}}
+                                                                        className="text-center font-black mt- auto text-blue-200">
+                                                                            {participationStatus !== "NOT CONTESTANT" ? participationStatus :"CONTEST"}
+                                                                    </Text>
+                                                                    
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                                                        onPress={
+                                                            ()=> {   
+                                                                router.push({ pathname:'TalentContestRoom', params:{
+                                                                region:userTalent.region,
+                                                                selectedTalent:userTalent.name , 
+                                                                selectedIcon: getIcon(userTalent.name),
+                                                                regionIcon : getIcon(userTalent.region),
+                                                                startIntroduction :"true",
+                                                                showGo:participationStatus == "ON STAGE" ?"true" :"false",
+                                                                location : participationStatus == "ON STAGE" ? "contest" :"condidate",
+                                                                } })
+                                                            }
+                                                        }
+                                                        className=" bg-black absolute top-0 right-0 border-4 border-blue-400 rounded-lg w- [23%]  gap-1 flex-col px-2 py-1  justify-center items-center">
+                                                                <Text
+                                                                 style={{fontSize:8}}
+                                                                 className="text-c enter font-black  text-white">
+                                                                    {userTalent.contestants.length}
+                                                                </Text>
+                                                                <Text
+                                                                style={{fontSize:8}}
+                                                                className="text-ce nter font-black  text-blue-200">
+                                                                    Contestants
+                                                                </Text>
+                        </TouchableOpacity> */}
+                    
                 
                 
         </View>
@@ -347,7 +311,8 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                                                 
                                                             <Image
                                                                 className="w-[100%] h-[100%]  round ed-xl"
-                                                                source={{uri: selectedContestant && selectedContestant.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                                                source={{uri: selectedContestantThumbNail || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                                                // source ={icons.big_heart}
                                                                 resizeMethod='contain' /> 
                                                                 <Image  
                                                                 className="absolute  w-10 h-10 rounded-xl"
@@ -360,7 +325,8 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                                                 onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
                                                 className="absolute top-[12px] flex-col bg-[#000000] [#deddd9] [#333132] [#630d20]  [#3b4348]  rounded-full justify-center p-1 items-start gap-2 ">
                                                     <Image
-                                                    source={{uri:selectedContestant && selectedContestant.profile_img}}
+                                                    source={{uri:selectedContestantImg}}
+                                                    // source ={icons.big_heart}
                                                     className ="w-[40px] h-[40px] m- rounded-full"
                                                     esizeMethod='cover'
                                                     />  
@@ -383,17 +349,7 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                         </Text>
                    </View>
         </View>
-        {/* <View
-              style={{ height: h * 0.06 }}
-              className="w-[100%] h-[50%] bg- [#f6f4f4] [#4a4646] flex-row   px -1 justify-center pt -1 items-center">
-                       <View
-                            className = "w-[60%]  h-[100%]  flex-col justify-start  gap-3 items-center">
-                                            <View
-                                            className="  w-[100%] bg-[#3a3a3a]  py-2 flex-col text-center  justify-center  items-center "> 
-                                                <SwingingTitle text={roundTitle} color={"orange"} fontSize={9} />
-                                            </View>           
-                        </View>
-         </View> */}
+       
 
         <View
         style={{ height: h * 0.13 , width : width - h * 0.28 + 10 , backgroundColor : boxBgColor }}
@@ -447,6 +403,61 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                                         )
               }) }
         </View>
+
+        <TouchableOpacity
+                                                                onPress={
+                                                                    ()=> {   
+                                                                        router.push({ pathname:'TalentContestRoom', params:{
+                                                                        region:userTalent.region,
+                                                                        selectedTalent:userTalent.name , 
+                                                                        selectedIcon: getIcon(userTalent.name),
+                                                                        regionIcon : getIcon(userTalent.region),
+                                                                        startIntroduction :"true",
+                                                                        showGo:participationStatus == "ON STAGE" ?"true" :"false",
+                                                                        location : participationStatus == "ON STAGE" ? "contest" :"condidate",
+                                                                        contestant_id :userParticipation && userParticipation.user_id 
+                                                                        } })
+                                                                    }
+                                                                }
+                                                                className=" bg-[#353131] absolute top-8 left-0  rounded-lg w- [20%]  gap-1 flex-col px-2 py-2  justify-center items-center">
+                                                                    <Text
+                                                                        style={{fontSize:7}}
+                                                                        className="text-center font-black mt- auto text-white">
+                                                                           {participationStatus !== "NOT CONTESTANT" ? "YOU ARE" : "JOIN"}
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={{fontSize:7}}
+                                                                        className="text-center font-black mt- auto text-blue-200">
+                                                                            {participationStatus !== "NOT CONTESTANT" ? participationStatus :"CONTEST"}
+                                                                    </Text>
+                                                                    
+        </TouchableOpacity>
+        <TouchableOpacity
+                                                        onPress={
+                                                            ()=> {   
+                                                                router.push({ pathname:'TalentContestRoom', params:{
+                                                                region:userTalent.region,
+                                                                selectedTalent:userTalent.name , 
+                                                                selectedIcon: getIcon(userTalent.name),
+                                                                regionIcon : getIcon(userTalent.region),
+                                                                startIntroduction :"true",
+                                                                showGo:participationStatus == "ON STAGE" ?"true" :"false",
+                                                                location : participationStatus == "ON STAGE" ? "contest" :"condidate",
+                                                                } })
+                                                            }
+                                                        }
+                                                        className=" absolute top-8 bg-[#353131] right-0 bord er-4 bo rder-blue-400 rounded-lg w- [23%]  gap-1 flex-col px-2 py-2  justify-center items-center">
+                                                                <Text
+                                                                 style={{fontSize:8}}
+                                                                 className="text-c enter font-black  text-white">
+                                                                    {userTalent.contestants.length}
+                                                                </Text>
+                                                                <Text
+                                                                style={{fontSize:7}}
+                                                                className="text-ce nter font-black  text-blue-200">
+                                                                    CONTESTANTS
+                                                                </Text>
+        </TouchableOpacity>
 
         
            

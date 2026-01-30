@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { storage } from './firebase';
 import * as VideoThumbnails from 'expo-video-thumbnails';
@@ -22,12 +22,10 @@ export const saveVideoLocally = async (videoUrl) => {
     const path = videoRef._location.path_
     const filename = path.substring(path.lastIndexOf('/') + 1);
     const localPath = `${FileSystem.documentDirectory}${filename}`;
-
     const fileInfo = await FileSystem.getInfoAsync(localPath);
     if (fileInfo.exists) {
         return localPath;
     }
-    
     return await downloadVideo(videoUrl, localPath);
 };
 
@@ -35,10 +33,8 @@ export const getVideo = async (videoUrl) => {
     const videoRef = ref(storage, videoUrl);
     const path = videoRef._location.path_
     const filename = path.substring(path.lastIndexOf('/') + 1);
-    
     const localPath = `${FileSystem.documentDirectory}${filename}`;
     const fileInfo = await FileSystem.getInfoAsync(localPath);
-
     if (fileInfo.exists) {
         return localPath;
     } else {

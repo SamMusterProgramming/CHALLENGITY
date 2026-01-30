@@ -102,9 +102,13 @@ import favourite from '../assets/icons/favourite.png'
 import trending from '../assets/icons/trending.png'
 import top from '../assets/icons/top.png'
 import accept from '../assets/icons/accept.png'
+import challengify_logo from '../assets/icons/challengify.png'
+import frame from '../assets/icons/frame2.png'
 
 
 export default {
+  frame,
+  challengify_logo ,
   accept,
   top,
   trending,

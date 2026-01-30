@@ -11,6 +11,7 @@ import PostChallengeHeader from '../activityHeader/PostChallengeHeader';
 import ChallengeActivityHeader from '../activityHeader/ChallengeActivityHeader';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getVideo } from '../../videoFiles';
 
 export default function UserChallengeEntry({challenge, user , userProfile ,activity}) {
   const {boxBgColor} = useGlobalContext()
@@ -21,7 +22,8 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
   const[ name , setName ] = useState(null)
   const [vacantSpots, setVacantSpots] = useState([])
 
-  
+  const [selectedParticipantImg , setSelectedParticipantImg] = useState(null)
+  const [selectedParticipantThumbNail , setSelectedParticipantThumbNail] = useState(null)
 
   const handleRefresh = () =>{
     setRefresh(true)
@@ -43,6 +45,13 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
               vs.push({index : index})    
         }
         setVacantSpots(vs)
+
+        getVideo(selectedParticipant.profile_img).then(path =>{
+            setSelectedParticipantImg(path)
+        });
+        getVideo(selectedParticipant.thumbNail_URL).then(path =>{
+            setSelectedParticipantThumbNail(path)
+        });
         
       }
    }, [selectedParticipant])
@@ -66,7 +75,7 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
                         
                         <View
                         style = {{ backgroundColor : boxBgColor}}
-                        className = "w-[20%] bg-[#fefeff] rounded-br-md h-[100%] justify-center items-center ">
+                        className = "w- [20%] bg-[#fefeff] h-[100%] justify-center items-center px-1">
                                 <TouchableOpacity
                                                                 onPress={
                                                                     ()=> {   
@@ -82,55 +91,47 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
                                                                         } })
                                                                     }
                                                                 }
-                                                                className=" bg-black border-l-4 border-r-4 border-green-400 rounded-lg min-w- [23%]  gap-1 flex-col px-2 py-1  justify-center items-center">
+                                                                className=" bg-[#353131]   rounded-lg min-w- [23%]  gap-1 flex-col px-4 py-2  justify-center items-center">
                                                                     <Text
-                                                                        style={{fontSize:8}}
+                                                                        style={{fontSize:7}}
                                                                         className="text-center font-black mt- auto text-white">
                                                                             you are
                                                                         </Text>
                                                                         <Text
-                                                                        style={{fontSize:8}}
-                                                                        className="text-center font-black mt- auto text-gray-100">
+                                                                        style={{fontSize:7}}
+                                                                        className="text-center font-black mt- auto text-blue-200">
                                                                             On Stage
                                                                         </Text>
                                                                     
                                 </TouchableOpacity>
                         </View>
-                        {/* <View
-                            className=" h-[100%] w- [100%] flex -1 px-2 rounded-b-xl bg-[#fefeff]  flex-row   gap-1 justify-center py-1  items-center ">
-                                {challenge.participants.slice(0,4).map((participant , index) => {
-                                    return (
-                                        <Participant key={index} participant={participant} selectedParticipant = {selectedParticipant}
-                                        participantTrackerId = {null} setSelectedParticipant={setSelectedParticpant} f={ h * 0.105}
-                                        challenge = {challenge}  index ={19} w = {"90%"} h={"30%"}/> 
-                                        )     
-                                })}
-                        </View> */}
+                        
                         <View
                         style={{width:width - width * 0.26 + 2}}
-                            className=" h- [100%] flex-1 bg-black py- rounded-tr-full gap-2 rounded-tl-full flex-row justify-center items-center">  
+                            className=" h- [100%] flex-1 bg-black py- rounded-tr-full gap-2 rounded-tl-full flex-col justify-center items-center">  
                             <Text
-                                style={{fontSize:8}}
+                                style={{fontSize:width/45}}
                                 className="tex t-center tex t-sm  font-black mt- auto text-gray-200">
                                     Challenge
+                                    <Text
+                                        style={{fontSize:width/45}}
+                                        className="tex t-center tex t-sm  font-black mt- auto text-blue-300">
+                                           {''} By
+                                    </Text>   
                             </Text>
-                            <Text
-                                style={{fontSize:8}}
-                                className="tex t-center tex t-sm  font-black mt- auto text-blue-300">
-                                    By
-                            </Text>    
+                            
                             <Image
-                                className="w-7 h-7  rounded-full"
+                                className="w-10 h-10 absolute top-0 right-2 rounded-full"
                                 source={{uri:challenge.profile_img}}
                                 resizeMode='cover'/>
                             <Text
-                                style={{fontSize:8}}
+                                style={{fontSize:width/43}}
                                 className="tex t-center tex t-sm  font-black text-white">
                                     {challenge.name.slice(0,13)}
                             </Text> 
                             <View
-                              className="absolute top-0 left-0 w- [30px] h- [30px] roun ded-full b g-black">
-                                 <MaterialCommunityIcons name="sword-cross" size={15} color = "#F97316"  />
+                              className="absolute top-0 left-2 w- [30px] h- [30px] roun ded-full b g-black">
+                                 <MaterialCommunityIcons name="sword-cross" size={20} color = "#F97316"  />
                             </View>
                         </View>
                         <View
@@ -142,16 +143,16 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
                                                                 challenge_id:challenge._id ,
                                        
                                                                } }) }
-                                                               className=" bg-black border-l-4 border-r-4 border-blue-400 rounded-lg w- [23%]  gap-1 flex-col px-2 py-1  justify-center items-center">
+                                                               className=" bg-[#353131] rounded-lg w- [23%]  gap-1 flex-col px-2 py-2  justify-center items-center">
                                                             <Text
                                                                 style={{fontSize:8}}
                                                                 className="text-c enter font-black mt- auto text-white">
                                                                     {challenge.participants.length}
                                                                 </Text>
                                                                 <Text
-                                                                style={{fontSize:8}}
+                                                                style={{fontSize:7}}
                                                                 className="text-ce nter font-black mt- auto text-gray-100">
-                                                                    Participants
+                                                                    PARTICIPANTS
                                                                 </Text>          
                                 </TouchableOpacity>
                         </View>
@@ -159,22 +160,7 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
                        
             </View>
 
-            {/* <View
-              style={{ height: h * 0.07  + 6 }}
-              className="w-[100%] h-[50%]  bg- [#f6f4f4] [#4a4646] flex-row  justify-center items-center">
-                        <View
-                            className = "w-[100%] h-[100%]  flex-col justify-center  gap-1 items-center">
-                                    
-                                    <View
-                                       className="  w-[60%] py-2   bg-[#3a3a3a] flex-col text-center justify-center  items-center "> 
-                                            <SwingingTitle text={challenge.desc} color={"white"} fontSize={9} />
-                                    </View>
-
-                                   
-                        </View>
-            </View> */}
-     {/* </View> */}
-
+           
      <View
             style={{ height:50}}
             className=" gap- 1 bg-black w-[100%] h-[100%]  flex-col justify-center items-center ">
@@ -186,44 +172,36 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
                                     
                                     <View
                                        className="  w-[60%] py-2  flex-col text-center justify-center  items-center "> 
-                                            <SwingingTitle text={challenge.desc} color={"orange"} fontSize={9} />
+                                            <SwingingTitle text={challenge.desc} color={"yellow"} fontSize={10} />
                                     </View>
 
                                    
                     </View>
                     
                     <View
-                                                className="absolute left-6 top-2 p- 1 gap-1 flex-col justify-center items-center">
+                                                className="absolute left-4 top-0 p- 1 gap-1 flex-col justify-center items-center">
                                                     <Image
-                                                        className="w-6 h-6"
+                                                        className="w-8 h-8"
                                                         source={getIcon(challenge.type)}                                                        resizeMode='cover'/>
                                                         <Text
-                                                        style={{fontSize:7}}
+                                                        style={{fontSize:8}}
                                                         className="text-center text- sm  font-black text-gray-100">
                                                              {challenge.type.slice(0,7)}
                                                         </Text>
                     </View>
                     <View
-                                                className="absolute right-6 top-2 p- 1 gap-1 flex-col justify-center items-center">
+                                                className="absolute right-4 top-0 p- 1 gap-1 flex-col justify-center items-center">
                                                      <Image
-                                                        className="w-6 h-6"
+                                                        className="w-8 h-8"
                                                         source={getIcon(challenge.privacy)}
                                                         resizeMode='cover'/>
                                                     <Text
-                                                        style={{fontSize:7}}
+                                                        style={{fontSize:8}}
                                                         className="text-center   font-black text-gray-100">
                                                           {challenge.privacy}
                                                     </Text>
                     </View>
                 </View>
-                
-               
-                                    
-                 {/* <View
-                    style={{width:width - width * 0.26 + 2}}
-                    className="  w- [60%]   bg-[#000000] flex-col  justify-start items-center "> 
-                        <SwingingTitle text={challenge.desc} color={"white"} fontSize={7} />
-                </View>         */}
             
      </View>
 
@@ -280,8 +258,9 @@ export default function UserChallengeEntry({challenge, user , userProfile ,activ
                                                 }}
                                                 className=" w-[100%] min-h-[100%] flex-1 bord er-t-8 border-black  flex-row justify-center items-center ">
                                                             <Image
-                                                                className="w-[100%] min-h-[100%]  rounded-md"
-                                                                source={{uri: selectedParticipant && selectedParticipant.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                                                className="w-[100%] h-[100%]  rounded-md"
+                                                                source={{uri: selectedParticipantThumbNail || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                                                // source ={icons.big_heart}
                                                                 resizeMethod='contain' /> 
                                                                 <Image 
                                                                 className="absolute  w-10 h-10 rounded-xl"

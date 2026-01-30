@@ -78,8 +78,19 @@
         }
       ],
       "react-native-compressor",
-      "expo-font"
+      "expo-font" ,
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "useModularHeaders": true,
+            "deploymentTarget": "15.1"
+          }
+        }
+      ]
     ],
+
     "experiments": {
       "typedRoutes": true
     },

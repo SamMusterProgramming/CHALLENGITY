@@ -1,11 +1,19 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { router } from 'expo-router'
 import { MotiView } from 'moti'
+import { getVideo } from '../../videoFiles'
 
-export default function Friend({friend,w, h ,index}) {
+export default function Friend({friend , w , h ,index}) {
   const {user,setUser,isViewed ,setIsViewed} = useGlobalContext()
+  const [friendImg , setFriendImg] = useState(null)
+  useEffect(() => {
+    getVideo(friend.profile_img).then(path =>{
+      setFriendImg(path)
+     });
+  }, [])
+  
   return (
 
     <TouchableOpacity
@@ -18,11 +26,13 @@ export default function Friend({friend,w, h ,index}) {
         className=" p-2 flex-col gap-2 justify-start items-center px-2"
         style={{width:w/6 , height:w/5.7}}
       >
+      {friendImg && (
        <Image
          style={{width:w/10 , height:w/10}}
          className="w-12 h-12 rounded-xl full"
-         source={{uri:friend.profile_img}}
+         source={{uri:friendImg  }}
         />
+      )}
       <Text className="text-gray-100 text-xs font-black"
       style={{fontSize:8}}>{friend.name.slice(0,10)}</Text>
         </MotiView>

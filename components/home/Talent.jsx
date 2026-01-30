@@ -274,7 +274,7 @@ export default function Talent() {
 
                           ListFooterComponent={section == 3 &&  (
                                         <View
-                                        style = {{height:height * 0.627}}
+                                        style = {{height:height * 0.576}}
                                         className="fle x-1 h- [600]">
                                             <TalentPage/>
                                         </View>

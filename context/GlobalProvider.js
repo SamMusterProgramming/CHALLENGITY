@@ -32,6 +32,8 @@ export const GlobalProvider =({children}) => {
    const [boxBgColor,setBoxBgcolor] = useState("##0e121a") //("#d4d4d4")//("#d1d8eb")//useState("#f0f1f7")
    const [contestantBgColor,setContestantBgColor] = useState("#35383d")//("#1f1f21")
 //    const [topTalents, setTopTalents] = useState([])
+   const [userProfileImg,setUserProfileImg] = useState(null)
+   const [userCoverImg,setUserCoverImg] = useState(null)
 
 
     useEffect(() => {
@@ -67,7 +69,9 @@ export const GlobalProvider =({children}) => {
             menuPanelBgColor, setMenuPanelBgColor,
             boxBgColor,setBoxBgcolor,
             contestantBgColor,setContestantBgColor ,
-            topTalents, setTopTalents
+            topTalents, setTopTalents,
+            userProfileImg,setUserProfileImg ,
+            userCoverImg,setUserCoverImg
             }
             } >
             {children}

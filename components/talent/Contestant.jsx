@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react'
 import CountryFlag from 'react-native-country-flag'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { icons } from '../../constants'
+import { getVideo } from '../../videoFiles'
 
 export default function Contestant({contestant , selectedContestant , setSelectedContestant ,talentRoom,
    participantTrackerId, regionIcon , selectedIcon ,index ,w,h , f}) {
   const {user} = useGlobalContext()
   const{width , height} = useWindowDimensions()
   const {contestantBgColor,setContestantBgColor} = useGlobalContext()
+  const [contestantImg , setContestantImg] = useState(null)
 
   const bgColor = ( selectedContestant && selectedContestant._id === contestant._id) 
     || ( participantTrackerId && participantTrackerId === contestant._id) ? 'white':
@@ -16,6 +18,15 @@ export default function Contestant({contestant , selectedContestant , setSelecte
    const textColor = 
     ( selectedContestant && selectedContestant._id === contestant._id) 
    || ( participantTrackerId && participantTrackerId === contestant._id) ? 'black' : 'white'
+
+   useEffect(() => {
+    const loadVideo = async () => {
+          await getVideo(contestant.profile_img).then(path =>{
+              setContestantImg(path)
+          });
+    };
+    loadVideo();
+  }, []);
 
   return (
     <TouchableOpacity
@@ -28,20 +39,23 @@ export default function Contestant({contestant , selectedContestant , setSelecte
                     //     user._id === contestant.user_id ?'rgba(0, 155, 0, 0.5)':'rgba(22, 33, 129, 1.0)',
                         height : f?  f : width  * 0.18,
                         width :f?  f : width * 0.18,
+                        backgroundColor: 
+                        bgColor,
                   }}
           
-                  className =" flex-col bg- [#2f241a] justify-center items-center">
+                  className =" flex-col bg- [#2f241a] justify-center items-center rounded-md">
                               <View
                                   style={{
-                                    height :f ?  f : width  * 0.18 ,
-                                    width : f ?  f : width * 0.18,
+                                    // height :f ?  f : width  * 0.18 ,
+                                    // width : f ?  f : width * 0.18,
                                     backgroundColor: 
-                                    bgColor,
+                                    "black",
                                   }}
-                                  className="flex-col justify-center items-center b g-white rounded-md ">
+                                  className="flex-col justify-center items-center b g-white rounded-full ">
               
                                         <Image
-                                        source={{uri:contestant.profile_img}}
+                                        source={{uri:contestantImg}}
+                                        // source={icons.avatar}
                                         className ={f? "w-[20px] h-[20px] m- rounded-full":"w-[40px] h-[40px] m- rounded-full"}
                                         resizeMethod='fill'
                                         />  

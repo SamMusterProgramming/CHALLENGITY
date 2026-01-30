@@ -8,7 +8,7 @@ import { router } from 'expo-router';
 import { uploadThumbnail } from '../firebase';
 import { updateUser } from '../apiCalls';
 import CountryFlag from 'react-native-country-flag';
-import CountryPicker from 'react-native-country-picker-modal';
+// import CountryPicker from 'react-native-country-picker-modal';
 
 
 export default function SetUpProfile() {

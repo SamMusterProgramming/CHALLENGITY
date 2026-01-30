@@ -25,14 +25,14 @@ export default function VacntSpotContestant({ index ,f}) {
                         width :f?  f : width * 0.18,
                   }}
           
-                  className =" flex-col bg- [#092b43] justify-center items-center">
+                  className =" flex-col  bg-[#454646] justify-center rounded-md items-center">
                               <View
                                   style={{
-                                    height :f ?  f : width  * 0.18 ,
-                                    width : f ?  f : width * 0.18,
+                                    // height :f ?  f : width  * 0.18 ,
+                                    // width : f ?  f : width * 0.18,
                                     // backgroundColor:  bgColor,
                                   }}
-                                  className="flex-col justify-center items-center bg-[#4b5155] rounded-md ">
+                                  className="flex-col justify-center items-center bg-[#202122] rounded-full">
               
                                         <Image
                                         source={icons.avatar}
@@ -48,9 +48,9 @@ export default function VacntSpotContestant({ index ,f}) {
                                   
                                             <Text 
                                                 style ={{fontSize:f?8:7,
-                                                  color:textColor
+                                                  // color:textColor
                                                 }}
-                                                className="  font-black text-white"> 
+                                                className="  font-black text-gray-100"> 
                                                  ?
                                             </Text>
                               </View>
@@ -62,9 +62,9 @@ export default function VacntSpotContestant({ index ,f}) {
                                 
                                         <Text   
                                           style ={{fontSize:f?6 :7,
-                                            color:textColor
+                                            // color:textColor
                                           }}
-                                          className="font-black mb- text-white ">
+                                          className="font-black mb- text-gray-100 ">
                     
                                             Vacant
                                         

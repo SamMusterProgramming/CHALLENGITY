@@ -16,16 +16,17 @@ const RenderHeader =  memo(({description,setDescription,user}) => {
             <View className="mb- 2 px- 1 flex-row gap-2 justify-start items-end ">
               <Text 
               style={{fontSize:18}}
-              className="tex t-2xl font-black text-[#3B82F6]">Home</Text>
-              <MaterialCommunityIcons name="home" size={27} color = "#3B82F6"  />
+              className="tex t-2xl font-black text-[#f5f9ff]">Home</Text>
+              <MaterialCommunityIcons name="home" size={27} color = "white"  />
             </View>
             <Text 
                style={{fontSize:9}}
-               className="text -sm font-bold text-gray-200">Talent & Challenge Contests</Text>
+               className="text -sm font-bold text-gray-200">Talent & Challenge Contests
+            </Text>
            
           </View>
 
-          <View className="bg- white w-[100%] flex-row justify-center items-center py-1 gap-2 ">
+          {/* <View className="bg- white w-[100%] flex-row justify-center items-center py-1 gap-2 ">
                      <Image
                               style={{ width:60 , height:60}}
                               className="w-8 h-8 rounded-full"
@@ -35,7 +36,6 @@ const RenderHeader =  memo(({description,setDescription,user}) => {
                         className=" ml-2 shadow-sm px-2 fle x-1 h-[60px] w-[60%] text-black text-start  bg-[#f5eeee] rounded-lg  "
           
                         style={{fontSize:13,color:"black"}}
-                        // onFocus={() => setIsFocused(true)}
                         multiline={true} 
                         numberOfLines={2} 
                         value={ description}
@@ -60,7 +60,7 @@ const RenderHeader =  memo(({description,setDescription,user}) => {
                                                           New Challenge
                                                   </Text>  
                       </TouchableOpacity>
-          </View>
+          </View> */}
     </View>
   )
 })

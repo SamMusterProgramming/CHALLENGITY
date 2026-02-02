@@ -1,9 +1,10 @@
-import { View, Text, useWindowDimensions, TouchableOpacity, Vibration } from 'react-native'
+import { View, Text, useWindowDimensions, TouchableOpacity, Vibration, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import FormField from '../custom/FormField'
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { ActivityIndicator } from 'react-native-web';
 import { authRegister } from '../../apiCalls';
+import { icons } from '../../constants';
 
 export default function Register({setAuthType}) {
     const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge
@@ -156,102 +157,50 @@ function validateFirstname(firstname) {
   return (
     <View className="bg-black white w-[100%] min-h-[100px] flex-col flex-1 justify-start items-center round ed-xl">
        
-        <View
-            className ="g-[#f29756] w-full text-center px-4 py-4 m -[40px] gap-2 items-center px- flex-col">
-                <Text
+       <View
+              className ="g-[#f29756] w-full te xt-center px-2 py-4 m -[40px] gap-2 items-center px- flex-col">
+                   
+                   
+                    <Text
+                     className ="font-bold text-blue-300"
+                     style={ {fontSize: 11,fontStyle: 'italic', marginTop : 0 ,marginBottom: 0,textAlign:"start"}}>
+                        Unleash Talent. Share Challenges
+                    </Text>
+                    <Text
+                     className ="font-bold text-blue-300"
+                     style={ {fontSize: 11,fontStyle: 'italic', marginTop : 0 ,marginBottom: 10,textAlign:"start"}}>
+                         Break Records.
+                    </Text>
+                    <Text 
                     className ="font-black"
-                    style={ {fontSize: 16,fontStyle: 'italic',color: '#5ca9f0', marginTop : 10 ,marginBottom: 0,textAlign:"center"}}>
-                    Unleash Talent. Share Challenges
-                </Text>
-                <Text
-                    className ="font-black"
-                    style={ {fontSize: 16,fontStyle: 'italic',color: '#5ca9f0', marginTop : 0 ,marginBottom: 20,textAlign:"center"}}>
-                        Break Records.
-                </Text>
-                <Text 
-                className ="font-bl ack"
-                style={{fontSize: 14,color: '#fff',lineHeight: 18,textAlign:"center"}}>
-                    Step into the spotlight with <Text >Challengify</Text> — the ultimate stage where everyday legends rise!
-                </Text>
-        </View>
+                    style={{fontSize: 13,color: '#fff',lineHeight: 22,textAlign:"center"}}>
+                        Step into the spotlight with <Text >Challengify</Text> — the ultimate stage where everyday legends rise!
+                    </Text>
+
+         </View>
+         <Image                                                                  
+            className="w-[98%] h-[20%] rounded-3xl"
+            source={icons.challengify_logo}
+            resizeMode='cover'
+           />      
+
+        
         <View
-                  className="flex- 1  bg-[#000000] flex-col p-1 mt-[80] justify-center item-center">
+                  className="flex- 1  bg-[#000000] flex-col p-1 mt-[20] justify-center item-center">
                                     <Text 
-                                        style={{fontSize:18,
+                                        style={{fontSize:16,
                                                  color:'white'}}
-                                        className="  font-black text-sm text-white">
+                                        className="  font-bold text-sm text-white">
                                                 REGISTER               
                                     </Text>  
          </View>
 
          <View className="w-[100%]  justify-start mt-auto py-2  gap-3 flex-col items-center">  
-               
-                <View
-                 className="w-[90%] flex-row justify-between   items-center">
-                        <FormField 
-                        width="48%"
-                        height= {height * 0.05}
-                        invalid = {isFirstnameInvalid }
-                        title="firstname" 
-                        value={form.firstname}
-                        placeholder="Firstname"
-                        handleChangeText={(e)=> setForm({...form,firstname:e})}
-                        keyboardType="email-address"
-                        />
-                         <FormField 
-                        width="48%"
-                        height= {height * 0.05}
-                        invalid = {isLastnameInvalid}
-                        title="lastname" 
-                        value={form.lastname}
-                        placeholder="Lastname"
-                        handleChangeText={(e)=> setForm({...form,lastname:e})}
-                        keyboardType="email-address"
-                        />
+                <View className="  w-[90%] h-[5vh] flex-col -auto justify-center items-centert ">
+                          {(isEmailWrong || isEmailInvalid || isPasswordInvalid 
+                            || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 text-sm text-center ">{message}</Text>}
                 </View>
-                 <FormField 
-                 width="90%"
-                 height= {height * 0.05}
-                 invalid = {isEmailInvalid || isEmailWrong}
-                 title="Email" 
-                 value={form.email}
-                 placeholder="email"
-                 handleChangeText={(e)=> setForm({...form,email:e.toLowerCase(),username:e.toLowerCase()})}
-                 keyboardType="email-address"
-                 />
-                 <FormField 
-                 width="90%"
-                 height= {height * 0.05}
-                 invalid = {isPasswordInvalid || isPasswordWrong}
-                 title="Password" 
-                 value={form.password}
-                 placeholder="Password"
-                 handleChangeText={(e)=> setForm({...form,password:e})}
-                 />
-                  <FormField 
-                 width="90%"
-                 height= {height * 0.05}
-                 invalid = {isPasswordWrong}
-                 title="Confirm" 
-                 value={form.confirm}
-                 placeholder="Confirm"
-                 handleChangeText={(e)=> setForm({...form,confirm:e})}
-               />
-                <TouchableOpacity onPress={handleRegistration}
-                   style={{height : height * 0.05}}
-                   className="bg-blue-800 mt-0 rounded-xl w-[90%] h-[47px] justify-center items-center">
-
-                        {isFetching ? (
-                               <View >
-                                 <ActivityIndicator size="large" color="#030202" />
-                               </View>
-                        ):(
-                               <Text className="text-white font-semibold text-lg">Register</Text>
-                        )}
-                 </TouchableOpacity>
-
-
-                 <View className="justify-center items-center w-[90%] mt-4 flex-row gap- 4">
+                  <View className="justify-center items-center w-[90%] m t-4 flex-row gap- 4">
                      <Text className="text-sm text-gray-100 font-semibold">
                        Already have an account ? {' '}
                      </Text>
@@ -266,11 +215,74 @@ function validateFirstname(firstname) {
                           </Text>
                         </TouchableOpacity>
                  </View>
-
-                 <View className="  w-[90%] h-[5vh] flex-col -auto justify-center items-centert ">
-                          {(isEmailWrong || isEmailInvalid || isPasswordInvalid 
-                            || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 text-sm text-center ">{message}</Text>}
+                <View
+                 className="w-[98%] flex-row justify-between   items-center">
+                        <FormField 
+                        width="49%"
+                        height= {height * 0.045}
+                        invalid = {isFirstnameInvalid }
+                        title="firstname" 
+                        value={form.firstname}
+                        placeholder="Firstname"
+                        handleChangeText={(e)=> setForm({...form,firstname:e})}
+                        keyboardType="email-address"
+                        />
+                         <FormField 
+                        width="49%"
+                        height= {height * 0.045}
+                        invalid = {isLastnameInvalid}
+                        title="lastname" 
+                        value={form.lastname}
+                        placeholder="Lastname"
+                        handleChangeText={(e)=> setForm({...form,lastname:e})}
+                        keyboardType="email-address"
+                        />
                 </View>
+                 <FormField 
+                 width="98%"
+                 height= {height * 0.045}
+                 invalid = {isEmailInvalid || isEmailWrong}
+                 title="Email" 
+                 value={form.email}
+                 placeholder="email"
+                 handleChangeText={(e)=> setForm({...form,email:e.toLowerCase(),username:e.toLowerCase()})}
+                 keyboardType="email-address"
+                 />
+                 <FormField 
+                 width="98%"
+                 height= {height * 0.045}
+                 invalid = {isPasswordInvalid || isPasswordWrong}
+                 title="Password" 
+                 value={form.password}
+                 placeholder="Password"
+                 handleChangeText={(e)=> setForm({...form,password:e})}
+                 />
+                  <FormField 
+                 width="98%"
+                 height= {height * 0.045}
+                 invalid = {isPasswordWrong}
+                 title="Confirm" 
+                 value={form.confirm}
+                 placeholder="Confirm"
+                 handleChangeText={(e)=> setForm({...form,confirm:e})}
+               />
+                <TouchableOpacity onPress={handleRegistration}
+                   style={{height : height * 0.045}}
+                   className="bg-yellow-800 mt-0 rounded-xl w-[98%] h-[47px] mb-2 justify-center items-center">
+
+                        {isFetching ? (
+                               <View >
+                                 <ActivityIndicator size="large" color="#030202" />
+                               </View>
+                        ):(
+                               <Text className="text-white font-semibold text-lg">Register</Text>
+                        )}
+                 </TouchableOpacity>
+
+
+                
+
+                
 
                  {/* <View className="justify-start items-center w-[90%] -5 flex-row gap-4">
                      <Text className="text-sm text-gray-100 font-semibold">

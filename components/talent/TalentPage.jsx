@@ -25,7 +25,7 @@ export default function TalentPage() {
   const [isLoading ,setIsLoading] = useState(true)
 
 
-  const h = height * 0.68 
+  const h = height * 0.50
   const w = width 
 
   const talentRooms = [
@@ -34,12 +34,12 @@ export default function TalentPage() {
     { id: '3', name: 'Fitness', icon: icons.fitness, iconPack: 'MaterialIcons',color:"#eb34cc" },
     { id: '4', name: 'Magic', icon: icons.magic, iconPack: 'FontAwesome5', color:"#6709e3"},
     { id: '5', name: 'Food', icon: icons.eating, iconPack: 'FontAwesome5' , color:"#c26e08" },
-    { id: '6', name: 'Adventure', icon: icons.adventure, iconPack: 'MaterialIcons', color:"#08c227" },
+    // { id: '6', name: 'Adventure', icon: icons.adventure, iconPack: 'MaterialIcons', color:"#08c227" },
     { id: '7', name: 'Sport', icon: icons.sport, iconPack: 'FontAwesome5' , color:"#babfba"},
     { id: '8', name: 'Instrument', icon: icons.instrument, iconPack: 'FontAwesome5', color:"#a83707" },
     { id: '9', name: 'Gaming', icon: icons.game, iconPack: 'FontAwesome5', color:"#0774ab" },
     { id: '10', name: 'Art', icon: icons.art, iconPack: 'FontAwesome5' , color:"#ab3807"},
-    { id: '11', name: 'Tech', icon: icons.tech, iconPack: 'FontAwesome5' , color:"#99970c"},
+    // { id: '11', name: 'Tech', icon: icons.tech, iconPack: 'FontAwesome5' , color:"#99970c"},
     { id: '12', name: 'Comedy', icon: icons.comedy, iconPack: 'MaterialIcons', color:"#8a0303" },
   ];
 
@@ -86,25 +86,19 @@ export default function TalentPage() {
       
         <LeftSidePanel show = { !selectedRegion || true } width ={width * 0.19} height = {h} top= {40 }
              left ={0} right ={null}  
-             data ={talentRooms.slice(0,6)}
+             data ={talentRooms.slice(0,5)}
              selectedTalent ={selectedTalent}
              setSelectedTalent ={setSelectedTalent}
              />
 
         <RightSidePanel show = { !selectedRegion  || true } width ={width * 0.19} height = {h} top= {40 }
              right ={0} left ={null}  
-             data ={talentRooms.slice(6,12)}
+             data ={talentRooms.slice(5,10)}
              selectedTalent ={selectedTalent}
              setSelectedTalent ={setSelectedTalent}
              />
     
-        {/* <TopPanel show = {selectedTalent && !selectedRegion || true } width ={width * 0.19} height = {h} top= {40 }
-             right ={0} left ={null}  
-             data ={talentRooms.slice(0,4)}
-             selectedTalent ={selectedTalent}
-             setSelectedTalent ={setSelectedTalent}
-
-             /> */}
+       
         
         <BottomPanel show = {selectedTalent && !selectedRegion || true } width ={width * 0.19} height = {h} top= {40 }
              right ={0} left ={null}  

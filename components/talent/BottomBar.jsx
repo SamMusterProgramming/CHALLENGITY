@@ -97,7 +97,7 @@ export default function BottomBar  ({ show,  height, width ,top ,bottom,left ,ri
                                    <TouchableOpacity
                                         onPress={() => router.back()}
                                         className="w-[ 100%] h-[60%] p- 8 flex-row g-green-600 rot ate-45   justify-center items-center">
-                                                   <AntDesign name="closecircle" size={35} color="white" /> 
+                                                   <AntDesign name="close" size={30} color="white" /> 
                                    </TouchableOpacity>
                              </View>
               </View>

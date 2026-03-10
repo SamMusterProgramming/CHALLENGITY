@@ -1,7 +1,7 @@
 import { View, Text, useWindowDimensions, Image, TextInput } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { getIcon } from '../../helper';
+import { getIcon, getInition, getStageLogo } from '../../helper';
 
 export default function PostTalentHeader({data}) {
   const {userFriendData, user , boxBgColor} = useGlobalContext()
@@ -43,22 +43,23 @@ export default function PostTalentHeader({data}) {
     // <>
     // {contestantFriends && (
     <View
-     style={{ backgroundColor:boxBgColor }}
-     className ="w-[100%] b g-[#fefeff] mt-2  px-1 flex-col justify-start items-center border-t-2 border-[#2e2a2a]">
+    // style={{height: width * 0.10   }}
+     className ="w-[95%]  rounded-md b g-[#fffbfb] py- 1 mb-2 mt- 4 px-1 gap-2 flex-row justify-center items-end ">
           <View
-                className ="w-[100%] pt-2 h- [100%] px-1 py- 1 rounde d-xl flex-row justify-center items-center gap-2  b g-[#292940]">
+                className ="w- [40%]  h- [100%] px- 1  rounde d-xl flex-row justify-start items-center gap-2  b g-[#ffffff]">
                         
                         { (hasJoined || !contestantFriends) &&  (
                            <View 
-                           className ="w-[10%] flex-col-reverse justify-start h- [100%]  items-center gap-1">
+                           style={{height: width * 0.09 ,width: width * 0.09 }}
+                           className =" flex-col justify-center h- [100%]  items-center gap-1">
                                   <Image 
-                                    style={{width: width * 0.06  ,height: width * 0.06 }}
+                                    style={{width: width * 0.07  ,height: width * 0.07 }}
                                     className=" rounded-full "
-                                    source={{uri : user.profile_img}}
-                                  />
+                                    source={{uri : user.profileImage?.publicUrl}}
+                                    />
                                   <Text 
-                                    style={{fontSize:8}}
-                                    className="font-black  text-gray-100">
+                                    style={{fontSize:7}}
+                                    className="font-bold absolute rounded-full bottom-0 left-0 p-1 bg-[#000000] text-gray-100">
                                             You 
                                     </Text> 
                            </View>  
@@ -66,72 +67,50 @@ export default function PostTalentHeader({data}) {
 
                         {contestantFriends &&  (
                            <View 
-                           className ="w-[10%] flex-col-reverse justify-start h- [100%]  items-center gap-1">
+                           style={{height: width * 0.09 ,width: width * 0.09 }}
+                           className ="w- [15%] flex-col justify-center  h- [100%]  items-center gap-1">
                                   <Image 
-                                    style={{width: width * 0.06  ,height: width * 0.06 }}
+                                    style={{width: width * 0.07  ,height: width * 0.07 }}
                                     className=" rounded-full "
                                     source={{uri : contestantFriends[0].profile_img}}
                                   />
                                   <Text 
-                                    style={{fontSize:8}}
-                                    className="font-black  text-gray-100">
-                                            { contestantFriends[0].name.split(' ')[0].slice(0,6)} 
-                                  </Text> 
+                                    style={{fontSize:7}}
+                                    className="font-bold absolute rounded-full bottom-0 left-0 p-1 bg-[#000000] text-gray-100">
+                                             { getInition(contestantFriends[0].name) }
+                                             </Text> 
                            </View>  
                         )}
                         {contestantFriends && contestantFriends.length >= 2 &&  (
                            <View 
-                           className ="w-[10%] flex-col-reverse flex- 1 justify-start h- [100%]  items-center gap-1">
+                           style={{height: width * 0.09 ,width: width * 0.09 }}
+                           className ="w- [15%] flex-col flex- 1 justify-center h- [100%]  items-center gap-1">
                                   <Image 
-                                    style={{width: width * 0.06  ,height: width * 0.06 }}
+                                    style={{width: width * 0.07  ,height: width * 0.07 }}
                                     className=" rounded-full "
                                     source={{uri : contestantFriends[1].profile_img}}
                                    />
                                   <Text 
-                                    style={{fontSize:9}}
-                                    className="font-black  text-gray-100"> 
-                                            { contestantFriends[1].name.split(' ')[0]}
+                                    style={{fontSize:7}}
+                                    className="font-bold absolute rounded-full  bottom-0 p-1 left-0 bg-[#000000] text-gray-100"> 
+                                             { getInition(contestantFriends[1].name) }
                                   </Text> 
                            </View>  
                           
                         )}
-                        <View
-                                              //  style = {{minWidth:h * 0.10}}
-                                                className="w- [100%] absolute top-2 left-0  rounded-md p- 1 px- 2 gap-1 flex-col justify-center items-center">
-                                                     <Image
-                                                        className="w-7 h-7 "
-                                                        source={getIcon(data.name)}
-                                                        resizeMode='cover'/>
-                                                    <Text
-                                                        style={{fontSize:10}}
-                                                        className="text-center   font-black text-gray-100">
-                                                            {data.name.toUpperCase()}
-                                                    </Text>
-                        </View>       
-                        <View
-                                              
-                                                className="w- [100%] absolute top-2 right-0  rounded-md p- 1 px- 2 gap-1 flex-col justify-center items-center">
-                                                     <Image
-                                                        className="w-7 h-7 "
-                                                        source={getIcon(data.region)}
-                                                        resizeMode='cover'/>
-                                                    <Text
-                                                        style={{fontSize:10}}
-                                                        className="text-center   font-black text-gray-100">
-                                                            {data.region.toUpperCase()}
-                                                    </Text>
-                        </View>       
+                    
     
                   
           </View>
           <View
-                className ="w- [100%]  flex- 1 pt-2  flex-row justify-center items-end  ">
+                style={{height: width * 0.10  }}
+                className ="  flex-1   rounded-full text-center items-start ">
                    
-                    <Text 
-                                    style={{fontSize:9}}
-                                    className="font-semibold  text-white"> 
+                     <Text 
+                                    style={{fontSize:width/45}}
+                                    className="font-bold mt-7 text-gray-100 line-clamp-3 tracking-wide"> 
                                             {text && text}
-                    </Text> 
+                     </Text> 
           </View>
     </View>
   //     )}

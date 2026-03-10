@@ -1,4 +1,4 @@
-import { View, Text, useWindowDimensions, TouchableOpacity, Vibration, Image } from 'react-native'
+import { View, Text, useWindowDimensions, TouchableOpacity, Vibration, Image, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import FormField from '../custom/FormField'
 import { useGlobalContext } from '../../context/GlobalProvider';
@@ -155,52 +155,33 @@ function validateFirstname(firstname) {
   
 
   return (
-    <View className="bg-black white w-[100%] min-h-[100px] flex-col flex-1 justify-start items-center round ed-xl">
+    <ImageBackground
+    source={icons.stage_bg}
+    resizeMode="cover"
+    className="flex-1 w-[100%] h-[100%] justify-center items-center"
+    >
        
-       <View
-              className ="g-[#f29756] w-full te xt-center px-2 py-4 m -[40px] gap-2 items-center px- flex-col">
-                   
-                   
-                    <Text
-                     className ="font-bold text-blue-300"
-                     style={ {fontSize: 11,fontStyle: 'italic', marginTop : 0 ,marginBottom: 0,textAlign:"start"}}>
-                        Unleash Talent. Share Challenges
-                    </Text>
-                    <Text
-                     className ="font-bold text-blue-300"
-                     style={ {fontSize: 11,fontStyle: 'italic', marginTop : 0 ,marginBottom: 10,textAlign:"start"}}>
-                         Break Records.
-                    </Text>
-                    <Text 
-                    className ="font-black"
-                    style={{fontSize: 13,color: '#fff',lineHeight: 22,textAlign:"center"}}>
-                        Step into the spotlight with <Text >Challengify</Text> — the ultimate stage where everyday legends rise!
-                    </Text>
+      
+       <Image
+              className ="absolute top-[-20] w-[100%]  "
+              source={icons.challengify_logo}
+              style={{ width: '90%', height: "35%" }} // adjust ratio
+              resizeMode="contain"
+            />
 
-         </View>
-         <Image                                                                  
-            className="w-[98%] h-[20%] rounded-3xl"
-            source={icons.challengify_logo}
-            resizeMode='cover'
-           />      
+       <View className=" absolute top-0 w-[90%] h- [5vh] flex-col  justify-center items-centert ">
+                          {(isEmailWrong || isEmailInvalid || isPasswordInvalid 
+                            || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 text-sm text-center ">{message}</Text>}
+       </View>
 
         
-        <View
-                  className="flex- 1  bg-[#000000] flex-col p-1 mt-[20] justify-center item-center">
-                                    <Text 
-                                        style={{fontSize:16,
-                                                 color:'white'}}
-                                        className="  font-bold text-sm text-white">
-                                                REGISTER               
-                                    </Text>  
-         </View>
-
-         <View className="w-[100%]  justify-start mt-auto py-2  gap-3 flex-col items-center">  
-                <View className="  w-[90%] h-[5vh] flex-col -auto justify-center items-centert ">
+{/* 
+         <View className="w-[100%] mt-auto justify-start  py- 2  gap-3 flex-col items-center">  
+                <View className="  w-[90%] h-[5vh] flex-col  justify-center items-centert ">
                           {(isEmailWrong || isEmailInvalid || isPasswordInvalid 
                             || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 text-sm text-center ">{message}</Text>}
                 </View>
-                  <View className="justify-center items-center w-[90%] m t-4 flex-row gap- 4">
+                  <View className="justify-center items-center w-[98%] mt-auto flex-row gap- 4">
                      <Text className="text-sm text-gray-100 font-semibold">
                        Already have an account ? {' '}
                      </Text>
@@ -245,7 +226,7 @@ function validateFirstname(firstname) {
                  title="Email" 
                  value={form.email}
                  placeholder="email"
-                 handleChangeText={(e)=> setForm({...form,email:e.toLowerCase(),username:e.toLowerCase()})}
+                 handleChangeText={(e)=> setForm({...form,email:e,username:e.toLowerCase()})}
                  keyboardType="email-address"
                  />
                  <FormField 
@@ -268,7 +249,7 @@ function validateFirstname(firstname) {
                />
                 <TouchableOpacity onPress={handleRegistration}
                    style={{height : height * 0.045}}
-                   className="bg-yellow-800 mt-0 rounded-xl w-[98%] h-[47px] mb-2 justify-center items-center">
+                   className="bg-blue-800 mt-0 rounded-xl w-[98%] h-[47px] mb-4 justify-center items-center">
 
                         {isFetching ? (
                                <View >
@@ -284,17 +265,110 @@ function validateFirstname(firstname) {
 
                 
 
-                 {/* <View className="justify-start items-center w-[90%] -5 flex-row gap-4">
-                     <Text className="text-sm text-gray-100 font-semibold">
-                       Already have an account ?
-                     </Text>
-                     <Link className=" text-lg text-blue-400 font-semibold"
-                     href="/login">
-                       Login
-                     </Link>
-                 </View> */}
-           </View>
+           
+           </View> */}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                className="flex- 1 w-[100%] mt-auto mb-20 flex-col items-center justify-center px-2"
+                >
+
+                  <View
+                            className="mb-12 w-[100%] flex-row  justify-center item-center">
+                                              <Text 
+                                                  style={{fontSize:width/20,
+                                                          //  color:'white'
+                                                          }}
+                                                  className="  font-bold text-sm  text-[#dcdeed]">
+                                                        Register             
+                                              </Text>  
+                  </View>
+                 <View
+                 className="w-[80%] flex-row justify-between   items-center">
+                        <FormField 
+                        width="49%"
+                        height= {height * 0.045}
+                        invalid = {isFirstnameInvalid }
+                        title="firstname" 
+                        value={form.firstname}
+                        placeholder="Firstname"
+                        handleChangeText={(e)=> setForm({...form,firstname:e})}
+                        keyboardType="email-address"
+                        />
+                         <FormField 
+                        width="49%"
+                        height= {height * 0.045}
+                        invalid = {isLastnameInvalid}
+                        title="lastname" 
+                        value={form.lastname}
+                        placeholder="Lastname"
+                        handleChangeText={(e)=> setForm({...form,lastname:e})}
+                        keyboardType="email-address"
+                        />
+                </View>
+             
+                 <FormField 
+                 width="80%"
+                 height= {height * 0.045}
+                 invalid = {isEmailInvalid || isEmailWrong}
+                 title="Email" 
+                 value={form.email}
+                 placeholder="email"
+                 handleChangeText={(e)=> setForm({...form,email:e,username:e.toLowerCase()})}
+                 keyboardType="email-address"
+                 />
+                 <FormField 
+                 width="80%"
+                 height= {height * 0.045}
+                 invalid = {isPasswordInvalid || isPasswordWrong}
+                 title="Password" 
+                 value={form.password}
+                 placeholder="Password"
+                 handleChangeText={(e)=> setForm({...form,password:e})}
+                 />
+                  <FormField 
+                 width="80%"
+                 height= {height * 0.045}
+                 invalid = {isPasswordWrong}
+                 title="Confirm" 
+                 value={form.confirm}
+                 placeholder="Confirm"
+                 handleChangeText={(e)=> setForm({...form,confirm:e})}
+               />
+                <TouchableOpacity onPress={handleRegistration}
+                  //  style={{height : height * 0.045}}
+                   className="bg-[#0e1c2d] p-4 w-[80%] items-center rounded-xl mt-3">
+
+                        {isFetching ? (
+                               <View >
+                                 <ActivityIndicator size="large" color="#030202" />
+                               </View>
+                        ):(
+                               <Text 
+                                style={{ fontSize :width/30}}
+                                className="text-[#c9b37a] text-center font-bold text -md">
+                                       Register
+                               </Text>
+                        )}
+                 </TouchableOpacity>
+                 <View className="flex-row justify-center mt-8">
+                      <Text className="text-gray-100">
+                          New to Challengify ? {' '}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={()=>{
+                          setAuthType("login")
+                      }}  >
+                        <Text className="text-indigo-400 ml-2 font-semibold">
+                            Create Account
+                        </Text>
+                      </TouchableOpacity>
+                 </View>
+              
+
+
+
+            </KeyboardAvoidingView>
  
-    </View>
+    </ImageBackground>
   )
 }

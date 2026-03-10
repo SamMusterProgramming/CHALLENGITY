@@ -1,14 +1,16 @@
-import { View, Text, Platform, FlatList, TouchableOpacity, Image } from 'react-native'
+import { View, Text, Platform, FlatList, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { icons } from '../../constants';
-import { getIcon } from '../../helper';
+import { getIcon, getStageLogo } from '../../helper';
 import { router } from 'expo-router';
 
 export default function CentralContestantPlayer({selectedContestant ,data, w,h , top ,user,  setSelectedContestant , selectedPostIndex,isScrolling,
-    setIsScrolling , setParticipantTrackerId ,talentRoom, participantTrackerId}) {
+    setIsScrolling , setParticipantTrackerId ,talentRoom, participantTrackerId , setIsPlaying , isPlaying ,player}) {
        
         const flatList = useRef()
         const [viewableItems, setViewableItems] = useState([]);
+        const {width ,height} = useWindowDimensions()
+
         
         const onViewableItemsChanged = ({ viewableItems }) => {
             setViewableItems(viewableItems);
@@ -52,7 +54,10 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
                 <TouchableOpacity
                      onPress={
                       () =>  {
-                        setSelectedContestant(item)
+                        // setSelectedContestant(item)
+                        // setIsPlaying(true)
+                         (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
+
                      }}
                       style ={{ 
           
@@ -81,11 +86,11 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
                                    <Image
                                    style={{width:w - w * 0.1 , height:w - w * 0.1}}
                                     className="w-[100%] h-[100%]  shadow-lg elevation-2xl rounded-full"
-                                    source={{uri:item.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                    source={{uri:item.thumbnail?.publicUrl ||  "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
                                     resizeMethod='contain' /> 
                                     <Image
                                     className="absolute w-10 h-10 rounded-xl"
-                                    source={icons.play}
+                                    source={icons.play} 
                                     resizeMethod='cover' /> 
                                     <View
                                     className="absolute top-4 left-0 flex-row justify-start items-center gap-2 ">
@@ -145,23 +150,38 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
         style={{
           height:h ,
           width:  w,
-          top : Platform.OS == "ios" ?  w * 0.18 + top + 1 : w * 0.18 + 50 + 1 
+          // top : Platform.OS == "ios" ?  w * 0.18 + top + 1 : w * 0.18 + 50 + 1 
           }}
         className="absolute  b g-[#162142]  flex- row justify-center items-center  rounded-xl "
         > 
-                         <View
-                              className="w- [100%] h- [15%] p-2 4 flex-col  justify-center b g-[#0f0830] items-center ">
-                                    <Text 
-                                        style ={{fontSize:10 }}
-                                        className="text-xl font-black -auto text-white"> 
-                                       STAGE {' '} 
-                                    </Text>
+                         {/* <View
+                              className="w-[100%] h- [15%] p-2 mb- 8 flex-col  justify-center  items-center ">
+                                    <View
+                                    className = "w-[100%] gap-2 flex-row justify-center items-center">
+                                        <Text 
+                                            style ={{fontSize:10 }}
+                                            className=" font-black  text-white"> 
+                                          {talentRoom.name}
+                                        </Text>
+                                        <Image
+                                                source={getStageLogo(talentRoom.name)}
+                                                style ={{ width:width/5 , height:width/5}}
+                
+                                                resizeMethod='cover'
+                                                />  
+                                        <Text 
+                                            style ={{fontSize:10 }}
+                                            className=" font-black  text-white"> 
+                                          STAGE 
+                                        </Text>
+                                    </View>
+                                   
                                     <Text 
                                         style ={{fontSize:9 ,fontStyle:"italic"}}
                                         className="text-xl font-black -auto text-yellow-500"> 
                                           {talentRoom.contestants.length}  CONTESTANTS
                                     </Text>
-                        </View>
+                        </View> */}
                         <FlatList
                                 // style={{width:"100%" ,height:"100%"}}
                                 data={data}
@@ -184,7 +204,7 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
                                   )}
                                 
                               /> 
-                               <View
+                               {/* <View
                                 className = "flex-col absolute h -7 left-2  top-1 justify-start items-center">
                                     <Image
                                         source={getIcon(talentRoom.name)}
@@ -195,9 +215,9 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
                                         className="text-xl font-black  text-white"> 
                                             {talentRoom.name} 
                                     </Text>
-                                </View>
+                                </View> */}
 
-                                <View
+                                {/* <View
                                 className = "flex-col absolute h -7 right-2  top-1 justify-start items-center">
                                   
                                     <Image
@@ -209,7 +229,7 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
                                         className="text-xl font-black  text-white"> 
                                             {talentRoom.region} 
                                     </Text>
-                                </View>
+                                </View> */}
         </View>
       )
     }

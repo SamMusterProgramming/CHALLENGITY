@@ -6,9 +6,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { icons } from '../constants';
 import { router } from 'expo-router';
 import { uploadThumbnail } from '../firebase';
-import { updateUser } from '../apiCalls';
+import { BASE_URL, updateUser } from '../apiCalls';
 import CountryFlag from 'react-native-country-flag';
-// import CountryPicker from 'react-native-country-picker-modal';
+import CountryPicker from '../components/custom/CountryPicker';
+import axios from 'axios';
+import { getUploadImageUrl, saveSignedUrlImageToDataBase,  uploadImageToBlackBlaze } from '../uploadFileToBlackBlaze';
+
 
 
 export default function SetUpProfile() {
@@ -16,6 +19,8 @@ export default function SetUpProfile() {
   const {user,setUser} = useGlobalContext();
   const { width, height } = Dimensions.get('window');
   const [profile_img, setProfile_img] = useState(user.profile_img);
+  const [filename, setFilename] = useState("");
+
   const [cover_img, setCover_img] = useState(user.cover_img);
   const [isFetching , setIsFetching] = useState(false)
   
@@ -40,8 +45,37 @@ export default function SetUpProfile() {
         aspect: [4, 3],
         quality: 1,
     });
+
     if (!result.canceled) {
         setProfile_img(result.assets[0].uri);
+        const fileName = `profile_${Date.now()}.jpg`;
+        setFilename(fileName)
+
+        const imageUri = result.assets[0].uri;
+
+         // get uploadUrl from backend
+        const data  = await getUploadImageUrl(user._id ,user.name , "profile")
+  
+
+        // upload file to blackBlaze
+        const uploadResult = await uploadImageToBlackBlaze(data,imageUri)
+        console.log(uploadResult.fileName)
+        await saveSignedUrlImageToDataBase(
+                                           {
+                                            userId: user._id,
+                                            fileId:uploadResult.fileId , 
+                                            fileName: uploadResult.fileName ,
+                                            deleteFileId: user.profileImage.fileId,
+                                            deleteFileName : user.profileImage.fileName
+                                           }
+                                          )
+
+        // await axios.post(`${BASE_URL}/users/saveProfileImage`, {
+        //   userId: user._id,
+        //   fileId: uploadResult.fileId,
+        //   fileName: data.fileName,
+        // });
+
     }
 };
 
@@ -63,9 +97,7 @@ const handleUpdate = ()=> {
           setUser({...user , isNewUser:false}),
           setIsFetching(false),
           router.replace('/Home'),
-          // setTimeout(() => {
-          //   router.push('/ProfilePage')
-          // }, 200)
+
         )
       })
    if(cover_img !== user.cover_img ) 
@@ -83,9 +115,7 @@ const handleUpdate = ()=> {
             setUser({...user , isNewUser:false}),
             setIsFetching(false),
             router.replace('/Home'),
-            // setTimeout(() => {
-            //   router.navigate('/ProfilePage')
-            // }, 200)
+
           )  
    })
    if(profile_img !== user.profile_img ) 
@@ -103,9 +133,7 @@ const handleUpdate = ()=> {
         setUser({...user , isNewUser:false}),
         setIsFetching(false),
         router.replace('/Home'),
-        // setTimeout(() => {
-        //   router.navigate('/ProfilePage')
-        // }, 200)
+  
       )  
 })
 
@@ -120,24 +148,22 @@ const handleUpdate = ()=> {
     setUser({...user , isNewUser:false}),
     setIsFetching(false),
     router.replace('/Home'),
-    // setTimeout(() => {
-    //   router.navigate('/ProfilePage')
-    // }, 200)
+
     
     )  
 
 }
 
 
-const onSelectCountry = (country="US") => {
+const onSelectCountry = (country) => {
+  if (!country?.cca2) return;
   setCountryCode(country.cca2);
   setCountryVisible(false);
 };
 
 
   return (
-    // <SafeAreaView
-    // className="flex-1 bg-primary" >
+
         <View 
            style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top,
                     paddingBottom:insets.bottom,
@@ -201,7 +227,7 @@ const onSelectCountry = (country="US") => {
 
 
               <View
-                    // style={{width:"100%",height:width/6-2}}
+          
                     className="w-full h-[20%] flex-row justify-between px-2 items-center"
                     >
                       <View
@@ -238,11 +264,18 @@ const onSelectCountry = (country="US") => {
                     <View
                         className="w-[30%] h-[50%] flex-col gap-1 justify-end items-center"
                         >
-                                <CountryPicker
+                                {Platform.OS !== 'web' && countryVisible === true && typeof CountryPicker === 'function' && (
+                                  <CountryPicker
                                     visible={countryVisible}
                                     onSelect={onSelectCountry}
                                     onClose={() => setCountryVisible(false)}
                                   />
+                                )}
+                                {/* <CountryPicker
+                                   visible={countryVisible}
+                                   onSelect={onSelectCountry}
+                                   onClose={() => setCountryVisible(false)}
+                                  /> */}
                                  <TouchableOpacity onPress={() => setCountryVisible(true)} 
                                       >
                                       <Text style={ {
@@ -371,6 +404,7 @@ const onSelectCountry = (country="US") => {
              
 
         </View>
-    // </SafeAreaView>
+
   )
 }
+

@@ -21,7 +21,7 @@
         "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45"
       },
       "ios": {
-        "simulator": true
+        "simulator": false
       },
       "channel": "development"
     },

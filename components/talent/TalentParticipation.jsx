@@ -14,6 +14,7 @@ import { BASE_URL } from '../../apiCalls';
 import { generateThumbnail } from '../../videoFiles';
 import axios from 'axios';
 import { deleteObject, getStorage, ref } from 'firebase/storage'
+import {  getUploadImageUrl, getUploadVideoUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from '../../uploadFileToBlackBlaze';
 
 
 export default function TalentParticipation({talentRoom, setReplayRecording , user, setNewChallenge, setSelectedContestant 
@@ -143,16 +144,137 @@ const toggleVideoPlaying = () =>{
   }    
 
 
+  const upload = async()=>{
+    if(videoUri ){
+      
+      /// upload blaze
+
+      const [videoRes, thumbRes] = await Promise.all([
+         getUploadVideoUrl(user._id , user.name , "talent" ),
+         getUploadImageUrl(user._id , user.name , "thumbnail" )
+      ]);
+
+      setTimeout(() => {
+        // setVisible(false)
+        setNewChallenge(false)
+        setStage(true)
+      }, 500); 
+  
+      const [videoUpload, thumbnailUpload] = await Promise.all([
+        uploadVideoToBackblaze(videoRes, videoUri),
+        uploadImageToBlackBlaze(thumbRes, thumbNailURL),
+      ]);
+     
+   
+
+      let body = {
+        publicUrl : user.profileImage.publicUrl,
+        user_id : user._id,
+        name : user.name,
+        // video_url : urls[0],
+        email : user.email,
+        city: user.city,
+        country : user.country,
+        // thumbNail:urls[1],
+        room_id:talentRoom._id,  
+        type:participation,
+        videoFileName :videoRes.fileName,
+        videoFileId: videoUpload.fileId,
+        thumbnailFileName : thumbRes.fileName,
+        thumbnailFileId : thumbnailUpload.fileId,
+        // thumbnailSignedUrl : `https://f000.backblazeb2.com/file/challengify-images/${thumbRes.fileName}`,
+        videoToDelete : participation == "update" ? talentRoom.contestants.find(c => c.user_id == user._id).video :
+                        participation == "qupdate" ? talentRoom.queue.find(c => c.user_id == user._id).video :
+                        participation == "eupdate" ?  talentRoom.eliminations.find(c => c.user_id == user._id).video : null ,
+        thumbnailToDelete : participation == "update" ? talentRoom.contestants.find(c => c.user_id == user._id).thumbnail :
+                        participation == "qupdate" ? talentRoom.queue.find(c => c.user_id == user._id).thumbnail :
+                        participation == "eupdate" ?  talentRoom.eliminations.find(c => c.user_id == user._id).thumbnail: null    
+          }
+
+      if(participation == "new" || participation == "queue"){
+        try {
+          const res = await axios.post(`${BASE_URL}/talents/uploads/${talentRoom._id}`, body);
+
+          if (res.data === "challenge expired") {
+            return setIsExpired(true);
+          }
+
+          setTalentRoom(res.data);
+
+          setTimeout(() => {
+            if (participation === "new") {
+              setGlobalRefresh(true);
+              setStage(true);
+              setSelectedContestant({
+                ...res.data.contestants.find(c => c.user_id == user._id),
+                rank: res.data.contestants.length
+              });
+            }
+
+            if (participation === "queue") {
+              setGlobalRefresh(true);
+              setStage(false);
+              setSelectedContestant(null);
+            }
+          }, 500);
+        } catch (err) {
+          console.error("Failed to save video metadata:", err.response?.data || err.message);
+        }
+      
+       }
+     
+
+       if(participation == "update" || participation == "qupdate" || participation == "eupdate" ){
+       await  axios.patch(BASE_URL +`/talents/update/${talentRoom._id}`,body)
+        .then(   
+          res =>  {
+              if(res.data === "challenge expired") return setIsExpired(true)
+
+                // let videoRef = ref(storage , videolURL); 
+                // let thumbnailRef = ref(storage , thumbURL); 
+                // Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
+                // .then(() => {
+                //   console.log("both deleted successfully!");
+                // })
+                // .catch((error) => {
+                //   console.error("Error deleting file:", error);
+                // });  
+                setTalentRoom(res.data)
+                setTimeout(() => {
+                      if(participation == "update"){
+                          setGlobalRefresh(true)
+                          setStage(true)
+                          const rank = res.data.contestants.findIndex( c => c.user_id == user._id)
+                          setSelectedContestant({...res.data.contestants.find( c => c.user_id == user._id),rank:rank +1 })
+                      }
+                      if(participation == "qupdate" || participation == "eupdate"){
+                          setGlobalRefresh(true)
+                          setStage(false)
+                          setSelectedContestant(null)
+                      }
+                } , 500); 
+                
+
+            
+          }
+          
+            )
+       }
+
+      
+
+
+    }
+  }
+
+
   const handleSumitChallenge =  () => {
     if(videoUri ){
-    //   setVisible(true)  
-    //   setTimeout(() => {
-    //     router.replace('/Talent')
-    //    }, 1500); 
       
-    //   setTimeout(() => {
-    //     setVisible(false)
-    //   }, 1000); 
+      /// upload blaze
+    
+
+
       setTimeout(() => {
         // setVisible(false)
         setNewChallenge(false)
@@ -304,7 +426,9 @@ const toggleVideoPlaying = () =>{
                      <View className="flex-row w-[30%]  bg-whi  mb- justify-center  items-center   h- first-letter: [99%]">
                          <TouchableOpacity
                          className="flex-row justify-center py-2 bg-[#04198e] gap-2 items-center h- [95%] w-[95%] rounded-xl"
-                           onPress={handleSumitChallenge}
+                          //  onPress={handleSumitChallenge}
+                           onPress={upload}
+
                              >
                          <Image      
                          className="w-5 h-5 "

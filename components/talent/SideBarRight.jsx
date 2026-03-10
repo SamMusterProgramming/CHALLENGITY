@@ -33,7 +33,7 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
 
     <Animated.View 
 
-    className=" flex-col justify-evenly rounded-tl-xl rounded-bl-xl items-end py- px- borde-t-2 borde-b-2 border-white g-[#0a48d9]"
+    // className=" flex-col justify-evenly  items-center  "
     style={[
         // styles.sidebar
         {
@@ -41,10 +41,10 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
             bottom:bottom && bottom,
             right:right && right,
             position: 'absolute',
-            height: height, // Adjust the width as needed
+            // height: height, 
             // backgroundColor: '',
             // padding: 20,
-            width:width ,
+            // width:width ,
             // zIndex: 1,
             // elevation:12
         }
@@ -54,12 +54,12 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
 
        <View
       
-       className ="w-[100%] h-[100%] pr-1 px- flex-col g-[#178bea] gap-1 -2 rounded-bl-xl borde-t-4 justify-start items-center">
+       className ="w- [100%] h- [100%] bg -white flex-col  gap-[1%] pr- 1  justify-start items-center">
           {contestants.map((contestant , index) => {
                return (
                 <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} 
                 participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
-                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={(index + 1 ) * 2 + 3 } w={"93%"} h={"13.7%"}/>
+                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={(index + 1 ) * 2 + 3 } w={"100%"} h={"13.7%"}/>
                 
                 )
           })}

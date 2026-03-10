@@ -45,7 +45,7 @@ export default function CentralElimineePlayer({selectedContestant ,data, w,h , t
                                    <Image
                                    style={{width:w - w * 0.1 , height:w - w * 0.1}}
                                     className="w-[100%] h-[100%]  shadow-lg elevation-2xl rounded-full"
-                                    source={{uri:item.thumbNail_URL || "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
+                                    source={{uri:item.thumbnail?.poblicUrl}}
                                     resizeMethod='contain' /> 
                                     <Image
                                     className="absolute w-10 h-10 rounded-xl"

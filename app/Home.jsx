@@ -9,7 +9,7 @@ import NotificationsModal from '../components/talent/modal/NotificationsModal';
 // import UserProfile from '../components/profile/UserProfile';
 import HomePage from '../components/home/HomePage';
 import UserNotifications from '../components/home/UserNotifications';
-import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGlobalContext } from '../context/GlobalProvider';
 // import Talent from './Talent';
 import Login from '../components/auth/Login';
@@ -20,6 +20,10 @@ import Challenge from '../components/home/Challenge';
 import UserProfile from '../components/home/UserProfile';
 import Favourite from '../components/home/Favourite';
 import { getVideo } from '../videoFiles';
+import { Feather, HomeIcon } from 'lucide-react-native';
+import TopStageNavBar from '../components/talent/custom/TopStageNavBar';
+import NotificationSearchNav from '../components/talent/custom/NotificationSearchNav';
+import NotificationDrawer from '../components/talent/modal/NotificationDrawer';
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -38,7 +42,12 @@ export default function Home() {
   const iconColor = "#ffffff" //"#d7d8de"//"#3c9fe6" //"#373a3d" //"#4f4e4b" //"#5a9fed" //"#9badc7" //"#9e9e9e" // "#4baedc"
   const selectedIconColor = "lightblue"
   const iconSize = width/20
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
 
+
+
+  // K005hK5QWiidUsLdkk3ak8RXVksORZU
   useEffect(() => {
     if(user){
     setSelectedPage("home")
@@ -66,12 +75,14 @@ export default function Home() {
       getFavouriteList(user._id,setFavouriteList)
       getTopChallenges(user._id,setTrendingChallenges) 
       getTopTalents(user._id ,setTopTalents)
-      getVideo(user.profile_img).then(path =>{
-           setUserProfileImg(path)
-        });
-      getVideo(user.cover_img).then(path =>{
-          setUserCoverImg(path)
-        });
+      setUserProfileImg(user.profileImage?.publicUrl)
+      // getVideo(user.profileImage.
+      //   signedUrl).then(path =>{
+      //      setUserProfileImg(path)
+      //   });
+      // getVideo(user.cover_img).then(path =>{
+      //     setUserCoverImg(path)
+      //   });
       setTimeout(() => {
         setIsFetching(false)
       }, 3000);
@@ -117,61 +128,34 @@ export default function Home() {
          
           <View 
           style={{height: height * 0.16}}
-          className="  w-[100%] flex-row    [#4f555c] items-start px- 1   justify-center bg -[#000000]" >
+          className="  w-[100%] flex-row    [#4f555c] items-start    justify-center bg -[#000000]" >
                  
-
                   <View className=" w-[100%] flex- 1 h-[100%] b g-[#000000] rounded-tl-lg  flex-col items-center justify-center" >
 
-                                            <View className = "w-[100%] h-[65%] bg-[#000000] flex-row-reverse items-center justify-start  ">
-                                                 
-                                                  <View className="absolute inset-0">
-                                                    {sparkles.map(s => (
-                                                    <View key={s.key} style={s.style} />
-                                                    ))}
-                                                  </View>
-                                                  <View className = "w-[40%] h-[100%]  flex-row rounded-tl-3xl  b g-[#202428] items-center justify-start  ">
-                                                                    {/* <View
-                                                                              className="  absolute  justify-center items-center">
-                                                                                  
-                                                                                    {user ? (
-                                                                                    <Image 
-                                                                                    style={{
-                                                                                      width: width /8.5 ,
-                                                                                      height: width /8.5 ,
-                                                                                      }}
-                                                                                    className=" rounded-full mb- 6 "
-                                                                                    source={{uri : userProfileImg}}
-                                                                                    />
-                                                                                    ):(
-                                                                                    <Image 
-                                                                                    style={{width:height * 0.04 ,height: height * 0.04}}
-                                                                                    className="w-[40px] h-[40px]  rounded-full  "
-                                                                                    source={icons.avatar}
-                                                                                    />
-                                                                                    )}
-                                                                            
-                                                                                  
-                                                                      </View> */}
-                                                                      <Image 
-                                                                                      // style={{width :height * 0.18 }}
-                                                                                      className="w-[100%] h-[100%]  "
-                                                                                      source={icons.challengify_logo}
-                                                                                      resizeMode='cover'
-                                                                      />      
+                                            <View className = "w-[100%] h-[50%] bg-[#000000] flex-row-reverse items-center justify-center  ">
+                                              
+                                                   <Image 
+                                                                                    
+                                                      className="absolute  left-[0] w-[40%] h-[90%]  "
+                                                      source={icons.challengify_logo}
+                                                      resizeMode='cover'
+                                                    />       
+                                                  {/* <View className = "w- [40%] h-[100%]  flex-row rounded-tl-3xl  b g-[#202428] items-center justify-start  ">
+                                                                  
                                                                
-                                                  </View>
+                                                  </View> */}
 
-                                                  <View 
-                                                              className = " w-[40%] flex-1 h-[100%] rounded-3xl b g-[#202428] mb- 12  b g-[#303132] flex-col gap-2 justify-center items-start" >
+                                                  {/* <View 
+                                                              className = " w-[100%] flex-1 h-[100%] rounded-3xl b g-[#202428] mb- 12  b g-[#303132] flex-col gap-2 justify-center items-center" >
                                                                              
                                                                               <View
                                                                                className="flex-row mt- 12 justify-start gap-2 items-end">
                                                                                   < CountryFlag
                                                                                       isoCode={user && user.country || "US"}
-                                                                                      size={width/25}
+                                                                                      size={width/30}
                                                                                   />
                                                                                   <Text   
-                                                                                      style ={{fontSize:width/25}}
+                                                                                      style ={{fontSize:width/30}}
                                                                                       className="font-black  text-gray-300 ">
                                                                                         {user && user.country || "US" }
                                                                                   </Text>
@@ -181,17 +165,17 @@ export default function Home() {
                                                                                         className=" w-[100%] mt- auto flex-col  shadow-2xl shadow-gray-300 b g-[#e6e6e6] rounded-md  gap-1 justify-center items-start">
                                                                                               
                                                                                               <Text   
-                                                                                                  style ={{fontSize:width/45}}
+                                                                                                  style ={{fontSize:width/48}}
                                                                                                   className="font-bold mt- auto text-gray-100 ">
                                                                                                     {user && user.name || "example John"} 
                                                                                               </Text>
                                                                                               <View
                                                                                                     className=" flex-row  justify-center items-center gap-2 ">
                                                                                                               <Text   
-                                                                                                                style ={{fontSize:width/42}}
+                                                                                                                style ={{fontSize:width/45}}
                                                                                                                 className="font-black  text-gray-100 ">
                                                                                                                     <Text   
-                                                                                                                      style ={{fontSize:width/45}}
+                                                                                                                      style ={{fontSize:width/48}}
                                                                                                                       className="font-bold  text-gray-100 ">
                                                                                                                       {user && user.city || "somewhere"} {' , '}
                                                                                                                     </Text>
@@ -202,19 +186,20 @@ export default function Home() {
                                                                                             
                                                                               </View>
 
-                                                  </View>
-                                                  <View className = "w- [30%] h-[100%]  flex-col p-2 pr-4 items-start justify-center  px- 1 ">
+                                                  </View> */}
+
+                                                  <View className = "w-[100%] h-[100%]  flex-col p- 2  items-center justify-start  px- 1 ">
                                                         <View 
                                                          style={{
-                                                          width: width /7 ,
-                                                          height: width /7 ,
+                                                          width: width /8 ,
+                                                          height: width /8 ,
                                                           }}
-                                                           className=" rounded-full bg-[#372f32] justify-center items-center">
+                                                           className=" rounded-full bg-[#d19c0c] justify-center items-center">
                                                                                  {user ? (
                                                                                     <Image 
                                                                                     style={{
-                                                                                      width: width /7.5 ,
-                                                                                      height: width /7.5 ,
+                                                                                      width: width /9 ,
+                                                                                      height: width /9 ,
                                                                                       }}
                                                                                     className=" rounded-full w-[100%] h- [100%] "
                                                                                     source={{uri : userProfileImg}}
@@ -227,59 +212,82 @@ export default function Home() {
                                                                                     />
                                                                                     )}
                                                          </View> 
+                                                         <Text   
+                                                                            style ={{fontSize:width/48}}
+                                                                            className="font-bold mt-auto text-gray-100 ">
+                                                                                     {user && user.name || "example John"} 
+                                                           </Text>
+
                                                                                    
                                                                                      
-                                                  </View>
+                                                     </View>
 
-
-
+                                                     <NotificationSearchNav showNotifications={showNotifications} setShowNotifications={setShowNotifications} />
+                                               
 
                                             </View>
 
                                             
 
                                         
-                                             <View className = "w-[100%] h-[35%] rounded-lg border-2 bg-[#0d0c09] border-t-[#314674] border-b-[#3a4974] flex-row   items-center justify-between px-1 ">
-                                                        <TouchableOpacity 
+                                             {/* <View className = "w-[100%] h-[40%] rounded-lg border-2 bg-[#292a2c] [#0d0c09] bord er-t-[#314674] bor der-b-[#3a4974] flex-row   items-center justify-between px- 1 "> */}
+                                             <View className="flex-1 bg-black flex-row justify-around items-center bo rder-t bor der-[#F5C542] py- 3">
+
+                                                     <TopStageNavBar
+                                                        activeIndex={activeIndex}
+                                                        setActiveIndex={setActiveIndex}
+                                                      />    
+                                                  <View className="flex-1 items-center justify-center">
+
+                                                    {activeIndex === 0 && <Text className="text-white">Home Arena</Text>}
+                                                    {activeIndex === 1 && <Text className="text-white">Talent Stages</Text>}
+                                                    {activeIndex === 2 && <Text className="text-white">Challenges</Text>}
+                                                    {activeIndex === 3 && <Text className="text-white">Statistics</Text>}
+                                                    {activeIndex === 4 && <Text className="text-white">Profile</Text>}
+
+                                                  </View>
+
+                                                        {/* <TouchableOpacity 
                                                                     onPress={()=> {setSelectedPage("home")}}
                                                                     style={{
                                                                         minWidth : width / 11 ,
-                                                                        elevation: 5 ,
+                                                                     
                                                                        
                                                                     }}
-                                                                    className =  { selectedPage !== `home` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col  shadow-lg sha dow-blue-800 " :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  shadow-md shadow-white android:elevation-50"}
+                                                                    className =  { selectedPage !== `home` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col   " :
+                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col   "}
                                                                       >
                                                                              {selectedPage !== "home" ? (
-                                                                                 <MaterialCommunityIcons name="home" size={width/20} color={iconColor} />                                                                                                         
+                                                                                 <MaterialCommunityIcons name="home" size={width/22} color={iconColor} />                                                                                                         
                                                                               ):(
                                                                               <MaterialCommunityIcons name="home"  
-                                                                              size={width/20} color={selectedIconColor}/>                                                                         
+                                                                              size={width/22} color={selectedIconColor}/>                                                                         
                                                                              )}
                                                                             <Text 
-                                                                              style ={{fontSize:selectedPage !== "home" ? 7 : 7,
+                                                                              style ={{fontSize:selectedPage !== "home" ? 6 : 6,
                                                                                 color : selectedPage !== "home" ? iconColor :  selectedIconColor
                                                                               }}
                                                                               className="text-white font-black  h-[20%] tracking-tight">HOME
                                                                             </Text>
+
                                                         </TouchableOpacity>
                                                         <TouchableOpacity 
                                                                     onPress={()=> {setSelectedPage("talent")}}
                                                                     style={{
                                                                       minWidth : width / 11
                                                                     }}
-                                                                    className =  { selectedPage !== `talent` ? "justify-center gap-1 h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col shadow-lg sha dow-red-200" :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-md shadow-amber-500 android:elevation-50"}
+                                                                    className =  { selectedPage !== `talent` ? "justify-center gap-1 h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col " :
+                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
                                                                     >
                                                                              {selectedPage !== "talent" ? (
-                                                                                 <MaterialCommunityIcons name="star" size={width/20} color={iconColor} style={{ transform: [{ rotate: "180deg" }]}}/>                                                                                                         
+                                                                                 <MaterialCommunityIcons name="star" size={width/22} color={iconColor} style={{ transform: [{ rotate: "180deg" }]}}/>                                                                                                         
                                                                              ):(
                                                                               <MaterialCommunityIcons name="star"  style={{ transform: [{ rotate: "180deg" }] }}
-                                                                              size={width/20} color={selectedIconColor}/>                                                                         
+                                                                              size={width/22} color={selectedIconColor}/>                                                                         
                                                                              )}
                                                                            
                                                                             <Text 
-                                                                              style ={{fontSize:selectedPage !== "talent" ? 7 : 7,
+                                                                              style ={{fontSize:selectedPage !== "talent" ? 6 : 6,
                                                                                 color : selectedPage !== "talent" ? iconColor :selectedIconColor
                                                                               }}
                                                                               className="tex t-white font-black  h-[20%] tracking-tight">TALENT
@@ -293,17 +301,17 @@ export default function Home() {
                                                                     minWidth : width /11 ,
                                                                   
                                                                   }}
-                                                                  className =  { selectedPage !== `challenge` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2] flex-col shadow-md sha dow-orange-900" :
-                                                                    "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-md shadow-amber-500"}
+                                                                  className =  { selectedPage !== `challenge` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2] flex-col " :
+                                                                    "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
                                                                   >
                                                                               {selectedPage !== "challenge" ? (
-                                                                                 <MaterialCommunityIcons name="sword-cross" size={width/21} color={iconColor} style={{ transform: [{ rotate: "180deg" }]}}/>                                                                                                         
+                                                                                 <MaterialCommunityIcons name="sword-cross" size={width/23} color={iconColor} style={{ transform: [{ rotate: "180deg" }]}}/>                                                                                                         
                                                                               ):(
                                                                                  <MaterialCommunityIcons name="sword-cross"  style={{ transform: [{ rotate: "360deg" }] }}
-                                                                                  size={width/21} color={selectedIconColor}/>                                                                         
+                                                                                  size={width/23} color={selectedIconColor}/>                                                                         
                                                                                )}
                                                                               <Text 
-                                                                                  style ={{fontSize:selectedPage !== "challenge" ? 7 : 7,
+                                                                                  style ={{fontSize:selectedPage !== "challenge" ? 6 : 6,
                                                                                     color : selectedPage !== "challenge" ? iconColor :selectedIconColor
                                                                                   }}
                                                                                   className="text-white font-black  h-[20%] tracking-tight" >CHLLNGE
@@ -314,17 +322,17 @@ export default function Home() {
                                                                             style={{
                                                                               minWidth : width / 11
                                                                             }}
-                                                                            className =  { selectedPage !== `notification` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col shadow-lg sha dow-zinc-900" :
-                                                                              "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-lg shadow-amber-500"}
+                                                                            className =  { selectedPage !== `notification` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col " :
+                                                                              "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
                                                                             >
                                                                                     {selectedPage !== "notification" ? (
-                                                                                    <MaterialCommunityIcons name="bell-ring" size={width/21} color={iconColor} />                                                                                                         
+                                                                                    <MaterialCommunityIcons name="bell-ring" size={width/23} color={iconColor} />                                                                                                         
                                                                                      ):(
                                                                                     <MaterialCommunityIcons name="bell-ring"  
-                                                                                      size={width/21} color={selectedIconColor}/>                                                                         
+                                                                                      size={width/23} color={selectedIconColor}/>                                                                         
                                                                                      )}
                                                                                     <View
-                                                                                     className="absolute top-[6] p- right-1 w-4 h-4 rounded-full justify-center items-center  text-center bg-yellow-400 font-black tex t-sm text-red-500 ">
+                                                                                     className="absolute top-[6] p- right-1 w-4 h-4 rounded-full justify-center items-center  text-center bg-yellow-400 font-black  ">
                                                                                         <Text 
                                                                                         style={{fontSize:7    }}
                                                                                         className=" font-black tex t-sm text-red-500 ">
@@ -332,7 +340,7 @@ export default function Home() {
                                                                                         </Text> 
                                                                                     </View>
                                                                                     <Text 
-                                                                                      style ={{fontSize : selectedPage !== "notification" ? 7 : 7, 
+                                                                                      style ={{fontSize : selectedPage !== "notification" ? 6 : 6, 
                                                                                         color : selectedPage !== "notification" ? iconColor:  selectedIconColor
                                                                                       }}
                                                                                       className="text-white font-black h-[20%]  tracking-tight">NOTIF
@@ -344,18 +352,18 @@ export default function Home() {
                                                                             style={{
                                                                               minWidth : width / 11
                                                                             }}
-                                                                            className =  { selectedPage !== `profile` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col shadow-lg sha dow-blue-900" :
-                                                                              "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-lg shadow-amber-500"}
+                                                                            className =  { selectedPage !== `profile` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col " :
+                                                                              "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
                                                                             >
                                                                                      {selectedPage !== "profile" ? (
-                                                                                    <MaterialCommunityIcons name="account" size={width/21} color={iconColor} />                                                                                                         
+                                                                                    <MaterialCommunityIcons name="account" size={width/23} color={iconColor} />                                                                                                         
                                                                                      ):(
                                                                                     <MaterialCommunityIcons name="account"  
-                                                                                      size={width/21} color={selectedIconColor}/>                                                                         
+                                                                                      size={width/23} color={selectedIconColor}/>                                                                         
                                                                                      )}
                                                                                    
                                                                                     <Text 
-                                                                                      style ={{fontSize : selectedPage !== "profile" ? 7 : 7,
+                                                                                      style ={{fontSize : selectedPage !== "profile" ? 6 : 6,
                                                                                         color : selectedPage !== "profile" ? iconColor :  selectedIconColor
                                                                                       }}
                                                                                       className="text-white font-black h-[20%] ml- 2 tracking-tight">PROFILE
@@ -366,16 +374,16 @@ export default function Home() {
                                                                     style={{
                                                                       minWidth : width / 11
                                                                     }}
-                                                                    className =  { selectedPage !== `favourite` ? "justify-center gap-1  h-[100%] rounded-lg  items-center b g-[#dee2e2]  flex-col shadow-lg shadow-pink-900" :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-lg shadow-amber-500"}
+                                                                    className =  { selectedPage !== `favourite` ? "justify-center gap-1  h-[100%] rounded-lg  items-center b g-[#dee2e2]  flex-col " :
+                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col "}
                                                                     >
                                                                             {selectedPage !== "favourite" ? (
-                                                                                 <MaterialCommunityIcons name="heart" size={width/21} color={iconColor} />                                                                                                         
+                                                                                 <MaterialCommunityIcons name="heart" size={width/23} color={iconColor} />                                                                                                         
                                                                             ):(
-                                                                                 <MaterialCommunityIcons name="heart" size={width/21} color={selectedIconColor} />                                                                                                         
+                                                                                 <MaterialCommunityIcons name="heart" size={width/23} color={selectedIconColor} />                                                                                                         
                                                                             ) }
-                                                                            <Text 
-                                                                              style ={{fontSize : selectedPage !== "favourite" ? 7 : 7,
+                                                                            <Text
+                                                                              style ={{fontSize : selectedPage !== "favourite" ? 6 : 6,
                                                                                 color : selectedPage !== "favourite" ? iconColor :  selectedIconColor
                                                                               }}
                                                                               className="text-white font-black h-[20%]   tracking-tight"> FAV
@@ -386,16 +394,16 @@ export default function Home() {
                                                                     style={{
                                                                       minWidth : width / 11
                                                                     }}
-                                                                    className =  { selectedPage !== `stats` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col shadow-lg " :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-lg shadow-amber-500"}
+                                                                    className =  { selectedPage !== `stats` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col  " :
+                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
                                                                     >
                                                                              {selectedPage !== "stats" ? (
-                                                                                 <MaterialCommunityIcons name="poll" size={width/22} color= {iconColor} />                                                                                                         
+                                                                                 <MaterialCommunityIcons name="poll" size={width/24} color= {iconColor} />                                                                                                         
                                                                               ):(
-                                                                                 <MaterialCommunityIcons name="poll" size={width/22} color= {selectedIconColor}/>                                                                                                         
+                                                                                 <MaterialCommunityIcons name="poll" size={width/24} color= {selectedIconColor}/>                                                                                                         
                                                                              ) }
                                                                             <Text 
-                                                                              style ={{fontSize : selectedPage !== "stats" ? 7 : 7,
+                                                                              style ={{fontSize : selectedPage !== "stats" ? 6 : 6,
                                                                                 color : selectedPage !== "stats" ? iconColor : selectedIconColor
                                                                               }}
                                                                               className="tex t-white font-black h-[20%]   tracking-tight">STATS
@@ -404,17 +412,17 @@ export default function Home() {
                                                           <TouchableOpacity
                                                                         onPress={() => { setSelectedPage("search") }}
                                                                         style ={{width : width/11}}
-                                                                        className =  { selectedPage !== `search` ? "justify-center gap-1  h-[100%] rounded-md b g-[#dee2e2] shadow-lg shadow-yellow-900 items-center   flex-col" :
-                                                                          "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-lg shadow-blue-100    "}
+                                                                        className =  { selectedPage !== `search` ? "justify-center gap-1  h-[100%] rounded-md b g-[#dee2e2]  items-center   flex-col" :
+                                                                          "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
                                                                         >
                                                                                 {selectedPage !== "search" ? (
-                                                                                <Ionicons name="search" size={width/22} color= {iconColor} style={{ transform: [{ rotate: "-90deg" }] }} />                                                                                                         
+                                                                                <Ionicons name="search" size={width/24} color= {iconColor} style={{ transform: [{ rotate: "-90deg" }] }} />                                                                                                         
                                                                                  ):(
-                                                                                <Ionicons name="search" size={width/22} color= {selectedIconColor} style={{ transform: [{ rotate: "-90deg" }] }}/>                                                                                                         
+                                                                                <Ionicons name="search" size={width/24} color= {selectedIconColor} style={{ transform: [{ rotate: "-90deg" }] }}/>                                                                                                         
                                                                                  ) }
                                                                                
                                                                                 <Text 
-                                                                                      style ={{fontSize: selectedPage !== "search" ? 7 : 7 ,
+                                                                                      style ={{fontSize: selectedPage !== "search" ? 6 : 6 ,
                                                                                         color : selectedPage !== "search" ? iconColor :selectedIconColor
                                                                                       }}
                                                                                       className="text-white font-black h-[20%]  tracking-tight">SEARCH
@@ -424,19 +432,19 @@ export default function Home() {
                                                                   onPress={()=> {setSelectedPage("help")}}
                                                                   style ={{width : width/11}}
                                                                   className =  { selectedPage !== `help` ? "justify-center gap-1  h-[100%] rounded-md b g-[#dee2e2] shadow-xl shadow-gray-800 items-center   flex-col" :
-                                                                    "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col elevation-lg shadow-lg shadow-blue-100    "}                                                                  >
+                                                                    "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col shadow-lg shadow-blue-100    "}                                                                  >
                                                                               {selectedPage !== "help" ? (
-                                                                              <MaterialCommunityIcons name="help-circle" size={width/21} color= {iconColor} />                                                                                                         
+                                                                              <MaterialCommunityIcons name="help-circle" size={width/23} color= {iconColor} />                                                                                                         
                                                                               ):(
-                                                                              <MaterialCommunityIcons name="help-circle" size={width/21} color= {selectedIconColor}/>                                                                                                         
+                                                                              <MaterialCommunityIcons name="help-circle" size={width/23} color= {selectedIconColor}/>                                                                                                         
                                                                               )}
                                                                               <Text 
-                                                                                  style ={{fontSize: selectedPage !== "help" ? 7 : 7 ,
+                                                                                  style ={{fontSize: selectedPage !== "help" ? 6 : 6 ,
                                                                                     color : selectedPage !== "help" ? iconColor : selectedIconColor
                                                                                   }}
                                                                                   className="text-white font-black h-[20%]  tracking-tight">HELP
                                                                               </Text>
-                                                          </TouchableOpacity>
+                                                          </TouchableOpacity> */}
                                                        
                                         
                                             </View>
@@ -466,18 +474,18 @@ export default function Home() {
             ) : (
        
             <View     
-                    className="w-[100%] h-[79%] flex-1  py- px- bg-black [#3b4348]  rounde-xl borde-[#272d31]  g-[#3b4348] 
+                    className="w-[100%] h-[79%] flex-1  mt-2 bg-black [#3b4348]  rounde-xl borde-[#272d31]  g-[#3b4348] 
                        flex-col justify-center items-center">
-                        {selectedPage == "home" && ! isFetching && (
+                        {activeIndex === 0 && ! isFetching && (
                           <HomePage reset ={reset} setReset={setReset}/>
                         )}
-                        {selectedPage == "talent" && ! isFetching && (
+                        {activeIndex === 1 && ! isFetching && (
                           <Talent setSelectedPage={setSelectedPage} />
                         )}
-                        {selectedPage == "challenge" && ! isFetching && (
+                        {activeIndex === 2 && ! isFetching && (
                           <Challenge setSelectedPage={setSelectedPage} />
                         )}
-                        {selectedPage == "profile" && ! isFetching && ! isLoggingOut && (
+                        {activeIndex === 4 && ! isFetching && ! isLoggingOut && (
                           <UserProfile user={user} />
                         )}
                         {selectedPage == "notification" && ! isFetching && (
@@ -501,36 +509,43 @@ export default function Home() {
             </View>
             
             )}
+  
+           <View
+             style={{ 
+             height: Platform.OS =="ios" ? width/12 + 5 : width/12 ,
+             width:"100%",
+             }}>
 
-          
+             </View>
+
+{/*           
           <View
              style={{ 
-             height: Platform.OS =="ios" ? width/8 + 5 : width/8 ,
+             height: Platform.OS =="ios" ? width/9 + 5 : width/9 ,
              width:"100%",
              }}
             className=" flex-row justify-center items-center b g-white py- 1 px- 6 ">
   
             <View
-            // style={{backgroundColor: "#312d22"}}
-            className=" [#324043] [#f6f5f5] primary bg-[#ffffff] w-[100%] h-[100%] rounded-b-[230px] flex-row justify-center items-center">
+            className=" [#324043] [#f6f5f5] primary bg-[#0b1015] w-[100%] h-[100%] rounded-b-[230px] flex-row justify-center items-center">
                { isFetching && (
                                 <Text   
                                      style ={{fontSize:10}}
-                                     className="font-bold text-gray-800  ">
+                                     className="font-bold text-white  ">
                                             Loggin Please Wait...
                                 </Text>
               )}
                { isLoggingOut && (
                                 <Text   
                                      style ={{fontSize:10}}
-                                     className="font-bold text-gray-800  ">
+                                     className="font-bold text-white  ">
                                             Logging out Please Wait...
                                 </Text>
               )}
               {!user &&  (
                                 <Text   
                                      style ={{fontSize:10}}
-                                     className="font-bold text-gray-800  ">
+                                     className="font-bold text-white  ">
                                             Login to get started
                                 </Text>
               )}
@@ -539,21 +554,27 @@ export default function Home() {
                           className = "flex-row justify-center h- [100%]  items-end gap-2">
                                 <View
                                     className="w- [30px] h- [30px] roun ded-full b g-black">
-                                      <MaterialCommunityIcons name={selectIcon(selectedPage)} size={22} color = {selectIconColor(selectedPage)}  />
+                                      <MaterialCommunityIcons name={selectIcon(selectedPage)} size={22} color = "white" //{selectIconColor(selectedPage)} 
+                                       />
                                 </View>
                                 <Text   
-                                     style ={{fontSize:10}}
-                                     className="font-bold text-gray-800 mb-1 ">
+                                     style ={{fontSize:12}}
+                                     className="font-bold text-white mb- 1 ">
                                             {selectedPage && selectedPage.toUpperCase() }
                                 </Text>
                           </View>
               )}
             </View>
-          </View>
+          </View> */}
                  
           {displayNotificationsModal && 
           <NotificationsModal user={user} displayNotificationsModal={displayNotificationsModal}
           setDisplayNotificationsModal={setDisplayNotificationsModal}/>}
+
+          <NotificationDrawer
+          visible={showNotifications}
+          onClose={() => setShowNotifications(false)}
+          />
  
       </View>
        

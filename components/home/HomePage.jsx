@@ -10,9 +10,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 const RenderHeader =  memo(({description,setDescription,user}) => {
   return(
-    <View className="bg-black   w-[100%] flex-col px-1 2 py-2 mt-1 mb-1 shadow-md round ed-xl">
+    <View className="bg-black   w-[100%] flex-col px-1 2 py-2 mt-2 mb-1 shadow-md round ed-xl">
          
-          <View className="b g-white w-[100%] flex-col  mb-2  round ed-b-xl">
+          {/* <View className="b g-white w-[100%] flex-col  mb-2  round ed-b-xl">
             <View className="mb- 2 px- 1 flex-row gap-2 justify-start items-end ">
               <Text 
               style={{fontSize:18}}
@@ -24,7 +24,7 @@ const RenderHeader =  memo(({description,setDescription,user}) => {
                className="text -sm font-bold text-gray-200">Talent & Challenge Contests
             </Text>
            
-          </View>
+          </View> */}
 
           {/* <View className="bg- white w-[100%] flex-row justify-center items-center py-1 gap-2 ">
                      <Image
@@ -126,7 +126,7 @@ export default function HomePage({reset , setReset}) {
             renderItem={({item ,index}) => {
             return <Post key={index} item={item} user={user} activity ={false}/>
             }}
-            ListHeaderComponent={<RenderHeader user = {user} description={description} setDescription ={setDescription} />}
+            // ListHeaderComponent={<RenderHeader user = {user} description={description} setDescription ={setDescription} />}
             onEndReached={loadMoreData}
             removeClippedSubviews={true} 
             scrollEventThrottle={16} 

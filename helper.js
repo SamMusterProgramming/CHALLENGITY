@@ -190,6 +190,92 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
     }
  }
 
+ export function getStageLogo(name){
+  switch (name) {
+     case "Music":
+         return icons.singingstage
+         break;
+     case "Magic":
+         return icons.magicstage
+         break;
+     case "Asia":
+         return icons.asia
+         break;
+     case "Africa":
+         return icons.africa
+         break;
+      case "Europe":
+           return icons.africa
+           break;
+      case "America":
+          return icons.africa
+          break;
+     case "Fitness":
+          return icons.fitnessstage
+          break;
+     case "Art":
+          return icons.artstage
+          break;
+    case "Food":
+          return icons.eatingstage
+          break;
+    case "Dancing":
+          return icons.dancingstage
+            break;
+    case "Tech":
+          return icons.singingstage
+          break;
+    case "Gaming":
+          return icons.singingstage
+          break;
+    case "Adventure":
+          return icons.singingstage
+          break;
+    case "Instrument":
+            return icons.singingstage
+            break;
+    case "Gaming":
+            return icons.singingstage
+            break;
+    case "Sport":
+            return icons.singingstage//sportstage
+            break;
+    case "Science":
+            return icons.singingstage
+            break;
+    case "Comedy":
+            return icons.comedystage
+            break;
+    case "Diet":
+            return icons.singingstage
+            break;
+
+    case "home":
+            return icons.home
+            break;
+    case "talent":
+            return icons.talent
+            break;
+    case "challenge":
+            return icons.challenge
+            break;
+    case "notification":
+            return icons.notification
+            break;
+    case "profile":
+            return icons.profile
+            break;
+
+    case "Public":
+              return icons.publi
+              break;
+    case "Private":
+              return icons.priv
+     default:
+         break;
+  }
+}
+
  export const countryCodes = {
   'US': 'United States',
   'CA': 'Canada',

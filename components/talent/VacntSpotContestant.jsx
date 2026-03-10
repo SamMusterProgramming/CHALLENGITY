@@ -25,18 +25,18 @@ export default function VacntSpotContestant({ index ,f}) {
                         width :f?  f : width * 0.18,
                   }}
           
-                  className =" flex-col  bg-[#454646] justify-center rounded-md items-center">
+                  className =" flex-col  bg-[#ededeb] justify-center rounded-sm items-center">
                               <View
                                   style={{
                                     // height :f ?  f : width  * 0.18 ,
                                     // width : f ?  f : width * 0.18,
                                     // backgroundColor:  bgColor,
                                   }}
-                                  className="flex-col justify-center items-center bg-[#202122] rounded-full">
+                                  className="flex-col justify-center items-center bg-[#202320] w-[90%] h-[60%] rounde d-full">
               
                                         <Image
                                         source={icons.avatar}
-                                        className ={f? "w-[30px] h-[30px] m- rounded-full":"w-[40px] h-[40px] m- rounded-full"}
+                                        className ={f? "w-[30px] h-[30px] m- rounded-sm":"w-[40px] h-[40px] m- rounded-sm"}
                                         resizeMethod='fill'
                                         />  
                               </View>
@@ -44,13 +44,13 @@ export default function VacntSpotContestant({ index ,f}) {
                              
               
                               <View
-                                  className ="absolute top-1 1 left-1 1 -rot ate-45 gap- 1  flex-row justify-center items-center   ">
+                                  className ="absolute top-[1px] 1 left-1 1 -rot ate-45 gap- 1  flex-row justify-center items-center   ">
                                   
                                             <Text 
-                                                style ={{fontSize:f?8:7,
+                                                style ={{fontSize:f?6:7,
                                                   // color:textColor
                                                 }}
-                                                className="  font-black text-gray-100"> 
+                                                className="  font-black text-gray-800"> 
                                                  ?
                                             </Text>
                               </View>
@@ -64,9 +64,9 @@ export default function VacntSpotContestant({ index ,f}) {
                                           style ={{fontSize:f?6 :7,
                                             // color:textColor
                                           }}
-                                          className="font-black mb- text-gray-100 ">
+                                          className="font-bold mb- text-gray-800 ">
                     
-                                            Vacant
+                                            Free Spot
                                         
                                         </Text>
                             </View>

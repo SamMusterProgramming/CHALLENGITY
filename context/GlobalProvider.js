@@ -29,7 +29,7 @@ export const GlobalProvider =({children}) => {
    const [isLoggingOut, setIsLoggingOut] = useState(false);
    const [globalRefresh, setGlobalRefresh] = useState(false);
    const [menuPanelBgColor, setMenuPanelBgColor] = useState("#2f3e42");
-   const [boxBgColor,setBoxBgcolor] = useState("##0e121a") //("#d4d4d4")//("#d1d8eb")//useState("#f0f1f7")
+   const [boxBgColor,setBoxBgcolor] = useState("#0e121a") //("#d4d4d4")//("#d1d8eb")//useState("#f0f1f7")
    const [contestantBgColor,setContestantBgColor] = useState("#35383d")//("#1f1f21")
 //    const [topTalents, setTopTalents] = useState([])
    const [userProfileImg,setUserProfileImg] = useState(null)

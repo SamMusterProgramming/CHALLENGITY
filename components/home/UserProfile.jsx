@@ -101,7 +101,10 @@ export default function UserProfile({user}) {
                     <Image 
                     className="w-[80px] h-[80px] rounded-full"
                     resizeMode='cover'
-                    source={{uri: userProfileImg }} 
+                    source={{uri: user.profileImage?.publicUrl
+                        // userProfileImg 
+
+                    }} 
                     />
                     </View>
                     <View
@@ -497,7 +500,7 @@ export default function UserProfile({user}) {
                 }
                 
                 }
-                    className="w-[100%] flex-row  justify-center  py-1 px-4  bg-gray-700 rounded-xl items-center">
+                    className="w-[100%] flex-row  justify-center  py-3 px-4  bg-gray-700 rounded-xl items-center">
                             <Text
                                 style={{fontSize:12,
                                 }}

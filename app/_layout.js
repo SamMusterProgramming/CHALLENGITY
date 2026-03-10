@@ -3,6 +3,8 @@ import React from 'react'
 import { Stack } from 'expo-router'
 import { GlobalProvider } from '../context/GlobalProvider'
 import * as SystemUI from 'expo-system-ui';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 SystemUI.setBackgroundColorAsync('#000000');
 
@@ -12,7 +14,8 @@ export default function rootLayout() {
 
   return (
     
-
+    <GestureHandlerRootView style={{ flex: 1 }}>
+    <BottomSheetModalProvider>
     <GlobalProvider>
      <Stack
      screenOptions={{ 
@@ -33,6 +36,8 @@ export default function rootLayout() {
 
      </Stack>
      </GlobalProvider>
+     </BottomSheetModalProvider>
+     </GestureHandlerRootView>
 
    
   )

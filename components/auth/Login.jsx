@@ -1,10 +1,11 @@
-import { View, Text, Image, useWindowDimensions, TouchableOpacity, Vibration } from 'react-native'
+import { View, Text, Image, useWindowDimensions, TouchableOpacity, Vibration, KeyboardAvoidingView, Platform, TextInput, ImageBackground } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { icons } from '../../constants'
 import FormField from '../custom/FormField'
 import { authLogin } from '../../apiCalls';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { router } from 'expo-router';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function Login({setAuthType}) {
   const {user,setUser,trendingChallenges,setTrendingChallenges,userChallenges,setUserChallenges,userFriendData,notifications} = useGlobalContext()
@@ -15,9 +16,11 @@ export default function Login({setAuthType}) {
   const [isEmailWrong, setIsEmailWrong] = useState(false); 
   const [isEmailInvalid, setIsEmailInvalid] = useState(false); 
   const [isFetching, setIsFetching] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+
   const [form, setForm] = useState({
-    email:"samirhaddadi@gmail.com",
-    password:"Samir@2024"
+    email:"sidalihaddadi@gmail.com",
+    password:"Sidali@2024"
   })
 
   //************************************* login here ************************ */
@@ -94,9 +97,15 @@ export default function Login({setAuthType}) {
 
  //******************************* authentification here *******************************************************/
   return (
-    <View className="bg-black white w-[100%] min-h-[100px] flex-col flex-1 justify-center items-center round ed-xl">
-         <View
-              className ="g-[#f29756] w-full te xt-center px-2 py-4 m -[40px] gap-2 items-center px- flex-col">
+
+    <ImageBackground
+      source={icons.stage_bg}
+      resizeMode="cover"
+      className="flex-1 w-[100%] h-[100%] justify-center items-center"
+      >
+    {/* <View className="b g-black white  flex-col flex-1 justify-center items-center "> */}
+         {/* <View
+              className ="g-[#f29756] w-full te xt-center px-2 py-2 m -[40px] gap-2 items-center px- flex-col">
                    
                    
                     <Text
@@ -115,24 +124,16 @@ export default function Login({setAuthType}) {
                         Step into the spotlight with <Text >Challengify</Text> — the ultimate stage where everyday legends rise!
                     </Text>
 
-         </View>
-         <Image                                                                  
-            className="w-[98%] h-[20%] rounded-3xl"
+         </View> */}
+         {/* <Image                                                                  
+            className="w-[40%] h-[10%] rounded-3xl"
             source={icons.challengify_logo}
             resizeMode='cover'
-           />      
+           />       */}
 
-         <View
-                  className="flex- 1  bg-[#000000]  flex-col p-1 mt-[20] justify-center item-center">
-                                    <Text 
-                                        style={{fontSize:18,
-                                                 color:'white'}}
-                                        className="  font-bold text-sm text-white">
-                                                LOGIN                
-                                    </Text>  
-         </View>
+    
 
-         <View className="w-[100%] rounded-b-[50px] justify-start 80 mt-auto gap-4 flex-col py-2  items-center">                      
+         {/* <View className="w-[100%] rounded-b-[50px] justify-start 80 mt-auto gap-4 flex-col py-2  items-center">                      
                 <View className="  w-[90%] -auto min-h-[8vh] py-2 flex-row justify-center items-center text-center ">
                    {(isEmailWrong || isEmailInvalid || isPasswordInvalid || isPasswordWrong)&& <Text className="text-gray-200 text-sm ">{message}</Text>}
                 </View>
@@ -169,14 +170,13 @@ export default function Login({setAuthType}) {
                   title="Password" 
                   value={form.password}
                   placeholder="password"
-                  keyboardType="email-address"
                   handleChangeText={(e)=> setForm({...form,password:e})}
                   />
 
                 <TouchableOpacity 
                   onPress={handleLogin}
                   style={{height : height * 0.05}}
-                  className="bg-yellow-800  rounded-lg w-[98%] h-[50px] mb-1  justify-center items-center">
+                  className="bg-blue-800  rounded-lg w-[98%] h-[50px] mb-1  justify-center items-center">
                       {isFetching ? (
                           <View >
                               <ActivityIndicator size="large" color="#030202" />
@@ -185,12 +185,109 @@ export default function Login({setAuthType}) {
                           <Text className="text-[#fff] font-semibold text-lg">Login</Text>
                       )}
                 </TouchableOpacity>   
-              
-                {/* <View className="  w-[90%] -auto min-h-[10vh] py-2 flex-row justify-center items-center text-center ">
-                {(isEmailWrong || isEmailInvalid || isPasswordInvalid || isPasswordWrong)&& <Text className="text-gray-200 text-sm ">{message}</Text>}
-                </View> */}
+         </View> */}
+  
+         <Image
+              className ="absolute top-[-20] w-[100%]  "
+              source={icons.challengify_logo}
+              style={{ width: '90%', height: "35%" }} // adjust ratio
+              resizeMode="contain"
+            />
+         <View className="  w-[90%] absolute top-0 min-h- [8vh] py-2 flex-row justify-center items-center text-center ">
+                   {(isEmailWrong || isEmailInvalid || isPasswordInvalid || isPasswordWrong)&& <Text className="text-gray-200 text-sm ">{message}</Text>}
+        </View>
+        <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex- 1 w-[80%] mt-auto mb-20 justify-center px-2"
+        >
 
-                </View>
-    </View>
+        <View
+                  className="mb-12 w-[100%] flex-row  justify-center item-center">
+                                    <Text 
+                                        style={{fontSize:width/20,
+                                                //  color:'white'
+                                                }}
+                                        className="  font-bold text-sm  text-[#dcdeed]">
+                                               LOGIN              
+                                    </Text>  
+         </View>
+
+
+        <View>
+
+            <TextInput
+            placeholder="Email"
+            placeholderTextColor="#c9b37a"
+            value={form.email}
+            onChangeText={(e)=> setForm({...form,email:e})}
+            className="bg-[#1c1b1a] border border-yellow-600/40 text-[#d5cece] p-4 rounded-xl mb-3"
+            />
+
+            <View>
+                <TextInput
+                      placeholder="Password"
+                      placeholderTextColor="#c9b37a"
+                      secureTextEntry ={showPassword}
+                      value={form.password}
+                      onChangeText={(e)=> setForm({...form,password:e})}
+                      className="bg-[#1c1b1a] border border-yellow-600/40  text-[#d5cece] p-4 rounded-xl"
+                />
+              <TouchableOpacity
+                  className ="absolute top-0 right-2"
+                  onPress={()=> setShowPassword(!showPassword)}>
+                      <Image className ="w-10 h-10 "
+                      resizeMode='contain'
+                      source={!showPassword  ? icons.eye : icons.eyeHide} />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity 
+                  onPress={handleLogin}
+                  className="bg-[#0e1c2d] p-4 rounded-xl mt-3">
+                              {isFetching ? (
+                                      <View >
+                                          <ActivityIndicator size="large" color="#030202" />
+                                      </View>
+                                  ):(
+                                    <Text 
+                                    style={{ fontSize :width/30}}
+                                    className="text-[#c9b37a] text-center font-bold text -md">
+                                            Sign In
+                                    </Text>
+                                  )}
+
+
+            </TouchableOpacity>
+
+            {/* <TouchableOpacity className="bg-[#efeaea] p-4 rounded-xl mt-4 flex-row items-center justify-center">
+                <AntDesign name="google" size={width/25} color="black" />
+                <Text className="text-black ml-3 font-semibold text-sm">
+                    Continue with Google
+                </Text>
+            </TouchableOpacity> */}
+
+        {/* REGISTER LINK */}
+
+        <View className="flex-row justify-center mt-8">
+            <Text className="text-gray-100">
+                New to Challengify ? {' '}
+            </Text>
+            <TouchableOpacity
+              onPress={()=>{
+                setAuthType("register")
+            }}  >
+              <Text className="text-indigo-400 ml-2 font-semibold">
+                  Create Account
+              </Text>
+             </TouchableOpacity>
+        </View>
+
+        </View>
+
+        </KeyboardAvoidingView>
+
+
+
+    </ImageBackground>
   )
 }

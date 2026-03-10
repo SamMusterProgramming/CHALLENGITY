@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Animated, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import { icons } from '../../../constants';
+import { getStageLogo } from '../../../helper';
 
 
 const RightSidePanel = ({ show, height, width ,top ,bottom,left ,right,data , setSelectedTalent, selectedTalent}) => {
@@ -22,7 +23,7 @@ const RightSidePanel = ({ show, height, width ,top ,bottom,left ,right,data , se
   
     return (
       <Animated.View 
-      className="w-[15%] min-h-[65%] py-2 flex-col justify-between bg-[#292828] [#edebeb] [#3b4348] items-center rounded-tl-xl rounded-br-xl"
+      className="w-[18%] h-[70%] py-2 flex-col justify-between b g-[#292828] [#edebeb] [#3b4348] items-center rounded-tl-xl rounded-br-xl"
       style={[
           {
               bottom:"10",
@@ -35,7 +36,7 @@ const RightSidePanel = ({ show, height, width ,top ,bottom,left ,right,data , se
           { transform: [{ translateX: sidebarAnimation }] }]}>
   
          <View
-         className =" w-[100%] h-[100%] flex-col b g-[#055783] px-1 rounded-xl justify-between items-center">
+         className =" w-[100%] h-[100%] flex-col b g-[#055783] px- 1 justify-between items-center">
             {data.map((talent , index) => {
               return  ( <TouchableOpacity
                         onPress={
@@ -47,25 +48,24 @@ const RightSidePanel = ({ show, height, width ,top ,bottom,left ,right,data , se
                             }
                         }
                         style={{
-                            backgroundColor : selectedTalent && selectedTalent.name == talent.name ? "#1f2a5e" :"black"
+                            // backgroundColor : selectedTalent && selectedTalent.name == talent.name ? "#1f2a5e" :"black"
                         }}
-                        className = "w-[96%] h-[15%] rounded-xl py-2 flex-col gap-2 justify-center items-center"
+                        className = "w-[100%] h-[20%] rounded-xl py-2 mr-[-10] flex-col gap- 1 justify-center items-center"
                         key={index}>
                              <Image
-                                        className="w-[80%]  h-[80%] flex-1 rounde d-xl bg-"
-                                        source={talent.icon}
-                                        resizeMode='contain'
+                                        className = {selectedTalent && selectedTalent.name == talent.name ?"w-[100%]  h-[100%]":"w-[85%]  h-[100%]"}
+                                        source={getStageLogo(talent.name)}
+                                        resizeMode='cover'
                                         />
-                             <Text 
-                                               style={{fontSize:8,
-                                                    color :selectedTalent && selectedTalent.name == talent.name ? "white" :"lightblue"
-
-                                                }}
-                                               className="  font-black  text-black">
-                                                           {talent.name.slice(0.6)}
+                            <Text 
+                                               style={{fontSize:selectedTalent && selectedTalent.name == talent.name ? width/7 :width/8,
+                                                color : selectedTalent && selectedTalent.name == talent.name ? "white" :"lightblue"
+                                            }}
+                                               className="  font-black mt-[-10] text-black">
+                                                           {talent.name}
                              </Text>  
 
-                             {selectedTalent && selectedTalent.name == talent.name && (<View className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500" />)} 
+                             {selectedTalent && selectedTalent.name == talent.name && (<View className="absolute top-0 left-0 w-3 h-3 rounded-full bg-green-500" />)} 
 
                         </TouchableOpacity>)
             })}

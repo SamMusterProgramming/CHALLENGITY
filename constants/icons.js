@@ -102,11 +102,30 @@ import favourite from '../assets/icons/favourite.png'
 import trending from '../assets/icons/trending.png'
 import top from '../assets/icons/top.png'
 import accept from '../assets/icons/accept.png'
-import challengify_logo from '../assets/icons/challengify.jpg'
+import challengify_logo from '../assets/icons/challengify.png'
 import frame from '../assets/icons/frame2.png'
+import magicstage from '../assets/icons/magicstage.png'
+import singingstage from '../assets/icons/singingstage.png'
+import dancingstage from '../assets/icons/dancingstage.png'
+import fitnessstage from '../assets/icons/fitnessstage.png'
+import artstage from '../assets/icons/artstage.png'
+import comedystage from '../assets/icons/comedystage.png'
+import eatingstage from '../assets/icons/eatingstage.png'
+import sportstage from '../assets/icons/sportstage.png'
+import stage_bg from '../assets/icons/stage_bg.png'
+
 
 
 export default {
+  stage_bg , 
+  sportstage,
+  eatingstage,
+  comedystage ,
+  artstage,
+  fitnessstage,
+  dancingstage,
+  singingstage,
+  magicstage,
   frame,
   challengify_logo ,
   accept,

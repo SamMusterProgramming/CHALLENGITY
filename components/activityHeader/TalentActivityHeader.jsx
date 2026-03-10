@@ -1,7 +1,7 @@
 import { View, Text, useWindowDimensions, Image, TextInput } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
-import { getIcon, getTimeLapse } from '../../helper';
+import { getIcon, getInition, getTimeLapse } from '../../helper';
 
 export default function TalentActivityHeader({data , userProfile ,type , user}) {
   const {boxBgColor} = useGlobalContext()
@@ -35,61 +35,35 @@ export default function TalentActivityHeader({data , userProfile ,type , user}) 
   
   return (
     <View
-    style={{ backgroundColor:boxBgColor }}
-    className ="w-[100%] bg-[#fefeff] mt-2 px-1 flex-col justify-start items-center border-t-2 border-[#2e2a2a]">
-         <View
-               className ="w-[100%] pt-2 h- [100%] px-1 py- 1 rounde d-xl flex-row justify-center items-center gap-2  b g-[#292940]">
-                             <View 
-                               className ="w-[10%] flex-col-reverse justify-start h- [100%]  items-center gap-1"> 
+    // style={{height: width * 0.10  }}
+    className ="w-[95%] rounded-lg  b g-[#252728] py- 1 mb-2  px-1 gap-2 flex-row justify-center items-center  bord er-[#d8caca]">
+          <View
+                style={{height: width * 0.09 ,width: width * 0.09 }}
+                className ="w- [40%]  h- [100%] px- 1  rounde d-xl flex-row justify-center items-center gap- 2  b g-[#ffffff]">
+                                <View 
+                                  // style={{height: width * 0.10 ,width: width * 0.10 }}
+                                  className =" flex-col justify-center h- [100%]  items-center gap-1">
                                 <Image 
-                                   style={{ width: width * 0.08 , height: width * 0.08 }}
+                                   style={{ width: width * 0.07 , height: width * 0.07 }}
                                    className = "rounded-full"
-                                   source={{uri : userProfile.profile_img}}
+                                   source={{uri : userProfile.profileImage?.publicUrl}}
                                 />
                                 <Text 
-                                   style={{fontSize:9}}
-                                   className="font-black  text-gray-100">
-                                           {  userProfile.name.split(' ')[0]} 
+                                   style={{fontSize:7}}
+                                   className="font-bold absolute rounded-full bottom-0 left-0 p-1 bg-[#000000] text-gray-100">
+                                           { getInition(userProfile.name)} 
                                 </Text> 
-                              </View>   
-
-                                <View
-                                              //  style = {{minWidth:h * 0.10}}
-                                                className="w- [100%] absolute top-2 left-0  rounded-md p- 1 px- 2 gap-1 flex-col justify-center items-center">
-                                                     <Image
-                                                        className="w-7 h-7 "
-                                                        source={getIcon(data.name)}
-                                                        resizeMode='cover'/>
-                                                    <Text
-                                                        style={{fontSize:10}}
-                                                        className="text-center   font-black text-gray-100">
-                                                            {data.name.toUpperCase()}
-                                                    </Text>
-                        </View>       
-                        <View
-                                              
-                                                className="w- [100%] absolute top-2 right-0  rounded-md p- 1 px- 2 gap-1 flex-col justify-center items-center">
-                                                     <Image
-                                                        className="w-7 h-7 "
-                                                        source={getIcon(data.region)}
-                                                        resizeMode='cover'/>
-                                                    <Text
-                                                        style={{fontSize:10}}
-                                                        className="text-center   font-black text-gray-100">
-                                                            {data.region.toUpperCase()}
-                                                    </Text>
-                        </View>              
-                               
-                               
+                              </View>                    
                 
          </View>
 
          <View
-                className ="w- [100%]  flex- 1 py-2  flex-row justify-center items-end  ">
+                style={{height: width * 0.10  }}
+                className ="w- [60%]  flex-1 pt- 2 text-wrap  flex-row justify-center items-end  ">
                    
                     <Text 
-                                    style={{fontSize:9}}
-                                    className="font-semibold  text-white"> 
+                                    style={{fontSize:width/45}}
+                                    className="font-semibold mb-2 text-gray-100"> 
                                             {text && text}
                     </Text> 
           </View>

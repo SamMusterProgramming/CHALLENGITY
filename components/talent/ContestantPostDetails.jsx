@@ -8,9 +8,10 @@ import CountryFlag from 'react-native-country-flag';
 import ChallengeAction from '../modal/ChallengeAction';
 import { router } from 'expo-router';
 import { createdAt } from 'expo-updates';
+import { getInition } from '../../helper';
 
 export default function ContestantPostDetails({user,show , height, width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
-  ,setParticipationType  ,rank,handleRefresh, setIsExpired }) {
+  ,setParticipationType  ,rank,handleRefresh, setIsExpired ,openComments}) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
   const [voteTimeLaps,setVoteTimeLaps] = useState(30)
@@ -60,7 +61,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
 
   useEffect(() => {
    if(postData && voted)   {
-      handleRefresh()
+      // handleRefresh()
    }
   }, [postData])
 
@@ -91,46 +92,74 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
      <>
        
          <View
-             className = " absolute borde-4 flex-col justify-center gap-1 items-center borde b g-black opacity-100 "
+             className = " absolute  flex-col justify-start  items-start gap-8 "
              style={{ 
                         
-                             width: width * 0.55, height : width * 0.8,
+                             width: width * 0.2,
+                           //   height : height * 0.6 ,
                              elevation:22,  
                              justifyContent: 'center', 
                              alignItems: 'center', 
                              zIndex: 3 ,
                              opacity:1,
-                             top:top 
+                             bottom:130,
+                           //   top:0,
+                             left:0
+                           //   top:top 
              }}
              >
                    <TouchableOpacity
                      onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
-                     // style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
-                     className = "w-[100%]  h-[20%] px-4 flex-col g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
-                                       <Image
+              
+                     className = "w-[100%]  py-2 px- 2 flex-row   gap-2   justify-start items-end">
+                                     {/* <Image
                                       style ={{
-                                          height : width * 0.8 /8 ,
-                                          width :width * 0.8 /8 }}
+                                          height : width * 0.8 /10 ,
+                                          width :width * 0.8 /10 }}
                                       source={{uri:selectedContestant.profile_img}}
-                                      className ="w-[70px] h-[70px] rounded-full"
+                                      className =" rounded-full"
                                       resizeMethod='fill'
                                                          />
                                      <Text 
-                                         style ={{fontSize:9,
-                                          // fontStyle:"italic"
+                                         style ={{fontSize:width/50,
+                                        
                                          }}
-                                         className="text-xl font-black  text-white"> 
+                                         className="text -center font-black  text-white"> 
                                              {selectedContestant.name}
                                      </Text>
+                                  
+
+                                     <View
+                                       
+                                          className = "absolute  top-0 left-[30%]    flex-row-reverse   justify-center items-end">
+                                                         <Text 
+                                                            style ={{fontSize:width/50 ,
+                                                               fontStyle:"italic"
+                                                            }}
+                                                            className=" font-black   text-white"> 
+                                                               {rank < 4 ? "#" : "# "}  {rank}
+                                          
+                                                         </Text>
+                                                         <Text 
+                                                            style ={{fontSize:10 ,
+                                                               fontStyle:"italic"
+                                                            }}
+                                                            className=" font-black  text-white"> 
+                                                               
+                                                               🏆 
+                                                         </Text>
+                                                    
+                                     </View> */}
+
                    </TouchableOpacity>
  
         
                    <View
    
-                      className = "w-[100%] flex-1  h -[60%] py- flex-row flex-wrap g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
+                      className = "w-[100%] flex -1 mt-auto  flex-col gap- 8 justify-start items-center">
                          
                          <TouchableOpacity
-                         style={{backgroundColor:postData.votes.find(vote => vote.voter_id == user._id) ?'rgba(61, 60, 58, 0.6)': 'rgba(61, 60, 58, 0.4)'}}
+                        //  style={{backgroundColor:postData.votes.find(vote => vote.voter_id == user._id) ?'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)'}}
                          onPress={
                            ()=> {
                               setIsModalVisible(true);
@@ -150,70 +179,90 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                );
                               }
                            }
-                           // handleVotePost
+                           
                         }
-                         className = "w-[50%] h-[50%]  elevation-2xl rounded-br-full rounded-tl-xl order-4 border-white g-[#f0e9e9] flex-col justify-start items-start g-[#0c0c0c] ">
+                         className = "w-[100%]  py-4 gap-2  rounded-br-full rounded-tl-xl  flex-row  justify-start items-end  ">
                                  
+                               
+                                          <Text 
+                                            style ={{fontSize:15}}
+                                             className=" font-bold  te xt-black"> 
+                                            
+                                             {postData.votes.find(vote => vote.voter_id == user._id) ? "❤️" : "🤍"}
+                                          </Text>  
+                                          
                                  <View
-                                 className=" w-[70%] h-[40%]  flex-row justify-center text-center items-center">
-                                     {/* <Image
-                                        source={postData.votes.find(vote => vote.voter_id == user._id) ? icons.voted : icons.vote}
-                                        className ="w-8 h-8 rounded-full"
-                                        resizeMethod='fill'
-                                            /> */}
-                                           <Ionicons name="checkmark-circle" size={32} color={postData.votes.find(vote => vote.voter_id == user._id) ? "#f76f8d" : "white"} />
-                                 </View>
-                                 <View
-                                    className=" w-[70%] h-[60%]  flex-row  justify-center  items-start">
+                                    className=" gap-2 flex-row  justify-center  items-start">
                                      <Text 
-                                         style ={{fontSize:10}}
-                                         className="text-xl font-black  text-white"> 
-                                             {postData.votes.length}
+                                         style ={{fontSize:width/40}}
+                                         className=" font-bold  text-gray-100"> 
+                                             {postData.votes.length} 
                                      </Text>
+                                     {/* <Text 
+                                         style ={{fontSize:11,
+                                         }}
+                                         className="te xt-xl font-bold   text-gray-100"> 
+                                          Votes
+                                     </Text> */}
+                                 
                                  </View>   
                          </TouchableOpacity>
 
                          <TouchableOpacity 
-                         style={{backgroundColor:postData.likes.find(vote => vote.liker_id == user._id) ?'rgba(61, 60, 58 , 0.6)': 'rgba(61, 60, 58, 0.4)'}}
+                        //  style={{backgroundColor:postData.likes.find(vote => vote.liker_id == user._id) ?'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)'}}
                          onPress={handleLikePost}
-                          className = "w-[50%] h-[50%] -4 -8 gap- rounded-bl-full rounded-tr-3xl borde-4 order-white g-[#eaa47c] flex-col justify-start pr- items-end g-[#0c0c0c] ">
+                         className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">
                                  
                                  <View
-                                 className=" w-[70%] h-[40%] flex-row justify-center  items-center">
-                                     <FontAwesome name="thumbs-up" size={24} color={postData.likes.find(like => like.liker_id == user._id) ?"lightblue":"white" }/>
+                                 className="  flex-row justify-center  items-center">
+                                     <FontAwesome name="thumbs-up" size={20} color={postData.likes.find(like => like.liker_id == user._id) ?"lightblue":"white" }/>
                                  </View>
                                  <View
-                                    className=" w-[70%] h-[60%] flex-row  justify-center items-start">
+                                    className="  flex-row  gap-2 justify-center items-end">
                                     <Text 
-                                         style ={{fontSize:10,
+                                         style ={{fontSize:width/40,
                                          }}
-                                         className="text-xl font-black pr-2  text-white"> 
+                                         className="te xt-xl font-bold   text-gray-100"> 
                                           {postData.likes.length}
                                     </Text>
+                                    {/* <Text 
+                                         style ={{fontSize:11,
+                                         }}
+                                         className="te xt-xl font-bold   text-gray-100"> 
+                                          Likes
+                                    </Text> */}
                                  </View>          
                          </TouchableOpacity>
 
                          <TouchableOpacity
-                         onPress ={()=>{setDisplayComment(true)}}
-                           style={{backgroundColor: postData.comments.find(c => c.commenter_id === user._id)? 'rgba(61, 60, 58, 0.6)': 'rgba(61, 60, 58, 0.4)' }}
-                           className = "w-[50%] h-[50%] p pl- gap- rounded-tr-full bordr-4 borde-white rounded-bl-3xl  g-[#f0e9e9]  flex-col justify-start items-start g-[#0c0c0c] ">
-                                         
+                        //  onPress ={()=>{setDisplayComment(true)}}
+                         onPressIn={openComments}
+
+                           // style={{backgroundColor: postData.comments.find(c => c.commenter_id === user._id)? 'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)' }}
+                           className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">
                                     <View
-                                      className=" w-[70%] h-[60%] flex-row  justify-center items-end">
+                                      className="  flex-row justify-center  items-center">
+                                         <Ionicons name="chatbubble" size={20} color="orange"/>
+                                    </View>    
+                                    <View
+                                      className=" gap-2 flex-row  justify-center items-end">
                                         <Text 
-                                         style ={{fontSize:10}}
-                                         className="text-white text-sm  font-black">
+                                         style ={{fontSize:width/40}}
+                                         className="text-gray-100  font-bold">
                                             {postData.comments.length}
                                         </Text>
+                                        {/* <Text 
+                                         style ={{fontSize:11,
+                                         }}
+                                         className="te xt-xl font-bold   text-gray-100"> 
+                                          Comments
+                                        </Text> */}
                                     </View>   
-                                    <View
-                                      className=" w-[70%] h-[40%] flex-row justify-center  items-center">
-                                         <Ionicons name="chatbubble" size={28} color="orange"/>
-                                    </View>
+                                    
                          </TouchableOpacity>
 
                           <TouchableOpacity
-                           style={{backgroundColor:postData.flags.find(vote => vote.flagger_id == user._id) ?'rgba(61, 60, 58 , 0.6)': 'rgba(61, 60, 58, 0.4)'}}
+                           // style={{backgroundColor:postData.flags.find(vote => vote.flagger_id == user._id) ?'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)'}}
                            onPress={ ()=> {
                               setIsModalVisible(true)
                               setAction("FL")
@@ -223,74 +272,31 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                  :`Are you sure you want to unflag  ${selectedContestant.name} 's post ` )
                            }}
                           
-                           className = "w-[50%] h-[50%]  rounded-tl-full  rounded-br-3xl borde-4 borde-white g-[#f0e9e9]  flex-col justify-end items-end g-[#d61a1a] ">
+                           className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">
                                  <View
-                                 className=" w-[70%] h-[40%] flex-row justify-center items-center">
+                                 className="  flex-row justify-center items-center">
                                     {!postData.flags.find(flag => flag.flagger_id == user._id) && (  
-                                       <Ionicons name="flag" size={32} color="white" />
+                                       <Ionicons name="flag" size={20} color="white" />
                                     )}
                                     {postData.flags.find(flag => flag.flagger_id == user._id) && (
-                                       <Ionicons name="flag" size={32} color="red" />
+                                       <Ionicons name="flag" size={20} color="red" />
                                     )}
                                  </View>   
+                                 {/* <Text 
+                                         style ={{fontSize:11,
+                                         }}
+                                         className="te xt-xl font-bold   text-gray-100"> 
+                                          Report
+                                 </Text> */}
                                 
                               
                           </TouchableOpacity>
-                          {/* <View
-         
-                                className= "absolute z-0 bottom-0  opaci-50 flex-col px-4 justify-center items-center">
-                                     <Text 
-                                            style ={{fontSize:10,
-                                             // backgroundColor: 'rgba(0, 0, 0, 0.3)'
-                                            }}
-                                            className="text-xl font-black opacity-100 px-2 text-white"> 
-                                               {selectedContestant.country || "US"}
-                                    </Text>
-                                  < CountryFlag
-                                            isoCode={selectedContestant.country || "US"}
-                                            size={30}
-                                       
-                                  />
-                           </View> */}
-                            <View
-                              //  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)'}}
-                                className= "absolute z-0 bottom-0  opaci-50 flex-col px-4 justify-center items-center">
-                                     <Text 
-                                            style ={{fontSize:10,
-                                             backgroundColor: 'rgba(0, 0, 0, 0.3)'
-                                            }}
-                                            className="text-xl font-black opacity-100 px-2 text-white"> 
-                                               {selectedContestant.country || "US"}
-                                    </Text>
-                                  < CountryFlag
-                                            isoCode={selectedContestant.country || "US"}
-                                            size={30}
-                                       
-                                  />
-                           </View>
+                         
 
-                         <View
-                             
-                              className = " absolute w-20  h-20 p-2 flex-col bg-[#12aaf1] rounded-full  justify-center items-center">
-                             
-                                   <Image 
-                                                  className="absolute w-16 h-16 opacity-100"
-                                                  source={ icons.play}/>
-                         </View>
+                     
                          
                   </View>
 
-                  <View
-                     style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}
-                     className = "w-[100%] mt-2 h- [20%] p-2 flex-row g-[#12aaf1] rounded-xl  g-blue-500  justify-center items-center">
-                                     <Text 
-                                         style ={{fontSize:10 ,
-                                          fontStyle:"italic"
-                                         }}
-                                         className="text-xl font-black  text-white"> 
-                                          {rank < 4 ? "TOP" : "RANKED "}  {rank}
-                                     </Text>
-                   </View>
 
                   
 
@@ -299,7 +305,6 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
 
          {isModalVisible && (  
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}
-                     // handleTalentParticipation  = {handleTalentParticipation} handleTalentResignition = {handleTalentResignition}
                      handleVotePost ={handleVotePost} handleFlagPost ={handleFlagPost} setParticipationType={setParticipationType}
 
               

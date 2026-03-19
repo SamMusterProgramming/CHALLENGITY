@@ -258,7 +258,7 @@ export const getVideoUrl = async (roomId , contestantId) => {
       contestantId,
     }
   );
-  return response.data.signedUrl;
+  return response.data.cdnUrl;
 };
 
 

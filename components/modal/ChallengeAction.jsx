@@ -364,9 +364,9 @@ export default function ChallengeAction({
             {action !== "OK" && action !== "help" && (
               <TouchableOpacity
                 onPress={confirmAction}
-                className="flex-1 bg-yellow-400 rounded-xl py-2 items-center"
+                className="flex-1 bg-yellow-600 rounded-xl py-2 items-center"
               >
-                <Text className="text-black text-[12px] font-semibold">
+                <Text className="text-gray-900 text-[12px] font-semibold">
                   Confirm
                 </Text>
               </TouchableOpacity>

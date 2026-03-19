@@ -198,9 +198,7 @@ const toggleVideoPlaying = () =>{
           if (res.data === "challenge expired") {
             return setIsExpired(true);
           }
-
           setTalentRoom(res.data);
-
           setTimeout(() => {
             if (participation === "new") {
               setGlobalRefresh(true);
@@ -210,7 +208,6 @@ const toggleVideoPlaying = () =>{
                 rank: res.data.contestants.length
               });
             }
-
             if (participation === "queue") {
               setGlobalRefresh(true);
               setStage(false);

@@ -221,12 +221,12 @@ export default function Talent() {
   
     return (
       <>
-       {/* <View 
+       <View 
     className="bg-black   w-[100%] flex-col px- 2 py-2 mt- 1 mb- 1 shadow-md round ed-xl">
          
         
 
-          <View className="bg-[#f5f5fa] rounded-md white w-[100%] flex-row justify-between items-center py-1 px-2  gap-2 ">
+          {/* <View className="bg-[#f5f5fa] rounded-md white w-[100%] flex-row justify-between items-center py-1 px-2  gap-2 ">
                     
                       <TouchableOpacity
                       style ={{
@@ -347,20 +347,20 @@ export default function Talent() {
                                                   </View>
                       </TouchableOpacity>
                      
-          </View>
-    </View> */}
+          </View> */}
+    </View>
 
       <View
        className=" flex-1 h- [100%] flex-col justify-start items-center  py- 2 b g-[#898888]"
        >
-            <View className="min-w-[100vw] flex-1    rounded- xl bg-[#000000] [#deddd9] [#6a7c83]">
+            <View className="min-w- [100vw] flex-1    rounded- xl bg-[#000000] [#deddd9] [#6a7c83]">
                         <FlatList
                           data={ displayData && displayData }
                           keyExtractor={(item) => item._id}
                           renderItem = {
                               (
                               ({item ,index}) => {
-                            return <UserTalentEntry  key={index} userTalent={item} user={user} userProfile={user} activity={section == 1 ?true :false}/>
+                            return <UserTalentEntry  key={index} userTalent={item} width={width} user={user} userProfile={user} activity={section == 1 ?true :false}/>
                                          }
                                         )
                                       }

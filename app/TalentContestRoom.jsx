@@ -40,6 +40,7 @@ import { getVideo, getVideoUrl, migrateToBackblaze } from '../videoFiles';
 import { getUploadUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from '../uploadFileToBlackBlaze';
 import CommentDrawer from '../components/talent/modal/CommentDrawer';
 import CommentSheet from '../components/talent/modal/CommentDrawer';
+import { continentIcons, stageIcons } from '../utilities/TypeData';
 
 
 
@@ -86,6 +87,10 @@ const [data,setData] = useState(null)
 const [isScrolling , setIsScrolling] = useState(false)
 const [selection , setSelection] = useState("stage")
 const [stage , setStage] = useState(true)
+
+const [selectedThumbnailUrl , setSelectedThumbnailUrl] = useState(null)
+const [selectedVideoUrl , setSelectedVideoUrl] = useState(null)
+const [selectedPerformance , setSelectedPerformance] = useState(null)
 
 const modalRef = useRef(null);
 
@@ -148,9 +153,12 @@ useEffect(() => {
   }, []);
 
 
+
 useEffect(() => {
     createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation, setEdition, setIsLoading)
 }, [])
+
+
 
 useEffect(() => {
  if(isExpired) {
@@ -161,6 +169,8 @@ useEffect(() => {
   }, 1500);  
       }
 }, [isExpired])
+
+
 
 useEffect(() => {
    if (talentRoom) {
@@ -177,34 +187,33 @@ useEffect(() => {
       if (!usedLocalParams && contestant_id) {
         if(talentRoom.contestants.length > 0) {     
            setSelectedContestant(location == "contest" ? talentRoom.contestants.find((contestant)=> contestant.user_id === contestant_id) 
-                                               : null)
-          //  userP && setSelectedContestant(userP)
+                                               : talentRoom.contestants[0])
            setStage(showGo =="true"? true : false)
            setStart(true)
            setUsedLocalParams(true)
          } 
-      }
+      } 
       let d = [] ; 
       talentRoom.contestants.forEach((p , index) => {
           d.push({...p,rank:index + 1})
       })
       setData([...d])
 
-      !participantTrackerId && talentRoom.contestants.length > 0 &&  setParticipantTrackerId(talentRoom.contestants[0]._id) 
-      participantTrackerId && talentRoom.contestants.length == 0 &&  setParticipantTrackerId(null) 
-      // selectedContestant && setParticipantTrackerId(selectedContestant)
-      // selectedContestant && setSelectedContestant(d.find(p => p.user_id ===  selectedContestant.user_id))
+      // !participantTrackerId && talentRoom.contestants.length > 0 &&  setParticipantTrackerId(talentRoom.contestants[0]._id) 
+      // participantTrackerId && talentRoom.contestants.length == 0 &&  setParticipantTrackerId(null) 
+
       
      if(selectedContestant){
         if(talentRoom.contestants.find(c=> c.user_id === selectedContestant.user_id)){
-          setParticipantTrackerId(selectedContestant)
+          // setParticipantTrackerId(selectedContestant)
           setSelectedContestant(d.find(p => p.user_id ===  selectedContestant.user_id))
         }else {
           setSelectedContestant(null)
-          setParticipantTrackerId(talentRoom.contestants[0]._id)
-          setSelectedPostIndex(0)
+          // setParticipantTrackerId(talentRoom.contestants[0]._id)
+          // setSelectedPostIndex(0)
         }
      }
+
      if(favouriteList){
        setIsFavourite(favouriteList.favourites.find(f=> f._id == talentRoom._id))
      }else setIsFavourite(false)
@@ -243,33 +252,6 @@ const handleTalentResignition = () => {
              post_id = userQueuedReservation._id
       }
 
-    // if(participationType == "eliminated") {
-    //     const userElimination = talentRoom.eliminations.find(u => u.user_id == user._id) 
-    //     post_id = userElimination._id
-    //     videoRef = ref(storage , userElimination.video_url); 
-    //     thumbnailRef = ref(storage , userElimination.thumbNail_URL); 
-    //     Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
-    //   .then(() => {
-    //     console.log("both deleted successfully!");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error deleting file:", error);
-    //   });  
-    // }
-    // if(participationType =="queued") {
-    //   const userQueuedReservation =  talentRoom.queue.find( u => u.user_id == user._id) 
-    //   post_id = userQueuedReservation._id
-    //   videoRef = ref(storage , userQueuedReservation.video_url); 
-    //   thumbnailRef = ref(storage , userQueuedReservation .thumbNail_URL); 
-    //   Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
-    //   .then(() => {
-    //     console.log("both deleted successfully!");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error deleting file:", error);
-    //   });  
-    // }
-    
     deleteContestant(talentRoom._id,{user_id:user._id, post_id:post_id,type:participationType},setTalentRoom , setIsLoading)
     getUserTalent(user._id , setUserTalents)
     setGlobalRefresh(true)
@@ -366,66 +348,49 @@ useEffect(() => {
 useEffect(() => {
 
    const loadVideo = ()=>{
+    
     if ( ! talentRoom || ! selectedContestant) return;
-         
-    // if (!selectedContestant.thumbnail?.publicUrl ){
-    //   console.log("i am migrating")
-    //    await  migrateToBackblaze(selectedContestant.thumbNail_URL, selectedContestant.user_id , 
-    //     selectedContestant.name , talentRoom._id )
-    //     return ; 
-    // }
-
     try {
       setSelection("stage");
-      setParticipantTrackerId(selectedContestant._id);
-      setSelectedPostIndex(selectedContestant.rank - 1);
       setDisplayThumbnail(true)
-      getVideoUrl(
-        talentRoom._id,     
-        selectedContestant._id
-      ).then(url => {
-        player.replaceAsync(url).then(()=> {setDisplayThumbnail(false) ;
-                                      //  player.play()
-                                      //  setIsPlaying(true)
-                                      })
-      });
-      // console.log(videoSignedUrl)
-      //   player.replaceAsync(videoSignedUrl).then(()=> {setIsPlaying(true)});
-      // await player.replaceAsync(videoSignedUrl);
-      // await player.play();
-    
-       // if (!selectedContestant.video?.signedUrl && talentRoom){
-    //   console.log(talentRoom._id)
-    //   migrateToBackblaze(selectedContestant.video_url,selectedContestant.thumbNail_URL, selectedContestant.user_id , 
-    //     selectedContestant.name , talentRoom._id , selectedContestant._id)
-    // }
+      // setSelectedThumbnailUrl(selectedContestant.performances[0].thumbnail?.publicUrl)
+      setSelectedPerformance({...selectedContestant.performances[0]})
+      // if(!selectedContestant.video?.cdnURL){
+      // getVideoUrl(
+      //   talentRoom._id,     
+      //   selectedContestant._id
+      // ).then(url => {
+      //   player.replaceAsync(url).then(()=> {setDisplayThumbnail(false)    })
+      //   }) 
+    //}
+      // else{
+      //     player.replaceAsync(selectedContestant.performances[0].video?.cdnURL).then(()=> {setDisplayThumbnail(false) })
+      // }
+     
+      player.replaceAsync(selectedContestant.performances[0].video?.cdnUrl).then(()=> {setDisplayThumbnail(false) })
 
-      // setIsPlaying(true);
-      setStage(true);
+      // setStage(true);
       setSelection("stage");
-      setParticipantTrackerId(selectedContestant._id);
-      setSelectedPostIndex(selectedContestant.rank - 1);
+      // setParticipantTrackerId(selectedContestant._id);
+      // setSelectedPostIndex(selectedContestant.rank - 1);
 
     } catch (err) {
       console.error("Error loading video:", err);
     }
    }
-
-  //  if(selectedContestant) {
-
-  //   const videoSignedUrl =   getSignedVideoUrl()
-  //   console.log(videoSignedUrl)
-  //   player.replaceAsync(videoSignedUrl).then(()=> {setIsPlaying(true)});
-
-  //   player.play();
-  //   setStage(true)
-  //   setSelection("stage")
-  //   setParticipantTrackerId(selectedContestant._id)
-  //   setSelectedPostIndex(selectedContestant.rank-1)
-   
-  //   }   
   loadVideo()
 }, [selectedContestant])
+
+// useEffect(() => {
+//   if(!selectedPerformance) return ;
+//    setDisplayThumbnail(true)
+//    player.replaceAsync(selectedPerformance.video?.cdnUrl).then(()=> {
+//                   setTimeout(() => {
+//                     setDisplayThumbnail(false) 
+//                   }, 300); 
+//                    })
+// }, [selectedPerformance])
+
 
 const handleRefresh =()=> {
   setIsRefreshing(true)
@@ -445,10 +410,8 @@ return (
       <View
        className=" flex-1  min-w-[100%] min-h-[100%] flex-row justify-center items-center   bg-black [#3d3c3a] [#041539]   [#786d6d]">
            {!isLoading && ! isExpired && talentRoom && data && (
-             <>
-                { start ?
-                  (
-                        <>
+         
+                 <>
                             {stage ? (
 
                                 <>
@@ -459,14 +422,14 @@ return (
                                           className={ "w-[100vw] h-[100%] b g-white flex-col justify-center items-center "}
                                               > 
                                               <View
-                                              className = {!isPlaying ? "opacity-30 w-[100%]" : "w-[100vw] opacity-100"}>
+                                              className = {!isPlaying ? "opacity-35 w-[100%] " : "w-[100vw]  opacity-100"}>
                                                        {displayThumbnail ? (
                                                           <View
                                                           className="w-[100%] h-[100%] justify-center items-center">
                                                                 <Image 
-                                                                  className="w-[100%] h-[100%] opacity-50"
+                                                                  className="w-[100%] h-[100%] opacity-100"
                                                                   resizeMethod='contain'
-                                                                  source={{uri:selectedContestant.thumbnail?.publicUrl}}/> 
+                                                                  source={{uri:selectedPerformance?.thumbnail.publicUrl}}/> 
                                                                  <ActivityIndicator className="absolute" size="large" color="white" />
  
                                                           </View>
@@ -479,16 +442,8 @@ return (
                                                                   nativeControls ={false}
                                                                   pointerEvents='box-only'
                                                         />
-                                                       )}
-                                                       {/* <VideoView 
-                                                             style={{ width:'100%' ,height:'100%',
-                                                             
-                                                            }}
-                                                             player={player}
-                                                             contentFit='cover'
-                                                             nativeControls ={false}
-                                                             pointerEvents='box-only'
-                                                           /> */}
+                                                        )} 
+                                               
                                               </View>
                                              
                                               <ContestantPostDetails user={user} show = { !isPlaying && selectedContestant} displayComment ={displayComment}
@@ -508,28 +463,7 @@ return (
                                                           "w-full h-full flex-col absolute top-  justify-center items-center"
                                                   }>
                                               </TouchableOpacity>
-{/* 
-                                              {!isPlaying && selectedContestant && (
-                                                 <View
-                             
-                                                      className = " absolute w-20  h-20 p-1 flex-col  rounded-full  justify-center items-center">
-                                                          <Image 
-                                                                          className="absolute w-12 h-12 opacity-100"
-                                                                          source={ icons.play}/>
-                                                </View> 
-                                              )} */}
 
-                                              {/* <DisplayContestant show = {isContestantVisible} setIsContestantVisible = {setIsContestantVisible} selectedContestant={selectedContestant} 
-                                              width ={width } height={height-insets.top} top = { insets.top} setIsExpired={setIsExpired} /> */}
-
-                                               {/* {displayComment && (
-                                                <CommentModal user={user} displayComment={displayComment} setDisplayComment={setDisplayComment} selectedContestant={selectedContestant} 
-                                                h = { Platform.OS == "ios" ?  width * 1.49 + insets.bottom/2 : 
-                                                           width * 1.49  } 
-                                                top = {insets.top}
-                                                            />  
-                                              
-                                              )} */}
 
                                               {isPlaying && (<ProgresssBarVideo player={player} visible={!isPlaying} bottom={82} />)}
                                               {isPlaying &&  (
@@ -555,11 +489,7 @@ return (
                                </>
                             )}
                           
-                        </>
-
-                ) : (
-                    <TalentRoomIntroduction talentRoom={talentRoom} edition = {edition} selectedIcon ={selectedIcon} selectedTalent={selectedTalent} region={region} regionIcon={regionIcon} setStart={setStart} />
-                )}
+         
 
 
                     
@@ -567,13 +497,9 @@ return (
             <View
             style = {{ top : height * 0.1 ,left :10}}
                   className="w- [100%] h- [15%] absolute top-8 flex-col  justify-center  items-center ">
-                        <View
+                        {/* <View
                         className = "w-[100%] gap-4 flex-row justify-center items-end">
-                            {/* <Text 
-                                style ={{fontSize:10 }}
-                                className=" font-black  text-white"> 
-                              {talentRoom.name}
-                            </Text> */}
+                         
                             <Image
                                     source={getStageLogo(talentRoom.name)}
                                     style ={{ width:width/8 ,height :width/6 }}
@@ -585,12 +511,12 @@ return (
                             className="tex t-xl font-black mb-4 text-yellow-500"> 
                               {talentRoom.contestants.length}  Contestants
                            </Text>
-                           <Text 
+                           <Text  
                             style ={{fontSize:width/50 ,fontStyle:"italic"}}
-                            className="absolute top-2 right-0 font-black -auto text-white"> 
+                            className="absolute top-6 right-0 font-black -auto text-white"> 
                               {talentRoom.region}  
                            </Text>
-                        </View>
+                        </View> */}
                       
                         
             </View>
@@ -687,7 +613,7 @@ return (
 
                         <TouchableOpacity
                                     onPress={handleRefresh}
-                                    onPressIn={() =>{setSelectedContestant(null)}}
+                                    // onPressIn={() =>{setSelectedContestant(null)}}
                                     className="p-2  rounded-tr-full flex-row g-green-600 -rota te-45   justify-center items-center">
                                         {isRefreshing ?(
                                               <ActivityIndicator size={20} color="red" />
@@ -724,7 +650,7 @@ return (
                                               <Text 
                                                 style ={{fontSize:10}}
                                                 className="text-xl  font-black   text-white"> 
-                                                  Contest Room 
+                                                  Stage
                                               </Text> 
                                               <Text 
                                                 style ={{fontSize:9}}
@@ -757,21 +683,35 @@ return (
 
                           <View
                           className = "flex-col absolute top-2 left-[20]    justify-center items-center gap- 2">
-                              <Image
-                                    style ={{height:width/7 ,width:width/9}}
-                                    source={getStageLogo(talentRoom.name)}
-                                    resizeMode='cover'
-                                    />
+                                <View className=" items-center justify-center">
+                                    
+                                    <Text 
+                                    style={{ fontSize : width/17}}
+                                    className="text-white  font-extrabold tracking-widest">
+                                        {stageIcons[talentRoom.name]}
+                                    </Text>
+                                    <Text 
+                                    style={{ fontSize : width/49}}
+                                    className="text-white t font-extrabold tracking-widest">
+                                        {talentRoom.name}
+                                    </Text>
+                                  </View>
                           </View>
                           <View
                           className = "flex-col absolute  top-4 right-[20]    justify-center items-center gap-2">
-                              <Image
-                                    style ={{height:width/9 ,width:width/9}}
-                                    source={getStageLogo(talentRoom.region)}
-                                    />                    
+                               <View className=" rounded-full items-center justify-center">
+                                  <Text 
+                                  style={{ fontSize : width/17}}
+                                  className="text-white t font-extrabold tracking-widest">
+                                      {continentIcons[talentRoom.region]}
+                                  </Text>
+                                  <Text 
+                                  style={{ fontSize : width/49}}
+                                  className="text-white t font-extrabold tracking-widest">
+                                      {talentRoom.region}
+                                  </Text>
+                                </View>                
                           </View>
-
-                        
                 </View>
             </MotiView>
 
@@ -849,11 +789,11 @@ return (
 
 
            
-              {!isPlaying &&  !newChallenge &&
-              //  !selectedContestant && 
+              { !isPlaying && !newChallenge && selectedContestant &&
                selection === "stage" && stage &&
               (
-              <CentralContestantPlayer data={data} selectedContestantt = {selectedContestant} h = { width * (0.98) }  w = { width * 0.57 }
+              <CentralContestantPlayer
+               data={selectedContestant.performances} setSelectedPerformance={setSelectedPerformance} selectedContestant = {selectedContestant} h = { width * (0.98) }  w = { width * 0.57 }
                 participantTrackerId = {participantTrackerId} setParticipantTrackerId={setParticipantTrackerId} talentRoom={talentRoom}
                 isScrolling = {isScrolling} setIsScrolling = {setIsScrolling} setIsPlaying = {setIsPlaying} isPlaying ={isPlaying} player ={player}
                 selectedPostIndex = {selectedPostIndex}  top={insets.top + width * 0.01} setSelectedContestant={setSelectedContestant} user={user}/>
@@ -862,7 +802,7 @@ return (
              {!isPlaying &&  !newChallenge && !selectedContestant && 
                selection === "queue" && stage &&
               (
-              <CentralQueuePlayer data={talentRoom.queue} selectedContestantt = {selectedContestant} h = { width * (0.98) }  w = { width * 0.57 }
+              <CentralQueuePlayer data={talentRoom.queue} selectedContestant = {selectedContestant} h = { width * (0.98) }  w = { width * 0.57 }
                 participantTrackerId = {participantTrackerId} setParticipantTrackerId={setParticipantTrackerId} talentRoom={talentRoom}
                 isScrolling = {isScrolling} setIsScrolling = {setIsScrolling} setParticipationType ={setParticipationType}
                 selectedPostIndex = {selectedPostIndex}  top={insets.top + width * 0.01} setSelectedContestant={setSelectedContestant} user={user}/>
@@ -871,7 +811,7 @@ return (
              {!isPlaying &&  !newChallenge && !selectedContestant && 
                selection === "elimination" && stage &&
               (
-              <CentralElimineePlayer data={talentRoom.eliminations} selectedContestantt = {selectedContestant} h = { width * (1.05) }  w = { width * 0.57 }
+              <CentralElimineePlayer data={talentRoom.eliminations} selectedContestant= {selectedContestant} h = { width * (1.05) }  w = { width * 0.57 }
                 participantTrackerId = {participantTrackerId} setParticipantTrackerId={setParticipantTrackerId} talentRoom={talentRoom}
                 isScrolling = {isScrolling} setIsScrolling = {setIsScrolling} setParticipationType ={setParticipationType} 
                 selectedPostIndex = {selectedPostIndex}  top={insets.top + width * 0.01} setSelectedContestant={setSelectedContestant} user={user}/>

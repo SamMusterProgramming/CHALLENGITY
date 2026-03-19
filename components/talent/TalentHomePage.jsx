@@ -59,7 +59,7 @@ const TalentHomePage = ({ setSelectedPage }) => {
         <Image
              className="w-10 h-10"
              source={item.icon}
-             esizeMethod='cover' />
+             resizeMethod='cover' />
        
       </TouchableOpacity>
       <Text style={styles.label}>{item.name}</Text>
@@ -72,7 +72,6 @@ const TalentHomePage = ({ setSelectedPage }) => {
     className="flex-1    ">
     {!selectedTalent ?  (
         <>
-           
             <View
             className="flex-row w-full -[5%] border-l- [10px] borde-r-[10px] borde-b-[10px] order-[#272d31] justify-center g-[#bdc2c4] items-center pt-4 py- px-4">
                 <TouchableOpacity

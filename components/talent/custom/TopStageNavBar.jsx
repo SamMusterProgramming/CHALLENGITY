@@ -6,11 +6,11 @@ const tabs = [
   { name: "Home", icon: "home" },
   { name: "Talent", icon: "trophy" },
   { name: "Challenge", icon: "fire" },
-  { name: "Stats", icon: "bars" },
+  { name: "Stats", icon: "fire" },
   { name: "Profile", icon: "user" }
 ];
 
-export default function TopStageNavBar({ activeIndex, setActiveIndex }) {
+export default function TopStageNavBar({ activeIndex, setActiveIndex, width }) {
 
   const screenWidth = Dimensions.get("window").width;
   const tabWidth = screenWidth / (tabs.length );
@@ -29,9 +29,9 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex }) {
 
   return (
 
-    <View className="bg-[#0D0D0D] border-b border-[#222]">
+    <View className="b g-[#1d1c1c] borde r-b-2 bor der-[#444040]">
 
-      <View className="flex-row">
+      <View className="flex-row h-[100%] justify-center items-center ">
 
         {tabs.map((tab, index) => {
 
@@ -46,18 +46,17 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex }) {
             >
 
               <View className={`px3 py-0 rounded-lg ${active ? "bg-[#F5C542]/20" : ""}`}>
-
                 <AntDesign
                   name={tab.icon}
-                  size={screenWidth/22}
-                  color={active ? "#F5C542" : "#888"}
+                  size={screenWidth/25}
+                  color={active ? "#F5C542" : "#fff"}
                 />
-
               </View>
 
               <Text
-                className={`text-xs mt-1 font-semibold ${
-                  active ? "text-[#F5C542]" : "text-gray-400"
+              style={{fontSize:width/47}}
+                className={`tex t-xs mt-1 font-bold ${
+                  active ? "text-[#F5C542]" : "text-gray-200"
                 }`}
               >
                 {tab.name}
@@ -74,8 +73,8 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex }) {
 
       <Animated.View
         style={{
-          position: "absolute",
-          bottom: 2,
+          // position: "absolute",
+          bottom: "17%",
           height: 1,
           width: tabWidth - 30,
           backgroundColor: "#F5C542",

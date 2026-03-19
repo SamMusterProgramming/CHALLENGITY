@@ -61,12 +61,12 @@ const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, region
                 <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} participantTrackerId={participantTrackerId}
                  setSelectedContestant={setSelectedContestant} 
                 talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +1} w={"12%"} h={"100%"}/>
-
-               
+   
+                  
                 )
           })}
        </View>
-       {/* </ScrollView> */}
+     
 
     </Animated.View>
 

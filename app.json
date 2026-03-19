@@ -25,7 +25,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/challenge-logo.png"
       },
-      "package": "com.anonymous.Challengify",
+      "package": "com.challengify.app",
       "permissions": [
         "camera",
         "android.permission.CAMERA",

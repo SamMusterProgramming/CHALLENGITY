@@ -9,6 +9,7 @@ import ChallengeAction from '../modal/ChallengeAction';
 import { router } from 'expo-router';
 import { createdAt } from 'expo-updates';
 import { getInition } from '../../helper';
+import VoteButton from '../custom/VoteButton';
 
 export default function ContestantPostDetails({user,show , height, width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
   ,setParticipationType  ,rank,handleRefresh, setIsExpired ,openComments}) {
@@ -61,7 +62,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
 
   useEffect(() => {
    if(postData && voted)   {
-      // handleRefresh()
+      handleRefresh()
    }
   }, [postData])
 
@@ -108,111 +109,27 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                            //   top:top 
              }}
              >
-                   <TouchableOpacity
+                   {/* <TouchableOpacity
                      onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
               
                      className = "w-[100%]  py-2 px- 2 flex-row   gap-2   justify-start items-end">
-                                     {/* <Image
-                                      style ={{
-                                          height : width * 0.8 /10 ,
-                                          width :width * 0.8 /10 }}
-                                      source={{uri:selectedContestant.profile_img}}
-                                      className =" rounded-full"
-                                      resizeMethod='fill'
-                                                         />
-                                     <Text 
-                                         style ={{fontSize:width/50,
-                                        
-                                         }}
-                                         className="text -center font-black  text-white"> 
-                                             {selectedContestant.name}
-                                     </Text>
-                                  
+                                   
 
-                                     <View
-                                       
-                                          className = "absolute  top-0 left-[30%]    flex-row-reverse   justify-center items-end">
-                                                         <Text 
-                                                            style ={{fontSize:width/50 ,
-                                                               fontStyle:"italic"
-                                                            }}
-                                                            className=" font-black   text-white"> 
-                                                               {rank < 4 ? "#" : "# "}  {rank}
-                                          
-                                                         </Text>
-                                                         <Text 
-                                                            style ={{fontSize:10 ,
-                                                               fontStyle:"italic"
-                                                            }}
-                                                            className=" font-black  text-white"> 
-                                                               
-                                                               🏆 
-                                                         </Text>
-                                                    
-                                     </View> */}
-
-                   </TouchableOpacity>
+                   </TouchableOpacity> */}
  
         
                    <View
    
                       className = "w-[100%] flex -1 mt-auto  flex-col gap- 8 justify-start items-center">
-                         
-                         <TouchableOpacity
-                        //  style={{backgroundColor:postData.votes.find(vote => vote.voter_id == user._id) ?'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)'}}
-                         onPress={
-                           ()=> {
-                              setIsModalVisible(true);
-                              if(voteTimeLaps < 0 || !talentRoom.contestants.find(c =>c._id == postData.post_id)){
-                                 setAction("OK")
-                                 setText(!talentRoom.contestants.find(c =>c._id == postData.post_id)?"this post is still in queue , can't vote , just yet !!!":
-                                            "you've just casted your vote , you can't edit your vote at this time wait 24h")
-                                 return false
-                              }
-                              else{
-                              setAction("VT");
-                              setText(
-                                 !voterEntry? `Are you sure you want to cast your vote for ${selectedContestant.name}`:
-                                 voterEntry.post_id == selectedContestant._id ?
-                                 `Are you sure you want to remove your vote   for ${selectedContestant.name}` :
-                                 `You 've previously cast your vote for ${voterEntry.name}. Would you like to change your vote to ${selectedContestant.name}?`
-                               );
-                              }
-                           }
-                           
-                        }
-                         className = "w-[100%]  py-4 gap-2  rounded-br-full rounded-tl-xl  flex-row  justify-start items-end  ">
-                                 
-                               
-                                          <Text 
-                                            style ={{fontSize:15}}
-                                             className=" font-bold  te xt-black"> 
-                                            
-                                             {postData.votes.find(vote => vote.voter_id == user._id) ? "❤️" : "🤍"}
-                                          </Text>  
-                                          
-                                 <View
-                                    className=" gap-2 flex-row  justify-center  items-start">
-                                     <Text 
-                                         style ={{fontSize:width/40}}
-                                         className=" font-bold  text-gray-100"> 
-                                             {postData.votes.length} 
-                                     </Text>
-                                     {/* <Text 
-                                         style ={{fontSize:11,
-                                         }}
-                                         className="te xt-xl font-bold   text-gray-100"> 
-                                          Votes
-                                     </Text> */}
-                                 
-                                 </View>   
-                         </TouchableOpacity>
-
+                         <VoteButton 
+                               setIsModalVisible={setIsModalVisible} width={width}
+                               voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
+                               postData ={postData} setAction={setAction} setText={setText} user={user}
+                               voterEntry={voterEntry} selectedContestant={selectedContestant} />
+         
                          <TouchableOpacity 
-                        //  style={{backgroundColor:postData.likes.find(vote => vote.liker_id == user._id) ?'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)'}}
                          onPress={handleLikePost}
-                         className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">
-                                 
+                         className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">  
                                  <View
                                  className="  flex-row justify-center  items-center">
                                      <FontAwesome name="thumbs-up" size={20} color={postData.likes.find(like => like.liker_id == user._id) ?"lightblue":"white" }/>
@@ -225,20 +142,11 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                          className="te xt-xl font-bold   text-gray-100"> 
                                           {postData.likes.length}
                                     </Text>
-                                    {/* <Text 
-                                         style ={{fontSize:11,
-                                         }}
-                                         className="te xt-xl font-bold   text-gray-100"> 
-                                          Likes
-                                    </Text> */}
                                  </View>          
                          </TouchableOpacity>
 
                          <TouchableOpacity
-                        //  onPress ={()=>{setDisplayComment(true)}}
                          onPressIn={openComments}
-
-                           // style={{backgroundColor: postData.comments.find(c => c.commenter_id === user._id)? 'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)' }}
                            className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">
                                     <View
                                       className="  flex-row justify-center  items-center">
@@ -251,18 +159,10 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                          className="text-gray-100  font-bold">
                                             {postData.comments.length}
                                         </Text>
-                                        {/* <Text 
-                                         style ={{fontSize:11,
-                                         }}
-                                         className="te xt-xl font-bold   text-gray-100"> 
-                                          Comments
-                                        </Text> */}
-                                    </View>   
-                                    
+                                    </View>            
                          </TouchableOpacity>
 
                           <TouchableOpacity
-                           // style={{backgroundColor:postData.flags.find(vote => vote.flagger_id == user._id) ?'rgba(255, 255, 255, 0.5)': 'rgba(255, 255, 255, 0.5)'}}
                            onPress={ ()=> {
                               setIsModalVisible(true)
                               setAction("FL")
@@ -282,14 +182,7 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                        <Ionicons name="flag" size={20} color="red" />
                                     )}
                                  </View>   
-                                 {/* <Text 
-                                         style ={{fontSize:11,
-                                         }}
-                                         className="te xt-xl font-bold   text-gray-100"> 
-                                          Report
-                                 </Text> */}
-                                
-                              
+                        
                           </TouchableOpacity>
                          
 

@@ -27,3 +27,41 @@ export const Audience =[
   {id: 2, value:"Strict"}
 
 ]
+
+
+export const talentStages = [
+  { id: "1", name: "Singing" },
+  { id: "2", name: "Dancing" },
+  { id: "3", name: "Fitness" },
+  { id: "4", name: "Magic" },
+  { id: "5", name: "Food" },
+  { id: "6", name: "Adventure" },
+  { id: "7", name: "Sport" },
+  { id: "8", name: "Melody" },
+  { id: "9", name: "Gaming" },
+  { id: "10", name: "Art" },
+  { id: "11", name: "Tech" },
+  { id: "12", name: "Comedy" },
+];
+
+export const stageIcons = {
+  Singing: "🎤",
+  Dancing: "💃",
+  Fitness: "🏋️",
+  Magic: "🪄",
+  Food: "🍔",
+  Adventure: "🏕️",
+  Sport: "⚽",
+  Melody: "🎸",
+  Gaming: "🎮",
+  Art: "🎨",
+  Tech: "🧠",
+  Comedy: "🎭",
+};
+
+export const continentIcons = {
+    Africa: "🌍",      // Globe showing Africa/Europe
+    America: "🌎",    // Globe showing Americas
+    Asia: "🌏",        // Globe showing Asia/Oceania
+    Europe: "🌍",      // Reuse Africa/Europe globe for Europe
+  };

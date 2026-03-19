@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
+import { continentIcons, stageIcons } from "../../../utilities/TypeData";
 
 export default function StageHeader({
   stageLogo,
   stageTitle,
+  region,
   contestants,
   round,
   continentLogo,
@@ -22,50 +24,61 @@ export default function StageHeader({
   <View className="flex-row items-center px-2 justify-between">
 
     {/* Stage Logo */}
-    <View className="p- 2 ml-[-10] items-center justify-center">
-      <Image
-      style={{height:width/5,width:width/5}}
-        source={stageLogo}
-        resizeMode="contain"
-        // className="w-12 h-12"
-      />
+    <View className="p- 2 ml- [-10] items-center justify-center">
+  
+      <Text 
+       style={{ fontSize : width/10}}
+       className="text-white  font-extrabold tracking-widest">
+           {stageIcons[stageTitle]}
+       </Text>
+       <Text 
+       style={{ fontSize : width/40}}
+       className="text-white t font-extrabold tracking-widest">
+           {stageTitle}
+       </Text>
     </View>
 
     {/* Continent */}
     {/* <View className="items-center"> */}
-      <View className="p-2 rounded-full bg-black border bor der-yellow-500 items-center justify-center">
-        <Image
-          source={continentLogo}
-          resizeMode="contain"
-          className="w-7 h-7"
-          style={{height:width/5,width:width/4}}
-        />
+      <View className=" rounded-full items-center justify-center">
+       <Text 
+       style={{ fontSize : width/10}}
+       className="text-white t font-extrabold tracking-widest">
+           {continentIcons[region]}
+       </Text>
+       <Text 
+       style={{ fontSize : width/40}}
+       className="text-white t font-extrabold tracking-widest">
+           {region}
+       </Text>
       </View>
     {/* </View> */}
 
   </View>
 
   {/* CENTER CONTENT */}
-  <View className="items-center mt-[-60]">
+  <View className="items-center mt-[-30]">
 
     {/* TITLE */}
     <Text 
-    style={{ fontSize : width/28}}
+    style={{ fontSize : width/32}}
     className="text-white text-xl font-extrabold tracking-widest">
       {stageTitle.toUpperCase()}
     </Text>
 
     {/* Contestants */}
     <Text 
-    style={{ fontSize : width/36}}
+    style={{ fontSize : width/39}}
     className="text-gray-400 text-sm mt-1 tracking-wide">
       {contestants} COMPETITORS
     </Text>
 
     {/* ROUND BADGE */}
-    <View className="mt-4 px-6 py-2 rounded-full bg-yellow-500/20 border border-yellow-500">
-      <Text className="text-yellow-400 text-xs font-bold tracking-[2px]">
-        {round.toUpperCase()}
+    <View className="mt-2 px-6 py-1  mb-2 rounded-full bg-yellow-500/20 border border-yellow-500">
+      <Text
+       style={{ fontSize : width/45}}
+       className="text-yellow-400 text-xs font-bold tracking-[2px]">
+        {round?.toUpperCase()}
       </Text>
     </View>
 

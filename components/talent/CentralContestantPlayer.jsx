@@ -1,88 +1,92 @@
 import { View, Text, Platform, FlatList, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { icons } from '../../constants';
-import { getIcon, getStageLogo } from '../../helper';
+import { getIcon, getStageLogo, getTimeLapse } from '../../helper';
 import { router } from 'expo-router';
 
 export default function CentralContestantPlayer({selectedContestant ,data, w,h , top ,user,  setSelectedContestant , selectedPostIndex,isScrolling,
-    setIsScrolling , setParticipantTrackerId ,talentRoom, participantTrackerId , setIsPlaying , isPlaying ,player}) {
+    setSelectedPerformance , setIsPlaying , isPlaying ,player}) {
        
         const flatList = useRef()
         const [viewableItems, setViewableItems] = useState([]);
         const {width ,height} = useWindowDimensions()
 
         
-        const onViewableItemsChanged = ({ viewableItems }) => {
-            setViewableItems(viewableItems);
-            // console.log(viewableItems[0].index)
-            // viewableItems.length > 0 && setParticipantTrackerId(viewableItems[0]._id)
-          };
+        // const onViewableItemsChanged = useRef(({ viewableItems }) => {
+        //   if (viewableItems.length > 0) {
+        //     const currentItem = viewableItems[0].item;
+        
+        //     setSelectedPerformance(currentItem);
+        
+        //     // Optional: auto play when visible
+        //     setIsPlaying(true);
+        //   }
+        // });
+
+        const onViewableItemsChanged = useRef(({ viewableItems }) => {
+          if (!viewableItems || viewableItems.length === 0) return;
+        
+          // pick the item with highest visibility
+          const mostVisible = viewableItems.reduce((prev, current) =>
+            prev.itemVisiblePercent > current.itemVisiblePercent ? prev : current
+          );
+          setSelectedPerformance(mostVisible.item);
+        });
+
+       
+          
     
-        useEffect(() => {
-          if(viewableItems.length > 0 && !selectedContestant && !isScrolling) {
-            setParticipantTrackerId(viewableItems[0].item._id)
-          }
-        }, [viewableItems])
+        // useEffect(() => {
+        //   if(viewableItems.length > 0 && !selectedContestant && !isScrolling) {
+        //     setParticipantTrackerId(viewableItems[0].item._id)
+        //   }
+        // }, [viewableItems])
     
     
-        useEffect(() => {
+        // useEffect(() => {
            
-            setTimeout(() => {
-              participantTrackerId &&  flatList.current &&  flatList.current.scrollToIndex({
-                    index: selectedPostIndex,
-                    animated:false
-                  });
-                  setIsScrolling(false)
-            }, 0);
-        }, [selectedPostIndex])
+        //     setTimeout(() => {
+        //       participantTrackerId &&  flatList.current &&  flatList.current.scrollToIndex({
+        //             index: selectedPostIndex,
+        //             animated:false
+        //           });
+        //           setIsScrolling(false)
+        //     }, 0);
+        // }, [selectedPostIndex])
     
       
         
     
-        const contestant = data.find(p => p._id === participantTrackerId)
+        // const contestant = selectedContestant data.find(p => p._id === participantTrackerId)
     
         
         const renderItem = ({ item ,index }) => (
             <View
-           
             className ="p- 2 b g-[#000000] rounded-3xl black  justify-center  items-center" 
             style ={{ 
-                height: h ,
+                height: w ,
                 width : w
                }}
             >
                 <TouchableOpacity
                      onPress={
                       () =>  {
-                        // setSelectedContestant(item)
-                        // setIsPlaying(true)
+                    
                          (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
 
                      }}
                       style ={{ 
           
                     }}
-                      className="min w-[100%] h-[100%] rounded-lg  b g-black border- borde-[white] flex-col justify-start items-center rounde gap-  ">
-                     
+                      className="min w-[100%] h-[100%]   b g-black border- borde-[white] flex-col justify-center items-center rounde gap-  ">
+                      
                       <View
-                          className=" flex-col w-[100%] h-[100%] -2 b g-black  h- 8 g-black opacity-100 rounded-lg justify-start items-center gap- 1 ">
+                          className=" flex-col w-[100%] h-[100%] k opacity-100 rounded-lg justify-center items-center gap- 1 ">
                          
-                              {/* <View
-                              className="w- [100%] h- [15%] p-2 4 flex-col  justify-center bg-[#0f0830] items-center ">
-                                    <Text 
-                                        style ={{fontSize:12 ,fontStyle:"italic"}}
-                                        className="text-xl font-black -auto text-white"> 
-                                        {challenge.participants.length} 
-                                    </Text>
-                                    <Text 
-                                        style ={{fontSize:9 ,fontStyle:"italic"}}
-                                        className="text-xl font-black -auto text-white"> 
-                                           PARTICIPANTS
-                                    </Text>
-                              </View> */}
+                        
     
                               <View
-                              className="w- [100%] h- [50%] py-12 b g-white flex-col justify-center items-center ">
+                              className=" flex-col justify-center items-center ">
                                    <Image
                                    style={{width:w - w * 0.1 , height:w - w * 0.1}}
                                     className="w-[100%] h-[100%]  shadow-lg elevation-2xl rounded-full"
@@ -92,52 +96,39 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
                                     className="absolute w-10 h-10 rounded-xl"
                                     source={icons.play} 
                                     resizeMethod='cover' /> 
-                                    <View
-                                    className="absolute top-4 left-0 flex-row justify-start items-center gap-2 ">
-                                                    <Text 
-                                                    style ={{fontSize:9}}
-                                                    className="text-xl text-center p-0 font-black text-blue-300"> 
-                                                        VOTES 
-                                                    </Text>
-                                        
-                                                   <Text 
-                                                    style ={{fontSize:10}}
-                                                    className="text-xl  font-black text-white"> 
-                                                    {item.votes }
-                                                  </Text>
-                                   </View>
-                                 
-                                   <View
-                                    className="absolute right-0 top-4 flex-row justify-start items-center gap-2 ">
-                                                   <Text 
-                                                        style ={{fontSize:9}}
-                                                        className="text-xl text-ce nter  p-0 font-black text-red-400"> 
-                                                        {item.rank < 4 ? "TOP" :"RK"}
-                                                    </Text>
-                                    
-                                            
-                                                    <Text 
-                                                        style ={{fontSize:10}}
-                                                        className="text-xl  font-black text-white"> 
-                                                        {item.rank}
-                                                    </Text>
-                                 </View>
-                                 <TouchableOpacity
-                                   onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:contestant.user_id} })}}
-                                     className="absolute bottom-0  h-24 left-0 flex-row justify-center mt- auto items-end gap-6 ">
-                                            <Image
-                                                source={{uri:item.profile_img}}
-                                                className ="w-[35px] h-[35px] m- rounded-full"
-                                                resizeMethod='cover'
-                                                />  
-                                             <Text   
-                                                style ={{fontSize:10}}
-                                                className="font-black text-xs   text-white">
-                                                {item.name.slice(0,15)}  
-                                            </Text>
-                                 </TouchableOpacity>
+                            
+                                
                                
                               </View>
+
+                              <View
+                                    className="absolute bottom-0 left-0 flex-row justify-center  items-center gap-2 ">
+                                                    <Text 
+                                                    style ={{fontSize:w/25}}
+                                                    className="text -xl text-center p-0 font-black text-[#464749]"> 
+                                                   
+                                                        <Text 
+                                                          style ={{fontSize:w/25}}
+                                                          className="tex t-xl  font-black text-white"> 
+                                                          {index == 0 ? "Recent" : "Previous"}  
+                                                        </Text>
+                                                    </Text>
+                                        
+                                                 
+                                   </View>
+                                   <View
+                                    className=" absolute top-0 right-0 flex-row justify-start items-center gap-2 ">
+                                                  <Text 
+                                                    style ={{fontSize:w/30}}
+                                                    className="tex t-xl  font-black text-white"> 
+                                                       {getTimeLapse(item.date)}
+                                                       <Text 
+                                                        style ={{fontSize:w/32}}
+                                                        className="tex t-xl  font-black text-white"> 
+                                                        {' '} ago
+                                                      </Text>
+                                                  </Text>
+                                    </View>
                 
                       </View>
                  </TouchableOpacity>
@@ -147,89 +138,117 @@ export default function CentralContestantPlayer({selectedContestant ,data, w,h ,
 
       return (
         <View
+      
         style={{
-          height:h ,
+          
+          // position: !isPlaying ? "absolute" : "relative",
+          height: h ,
           width:  w,
-          // top : Platform.OS == "ios" ?  w * 0.18 + top + 1 : w * 0.18 + 50 + 1 
+          // top : Platform.OS == "ios" ?  w * 0.24 + top + 1 : w * 0.24 + 50 + 1 
           }}
-        className="absolute  b g-[#162142]  flex- row justify-center items-center  rounded-xl "
+        className="absolute  b g-[#162142]  flex- row justify-between items-center  rounded-xl "
         > 
-                         {/* <View
-                              className="w-[100%] h- [15%] p-2 mb- 8 flex-col  justify-center  items-center ">
-                                    <View
-                                    className = "w-[100%] gap-2 flex-row justify-center items-center">
-                                        <Text 
-                                            style ={{fontSize:10 }}
-                                            className=" font-black  text-white"> 
-                                          {talentRoom.name}
-                                        </Text>
-                                        <Image
-                                                source={getStageLogo(talentRoom.name)}
-                                                style ={{ width:width/5 , height:width/5}}
-                
+                        <View
+                          style={{
+                            minHeight : (h-w)/2 ,
+                            width : w
+                          }}
+                          className ="flex-col p-4 mb- 12  justify-center gap-4 b g-white items-center"
+                        >
+                                <View
+                                    className ="flex-row border-b border-[gold] p-2 mb- 12 justify-center gap-8 b g-white items-center">
+                                   <Text 
+                                                    style ={{fontSize:w/20}}
+                                                    className="text -xl text-center p-0 font-black text-[#59a5ed]"> 
+                                                        Performances :{' '}
+                                                        <Text 
+                                                          style ={{fontSize:w/20}}
+                                                          className="tex t-xl  font-black text-white"> 
+                                                          {data.length}  
+                                                        </Text>
+                                                    </Text>
+                                </View>
+
+                                
+
+                        </View>
+                        <View
+                        className = "flex-1 b g-white justify-center items-center">
+                            <FlatList
+                                    data={data}
+                                    ref={flatList}
+                                    // extraData={data}
+                                    keyExtractor={(item, index) =>
+                                      item.video?.fileId || index.toString()
+                                    }                                    
+                                    renderItem={renderItem}
+                                    removeClippedSubviews={true} 
+                                    scrollEventThrottle = {16}
+                                    showsHorizontalScrollIndicator ={false}
+                                    pagingEnabled 
+                                    horizontal={true}
+                                    onViewableItemsChanged={onViewableItemsChanged.current}
+                           
+                                    viewabilityConfig={{
+                                        itemVisiblePercentThreshold: 70, 
+                                      }}
+                                    getItemLayout={(data, index) => (
+                                        { length: w, offset: w * index, index }
+                                      )}
+                                    
+                                  /> 
+                        </View>
+
+                         
+                        <TouchableOpacity
+                                    style={{
+                                      minHeight: (h-w)/2 ,
+                                      width : w
+                                    }}
+                                     className="w-[100%]  flex-row justify-start  items-end gap-2 ">
+                                            <Image
+                                                style =
+                                                {{
+                                                  height: h * 0.1,
+                                                  width : h * 0.1,
+                                                }}
+                                                source={{uri:selectedContestant.profile_img}}
+                                                className ="mb-4 rounded-full"
                                                 resizeMethod='cover'
                                                 />  
-                                        <Text 
-                                            style ={{fontSize:10 }}
-                                            className=" font-black  text-white"> 
-                                          STAGE 
-                                        </Text>
-                                    </View>
-                                   
-                                    <Text 
-                                        style ={{fontSize:9 ,fontStyle:"italic"}}
-                                        className="text-xl font-black -auto text-yellow-500"> 
-                                          {talentRoom.contestants.length}  CONTESTANTS
-                                    </Text>
-                        </View> */}
-                        <FlatList
-                                // style={{width:"100%" ,height:"100%"}}
-                                data={data}
-                                ref={flatList}
-                                extraData={data}
-                                // numColumns={3}
-                                keyExtractor={(item) => item._id}
-                                renderItem={renderItem}
-                                removeClippedSubviews={true} 
-                                scrollEventThrottle = {16}
-                                showsHorizontalScrollIndicator ={false}
-                                pagingEnabled
-                                horizontal={true}
-                                onViewableItemsChanged={onViewableItemsChanged}
-                                viewabilityConfig={{
-                                    itemVisiblePercentThreshold: 70, 
-                                  }}
-                                getItemLayout={(data, index) => (
-                                    { length: w, offset: w * index, index }
-                                  )}
-                                
-                              /> 
-                               {/* <View
-                                className = "flex-col absolute h -7 left-2  top-1 justify-start items-center">
-                                    <Image
-                                        source={getIcon(talentRoom.name)}
-                                        className = "w-5 h-5"
-                                        />
-                                    <Text 
-                                        style ={{fontSize:7}}
-                                        className="text-xl font-black  text-white"> 
-                                            {talentRoom.name} 
-                                    </Text>
-                                </View> */}
-
-                                {/* <View
-                                className = "flex-col absolute h -7 right-2  top-1 justify-start items-center">
-                                  
-                                    <Image
-                                        source={getIcon(talentRoom.region)}
-                                        className ="w-5 h-5"
-                                        />
-                                    <Text  
-                                        style ={{fontSize:7}}
-                                        className="text-xl font-black  text-white"> 
-                                            {talentRoom.region} 
-                                    </Text>
-                                </View> */}
+                                             <Text   
+                                                style ={{fontSize:w/27}} 
+                                                className="font-black mb-5  text-white">
+                                                {selectedContestant.name?.slice(0,15)}  
+                                            </Text>
+                                            <View
+                                              className="mb-5 ml-auto  flex-row justify-center  items-center gap-2 ">
+                                                              <Text  
+                                                              style ={{fontSize:9}}
+                                                              className="text -xl text-center p-0 font-black text-gray-300"> 
+                                                                  Votes {''}
+                                                                  <Text 
+                                                                    style ={{fontSize:10}}
+                                                                    className="tex t-xl  font-black text-white"> 
+                                                                    {selectedContestant.votes }
+                                                                  </Text> 
+                                                              </Text>
+                                            </View>
+                                            <View
+                                              className="mb-5 flex-row justify-start items-center gap-2 ">
+                                                            <Text 
+                                                                  style ={{fontSize:9}}
+                                                                  className="text -xl text-ce nter  p-0 font-black text-gray-300"> 
+                                                                  {selectedContestant.rank < 4 ? "Top" :"Ranked"}{' '}
+                                                                  <Text 
+                                                                      style ={{fontSize:10}}
+                                                                      className="tex t-xl  font-black text-white"> 
+                                                                      {selectedContestant.rank}
+                                                                  </Text>
+                                                              </Text>
+                                            </View>
+                         </TouchableOpacity>
+                              
         </View>
       )
     }

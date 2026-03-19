@@ -205,10 +205,10 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
          return icons.africa
          break;
       case "Europe":
-           return icons.africa
+           return icons.europe
            break;
       case "America":
-          return icons.africa
+          return icons.america
           break;
      case "Fitness":
           return icons.fitnessstage

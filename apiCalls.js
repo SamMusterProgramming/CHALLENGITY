@@ -1135,11 +1135,11 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       Promise.all([axios.get( BASE_URL + `/challenges/general/${user_id}`), axios.get( BASE_URL + `/talents/general/${user_id}`)]) 
       .then(res =>  {
         const data = []
-        if(res[0].data.length > 0) {
-             res[0].data.forEach(element => {
-                  data.push({...element , dataType:"challenge" })
-             });
-         } 
+        // if(res[0].data.length > 0) {
+        //      res[0].data.forEach(element => {
+        //           data.push({...element , dataType:"challenge" })
+        //      });
+        //  } 
         if(res[1].data.length > 0) {
             res[1].data.forEach(element => {
                data.push({...element , dataType:"talent" })
@@ -1185,3 +1185,18 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       console.log(error)
     }
     }
+
+    export const getAllTalentStages = async( setTalentStages) =>{
+      try {
+        await axios.get( `${BASE_URL}/talents/stages` )
+        .then(res =>  {
+          // console.log(res.data)
+          setTalentStages(res.data)  
+          })
+          .finally(()=>{
+            // setIsLoading(false)
+          })
+      } catch (error) {
+        console.log(error)
+      }
+     }

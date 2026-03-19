@@ -153,39 +153,194 @@
 
 // }
 
-import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, useWindowDimensions, Animated } from "react-native";
-import { getStageLogo } from "../../helper";
-import { router } from "expo-router";
-import { useGlobalContext } from "../../context/GlobalProvider";
+// import React, { useEffect, useState } from "react";
+// import { View, Text, Image, TouchableOpacity, useWindowDimensions } from "react-native";
+// import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring, interpolate } from "react-native-reanimated";
+// import { Gesture, GestureDetector } from "react-native-gesture-handler";
+// import { getStageLogo } from "../../helper";
+// import { router } from "expo-router";
+// import { icons } from "../../constants";
+// import { deleteUserNotification, getNotificationByUser, updateNotificationByUser } from "../../apiCalls";
+
+// export default function DisplayTalentNotification({ notification, setNotifications, user }) {
+//   const { width, height } = useWindowDimensions();
+//   const isRead = notification.isRead;
+//   const [not,setNot] = useState(notification)
+//   const translateX = useSharedValue(0);
+//   const BUTTON_WIDTH = 80; 
+
+//   const gesture = Gesture.Pan()
+//     .onUpdate((e) => {
+//       if (e.translationX < 0) translateX.value = e.translationX; 
+//     })
+//     .onEnd(() => {
+//       if (translateX.value < -BUTTON_WIDTH / 2) {
+//         translateX.value = withTiming(-BUTTON_WIDTH);
+//       } else {
+//         translateX.value = withSpring(0);
+//       }
+//     });
+
+//   const animatedStyle = useAnimatedStyle(() => ({
+//     transform: [{ translateX: translateX.value }],
+//   }));
+
+//   const deleteButtonStyle = useAnimatedStyle(() => {
+//     const opacity = interpolate(translateX.value, [-BUTTON_WIDTH, 0], [1, 0]);
+//     return { opacity };
+//   });
+
+//   const handleDelete = () => {
+//     deleteUserNotification(notification._id, setNotifications);
+//     translateX.value = withTiming(0); 
+//   };
+
+//   const handleAction = () => {
+
+//     switch (notification.type) {
+//       case "talent":
+//         updateNotificationByUser(notification._id,setNot)
+       
+//         router.push({
+//           pathname: "TalentContestRoom",
+//           params: {
+//             region: notification.content.region,
+//             selectedTalent: notification.content.talentName,
+//             selectedIcon: icons.dance,
+//             regionIcon: icons.africa,
+//             startIntroduction: "true",
+//             showGo: "true",
+//             location: "contest",
+//             contestant_id: notification.content.sender_id,
+//           },
+//         });
+//         break;
+//       case "followers":
+//         router.push({
+//           pathname: "FSinstantChallengeDisplayer",
+//           params: { challenge_id: notification.content.challenge_id },
+//         });
+//         break;
+//       default:
+//         break;
+//     }
+//   };
+//    useEffect(() => {
+//     getNotificationByUser(user._id,setNotifications)
+//   }, [not])
+
+//   return (
+//     <View className="mb-3" style={{ height: height / 10 }}>
+  
+//       <Animated.View
+//         style={[
+//           {
+//             position: "absolute",
+//             right: 0,
+//             top: 0,
+//             bottom: 0,
+//             width: BUTTON_WIDTH,
+//             backgroundColor: "red",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             borderRadius: 12,
+//           },
+//           deleteButtonStyle,
+//         ]}
+//       >
+//         <TouchableOpacity onPress={handleDelete} className="w-full h-full justify-center items-center">
+//           <Text className="text-white font-bold">DELETE</Text>
+//         </TouchableOpacity>
+//       </Animated.View>
+
+
+//       <GestureDetector gesture={gesture}>
+//         <Animated.View
+//           style={[animatedStyle]}
+//           className={`flex-row items-center px-4 py-3 rounded-xl ${
+//             isRead ? "bg-zinc-800/80" : "bg-zinc-600"
+//           } shadow-md`}
+//         >
+//           <Image
+//             resizeMethod="cover"
+//             source={getStageLogo(notification.content.talentName)}
+//             style={{ width: width / 10, height: height / 18, borderRadius: 8 }}
+//           />
+
+//           <TouchableOpacity onPress={handleAction} activeOpacity={0.8} className="flex-1 px-3">
+//             <Text className="text-white font-semibold text-base">{notification.content.talentName} Stage</Text>
+//             <Text className="text-yellow-100 font-bold text-sm">{notification.content.name}</Text>
+//             <Text className="text-gray-300 text-sm">{notification.message}</Text>
+//           </TouchableOpacity>
+//         </Animated.View>
+//       </GestureDetector>
+//     </View>
+//   );
+// }
+
+
+import React, { useEffect, useState } from 'react';
+import { 
+  View, Text, Image, TouchableOpacity, useWindowDimensions, LayoutAnimation, Platform, UIManager 
+} from 'react-native';
+import { router } from 'expo-router';
+import { icons } from '../../constants';
+import { getStageLogo } from '../../helper';
+import { useGlobalContext } from '../../context/GlobalProvider';
+import { deleteUserNotification, updateNotificationByUser } from '../../apiCalls';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function DisplayTalentNotification({ notification, setNotifications, user }) {
+
   const { width, height } = useWindowDimensions();
   const { userFriendData, setUserFriendData } = useGlobalContext();
-  const [translateX] = useState(new Animated.Value(0));
+
+  const [isRead, setIsRead] = useState(notification.isRead);
   const [showDelete, setShowDelete] = useState(false);
+  const [not, setNot] = useState(notification);
+
+  // Animate layout changes
+  const toggleDelete = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setShowDelete(!showDelete);
+  };
+
+  const markAsRead = () => {
+    if (!isRead) {
+      setIsRead(true);
+      updateNotificationByUser(notification._id, setNot);
+    }
+  };
 
   const handleAction = () => {
-    if (showDelete) return; // prevent tap when swipe open
+    markAsRead();
     switch (notification.type) {
-      case "talent":
+      case 'talent':
         router.push({
-          pathname: "TalentContestRoom",
+          pathname: 'TalentContestRoom',
           params: {
             region: notification.content.region,
             selectedTalent: notification.content.talentName,
-            startIntroduction: "true",
-            showGo: "true",
-            location: "contest",
-            contestant_id: notification.content.sender_id,
-          },
+            selectedIcon: icons.dance,
+            regionIcon: icons.africa,
+            startIntroduction: 'true',
+            showGo: 'true',
+            location: 'contest',
+            contestant_id: notification.content.sender_id
+          }
         });
         break;
-      case "followers":
+      case 'followers':
         router.push({
-          pathname: "FSinstantChallengeDisplayer",
-          params: { challenge_id: notification.content.challenge_id },
+          pathname: 'FSinstantChallengeDisplayer',
+          params: { challenge_id: notification.content.challenge_id }
         });
+        break;
+      case 'friends':
+        router.navigate({ pathname: '/ViewProfile', params: { user_id: notification.content.sender_id } });
         break;
       default:
         break;
@@ -193,60 +348,100 @@ export default function DisplayTalentNotification({ notification, setNotificatio
   };
 
   const deleteNotification = () => {
-    setNotifications((prev) => prev.filter((n) => n._id !== notification._id));
-    Animated.timing(translateX, { toValue: 0, duration: 200, useNativeDriver: true }).start();
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    deleteUserNotification(notification._id, setNot);
+    setNotifications(prev => prev.filter(n => n._id !== notification._id));
   };
 
-  const swipeLeft = () => {
-    Animated.timing(translateX, { toValue: -80, duration: 200, useNativeDriver: true }).start(() => setShowDelete(true));
-  };
-
-  const swipeRight = () => {
-    Animated.timing(translateX, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => setShowDelete(false));
-  };
+  useEffect(() => {
+    if (showDelete) {
+      const timer = setTimeout(() => setShowDelete(false), 5000); // hide after 5s
+      return () => clearTimeout(timer);
+    }
+  }, [showDelete]);
 
   return (
     <View className="mb-3">
-      {/* Delete Button */}
-      {showDelete && (
-        <TouchableOpacity
-          onPress={deleteNotification}
-          className="absolute right-0 top-0 bottom-0 bg-red-600 justify-center items-center rounded-xl px-5"
-          style={{ width: 80 }}
-        >
-          <Text className="text-white font-bold">Delete</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Notification Row */}
-      <Animated.View
-        style={{ transform: [{ translateX }] }}
-        {...{ onTouchStart: swipeRight }}
-      >
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        
+        {/* Notification Box */}
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={handleAction}
-          onLongPress={swipeLeft}
-          className={`flex-row items-center p-2 rounded-xl border border-yellow-400/20 ${
-            notification.isRead ? "bg-zinc-800/80" : "bg-zinc-600"
-          }`}
+          style={{
+            flex: 1,
+            backgroundColor: isRead ? '#2a2a2a' : '#3c3c3c',
+            borderRadius: 14,
+            padding: 12,
+            paddingRight: showDelete ? 0 : 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
+            elevation: 3
+          }}
         >
+          {/* Stage Logo */}
           <Image
             resizeMode="cover"
-            source={getStageLogo(notification.content.talentName)}
             style={{ width: width / 10, height: height / 18, borderRadius: 8 }}
+            source={getStageLogo(notification.content.talentName)}
           />
-          <View className="flex-1 px-2 justify-center">
-            <Text className="text-white font-semibold" style={{ fontSize: width / 38 }}>
+
+          {/* Texts */}
+          <View style={{ flex: 1, marginLeft: 10 }}>
+            <Text style={{ color: 'white', fontSize: width / 38, fontWeight: '600', marginBottom: 2 }}>
               {notification.content.talentName} Stage
             </Text>
-            <Text className="text-yellow-400 font-bold" style={{ fontSize: width / 48 }}>
+            <Text style={{ color: '#FFD700', fontWeight: '700', fontSize: width / 48 }}>
               {notification.content.name}
             </Text>
-            <Text className="text-white text-sm">{notification.message}</Text>
+            <Text style={{ color: 'white', fontSize: 12 }}>
+              {notification.message}
+            </Text>
           </View>
         </TouchableOpacity>
-      </Animated.View>
+
+        {/* Delete Button */}
+        {showDelete && (
+        <TouchableOpacity
+          onPress={deleteNotification}
+          style={{
+            // backgroundColor: '#FF3B30',
+            paddingHorizontal: 16,
+            width: 70,              // fixed width
+            height: 70,             // fixed height
+            marginLeft: 6,
+            borderRadius: 12,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+          className ="h- [100%] bg-[#6b0808]"
+        >
+          <Text style={{ color: 'white', fontWeight: '700', fontSize: 11 }}>Delete</Text>
+        </TouchableOpacity>
+      )}
+
+        {/* Toggle Delete Button */}
+        {!showDelete && (
+          <TouchableOpacity
+            onPress={toggleDelete}
+            style={{
+              marginLeft: 6,
+              paddingHorizontal: 8,
+              paddingVertical: 18,
+              backgroundColor: '#FFD70033',
+              borderRadius: 10,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ color: '#FFD700', fontWeight: '700' }}>🗑️</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }

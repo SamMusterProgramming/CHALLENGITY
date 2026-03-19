@@ -52,9 +52,9 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
     { transform: [{ translateX: sidebarAnimation }] }]}>
 
 
-       <View
+       <View    
       
-       className ="w- [100%] h- [100%] bg -white flex-col  gap-[1%] pr- 1  justify-start items-center">
+       className ="w- [100%] h- [100%] bg -white flex-col  gap-[1.56%] pr- 1  justify-start items-center">
           {contestants.map((contestant , index) => {
                return (
                 <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} 

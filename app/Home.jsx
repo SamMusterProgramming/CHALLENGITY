@@ -24,6 +24,10 @@ import { Feather, HomeIcon } from 'lucide-react-native';
 import TopStageNavBar from '../components/talent/custom/TopStageNavBar';
 import NotificationSearchNav from '../components/talent/custom/NotificationSearchNav';
 import NotificationDrawer from '../components/talent/modal/NotificationDrawer';
+import HeaderApp from '../components/header/headerApp';
+
+
+
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -89,6 +93,8 @@ export default function Home() {
     }
   }, [user])
 
+  const headerHeight = height * 0.12;
+
 
   const sparkles = useMemo(() => {
     return Array.from({ length: 1000 }).map((_, i) => {
@@ -119,349 +125,36 @@ export default function Home() {
   
   return (
 
-        <View
+       <View
            style={{ 
             paddingTop:Platform.OS == "ios" ? insets.top : insets.top
           }}
            className=" flex-1  flex-col justify-start items-center py- bg-black primary [#0f1010]">
 
-         
-          <View 
-          style={{height: height * 0.16}}
-          className="  w-[100%] flex-row    [#4f555c] items-start    justify-center bg -[#000000]" >
-                 
-                  <View className=" w-[100%] flex- 1 h-[100%] b g-[#000000] rounded-tl-lg  flex-col items-center justify-center" >
+    
 
-                                            <View className = "w-[100%] h-[50%] bg-[#000000] flex-row-reverse items-center justify-center  ">
-                                              
-                                                   <Image 
-                                                                                    
-                                                      className="absolute  left-[0] w-[40%] h-[90%]  "
-                                                      source={icons.challengify_logo}
-                                                      resizeMode='cover'
-                                                    />       
-                                                  {/* <View className = "w- [40%] h-[100%]  flex-row rounded-tl-3xl  b g-[#202428] items-center justify-start  ">
-                                                                  
-                                                               
-                                                  </View> */}
+          <View
+            style={{ height: headerHeight }}
+            className="w-full bg-black"
+          >
 
-                                                  {/* <View 
-                                                              className = " w-[100%] flex-1 h-[100%] rounded-3xl b g-[#202428] mb- 12  b g-[#303132] flex-col gap-2 justify-center items-center" >
-                                                                             
-                                                                              <View
-                                                                               className="flex-row mt- 12 justify-start gap-2 items-end">
-                                                                                  < CountryFlag
-                                                                                      isoCode={user && user.country || "US"}
-                                                                                      size={width/30}
-                                                                                  />
-                                                                                  <Text   
-                                                                                      style ={{fontSize:width/30}}
-                                                                                      className="font-black  text-gray-300 ">
-                                                                                        {user && user.country || "US" }
-                                                                                  </Text>
-                                                                              </View>  
+            <HeaderApp
+              user={user && user || null}
+              showNotifications={showNotifications}
+              setShowNotifications={setShowNotifications}
+              width={width}
+              headerHeight={headerHeight}
+            />
 
-                                                                              <View
-                                                                                        className=" w-[100%] mt- auto flex-col  shadow-2xl shadow-gray-300 b g-[#e6e6e6] rounded-md  gap-1 justify-center items-start">
-                                                                                              
-                                                                                              <Text   
-                                                                                                  style ={{fontSize:width/48}}
-                                                                                                  className="font-bold mt- auto text-gray-100 ">
-                                                                                                    {user && user.name || "example John"} 
-                                                                                              </Text>
-                                                                                              <View
-                                                                                                    className=" flex-row  justify-center items-center gap-2 ">
-                                                                                                              <Text   
-                                                                                                                style ={{fontSize:width/45}}
-                                                                                                                className="font-black  text-gray-100 ">
-                                                                                                                    <Text   
-                                                                                                                      style ={{fontSize:width/48}}
-                                                                                                                      className="font-bold  text-gray-100 ">
-                                                                                                                      {user && user.city || "somewhere"} {' , '}
-                                                                                                                    </Text>
-                                                                                                                {user && countryCodes[user.country] || "United States "} 
-                                                                                                              </Text>
-                                                                                                        
-                                                                                              </View>
-                                                                                            
-                                                                              </View>
+            <View className="flex-1 bor der-t bo rder-[#434242] flex-row items-center">
+                <TopStageNavBar
+                  width={width}
+                  activeIndex={activeIndex}
+                  setActiveIndex={setActiveIndex}
+                />
+            </View>
 
-                                                  </View> */}
-
-                                                  <View className = "w-[100%] h-[100%]  flex-col p- 2  items-center justify-start  px- 1 ">
-                                                        <View 
-                                                         style={{
-                                                          width: width /8 ,
-                                                          height: width /8 ,
-                                                          }}
-                                                           className=" rounded-full bg-[#d19c0c] justify-center items-center">
-                                                                                 {user ? (
-                                                                                    <Image 
-                                                                                    style={{
-                                                                                      width: width /9 ,
-                                                                                      height: width /9 ,
-                                                                                      }}
-                                                                                    className=" rounded-full w-[100%] h- [100%] "
-                                                                                    source={{uri : userProfileImg}}
-                                                                                    />
-                                                                                    ):(
-                                                                                    <Image 
-                                                                                    style={{width:height * 0.04 ,height: height * 0.04}}
-                                                                                    className="w-[40px] h-[40px]  rounded-full  "
-                                                                                    source={icons.avatar}
-                                                                                    />
-                                                                                    )}
-                                                         </View> 
-                                                         <Text   
-                                                                            style ={{fontSize:width/48}}
-                                                                            className="font-bold mt-auto text-gray-100 ">
-                                                                                     {user && user.name || "example John"} 
-                                                           </Text>
-
-                                                                                   
-                                                                                     
-                                                     </View>
-
-                                                     <NotificationSearchNav showNotifications={showNotifications} setShowNotifications={setShowNotifications} />
-                                               
-
-                                            </View>
-
-                                            
-
-                                        
-                                             {/* <View className = "w-[100%] h-[40%] rounded-lg border-2 bg-[#292a2c] [#0d0c09] bord er-t-[#314674] bor der-b-[#3a4974] flex-row   items-center justify-between px- 1 "> */}
-                                             <View className="flex-1 bg-black flex-row justify-around items-center bo rder-t bor der-[#F5C542] py- 3">
-
-                                                     <TopStageNavBar
-                                                        activeIndex={activeIndex}
-                                                        setActiveIndex={setActiveIndex}
-                                                      />    
-                                                  <View className="flex-1 items-center justify-center">
-
-                                                    {activeIndex === 0 && <Text className="text-white">Home Arena</Text>}
-                                                    {activeIndex === 1 && <Text className="text-white">Talent Stages</Text>}
-                                                    {activeIndex === 2 && <Text className="text-white">Challenges</Text>}
-                                                    {activeIndex === 3 && <Text className="text-white">Statistics</Text>}
-                                                    {activeIndex === 4 && <Text className="text-white">Profile</Text>}
-
-                                                  </View>
-
-                                                        {/* <TouchableOpacity 
-                                                                    onPress={()=> {setSelectedPage("home")}}
-                                                                    style={{
-                                                                        minWidth : width / 11 ,
-                                                                     
-                                                                       
-                                                                    }}
-                                                                    className =  { selectedPage !== `home` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col   " :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col   "}
-                                                                      >
-                                                                             {selectedPage !== "home" ? (
-                                                                                 <MaterialCommunityIcons name="home" size={width/22} color={iconColor} />                                                                                                         
-                                                                              ):(
-                                                                              <MaterialCommunityIcons name="home"  
-                                                                              size={width/22} color={selectedIconColor}/>                                                                         
-                                                                             )}
-                                                                            <Text 
-                                                                              style ={{fontSize:selectedPage !== "home" ? 6 : 6,
-                                                                                color : selectedPage !== "home" ? iconColor :  selectedIconColor
-                                                                              }}
-                                                                              className="text-white font-black  h-[20%] tracking-tight">HOME
-                                                                            </Text>
-
-                                                        </TouchableOpacity>
-                                                        <TouchableOpacity 
-                                                                    onPress={()=> {setSelectedPage("talent")}}
-                                                                    style={{
-                                                                      minWidth : width / 11
-                                                                    }}
-                                                                    className =  { selectedPage !== `talent` ? "justify-center gap-1 h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col " :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
-                                                                    >
-                                                                             {selectedPage !== "talent" ? (
-                                                                                 <MaterialCommunityIcons name="star" size={width/22} color={iconColor} style={{ transform: [{ rotate: "180deg" }]}}/>                                                                                                         
-                                                                             ):(
-                                                                              <MaterialCommunityIcons name="star"  style={{ transform: [{ rotate: "180deg" }] }}
-                                                                              size={width/22} color={selectedIconColor}/>                                                                         
-                                                                             )}
-                                                                           
-                                                                            <Text 
-                                                                              style ={{fontSize:selectedPage !== "talent" ? 6 : 6,
-                                                                                color : selectedPage !== "talent" ? iconColor :selectedIconColor
-                                                                              }}
-                                                                              className="tex t-white font-black  h-[20%] tracking-tight">TALENT
-                                                                            </Text>
-
-
-                                                          </TouchableOpacity>
-                                                          <TouchableOpacity 
-                                                                  onPress={()=> {setSelectedPage("challenge")}}
-                                                                  style={{
-                                                                    minWidth : width /11 ,
-                                                                  
-                                                                  }}
-                                                                  className =  { selectedPage !== `challenge` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2] flex-col " :
-                                                                    "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
-                                                                  >
-                                                                              {selectedPage !== "challenge" ? (
-                                                                                 <MaterialCommunityIcons name="sword-cross" size={width/23} color={iconColor} style={{ transform: [{ rotate: "180deg" }]}}/>                                                                                                         
-                                                                              ):(
-                                                                                 <MaterialCommunityIcons name="sword-cross"  style={{ transform: [{ rotate: "360deg" }] }}
-                                                                                  size={width/23} color={selectedIconColor}/>                                                                         
-                                                                               )}
-                                                                              <Text 
-                                                                                  style ={{fontSize:selectedPage !== "challenge" ? 6 : 6,
-                                                                                    color : selectedPage !== "challenge" ? iconColor :selectedIconColor
-                                                                                  }}
-                                                                                  className="text-white font-black  h-[20%] tracking-tight" >CHLLNGE
-                                                                              </Text>
-                                                          </TouchableOpacity>
-                                                         <TouchableOpacity 
-                                                                            onPress={() => { setSelectedPage("notification") }}
-                                                                            style={{
-                                                                              minWidth : width / 11
-                                                                            }}
-                                                                            className =  { selectedPage !== `notification` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col " :
-                                                                              "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
-                                                                            >
-                                                                                    {selectedPage !== "notification" ? (
-                                                                                    <MaterialCommunityIcons name="bell-ring" size={width/23} color={iconColor} />                                                                                                         
-                                                                                     ):(
-                                                                                    <MaterialCommunityIcons name="bell-ring"  
-                                                                                      size={width/23} color={selectedIconColor}/>                                                                         
-                                                                                     )}
-                                                                                    <View
-                                                                                     className="absolute top-[6] p- right-1 w-4 h-4 rounded-full justify-center items-center  text-center bg-yellow-400 font-black  ">
-                                                                                        <Text 
-                                                                                        style={{fontSize:7    }}
-                                                                                        className=" font-black tex t-sm text-red-500 ">
-                                                                                            {notifications.filter(not => not.isRead == false).length}
-                                                                                        </Text> 
-                                                                                    </View>
-                                                                                    <Text 
-                                                                                      style ={{fontSize : selectedPage !== "notification" ? 6 : 6, 
-                                                                                        color : selectedPage !== "notification" ? iconColor:  selectedIconColor
-                                                                                      }}
-                                                                                      className="text-white font-black h-[20%]  tracking-tight">NOTIF
-                                                                                    </Text>
-                                                        </TouchableOpacity>
-
-                                                        <TouchableOpacity 
-                                                                            onPress={() => { setSelectedPage("profile") }}
-                                                                            style={{
-                                                                              minWidth : width / 11
-                                                                            }}
-                                                                            className =  { selectedPage !== `profile` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col " :
-                                                                              "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
-                                                                            >
-                                                                                     {selectedPage !== "profile" ? (
-                                                                                    <MaterialCommunityIcons name="account" size={width/23} color={iconColor} />                                                                                                         
-                                                                                     ):(
-                                                                                    <MaterialCommunityIcons name="account"  
-                                                                                      size={width/23} color={selectedIconColor}/>                                                                         
-                                                                                     )}
-                                                                                   
-                                                                                    <Text 
-                                                                                      style ={{fontSize : selectedPage !== "profile" ? 6 : 6,
-                                                                                        color : selectedPage !== "profile" ? iconColor :  selectedIconColor
-                                                                                      }}
-                                                                                      className="text-white font-black h-[20%] ml- 2 tracking-tight">PROFILE
-                                                                                    </Text>
-                                                        </TouchableOpacity>
-                                                        <TouchableOpacity 
-                                                                    onPress={()=> {setSelectedPage("favourite")}}
-                                                                    style={{
-                                                                      minWidth : width / 11
-                                                                    }}
-                                                                    className =  { selectedPage !== `favourite` ? "justify-center gap-1  h-[100%] rounded-lg  items-center b g-[#dee2e2]  flex-col " :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col "}
-                                                                    >
-                                                                            {selectedPage !== "favourite" ? (
-                                                                                 <MaterialCommunityIcons name="heart" size={width/23} color={iconColor} />                                                                                                         
-                                                                            ):(
-                                                                                 <MaterialCommunityIcons name="heart" size={width/23} color={selectedIconColor} />                                                                                                         
-                                                                            ) }
-                                                                            <Text
-                                                                              style ={{fontSize : selectedPage !== "favourite" ? 6 : 6,
-                                                                                color : selectedPage !== "favourite" ? iconColor :  selectedIconColor
-                                                                              }}
-                                                                              className="text-white font-black h-[20%]   tracking-tight"> FAV
-                                                                            </Text>
-                                                          </TouchableOpacity>
-                                                          <TouchableOpacity 
-                                                                    onPress={()=> {setSelectedPage("stats")}}
-                                                                    style={{
-                                                                      minWidth : width / 11
-                                                                    }}
-                                                                    className =  { selectedPage !== `stats` ? "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#dee2e2]  flex-col  " :
-                                                                      "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
-                                                                    >
-                                                                             {selectedPage !== "stats" ? (
-                                                                                 <MaterialCommunityIcons name="poll" size={width/24} color= {iconColor} />                                                                                                         
-                                                                              ):(
-                                                                                 <MaterialCommunityIcons name="poll" size={width/24} color= {selectedIconColor}/>                                                                                                         
-                                                                             ) }
-                                                                            <Text 
-                                                                              style ={{fontSize : selectedPage !== "stats" ? 6 : 6,
-                                                                                color : selectedPage !== "stats" ? iconColor : selectedIconColor
-                                                                              }}
-                                                                              className="tex t-white font-black h-[20%]   tracking-tight">STATS
-                                                                            </Text>
-                                                          </TouchableOpacity>
-                                                          <TouchableOpacity
-                                                                        onPress={() => { setSelectedPage("search") }}
-                                                                        style ={{width : width/11}}
-                                                                        className =  { selectedPage !== `search` ? "justify-center gap-1  h-[100%] rounded-md b g-[#dee2e2]  items-center   flex-col" :
-                                                                          "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col  "}
-                                                                        >
-                                                                                {selectedPage !== "search" ? (
-                                                                                <Ionicons name="search" size={width/24} color= {iconColor} style={{ transform: [{ rotate: "-90deg" }] }} />                                                                                                         
-                                                                                 ):(
-                                                                                <Ionicons name="search" size={width/24} color= {selectedIconColor} style={{ transform: [{ rotate: "-90deg" }] }}/>                                                                                                         
-                                                                                 ) }
-                                                                               
-                                                                                <Text 
-                                                                                      style ={{fontSize: selectedPage !== "search" ? 6 : 6 ,
-                                                                                        color : selectedPage !== "search" ? iconColor :selectedIconColor
-                                                                                      }}
-                                                                                      className="text-white font-black h-[20%]  tracking-tight">SEARCH
-                                                                                </Text>
-                                                          </TouchableOpacity>   
-                                                          <TouchableOpacity 
-                                                                  onPress={()=> {setSelectedPage("help")}}
-                                                                  style ={{width : width/11}}
-                                                                  className =  { selectedPage !== `help` ? "justify-center gap-1  h-[100%] rounded-md b g-[#dee2e2] shadow-xl shadow-gray-800 items-center   flex-col" :
-                                                                    "justify-center gap-1  h-[100%] rounded-md  items-center b g-[#ffffff]  flex-col shadow-lg shadow-blue-100    "}                                                                  >
-                                                                              {selectedPage !== "help" ? (
-                                                                              <MaterialCommunityIcons name="help-circle" size={width/23} color= {iconColor} />                                                                                                         
-                                                                              ):(
-                                                                              <MaterialCommunityIcons name="help-circle" size={width/23} color= {selectedIconColor}/>                                                                                                         
-                                                                              )}
-                                                                              <Text 
-                                                                                  style ={{fontSize: selectedPage !== "help" ? 6 : 6 ,
-                                                                                    color : selectedPage !== "help" ? iconColor : selectedIconColor
-                                                                                  }}
-                                                                                  className="text-white font-black h-[20%]  tracking-tight">HELP
-                                                                              </Text>
-                                                          </TouchableOpacity> */}
-                                                       
-                                        
-                                            </View>
-
-                                           
-
-
-                </View>
-
-             
-
-                
-
-                 
           </View>
-       
-
  
 
             { !user ? (
@@ -474,7 +167,7 @@ export default function Home() {
             ) : (
        
             <View     
-                    className="w-[100%] h-[79%] flex-1  mt-2 bg-black [#3b4348]  rounde-xl borde-[#272d31]  g-[#3b4348] 
+                    className="w-[100%] h- [79%] flex-1  mt- 2 bg-black [#3b4348]  rounde-xl borde-[#272d31]  g-[#3b4348] 
                        flex-col justify-center items-center">
                         {activeIndex === 0 && ! isFetching && (
                           <HomePage reset ={reset} setReset={setReset}/>
@@ -512,60 +205,12 @@ export default function Home() {
   
            <View
              style={{ 
-             height: Platform.OS =="ios" ? width/12 + 5 : width/12 ,
+             height: Platform.OS =="ios" ? width/20 + 5 : width/20 ,
              width:"100%",
              }}>
 
              </View>
 
-{/*           
-          <View
-             style={{ 
-             height: Platform.OS =="ios" ? width/9 + 5 : width/9 ,
-             width:"100%",
-             }}
-            className=" flex-row justify-center items-center b g-white py- 1 px- 6 ">
-  
-            <View
-            className=" [#324043] [#f6f5f5] primary bg-[#0b1015] w-[100%] h-[100%] rounded-b-[230px] flex-row justify-center items-center">
-               { isFetching && (
-                                <Text   
-                                     style ={{fontSize:10}}
-                                     className="font-bold text-white  ">
-                                            Loggin Please Wait...
-                                </Text>
-              )}
-               { isLoggingOut && (
-                                <Text   
-                                     style ={{fontSize:10}}
-                                     className="font-bold text-white  ">
-                                            Logging out Please Wait...
-                                </Text>
-              )}
-              {!user &&  (
-                                <Text   
-                                     style ={{fontSize:10}}
-                                     className="font-bold text-white  ">
-                                            Login to get started
-                                </Text>
-              )}
-              {selectedPage && user && !isFetching && !isLoggingOut && ( 
-                          <View
-                          className = "flex-row justify-center h- [100%]  items-end gap-2">
-                                <View
-                                    className="w- [30px] h- [30px] roun ded-full b g-black">
-                                      <MaterialCommunityIcons name={selectIcon(selectedPage)} size={22} color = "white" //{selectIconColor(selectedPage)} 
-                                       />
-                                </View>
-                                <Text   
-                                     style ={{fontSize:12}}
-                                     className="font-bold text-white mb- 1 ">
-                                            {selectedPage && selectedPage.toUpperCase() }
-                                </Text>
-                          </View>
-              )}
-            </View>
-          </View> */}
                  
           {displayNotificationsModal && 
           <NotificationsModal user={user} displayNotificationsModal={displayNotificationsModal}

@@ -13,14 +13,15 @@ import TalentActivityHeader from '../activityHeader/TalentActivityHeader';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getVideo, migrateToBackblaze, migrateToBackblaze2 } from '../../videoFiles';
 import StageHeader from './custom/StageHeader';
+import { LinearGradient } from 'expo-linear-gradient';
 
-export default function UserTalentEntry({userTalent, user , userProfile ,activity}) {
+export default function UserTalentEntry({userTalent, user , userProfile ,activity ,width}) {
     const {boxBgColor} = useGlobalContext()
     const[ userParticipation , setUserParticipation ] = useState(null)
     const[ rank , setRank ] = useState(0)
     const[ roundTitle , setRoundTitle ] = useState(null)
     const[ name , setName ] = useState(null)
-    const { width, height } = useWindowDimensions();
+    const { screenWidth, height } = useWindowDimensions();
     const participationStatus = userTalent.contestants.find( c => c.user_id === user._id ) ? "ON STAGE" :
                                 userTalent.queue.find( c => c.user_id === user._id ) ? "IN QUEUE":
                                 userTalent.eliminations.find( c => c.user_id === user._id ) ?  "ELIMINATED":"NOT CONTESTANT"
@@ -115,115 +116,89 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
 
   return (
    <>
-    {name &&  (   
-    <>
+    {/* {name &&  (   
+    <> */}
     <View
-        style={{height: h + width/3.5  + width * 0.10, width:width }}
-        className=" mb-8 w-[100%] rounded-lg gap-1  flex-col  justify-start items-center bg-gradient-to-r from-[#0f0f1a] to-black  border border-white/30 ">
+        style={{height: h + width/3.5  + width * 0.10, width : width ,          borderRadius: 20,
+        }}
+        className=" mb-8 w-[100%]   round ed-lg gap-1  flex-col  justify-start items-center bg-gradient-to-r from-[#0f0f1a] to-black  bo rder bor der-white/30 ">
             
-            {/* <View
-               style={{
-                 height:60 ,
-                  width:width
-                }}
-               className=" gap-1 bg-[#292828] w-[100%]    flex-row justify-between items-center "> */}
-                
-                 {/* <View
-                 style={{ height:70 , width:70}}
-                 className=" flex-row justify-center mt -2 items-center">
-                   <Image
-                    style={{ height:55, width:65}}
-                    source={getStageLogo(userTalent.name)}
-                    resizeMode='cover'/>        
-                 </View>    
-                 <View
-                  
-                        style={{ height:55 , width:width-130}}
-                        className=" h- [80%] b g-[#0f1011]  rounded-lg gap- 2  flex-col justify-evenly pb- 1 items-center">
-                            <Text
-                                style={{fontSize:10}}
-                                className="text-center mb- 4 font-black  text-gray-100">
-                                        {userTalent.name} Contest
-                            </Text>   
-                            <View
-                            >
-                                                                <Text
-                                                                 style={{fontSize:8}}
-                                                                 className="text-c enter font-black  text-[white]">
-                                                                    {userTalent.contestants.length}
-                                                                    <Text
-                                                                      style={{fontSize:7}}
-                                                                      className="text-ce nter font-black  text-blue-200">
-                                                                      {' '} Contestants
-                                                                    </Text>
-                                                                </Text>
-                                                               
-                            </View>          
-                            <View
-                                className = "w-[100%]  h- [100%]  flex-col justify-start  gap- 3 items-center">
-                                                <View
-                                                className="  w-[100%] b g-[#3a3a3a]  py- 2 flex-col text-center  justify-center  items-center "> 
-                                                    <SwingingTitle text={roundTitle} color={"gold"} fontSize={8} />
-                                                </View>           
-                            </View>
-                        
-                      
-                 </View>
-                   
-                 <View
-                 style={{ height:70 , width:60}}
-                 className=" flex-row justify-center  items-center">
-                   <Image
-                    style={{ height:70, width:70}}
-                    source={getStageLogo(userTalent.region)}
-                    resizeMode='cover'/>       
-                 <View/>
-                
+            <LinearGradient
+          pointerEvents="none"
+          colors={["rgba(255,255,255,0.25)", "transparent"]}
+          style={{
+            position: "absolute",
+            top: 0,
+            alignSelf: "center",
+            width: "100%",
+            height: 30,
+            borderRadius: 5,
+          }}
+        />
+          <LinearGradient
+          pointerEvents="none"
+          colors={[ "transparent","rgba(255,255,255,0.25)"]}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            alignSelf: "center",
+            width: "100%",
+            height: 30,
+            borderRadius: 5,
+          }}
+       />
+          <LinearGradient
+          pointerEvents="none"
+          colors={["transparent", "rgba(255,255,255,0.25)"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: width/10,
+            borderRadius: 5,
+          }}
+        /> 
+          <LinearGradient
+          pointerEvents="none"
+          colors={["transparent", "rgba(255,255,255,0.25)"]}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 0, y: 0 }}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: width/10,
+            borderRadius: 5,
 
-              </View>    */}
+          }}
+        /> 
+    
+
+
                 <StageHeader
                             stageLogo={getStageLogo(userTalent.name)}
                             stageTitle={userTalent.name}
+                            region={userTalent.region}
                             contestants={userTalent.contestants.length}
                             round={roundTitle}
                             continentLogo={getStageLogo(userTalent.region)}
                             continentName= {userTalent.region}
-                            width={ width}
+                            width={width}
                          />  
 
-            {/* </View> */}
-
-            {/* <View
-              style={{ height: h * 0.13}}
-              className="w-[100%] bg- [#fefeff]  flex-row px- 1   px- 2 justify-center  items-center">
-                        <View
-                            style={{  backgroundColor : boxBgColor}}
-                            className=" h-[100%] w-[100%] bg-[#fefeff] flex -1 px-1 bg- black rounded-br-md flex-row   gap- 2 justify-between py-1  items-center ">
-                                 {contestants.slice(0,8).map((contestant , index) =>{
-                                    return(
-                                        <Contestant key={index} contestant = {contestant} selectedContestant={selectedContestant}
-                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.108}
-                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
-                                        )
-                                 })}
-                                 {contestants.length < 8 && vacantSpots.slice(contestants.length,8).map((element , index) =>{
-                                    return (
-                                        <VacntSpotContestant key={index} f={h * 0.108} /> 
-                                        )
-                                 }) }
-                         </View>
-                       
-                    
-            </View> */}
-
+        
           
       <View
         style={{  height : h * 0.138  , backgroundColor : boxBgColor}}
-        className=" border-b border-white/30 w- [66%] py-4 px-2  flex-row rounded-xl justify-center gap-4 items-center  ">
+        className=" border-b border-white/30 w-[86%] py-4 px-2  flex-row rounded-xl justify-center gap-4 items-center  ">
               {contestants.slice(0,5).map((contestant , index) =>{
                                     return(
                                         <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
-                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.108}
+                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.088}
                                         talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
                                         )
               })}
@@ -233,7 +208,7 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
 
         <View
         style={{ 
-            // height:h - h * 0.14 , 
+          
             width : width * 0.8 }}
         className="  mb-1 flex-1 [#f6f4f4]  [#4a4646] [#deddd9] [#333132] [#630d20] p- 1 [#3b4348] [#3b4348] w-[66%] gap-1 h-[56%] rounded-b-md flex-col justify-start items-center  ">
                   
@@ -264,7 +239,7 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                                                 
                                                             <Image
                                                                 className="w-[100%] h-[100%] opacity-70 rounded-md"
-                                                                source={{uri: selectedContestant.thumbnail?.publicUrl }}
+                                                                source={{uri: selectedContestant.performances[0].thumbnail?.publicUrl }}
                                                                 // source ={icons.big_heart}
                                                                 resizeMethod='contain' /> 
                                                                 <Image  
@@ -317,113 +292,30 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
                                                        </Text>
                                                    
                                     </View>
-                                    {/* <View
-                                           className="flex- 1 h-[100%] flex-row justify-center items-center gap-1 ">
-                                                    <Text 
-                                                     style ={{fontSize:8}}
-                                                     className="tex t-xl text-ce nter  p-0 font-black text-red-300"> 
-                                                       {selectedContestant && selectedContestant.rank < 4 ? "TOP" :"RANKED"}
-                                                    </Text>
-                                                    <Text 
-                                                        style ={{fontSize:9}}
-                                                        className="tex t-xl  font-black text-gray-100"> 
-                                                           {selectedContestant && selectedContestant && selectedContestant.rank}
-                                                    </Text>
-                                    </View> */}
+                                  
                   </View>
 
 
-                  {/* <TouchableOpacity
-                                                onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
-                                                className="absolute top-[5px] flex-col bg-[#000000] [#deddd9] [#333132] [#630d20]  [#3b4348]  rounded-full justify-center p-2 items-start gap-2 ">
-                                                    <Image
-                                                    source={{uri:selectedContestantImg}}
-                                                    className ="w-[50px] h-[50px] m- rounded-full"
-                                                    esizeMethod='cover'
-                                                    />  
-                                                  
-                   </TouchableOpacity> */}
-                   {/* <View
-                   className = "absolute w-[25%] top-5 left-[14%] flex-row justify-end items-center b g-white">
-                         <Text   
-                         style ={{fontSize:8}}
-                         className="font-black text-gray-100 ">
-                                  {name && name.part1}  
-                         </Text>
-                   </View>
-                   <View
-                   className = "absolute w-[25%] top-5 right-[14%] flex-row justify-start items-center b g-white">
-                        <Text   
-                            style ={{fontSize:8}}
-                            className="font-black text-gray-100">
-                                 {name && name.part2}  
-                        </Text>
-                   </View> */}
         </View>
        
 
-        {/* <View
-        style={{ height: h * 0.13 , width : width - h * 0.28 + 10 , backgroundColor : boxBgColor }}
-        className=" bg-[#fefeff] [#3b4348] [#676c73] w- [66%] py-2  rounded-b-md flex-row justify-center gap-2 items-center  ">
-              {contestants.slice(16,22).map((contestant , index) =>{
-                                    return(
-                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
-                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.109}
-                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
-                                        )
-              })}
-              { vacantSpots.slice(vacantSpots.length + contestants.slice(16,22).length - 6 ,vacantSpots.length).map((element , index) =>{
-                                    return (
-                                        <VacntSpotContestant key={index} f={h * 0.109} /> 
-                                        )
-              }) }
-        </View> */}
+    
 
-        
-
-        {/* <View
-        style={{ width : h * 0.14 , height : h / 2 + 30  , bottom: h * 0.27 ,left:5 , backgroundColor : boxBgColor}}
-        className=" bg-[#000000]  [#43434a] [#3b4348] [#676c73] [#3b4348] w- [66%] py-4  absolute   flex-col rounded-full justify-start gap-4 items-center  ">
-              {contestants.slice(0,5).map((contestant , index) =>{
-                                    return(
-                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
-                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.108}
-                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
-                                        )
-              })}
-         
-        </View> */}
-
-        {/* <View
-        style={{ width : h * 0.12 , height : h - h * 0.30  , bottom: h * 0.27 ,right: 1 , backgroundColor : boxBgColor}}
-        className=" bg-[#f6f4f4] [#43434a] [#3b4348] [#676c73] [#3b4348] w- [66%] py-1 absolute bottom- 1 right-0 flex-col rounded-br-md rounded-tl-md justify-between gap-2 items-center  ">
-              {contestants.slice(8,22).filter((element, index) => { return index % 2 === 1}).map((contestant , index) =>{
-                                    return(
-                                        <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
-                                        participantTrackerId = {null} setSelectedContestant={setSelectedContestant} f={h * 0.108}
-                                        talentRoom={userTalent} regionIcon={getIcon(userTalent.region)} selectedIcon = {userTalent.name} index ={index +19} w = {"90%"} h={"30%"}/> 
-                                        )
-              })}
-              { vacantSpots.slice(contestants.slice(8,22).filter((element, index) => { return index % 2 === 1}).length ,7).map((element , index) =>{
-                                    return (
-                                        <VacntSpotContestant key={index} f={h * 0.108} /> 
-                                        )
-              }) }
-        </View> */}
-
-        {activity ? (
-         <TalentActivityHeader data={userTalent} userProfile = {userProfile} activity = {true} user = {user} type = "talent"/>
+        {/* {activity ? (
+         <TalentActivityHeader data={userTalent} width={width} userProfile = {userProfile} activity = {true} user = {user} type = "talent"/>
          ):(
-         <PostTalentHeader data={userTalent} user={user}/>
-         )}
+         <PostTalentHeader data={userTalent} width={width} user={user}/>
+         )} */}
+                  <PostTalentHeader data={userTalent} width={width} user={user}/>
+
            
      </View>
 
    
 
 
-    </>
-    )} 
+    {/* </>
+    )}  */}
    
    
     </>

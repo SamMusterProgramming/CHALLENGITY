@@ -130,7 +130,7 @@
 // );
 // }
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 View,
 Text,
@@ -168,6 +168,9 @@ const { notifications, setNotifications, user } = useGlobalContext();
 
 const nativeGesture = Gesture.Native();
 
+const [scrollEnabled, setScrollEnabled] = useState(true);
+
+
 useEffect(() => {
 
 if (visible) {
@@ -186,24 +189,39 @@ const closeDrawer = () => {
 onClose();
 };
 
+// const panGesture = Gesture.Pan()
+//   .activeOffsetX([20, 999])
+//   .failOffsetY([-15, 15])
+//   .simultaneousWithExternalGesture(nativeGesture)
+//   .onUpdate((event) => {
+//     if (event.translationX > 0) {
+//       translateX.value = event.translationX;
+//     }
+//   })
+//   .onEnd(() => {
+//     if (translateX.value > drawerWidth * 0.35) {
+//       translateX.value = withTiming(drawerWidth, {}, () => {
+//         runOnJS(onClose)();
+//       });
+//     } else {
+//       translateX.value = withSpring(0);
+//     }
+//   });
+
 const panGesture = Gesture.Pan()
-  .activeOffsetX([20, 999])
-  .failOffsetY([-15, 15])
-  .simultaneousWithExternalGesture(nativeGesture)
-  .onUpdate((event) => {
-    if (event.translationX > 0) {
-      translateX.value = event.translationX;
-    }
-  })
-  .onEnd(() => {
-    if (translateX.value > drawerWidth * 0.35) {
-      translateX.value = withTiming(drawerWidth, {}, () => {
-        runOnJS(onClose)();
-      });
-    } else {
+.activeOffsetX([-10, 10])   // only triggers for horizontal swipe
+.failOffsetY([-10, 10])     // vertical motion fails the gesture
+.onUpdate((event) => {
+  translateX.value = Math.max(0, event.translationX); 
+})
+.onEnd(() => {
+  if (translateX.value > 120) {
+      translateX.value = withTiming(width);
+      runOnJS(onClose)();
+  } else {
       translateX.value = withSpring(0);
-    }
-  });
+  }
+});
 
 const animatedStyle = useAnimatedStyle(() => ({
 transform: [{ translateX: translateX.value }]
@@ -285,10 +303,12 @@ Notifications
     }}
     keyboardShouldPersistTaps="handled"
     nestedScrollEnabled
-    initialNumToRender={10}        // render only first 10
-  maxToRenderPerBatch={10}       // batch size
-  windowSize={10}                // controls virtualized list buffer
-  removeClippedSubviews={true}   // important for Android
+    initialNumToRender={10}        
+    maxToRenderPerBatch={10}       
+    windowSize={10}                
+    removeClippedSubviews={true}   
+    scrollEnabled={scrollEnabled}
+    onScrollBeginDrag={() => setScrollEnabled(true)}
     />
 </GestureDetector>
 

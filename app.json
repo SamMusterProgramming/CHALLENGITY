@@ -3,7 +3,7 @@
     "name": "Challengify",
     "slug": "Challengify",
     "runtimeVersion": "1.0.0",
-    "backgroundColor": "#000000", 
+    "backgroundColor": "#000000",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/challenge-logo.png",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier":"com.anonymous.Challengify",
+      "bundleIdentifier": "com.anonymous.Challengify",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -78,7 +78,7 @@
         }
       ],
       "react-native-compressor",
-      "expo-font" ,
+      "expo-font",
       [
         "expo-build-properties",
         {
@@ -88,9 +88,9 @@
             "deploymentTarget": "15.1"
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
-
     "experiments": {
       "typedRoutes": true
     },

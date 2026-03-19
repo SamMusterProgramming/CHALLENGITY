@@ -64,8 +64,8 @@ export const loginAnonymously = async () => {
 // ----------------- Google Login Hook -----------------
 export const useGoogleLogin = () => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    // expoClientId: process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID, 
-    // iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,   
+    expoClientId: process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID, 
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,   
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,  });
 
   const signInWithGoogle = async () => {

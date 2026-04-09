@@ -74,8 +74,6 @@ const TopBar = ({ show, onClose , height, width ,top ,bottom,left ,right , regio
                                                         {selectedTalent} Contest
                                                   </Text>
                                         </View>
-                                   
-                                    
                                 </View>
                               
                         </View>

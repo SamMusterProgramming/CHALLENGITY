@@ -1,28 +1,29 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
+import { auth } from './firebase/client'
 
+const baseURL_DEVOLOPMENT = "http://localhost:8000"
+const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-
- const baseURL_DEVOLOPMENT = "http://localhost:8000"
- const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
-
-
-
-
-
- 
 export const BASE_URL =  baseURL_PRODUCTION
+
+export const api = axios.create({
+  baseURL: BASE_URL,
+});
+
+// api.interceptors.request.use(async (config) => {
+//   const token = await auth.currentUser.getIdToken();
+//   config.headers.Authorization = `Bearer ${token}`;
+//   return config;
+// });
 
 export const setLoadingBarAxios = (loadingRef) => {
   axios.interceptors.request.use(async(config) => {
     loadingRef.current.continuousStart();
-   
   }, (error) => {
     loadingRef.current.complete();
-
   });
-  
   axios.interceptors.response.use((response) => {
     loadingRef.current.complete();
     
@@ -32,7 +33,7 @@ export const setLoadingBarAxios = (loadingRef) => {
   });
 }
 
-axios.interceptors.request.use(
+api.interceptors.request.use(
   async (config) => {
     const token = await getToken();
     if (token) {
@@ -45,29 +46,41 @@ axios.interceptors.request.use(
   }
 );
 
-const getToken = async () => {
-  try {
-    const token = await AsyncStorage.getItem('jwt_token');
-    return token;
-  } catch (error) {
-    console.error('Error getting token:', error);
-    return null;
-  }
+// const getToken = async () => {
+//   try {
+//     const token = await AsyncStorage.getItem('jwt_token');
+//     return token;
+//   } catch (error) {
+//     console.error('Error getting token:', error);
+//     return null;
+//   }
+// };
+
+// const storeToken = async (token) => {
+//   try {
+//     await AsyncStorage.setItem('jwt_token', token);
+//   } catch (error) {
+//     console.error('Error storing token:', error);
+//   }
+// };
+// const removeToken = async (token) => {
+//   try {
+//     await AsyncStorage.removeItem('jwt_token');
+//   } catch (error) {
+//     console.error('Error removing token:', error);
+//   }
+// };
+
+export const saveToken = async (token) => {
+  await AsyncStorage.setItem("token", token);
 };
 
-const storeToken = async (token) => {
-  try {
-    await AsyncStorage.setItem('jwt_token', token);
-  } catch (error) {
-    console.error('Error storing token:', error);
-  }
+export const getToken = async () => {
+  return await AsyncStorage.getItem("token");
 };
-const removeToken = async (token) => {
-  try {
-    await AsyncStorage.removeItem('jwt_token');
-  } catch (error) {
-    console.error('Error removing token:', error);
-  }
+
+export const removeToken = async () => {
+  await AsyncStorage.removeItem("token");
 };
 
 
@@ -148,11 +161,11 @@ export const getUserById = async(user_id,setUserProfile) =>{
 
 }
 
-export const updateUser = async(user_id,rawBody,setUser,user)=> {
+export const updateUserInfo = async(user_id,rawBody,setUser)=> {
   try {
-     await axios.patch(BASE_URL + `/users/user/${user_id}`,rawBody)
+     await api.patch(`/users/user/${user_id}`,rawBody)
      .then(res =>{ 
-      setUser( {...res.data,profile_img:res.data.profile_img,cover_img:res.data.cover_img} )
+      setUser(res.data)
     } )
   } catch (error) {
      console.error(error)
@@ -551,58 +564,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 }
 }
 
-     
-  // export const loadLikeVoteData= async(ids,setLikesVotesData,likesVotesData,setIsExpired)=> {
 
-  //   try {
-  //     await axios.get( BASE_URL + '/challenges/load/like/', {
-  //       params:{
-  //           ids: ids.join(',')
-  //       }
-  //    } )
-  //     .then(res => {
-       
-  //        if(res.data === "post expired") setIsExpired(true)
-  //        else setLikesVotesData({...likesVotesData,isLiked:res.data.isLiked,like_count:res.data.like_count,
-  //       isVoted:res.data.isVoted,vote_count:res.data.vote_count}) 
-  //   })
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
-  // export const liked = async(ids,setLikesVotesData,likesVotesData, setIsExpired)=>{
-  //   try {
-  //       await axios.get( BASE_URL + `/challenges/challenge/like/`, {
-  //         params:{
-  //             ids: ids.join(',')
-  //         }
-  //      } )
-  //       .then(res => { if(res.data === "post expired") setIsExpired(true)
-  //         else
-  //         setLikesVotesData({...likesVotesData,isLiked:res.data.isLiked,like_count:res.data.like_count})
-  //       } )
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  // }
-
-  // export const voted = async(ids,setLikesVotesData,likesVotesData,setIsExpired)=>{
-  //   try {
-  //       await axios.get( BASE_URL + `/challenges/challenge/vote/`, {
-  //         params:{
-  //             ids: ids.join(',')
-  //         }
-  //      } )
-  //       .then(res =>  { if(res.data === "post expired") setIsExpired(true)
-  //         else
-  //         setLikesVotesData({...likesVotesData,isVoted:res.data.isVoted,vote_count:res.data.vote_count})} )
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  // }
-
-  // *********************************** follower and following *************************
 
 
     export const getFollowData = async(user_id ,setFollower)=>{
@@ -748,7 +710,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
    export const getNotificationByUser = async(receiver_id ,setNotification) =>{
     try {
-      await axios.get( BASE_URL + `/users/notifications/${receiver_id}` )
+      await api.get( `/users/notifications/${receiver_id}` )
       .then(res =>  { 
         setNotification(res.data);
         } )
@@ -759,7 +721,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
    
   export const updateNotificationByUser = async(_id , setNotification) =>{
     try {
-      await axios.patch( BASE_URL + `/users/notifications/${_id}` )
+      await api.patch( `/users/notifications/${_id}` )
       .then(res =>  { 
         setNotification(res.data);
         } )
@@ -771,7 +733,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
    export const deleteUserNotification = async(_id,setNot) =>{
     try {
-      await axios.delete( BASE_URL + `/users/notifications/${_id}` )
+      await api.delete( `/users/notifications/${_id}` )
       .then(res =>  { 
            setNot(res.data)
         } )
@@ -785,7 +747,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
 export const getCommentsByPost = async(post_id,setComments) =>{
   try {
-    await axios.get( BASE_URL + `/challenges/posts/${post_id}` )
+    await api.get( `/challenges/posts/${post_id}` )
     .then(res =>  { 
          setComments(res.data)
       } )
@@ -796,7 +758,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 
  export const addCommentsByPost = async(post_id,body,setComments) =>{
   try {
-    await axios.post( BASE_URL + `/challenges/posts/${post_id}`,body)
+    await api.post( `/challenges/posts/${post_id}`,body)
     .then(res =>  { 
          setComments({...res.data})
       } )
@@ -807,7 +769,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 
  export const deleteCommentsById = async(post_id,body,setComments) =>{
   try {
-    await axios.patch( BASE_URL + `/challenges/posts/comment/${post_id}`,body )
+    await api.patch( `/challenges/posts/comment/${post_id}`,body )
     .then(res =>  {
          setComments(res.data)
       } )
@@ -825,7 +787,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 
  export const createTalentRoom = async(body, setTalentRoom ,user_id , setUserContestantStatus, setUserParticipation ,setEdition, setIsLoading) =>{
   try {
-    await axios.post( BASE_URL + `/talents/creates/`,body )
+    await api.post( `/talents/creates/`,body )
     .then(res =>  {
          setTalentRoom({...res.data})
          let edition = res.data.editions.find(e => e.status === "open")
@@ -882,7 +844,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 
  export const GetTalentRoomById = async(talentRoom_id, setTalentRoom ) =>{
   try {
-    await axios.get( BASE_URL + `/talents/room/${talentRoom_id}` )
+    await api.get(`/talents/room/${talentRoom_id}` )
     .then(res =>  {
          setTalentRoom(res.data)
       } )
@@ -896,7 +858,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 
  export const GetTalentRoomsByName = async(queryParams,setTalentRooms ,  setIsLoading) =>{
   try {
-    await axios.get( BASE_URL + `/talents/rooms`,{
+    await api.get( `/talents/rooms`,{
       params: queryParams
   } )
     .then(res =>  {
@@ -913,7 +875,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 
  export const getUserTalent = async(user_id , setUserTalents ) =>{
   try {
-    await axios.get( BASE_URL + `/talents/user/talent/${user_id}` )
+    await api.get( `/talents/user/talent/${user_id}` )
     .then(res =>  {
         setUserTalents(res.data)  
       })
@@ -939,13 +901,13 @@ export const getCommentsByPost = async(post_id,setComments) =>{
   }
  }
 
- export const deleteContestant = async(talentRoom_id,body, setTalentRoom , setIsLoading) =>{
+ export const deleteContestantStage = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
   try {
     setIsLoading(true)
-    await axios.patch( BASE_URL + `/talents/delete/${talentRoom_id}`,body)
+    await api.patch( BASE_URL + `/talents/delete/contestant/stage/${talentRoom_id}`,body)
     .then(res =>  {
          setTalentRoom(res.data)
-       
+         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
       } )
       .finally(()=>{
         setIsLoading(false)
@@ -954,6 +916,87 @@ export const getCommentsByPost = async(post_id,setComments) =>{
     console.log(error)
   }
  }
+
+ export const deleteContestantQueue = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
+  try {
+    setIsLoading(true)
+    await api.patch( BASE_URL + `/talents/delete/contestant/queue/${talentRoom_id}`,body)
+    .then(res =>  {
+         setTalentRoom(res.data)
+         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const deleteContestantElimination = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
+  try {
+    setIsLoading(true)
+    await api.patch( BASE_URL + `/talents/delete/contestant/Elimination/${talentRoom_id}`,body)
+    .then(res =>  {
+         setTalentRoom(res.data)
+         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const deletePerformanceStage = async(talentRoom_id,body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
+  try {
+    setIsLoading(true)
+    await api.patch( BASE_URL + `/talents/delete/performance/stage/${talentRoom_id}`,body)
+    .then(res =>  {
+         setTalentRoom(res.data)
+         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const deletePerformanceQueue = async(talentRoom_id,body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
+  try {
+    setIsLoading(true)
+    await api.patch( BASE_URL + `/talents/delete/performance/queue/${talentRoom_id}`,body)
+    .then(res =>  {
+         setTalentRoom(res.data)
+         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
+ export const backInQueue = async(talentRoom_id, body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
+  try {
+    setIsLoading(true)
+    await api.patch( BASE_URL + `/talents/back/queue/${talentRoom_id}`,body)
+    .then(res =>  {
+         setTalentRoom(res.data)
+         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+      } )
+      .finally(()=>{
+        setIsLoading(false)
+      })
+  } catch (error) {
+    console.log(error)
+  }
+ }
+
 
  export const eliminationTalentRoom = async(talentRoom_id, setTalentRoom , setIsLoading) =>{
   try {
@@ -1035,7 +1078,7 @@ export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsE
 
    export const likeTalentPost = async(post_id , body, setPostData , setIsLoading , setIsExpired) =>{
     try { 
-    await axios.post( BASE_URL + `/talents/likes/${post_id}`,body )
+    await api.post( `/talents/likes/${post_id}`,body )
     .then(res =>  {
          if(res.data === "expired") {
           return setIsExpired(true)
@@ -1052,7 +1095,7 @@ export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsE
 
  export const voteTalentPost = async(post_id , body, setPostData ,setIsExpired) =>{
   try { 
-  await axios.post( BASE_URL + `/talents/votes/${post_id}`, body )
+  await api.post( `/talents/votes/${post_id}`, body )
   .then(res =>  {
       if(res.data === "expired") {
       return setIsExpired(true)
@@ -1069,7 +1112,7 @@ export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsE
 
 export const flagTalentPost = async(post_id , body, setPostData ,setIsExpired) =>{
   try { 
-  await axios.post( BASE_URL + `/talents/flags/${post_id}`, body )
+  await api.post( `/talents/flags/${post_id}`, body )
   .then(res =>  {
       if(res.data === "expired") {
       return setIsExpired(true)
@@ -1086,7 +1129,7 @@ export const flagTalentPost = async(post_id , body, setPostData ,setIsExpired) =
 
  export const getPostData = async(post_id , setPostData  , setIsExpired) =>{
   try { 
-  await axios.get( BASE_URL + `/talents/post/${post_id}` )
+  await api.get(`/talents/post/${post_id}` )
   .then(res =>  {
     if(res.data === "expired") {
         setIsExpired(true)
@@ -1104,7 +1147,7 @@ export const flagTalentPost = async(post_id , body, setPostData ,setIsExpired) =
 
 export const addCommentContestant = async(post_id,body,setPostData) =>{
   try {
-    await axios.post( BASE_URL + `/talents/posts/${post_id}`,body)
+    await api.post( `/talents/posts/${post_id}`,body)
     .then(res =>  { 
          setPostData({...res.data})
       } )
@@ -1117,8 +1160,8 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
 
  export const deleteTalentCommentsById = async(post_id,body,setPostData) =>{
   try {
-    console.log(post_id)
-    await axios.patch( BASE_URL + `/talents/posts/comment/${post_id}`,body )
+  
+    await api.patch(`/talents/posts/comment/${post_id}`,body )
     .then(res =>  {
       setPostData({...res.data})
       } )
@@ -1132,17 +1175,12 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
   export const generateChallengeTalentGuinessData = async(user_id , setData ) =>{
       try { 
       await 
-      Promise.all([axios.get( BASE_URL + `/challenges/general/${user_id}`), axios.get( BASE_URL + `/talents/general/${user_id}`)]) 
+      api.get(`/talents/general/${user_id}`)
       .then(res =>  {
         const data = []
-        // if(res[0].data.length > 0) {
-        //      res[0].data.forEach(element => {
-        //           data.push({...element , dataType:"challenge" })
-        //      });
-        //  } 
-        if(res[1].data.length > 0) {
-            res[1].data.forEach(element => {
-               data.push({...element , dataType:"talent" })
+        if(res.data.length > 0) {
+            res.data.forEach(element => {
+               data.push({...element  })
             });
         } 
         data.sort((a, b) => 
@@ -1150,14 +1188,12 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
         setData(data)
 
         } )
-        .finally(()=>{
-          // setIsLoading(false)
-        })
+        
     } catch (error) {
       console.log(error)
     }
     }
-  
+     
 
     export const getFavouriteTalents = async( user_id , data  , setFavourites) =>{
       try { 
@@ -1188,7 +1224,7 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
 
     export const getAllTalentStages = async( setTalentStages) =>{
       try {
-        await axios.get( `${BASE_URL}/talents/stages` )
+        await api.get( `/talents/stages` )
         .then(res =>  {
           // console.log(res.data)
           setTalentStages(res.data)  

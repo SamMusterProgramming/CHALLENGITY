@@ -1,78 +1,4 @@
-// import { Image, Text, View } from "react-native";
-// import NotificationSearchNav from "../talent/custom/NotificationSearchNav";
-// import { icons } from "../../constants";
 
-
-
-
-// export default function HeaderApp({
-//     user,
-//     showNotifications,
-//     setShowNotifications,
-//     width,
-//     headerHeight
-//   }) {
-  
-     
-//     return (
-//       <View
-//         style={{ height: headerHeight * 0.45 }}
-//         className="flex-row items-end justify-start  px-0"
-//       >
-  
-//        <View
-//         style={{
-//           width: width * 0.35,
-//           height: "100%"
-//         }}
-//          className="justify-center items-center bor der-l-2  bo rder-[#564b09] b g-[#112e52]">
-//         <Image
-//            className="mt-4"
-//             source={icons.challengify_logo}
-//             resizeMode="cover"
-//             style={{
-//               width: width * 0.35,
-//               height: "90%"
-//             }}
-//           />
-//        </View>
-       
-  
-     
-  
-//      <View
-//          className="items-center flex-row gap-4 ml-auto justify-center">
-//         <NotificationSearchNav
-//           showNotifications={showNotifications}
-//           setShowNotifications={setShowNotifications}
-//           headerHeight={headerHeight}
-//         />
-     
-//             {user ? (
-//               <Image
-//                 source={{ uri: user?.profileImage.publicUrl }}
-//                 style={{
-//                   width: headerHeight * 0.35,
-//                   height: headerHeight * 0.35
-//                 }}
-//                 className="rounded-full"
-//               />
-//             ) : (
-//               <Image
-//                 source={icons.avatar}
-//                 style={{
-//                   width: headerHeight * 0.40,
-//                   height: headerHeight * 0.40
-//                 }}
-//                 className="rounded-full"
-//               />
-//             )}
-      
-//         </View>
-  
-//       </View>
-//     );
-//   }
 
 
 import { Image, Text, View, TouchableOpacity } from "react-native";
@@ -85,6 +11,7 @@ export default function HeaderApp({
   user,
   showNotifications,
   setShowNotifications,
+  setShowProfile,
   width,
   headerHeight,
   title = "Challengify"
@@ -147,7 +74,9 @@ export default function HeaderApp({
         />
 
         {/* USER AVATAR */}
-        <TouchableOpacity>
+        <TouchableOpacity
+         onPress={()=> setShowProfile(true)}
+        >
           {user ? (
             <Image
               source={{ uri: user?.profileImage?.publicUrl }}

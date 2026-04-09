@@ -9,6 +9,7 @@ import { countryCodes } from '../../helper'
 import { acceptFriendRequest, deleteUserNotification, getNotificationByUser, removeFriendRequest } from '../../apiCalls'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import Friend from '../profile/Friend'
+import { logoutUser } from '../../services/userServices'
 
 export default function UserProfile({user}) {
   const {setUser,setFollowings ,setTrendingChallenges, setFollow,setPublicParticipateChallenges,userFriendData,follow,userPublicChallenges,
@@ -82,6 +83,9 @@ export default function UserProfile({user}) {
     user && getNotificationByUser(user._id,setNotifications)
   }, [userFriendData ,deletedNot])
 
+
+
+
   return (
     <ScrollView
     showsVerticalScrollIndicator ={false}
@@ -92,8 +96,8 @@ export default function UserProfile({user}) {
             <View className="w-[100%] flex-col b g-[#F7F7F7] justify-center  rounde d-t-lg items-center ">
                     <Image 
                     resizeMode='stretch'
-                    className="w-[100%] h-[200px]  roun ded-xl"
-                    source={{uri: userCoverImg }} 
+                    className="w-[100%] h-[200px] roun ded-xl"
+                    source={{uri: user.coverImage?.publicUrl}} 
                     />
                     <View 
                 
@@ -391,7 +395,7 @@ export default function UserProfile({user}) {
                 className=" w-[100%] max-h- [200px] ">
                     <View 
                     className=" w- [100%] h- [100%] flex-row flex-wrap py-2 gap-3  rounde d-2xl justify-center items-center b g-[#1c1c1d] ">
-                        {userFriendData && follow.followers.map((item ,index)=> {
+                        {userFriendData && follow?.followers.map((item ,index)=> {
                             return(   
                                 <Friend key={index} index={index} friend={item} w={width} h={height} />
                             )
@@ -451,7 +455,7 @@ export default function UserProfile({user}) {
                     className=" w-[100%] max-h- [200px] ">
                         <View 
                         className=" w- [100%] h- [100%] flex-row flex-wrap py-2 gap-3  rounde d-2xl justify-center  items-center b g-[#1c1c1d] ">
-                            {userFriendData && follow.followings.map((item ,index)=> {
+                            {userFriendData && follow?.followings.map((item ,index)=> {
                                 return(   
                                     <Friend key={index} index={index} friend={item} w={width} h={height} />
                                 )
@@ -477,29 +481,30 @@ export default function UserProfile({user}) {
             className="w-[100%] py-2 px-2 bg-[#000000] flex-row mb- 2 mt- 1 round ed-b-3xl  justify-center items-center">
               
                     <TouchableOpacity
-                      onPress={async()=>{                           
-                        try {
-                            await AsyncStorage.removeItem("jwt_token")
-                            setIsLoggingOut(true)
-                            setTimeout(() => {
-                                setUser(null)
-                                setTrendingChallenges([])
-                                setPublicParticipateChallenges(null)
-                                setIsViewed(true)
-                                setNotifications([])
-                                setFollowings([])
-                                setUserFriendData(null)
-                                setFollow(null)
-                                setIsLoggingOut(false)
-                                router.replace('/Home');
-                            }, 2000);
+                      onPress={
+                        // async()=>{                           
+                        // try {
+                        //     await AsyncStorage.removeItem("jwt_token")
+                        //     setIsLoggingOut(true)
+                        //     setTimeout(() => {
+                        //         setUser(null)
+                        //         setTrendingChallenges([])
+                        //         setPublicParticipateChallenges(null)
+                        //         setIsViewed(true)
+                        //         setNotifications([])
+                        //         setFollowings([])
+                        //         setUserFriendData(null)
+                        //         setFollow(null)
+                        //         setIsLoggingOut(false)
+                        //         router.replace('/Home');
+                        //     }, 2000);
                         
-                    } catch (error) {
-                        console.log(error)
-                    }
-                }
-                
-                }
+                        //     } catch (error) {
+                        //         console.log(error)
+                        //     }
+                        //  }
+                       async() => await logoutUser(setUser ,router)
+                       }
                     className="w-[100%] flex-row  justify-center  py-3 px-4  bg-gray-700 rounded-xl items-center">
                             <Text
                                 style={{fontSize:12,

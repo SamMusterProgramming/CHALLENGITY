@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "./apiCalls";
+import { api, BASE_URL } from "./apiCalls";
 import * as FileSystem from 'expo-file-system/legacy';
 
 
@@ -23,7 +23,7 @@ export const getUploadVideoUrl = async ( userId , name , type ) => {
 
 export const getUploadImageUrl = async ( userId , name , type ) => {
   try {
-   const res = await axios.post(`${BASE_URL}/users/getUploadImageUrl`, {
+   const res = await api.post(`/users/getUploadImageUrl`, {
      userId,
      name,
      type,
@@ -88,7 +88,10 @@ export const uploadImageToBlackBlaze = async (
 };
  
 
- export const saveSignedUrlImageToDataBase = async (body) => {
-    await axios.post(`${BASE_URL}/users/saveProfileImage`, body);
+ export const saveProfileImageToDataBase = async (body) => {
+   return await api.post(`/users/saveProfileImage`, body);
+  };
+  export const saveCoverImageToDataBase = async (body) => {
+   return  await api.post(`/users/saveCoverImage`, body);
   };
   

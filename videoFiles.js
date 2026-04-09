@@ -1,6 +1,5 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { storage } from './firebase';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { getUploadImageUrl, getUploadUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from './uploadFileToBlackBlaze';
 import axios from 'axios';

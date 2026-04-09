@@ -20,9 +20,9 @@ const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon,
     
     Animated.timing(sidebarAnimation, {
       toValue: 
-         show ? 0 :  -width ,
+         show ? 0 :  - width -100 ,
         // right && show ? width : 0,
-      duration: 700,
+      duration: 300,
       useNativeDriver: true,
     }).start();
    
@@ -31,15 +31,15 @@ const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon,
 
   return (
     <Animated.View 
-    className=" flex-col justify-evenly rounded-tr-xl rounded-br-xl items-start  "
+    className="absolute flex-col justify-center rounded-tr-xl rounded-br-xl items-start  "
     style={[
         {
-            top:top && top,
-            bottom:bottom && bottom,
+            // top: top && top,
+            bottom: bottom && bottom,
             left:left && left ,
             right:right && right,
             position: 'absolute',
-            height: height, // Adjust the width as needed
+            height: height , 
             backgroundColor: 'transparent',
             // padding: 20,
             width:width ,
@@ -52,17 +52,20 @@ const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon,
         
        
 
-       <View
-       className ="w-[99%] h-[100%] pl-1 px- flex-col g-[#055783] gap-1 -2 rounde-tr-xl rounded-br-xl borde-t-4 justify-start items-center">
-          {contestants.map((contestant , index) => {
-               return (
-                <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
-                participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
-                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index = {(index + 1)* 2 + 4} w={"93%"} h={"19.7%"}/>
-              
-                )
-          })}
-       </View>
+     <View    
+      style={{
+        // height: height,
+      }}
+      className ="w-[100%]   h-[100%] pt- 2 flex-col b g-white  gap-[1.5%] pr- 1  justify-end items-center">
+         {contestants.map((contestant , index) => {
+              return (
+               <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} left = {"left"}
+               participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
+               talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={(index + 1 ) * 2 + 3 } w={"100%"} h={width}/>
+               
+               )
+         })}
+      </View>
 
 
     </Animated.View>

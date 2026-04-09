@@ -35,62 +35,67 @@
     "web": {
       "output": "static"
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-image-picker",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to let you ...",
-          "imagePickerPermission": "Allow $(PRODUCT_NAME) to access your photos to let you ..."
-        }
-      ],
-      [
-        "expo-navigation-bar",
-        {
-          "position": "absolute",
-          "visibility": "hidden",
-          "behavior": "overlay-swipe",
-          "backgroundColor": "#00000080"
-        }
-      ],
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/challenge-logo.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#000000"
-        }
-      ],
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-          "recordAudioAndroid": true
-        }
-      ],
-      [
-        "expo-video",
-        {
-          "supportsBackgroundPlayback": true,
-          "supportsPictureInPicture": true
-        }
-      ],
-      "react-native-compressor",
-      "expo-font",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static",
-            "useModularHeaders": true,
-            "deploymentTarget": "15.1"
-          }
-        }
-      ],
-      "expo-web-browser"
-    ],
+   "plugins": [
+  "expo-router",
+  [
+    "expo-image-picker",
+    {
+      "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to let you ...",
+      "imagePickerPermission": "Allow $(PRODUCT_NAME) to access your photos to let you ..."
+    }
+  ],
+  [
+    "expo-navigation-bar",
+    {
+      "position": "absolute",
+      "visibility": "hidden",
+      "behavior": "overlay-swipe",
+      "backgroundColor": "#00000080"
+    }
+  ],
+  [
+    "expo-splash-screen",
+    {
+      "image": "./assets/images/challenge-logo.png",
+      "imageWidth": 200,
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    }
+  ],
+  [
+    "expo-camera",
+    {
+      "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+      "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+      "recordAudioAndroid": true
+    }
+  ],
+  [
+    "expo-video",
+    {
+      "supportsBackgroundPlayback": true,
+      "supportsPictureInPicture": true
+    }
+  ],
+  "expo-font",
+  [
+    "expo-build-properties",
+    {
+      "ios": {
+        "useFrameworks": "static",
+        "useModularHeaders": true,
+        "deploymentTarget": "15.1"
+      }
+    }
+  ],
+  "expo-web-browser",
+  [
+    "@react-native-google-signin/google-signin",
+    {
+      "iosUrlScheme": "com.googleusercontent.apps.373653845536-a02tl7vqrhe3ac4k96uu8pkgf3g8tt94"
+    }
+  ]
+],
     "experiments": {
       "typedRoutes": true
     },

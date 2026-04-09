@@ -51,13 +51,13 @@ export default function VoteButton({setIsModalVisible,width ,
         }
         
      }
-      className ="-ml-4"
+      className =""
       style={{
         alignItems: "start",
         justifyContent: "center", 
         paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderRadius: 10,
+        paddingHorizontal: 10,
+        borderRadius: 5,
         backgroundColor:postData.votes.find(vote => vote.voter_id == user._id)?"rgba(255,215,0,0.15)":"rgba(255,255,255,0.15)" // "rgba(255,215,0,0.15)",
       }}
     >
@@ -72,7 +72,7 @@ export default function VoteButton({setIsModalVisible,width ,
 
         <MaterialCommunityIcons
           name="trophy"
-          size={width/22}
+          size={width/18}
           color={postData.votes.find(vote => vote.voter_id == user._id)? "gold":"white"}
         />
 
@@ -81,7 +81,7 @@ export default function VoteButton({setIsModalVisible,width ,
           style={{
             color: "white",
             marginLeft: 6,
-            fontWeight: "500",
+            fontWeight: "700",
             fontSize: width/30,
           }}
         >
@@ -93,7 +93,7 @@ export default function VoteButton({setIsModalVisible,width ,
       <Text
         style={{
           color:postData.votes.find(vote => vote.voter_id == user._id)? "#FFD700":"white",
-          fontSize: width/45,
+          fontSize: width/40,
           marginTop: 5,
           fontWeight: "700",
         }}

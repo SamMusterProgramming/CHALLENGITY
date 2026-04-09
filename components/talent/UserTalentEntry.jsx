@@ -99,8 +99,8 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
         //   else {   
         //     setSelectedContestantImg(selectedContestant.profile_img)
         //   }
-           await  migrateToBackblaze2 (userTalent._id, selectedContestant.user_id)
-           setSelectedContestantImg(selectedContestant.profile_img)
+          //  await  migrateToBackblaze2 (userTalent._id, selectedContestant.user_id)
+          //  setSelectedContestantImg(selectedContestant.profile_img)
 
 
         //   getVideo(selectedContestant.profile_img).then(path =>{
@@ -115,9 +115,8 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
     }, [selectedContestant])
 
   return (
-   <>
-    {/* {name &&  (   
-    <> */}
+  
+   
     <View
         style={{height: h + width/3.5  + width * 0.10, width : width ,          borderRadius: 20,
         }}
@@ -310,14 +309,8 @@ export default function UserTalentEntry({userTalent, user , userProfile ,activit
 
            
      </View>
-
-   
-
-
-    {/* </>
-    )}  */}
    
    
-    </>
+
   )
 }

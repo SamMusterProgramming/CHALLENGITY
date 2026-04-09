@@ -1,6 +1,8 @@
 import { ActivityIndicator, Image, Platform, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import React, {  useEffect, useMemo, useState } from 'react'
-import { getFavouriteList, getFollowData, getFollowings, getNotificationByUser, getTopChallenges,  getTopTalents,  getUserFriendsData, getUserParticipateChallenges, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, getUserPublicParticipateChallenges, getUserTalent, getUserTalentPerformances } from '../apiCalls';
+import { getFavouriteList, getFollowData, getFollowings, getNotificationByUser, getTopChallenges,  getTopTalents,  getUserFriendsData, 
+  getUserParticipateChallenges, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, 
+  getUserPublicParticipateChallenges, getUserTalent, getUserTalentPerformances } from '../apiCalls';
 import {icons} from '../constants'
 import { router} from 'expo-router';
 import { countryCodes, getIcon, selectIcon, selectIconColor } from '../helper';
@@ -20,11 +22,11 @@ import Challenge from '../components/home/Challenge';
 import UserProfile from '../components/home/UserProfile';
 import Favourite from '../components/home/Favourite';
 import { getVideo } from '../videoFiles';
-import { Feather, HomeIcon } from 'lucide-react-native';
 import TopStageNavBar from '../components/talent/custom/TopStageNavBar';
 import NotificationSearchNav from '../components/talent/custom/NotificationSearchNav';
-import NotificationDrawer from '../components/talent/modal/NotificationDrawer';
+import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
+import ProfileDrawer from '../components/modal/profileDrawer';
 
 
 
@@ -48,6 +50,7 @@ export default function Home() {
   const iconSize = width/20
   const [activeIndex, setActiveIndex] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
 
 
@@ -63,35 +66,29 @@ export default function Home() {
     }
   }, [user])
 
-  useEffect(() => {
-    if(user) {
-      setIsFetching(true)
-      getUserTalent(user._id , setUserTalents)
-      getUserTalentPerformances(user._id , setUserTalentPerformances)
-      getUserPublicChallenges(user._id,setUserPublicChallenges)
-      getUserPrivateChallenges(user._id,setUserPrivateChallenges)
-      getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
-      getUserPrivateParticipateChallenges(user._id ,setPrivateParticipateChallenges)
-      getNotificationByUser(user._id , setNotifications)
-      getFollowings(user._id,setFollowings)
-      getUserFriendsData(user._id,setUserFriendData)
-      getFollowData(user._id,setFollow)
-      getFavouriteList(user._id,setFavouriteList)
-      getTopChallenges(user._id,setTrendingChallenges) 
-      getTopTalents(user._id ,setTopTalents)
-      setUserProfileImg(user.profileImage?.publicUrl)
-      // getVideo(user.profileImage.
-      //   signedUrl).then(path =>{
-      //      setUserProfileImg(path)
-      //   });
-      // getVideo(user.cover_img).then(path =>{
-      //     setUserCoverImg(path)
-      //   });
-      setTimeout(() => {
-        setIsFetching(false)
-      }, 3000);
-    }
-  }, [user])
+  // useEffect(() => {
+  //   if(user) {
+  //     setIsFetching(true)
+  //     getUserTalent(user._id , setUserTalents)
+  //     getUserTalentPerformances(user._id , setUserTalentPerformances)
+  //     getUserPublicChallenges(user._id,setUserPublicChallenges)
+  //     getUserPrivateChallenges(user._id,setUserPrivateChallenges)
+  //     getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
+  //     getUserPrivateParticipateChallenges(user._id ,setPrivateParticipateChallenges)
+  //     getNotificationByUser(user._id , setNotifications)
+  //     getFollowings(user._id,setFollowings)
+  //     getUserFriendsData(user._id,setUserFriendData)
+  //     getFollowData(user._id,setFollow)
+  //     getFavouriteList(user._id,setFavouriteList)
+  //     getTopChallenges(user._id,setTrendingChallenges) 
+  //     getTopTalents(user._id ,setTopTalents)
+  //     setUserProfileImg(user.profileImage?.publicUrl)
+   
+  //     setTimeout(() => {
+  //       setIsFetching(false)
+  //     }, 3000);
+  //   }
+  // }, [user])
 
   const headerHeight = height * 0.12;
 
@@ -142,6 +139,7 @@ export default function Home() {
               user={user && user || null}
               showNotifications={showNotifications}
               setShowNotifications={setShowNotifications}
+              setShowProfile={setShowProfile}
               width={width}
               headerHeight={headerHeight}
             />
@@ -160,8 +158,8 @@ export default function Home() {
             { !user ? (
             <View     
             className="w-[100%] h-[79%] flex-1 py- px- bg-black  rounde-xl borde-[#272d31]  g-[#3b4348] ">
-               {authType == "login" && <Login  setAuthType ={setAuthType}/> }
-               {authType == "register" && <Register  setAuthType ={setAuthType}/> }
+               {/* {authType == "login" && <Login  setAuthType ={setAuthType}/> }
+               {authType == "register" && <Register  setAuthType ={setAuthType}/> } */}
 
             </View>
             ) : (
@@ -219,6 +217,10 @@ export default function Home() {
           <NotificationDrawer
           visible={showNotifications}
           onClose={() => setShowNotifications(false)}
+          />
+          <ProfileDrawer
+          visible={showProfile}
+          onClose={() => setShowProfile(false)}
           />
  
       </View>

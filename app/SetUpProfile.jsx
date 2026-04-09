@@ -5,7 +5,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker';
 import { icons } from '../constants';
 import { router } from 'expo-router';
-import { uploadThumbnail } from '../firebase';
+// import { uploadThumbnail } from '../firebase';
 import { BASE_URL, updateUser } from '../apiCalls';
 import CountryFlag from 'react-native-country-flag';
 import CountryPicker from '../components/custom/CountryPicker';
@@ -69,13 +69,6 @@ export default function SetUpProfile() {
                                             deleteFileName : user.profileImage.fileName
                                            }
                                           )
-
-        // await axios.post(`${BASE_URL}/users/saveProfileImage`, {
-        //   userId: user._id,
-        //   fileId: uploadResult.fileId,
-        //   fileName: data.fileName,
-        // });
-
     }
 };
 
@@ -115,7 +108,6 @@ const handleUpdate = ()=> {
             setUser({...user , isNewUser:false}),
             setIsFetching(false),
             router.replace('/Home'),
-
           )  
    })
    if(profile_img !== user.profile_img ) 
@@ -179,11 +171,11 @@ const onSelectCountry = (country) => {
                   <TouchableOpacity
                     onPress={()=>pickImage(setCover_img)}
                     // style={{left:width/2-24}}
-                    className="w-[80%] h-[100%] flex-row justify-center items-center rounded-lg"
+                    className="w-[100%] h-[100%] flex-row justify-center items-center rounded-lg"
                     >
                         <Image  
                         className="w-[100%] h-[100%] rounded-lg"
-                        source={{uri:cover_img}}
+                        source={{uri:user.coverImage?.publicUrl}}
                         />
                         <Image
                         source={icons.update}
@@ -199,7 +191,7 @@ const onSelectCountry = (country) => {
                     <Image 
                     className="w-[95%] h-[95%] rounded-full"
                     resizeMode='cover'
-                    source={{uri:user && user.profile_img}} 
+                    source={{uri:user && user.profileImage?.publicUrl}} 
                     />
                        <TouchableOpacity
                       onPress={()=>pickImage(setProfile_img)}

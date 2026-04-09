@@ -6,7 +6,7 @@ import Slider from '@react-native-community/slider';
 import { icons } from '../../constants';
 import { formatTime } from '../../helper';
 
-export default function ProgresssBarVideo({player,visible,bottom}) {
+export default function ProgresssBarVideo({player,visible,bottom ,key}) {
  const [progress, setProgress] = useState(5);
  const [timer, setTimer] = useState(0);
 
@@ -17,22 +17,38 @@ export default function ProgresssBarVideo({player,visible,bottom}) {
     
 //   useEvent(player, 'playingChange', handleTimeUpdate);
 
+  // useEffect(() => {
+  //   const statusSubscription = player?.addListener(
+  //     'timeUpdate',
+  //     () => {
+  //       setProgress(player.currentTime / player.duration);
+  //       setTimer(player.currentTime)
+  //     },
+  //   );
+  //   return () => {
+  //     statusSubscription.remove();
+  //   };
+  // }, []);
+
+
   useEffect(() => {
-    const statusSubscription = player?.addListener(
-      'timeUpdate',
-      () => {
+    if (!player) return;
+  
+    // Initialize progress to zero
+    setProgress(0);
+  
+    const subscription = player.addListener("timeUpdate", () => {
+      if (player.duration > 0) {
         setProgress(player.currentTime / player.duration);
-        setTimer(player.currentTime)
-      },
-    );
-    return () => {
-      statusSubscription.remove();
-    };
-  }, []);
+      }
+    });
+  
+    return () => subscription?.remove();
+  }, [player, key]);
 
   return (
    <>
-      {!visible && (<Slider
+      {visible && (<Slider
             style={{width: 200, height: 40  ,position:"absolute" ,bottom:bottom}}
             minimumValue={0}
             maximumValue={1}
@@ -48,7 +64,7 @@ export default function ProgresssBarVideo({player,visible,bottom}) {
 
        <Text className="text-white text-sm absolute font-black "
         style={{position:"absolute" ,bottom:bottom-8}}>
-                         {formatTime(player.currentTime *1000)}
+                         {formatTime(player.currentTime * 1000)}
       </Text>     
            
      </>       

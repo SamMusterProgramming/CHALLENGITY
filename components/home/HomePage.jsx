@@ -285,7 +285,6 @@ export default function HomePage() {
     if (user?._id) {
       generateChallengeTalentGuinessData(user._id, setData);
     }
-
   }, [user]);
 
   /* ---------- Loading ---------- */

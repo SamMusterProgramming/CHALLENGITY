@@ -14,8 +14,8 @@ import {  useSafeAreaInsets } from 'react-native-safe-area-context';
 import ChallengeAction from '../components/modal/ChallengeAction';
 
 import { useGlobalContext } from '../context/GlobalProvider';
-import { deleteObject,  ref } from 'firebase/storage'
-import { storage } from '../firebase';
+// import { deleteObject,  ref } from 'firebase/storage'
+// import { storage } from '../firebase';
 import ChallengeExpired from '../components/challenge/ChallengeExpired';
 
 import { useEvent } from 'expo';

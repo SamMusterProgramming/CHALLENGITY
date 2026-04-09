@@ -9,7 +9,7 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
 import {demo} from "../../assets/video/demo1.mp4"
 import { AntDesign } from '@expo/vector-icons';
-import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from '../../firebase';
+// import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from '../../firebase';
 import axios from 'axios';
 import { generateThumbnail } from '../../videoFiles';
 import { BASE_URL, getChallengeById, getUserPrivateParticipateChallenges, getUserPublicParticipateChallenges } from '../../apiCalls';

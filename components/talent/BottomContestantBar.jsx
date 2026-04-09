@@ -34,32 +34,32 @@ const BottomContestantBar = ({ show, height, width ,top ,bottom,left ,right, reg
 
  
     <Animated.View 
-    className=" flex-col w-[60%] justify-evenly  items-start  "
+    className=" flex-row justify-center items-center  "
     style={[
         // styles.sidebar
         {
             top:top && top,
             bottom:bottom && bottom,
-            // left:left && left ,
-            right:right && right,
+            left:left && left ,
+            // right:right && right,
             position: 'absolute',
             height: height, // Adjust the width as needed
             // backgroundColor: '#022f2f',
             // padding: 20,
-            // width:width ,
-            zIndex: 1,
+            width:width ,
+            // zIndex: 1,
             // elevation:12
         }
         , 
     { transform: [{ translateX: sidebarAnimation }] }]}>
 
        <View
-       className ="w-[100%] h- [100%]  py-2 px- flex-row-reverse gap-2 justify-start items-start">
+       className ="w-[100%] h-[100%]  py- 2 px-1 flex-row gap-[5%] justify-center items-center">
           {contestants.map((contestant , index) => {
                return (
                 <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant}
                 participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
-                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +19} w={"23%"} h={"100%"}/> 
+                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +19} w={"23%"} h={height}/> 
                 )
           })}
        </View>

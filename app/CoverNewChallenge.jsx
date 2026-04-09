@@ -3,12 +3,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { icons } from '../constants';
 import { router, useLocalSearchParams } from 'expo-router';
-// import SelectType from '../components/challenge/SelectType';
 import { Audience, challengeType  , privacyData } from '../utilities/TypeData'
-// import SelectPrivacy from '../components/challenge/SelectPrivacy';
-// import SelectMode from '../components/challenge/SelectMode';
 import { useGlobalContext } from '../context/GlobalProvider';
-// import SelectFriends from '../components/challenge/SelectFriends';
+
 import CustomAlert from '../components/custom/CustomAlert';
 import MakeSelectionChallengeModal from '../components/modal/MakeSelectionChallengeModel';
 import { formatTime, getInition } from '../helper';
@@ -20,7 +17,7 @@ import { useEvent } from 'expo';
 import { generateThumbnail, saveVideoLocally } from '../videoFiles';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from '../firebase';
+// import { _uploadVideoAsync, compressImage, compressVideo, uploadThumbnail } from '../firebase';
 import axios from 'axios';
 import { BASE_URL, getUserPrivateChallenges, getUserPublicChallenges } from '../apiCalls';
 import { MotiView } from 'moti';

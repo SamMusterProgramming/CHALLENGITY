@@ -1,4 +1,4 @@
-import { Animated, View, Button, Image, Text, ImageBackground, TouchableOpacity } from 'react-native';
+import { Animated, View, Button, Image, Text, ImageBackground, TouchableOpacity, useWindowDimensions } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { icons } from '../../constants';
 import Countdown from '../custom/CountDown';
@@ -10,8 +10,9 @@ import { router } from 'expo-router';
 import { createdAt } from 'expo-updates';
 import { getInition } from '../../helper';
 import VoteButton from '../custom/VoteButton';
+import UserCard from './UserCard';
 
-export default function ContestantPostDetails({user,show , height, width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
+export default function ContestantPostDetails({user,show ,  width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
   ,setParticipationType  ,rank,handleRefresh, setIsExpired ,openComments}) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
@@ -20,9 +21,26 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
   const [text,setText] = useState("")
   const [action,setAction] = useState("")
   const [voted,setVoted] = useState(false)
+  const {height} = useWindowDimensions()
+
+  
 
   const [voterEntry , setVoterEntry] = useState(talentRoom.voters.find(v=> v.voter_id == user._id))
 
+  
+  const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  width )).current;
+
+  useEffect(() => {
+  
+    Animated.timing(sidebarAnimation, {
+      toValue: 
+         show ? 0 :  width ,
+      duration: 700,
+      useNativeDriver: true,
+    }).start();
+
+   
+  }, [show]);
 
 
   useEffect(() => {
@@ -87,57 +105,55 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
  }
 
 
+
+
   return (
     <>
-    {show && selectedContestant && postData && !displayComment &&( 
+    {show && selectedContestant && postData && !displayComment && ( 
      <>
        
-         <View
-             className = " absolute  flex-col justify-start  items-start gap-8 "
-             style={{ 
-                        
-                             width: width * 0.2,
-                           //   height : height * 0.6 ,
-                             elevation:22,  
-                             justifyContent: 'center', 
-                             alignItems: 'center', 
-                             zIndex: 3 ,
-                             opacity:1,
-                             bottom:130,
-                           //   top:0,
-                             left:0
-                           //   top:top 
-             }}
-             >
-                   {/* <TouchableOpacity
-                     onPress={()=> {router.navigate({ pathname: '/ViewProfile', params: {user_id:selectedContestant.user_id} })}}
-              
-                     className = "w-[100%]  py-2 px- 2 flex-row   gap-2   justify-start items-end">
-                                   
-
-                   </TouchableOpacity> */}
- 
+         < Animated.View
+             className = " absolute  flex-col justify-end  items-center  "
+             style={[
+               {
+                  // width: width * 0.7,
+                  // height : height,
+                  elevation:22,  
+                  // justifyContent: 'center', 
+                  // alignItems: 'center', 
+                  zIndex: 3 ,
+                  opacity:1,
+                  width:width ,
+                  bottom:bottom,
+                //   top:0,
+                  left:left
+                //   top:top 
+               }
+               , 
+           { transform: [{ translateX: sidebarAnimation }] }]}>
+                  
+                    
         
-                   <View
+                   {/* <View
    
-                      className = "w-[100%] flex -1 mt-auto  flex-col gap- 8 justify-start items-center">
-                         <VoteButton 
-                               setIsModalVisible={setIsModalVisible} width={width}
-                               voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
-                               postData ={postData} setAction={setAction} setText={setText} user={user}
-                               voterEntry={voterEntry} selectedContestant={selectedContestant} />
-         
+                      className = "w-[100%] h- [100%] px- 4 b g-black gap-2 flex-row  justify-start items-end"> */}
+                        
+                        <View
+                        style ={{
+                           backgroundColor :"rgba(0,0,0,0.6"
+                        }}
+                        className ="flex-1 w-[90%] bg-[#2b2a2a] rounded-lg flex-row gap-8 py-2 justify-end items-end">
                          <TouchableOpacity 
                          onPress={handleLikePost}
-                         className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">  
+                         className = "w- [20%]  pb-1 gap-2  h-[100%]   flex-col-reverse  justify-start items-center  ">  
                                  <View
                                  className="  flex-row justify-center  items-center">
-                                     <FontAwesome name="thumbs-up" size={20} color={postData.likes.find(like => like.liker_id == user._id) ?"lightblue":"white" }/>
+                                     <FontAwesome name="thumbs-up" size={width/16} color={postData.likes.find(like => like.liker_id == user._id) ?"lightblue":"white" }/>
                                  </View>
                                  <View
-                                    className="  flex-row  gap-2 justify-center items-end">
+                                    className="  flex-row mb-1 gap-2 justify-center items-end">
                                     <Text 
-                                         style ={{fontSize:width/40,
+                                         style ={{fontSize:width/30,
                                          }}
                                          className="te xt-xl font-bold   text-gray-100"> 
                                           {postData.likes.length}
@@ -147,15 +163,15 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
 
                          <TouchableOpacity
                          onPressIn={openComments}
-                           className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">
+                         className = "w- [20%]  pb-1 gap-2  h-[100%]   flex-col-reverse  justify-start items-center  ">  
                                     <View
                                       className="  flex-row justify-center  items-center">
-                                         <Ionicons name="chatbubble" size={20} color="orange"/>
+                                         <Ionicons name="chatbubble" size={width/16} color="orange"/>
                                     </View>    
                                     <View
-                                      className=" gap-2 flex-row  justify-center items-end">
+                                      className=" gap-2 flex-row mb-1 justify-center items-end">
                                         <Text 
-                                         style ={{fontSize:width/40}}
+                                         style ={{fontSize:width/30}}
                                          className="text-gray-100  font-bold">
                                             {postData.comments.length}
                                         </Text>
@@ -172,29 +188,46 @@ export default function ContestantPostDetails({user,show , height, width ,top ,b
                                  :`Are you sure you want to unflag  ${selectedContestant.name} 's post ` )
                            }}
                           
-                           className = "w-[100%]  py-4 gap-2    flex-row  justify-start items-end  ">
+                           className = "w- [20%]  pb-1 gap-1  h-[100%]   flex-col-reverse  justify-start items-center  ">  
                                  <View
                                  className="  flex-row justify-center items-center">
                                     {!postData.flags.find(flag => flag.flagger_id == user._id) && (  
-                                       <Ionicons name="flag" size={20} color="white" />
+                                       <Ionicons name="flag" size={width/16} color="white" />
                                     )}
                                     {postData.flags.find(flag => flag.flagger_id == user._id) && (
-                                       <Ionicons name="flag" size={20} color="red" />
+                                       <Ionicons name="flag" size={width/16} color="red" />
                                     )}
                                  </View>   
                         
                           </TouchableOpacity>
                          
-
+                          </View>
                      
                          
+                  {/* </View> */}
+                  <View
+                  className= "flex-row w-[90%] justify-between items-end">
+                        <TouchableOpacity
+                                    style={{
+                                    //   width : width 
+                                    }}
+                                     className="flex-1   flex-col justify-start  items-center gap-2 ">
+                                           
+                                            <UserCard selectedContestant={selectedContestant}  height={height/15} width={width } />
+                                           
+                        </TouchableOpacity>
+                        <VoteButton 
+                               setIsModalVisible={setIsModalVisible} width={width}
+                               voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
+                               postData ={postData} setAction={setAction} setText={setText} user={user}
+                               voterEntry={voterEntry} selectedContestant={selectedContestant} />
                   </View>
 
 
                   
 
                 
-         </View>
+         </Animated.View>
 
          {isModalVisible && (  
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}

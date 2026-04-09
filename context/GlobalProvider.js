@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 
+
 const GlobalContext = createContext();
 
 export const  useGlobalContext = () => useContext(GlobalContext);
@@ -34,10 +35,19 @@ export const GlobalProvider =({children}) => {
 //    const [topTalents, setTopTalents] = useState([])
    const [userProfileImg,setUserProfileImg] = useState(null)
    const [userCoverImg,setUserCoverImg] = useState(null)
+   const [loading, setLoading] = useState(true);
+
+
+
 
 
     useEffect(() => {
-          
+        // const unsubscribe = subscribeToAuthChanges((firebaseUser) => {
+        //     setUser(firebaseUser);
+        //     setLoading(false);
+        //   });
+      
+        //   return unsubscribe;
     }, [])
     
     return (

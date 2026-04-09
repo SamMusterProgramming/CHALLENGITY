@@ -20,6 +20,7 @@ export default function rootLayout() {
      <Stack
      screenOptions={{ 
      }}>
+       <Stack.Screen name='Login' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='index' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='Home' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='ViewProfile' options={{ headerShown:false,unmountOnBlur: true}} />
@@ -31,9 +32,6 @@ export default function rootLayout() {
        <Stack.Screen name='FSinstantChallengeDisplayer' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='TalentContestRoom' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='DisplayEdition' options={{ headerShown:false,unmountOnBlur: true}} />
-    
-
-
      </Stack>
      </GlobalProvider>
      </BottomSheetModalProvider>

@@ -38,13 +38,9 @@
         </array>
       </dict>
       <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLName</key>
-        <string>OAuthRedirect</string>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.anonymous.Challengify</string>
+          <string>com.googleusercontent.apps.373653845536-a02tl7vqrhe3ac4k96uu8pkgf3g8tt94</string>
         </array>
       </dict>
     </array>

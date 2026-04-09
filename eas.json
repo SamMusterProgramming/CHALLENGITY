@@ -18,7 +18,11 @@
         "EXPO_PUBLIC_SERVER_URL": "https://capstone-wgt-server.onrender.com",
         "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyB12LtMOPw2OPeiUS3DB4wtlpQKtTQ-FU8",
         "EXPO_PUBLIC_messagingSenderId": "373653845536",
-        "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45"
+        "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45",
+        "EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID" :"373653845536-4tp9pa41fc20li102ig5th0ehueu56ip.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID" : "373653845536-a02tl7vqrhe3ac4k96uu8pkgf3g8tt94.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "373653845536-opohcgcmohdrpggbvc3n76ivlf4pp9a9.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID" :"373653845536-4tp9pa41fc20li102ig5th0ehueu56ip.apps.googleusercontent.com"
       },
       "ios": {
         "simulator": false
@@ -29,10 +33,15 @@
       "distribution": "internal",
        "node": "20.20.0",
       "env": {
-        "EXPO_PUBLIC_SERVER_URL": "https://capstone-wgt-server.onrender.com",
-        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyB12LtMOPw2OPeiUS3DB4wtlpQKtTQ-FU8",
+        "EXPO_PUBLIC_SERVER_URL":"https://capstone-wgt-server.onrender.com",
+        "EXPO_PUBLIC_FIREBASE_API_KEY":"AIzaSyB12LtMOPw2OPeiUS3DB4wtlpQKtTQ-FU8",
         "EXPO_PUBLIC_messagingSenderId": "373653845536",
-        "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45"
+        "EXPO_PUBLIC_appId": "1:373653845536:web:922f2f65a9a7718a92ee45",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID" : "373653845536-a02tl7vqrhe3ac4k96uu8pkgf3g8tt94.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "373653845536-opohcgcmohdrpggbvc3n76ivlf4pp9a9.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID" :"373653845536-4tp9pa41fc20li102ig5th0ehueu56ip.apps.googleusercontent.com",
+        "EXPO_APP_ID":"373653845536:android:af18f56fbb2a53b492ee45"
+
       },
       "ios": {
         "buildConfiguration": "Release"

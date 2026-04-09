@@ -1,101 +1,102 @@
-import { View, Text, Image, TouchableOpacity, ActivityIndicator, useWindowDimensions, Platform, SafeAreaView } from 'react-native'
-import React, {  useEffect, useRef, useState } from 'react'
+
+import { View, Text, ActivityIndicator, useWindowDimensions, Platform } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
 import "../global.css";
 
-import {  SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import {  isAuthenticated } from '../apiCalls';
-
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGlobalContext } from '../context/GlobalProvider';
+import { getAuth } from 'firebase/auth';
+import { api, BASE_URL, getFavouriteList, getFollowData, getFollowings, getNotificationByUser, getToken, getTopTalents, getUserFriendsData, getUserTalent } from '../apiCalls';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthLoadingScreen from '../components/auth/authLoadingScreen';
+// import { configureGoogle } from '../config/google';
 
+;
+// import { configureGoogle } from '../services/googleLogin';
 
-
-
-
-
-export default function app() {
+export default function App() {
   const videoRef = useRef()
-  const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge,setUserTalents,setUserTalentPerformances
-    ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges
-  } = useGlobalContext()
+  // const { user , setUser } = useGlobalContext()
+
   const [isFetching, setIsFetching] = useState(false);
+  const {user,setUser , menuPanelBgColor, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteList,setUserTalents,setUserTalentPerformances,topTalents, setTopTalents
+    ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges,isLoggingOut, setIsLoggingOut
+    ,userProfileImg,setUserProfileImg , userCoverImg,setUserCoverImg} = useGlobalContext()  
+
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  
 
+  // useEffect(() => {
+  //   if (user) 
+  //   setTimeout(() => {
+  //     router.replace('/Home')
+  //   }, 2000);
+  // }, [user])
 
   useEffect(() => {
- 
-        setTimeout(() => {
-        router.replace('Home')
-      }, 1000);
- 
-  }, [user])
+    if(user){
+      getUserTalent(user._id , setUserTalents)
+      // getUserTalentPerformances(user._id , setUserTalentPerformances)
+      getNotificationByUser(user._id , setNotifications)
+      getFollowings(user._id,setFollowings)
+      getUserFriendsData(user._id,setUserFriendData)
+      getFollowData(user._id,setFollow)
+      getFavouriteList(user._id,setFavouriteList)
+      // getTopChallenges(user._id,setTrendingChallenges) 
+      getTopTalents(user._id ,setTopTalents)
+      setUserProfileImg(user.profileImage?.publicUrl)
+      setTimeout(() => {
+        setIsFetching(false)
+        router.replace('/Home')
+      }, 2000);
+    }
+ }, [user])    
 
+  useEffect(() => {
+      //  configureGoogle();
+    }, []); 
+
+  useEffect(() => {
+    const autoLogin = async () => {
+      setIsFetching(true)
+      const token = await getToken();
  
-  // useEffect(() => {
-  //   isAuthenticated(setUser)
-  //  },[])
+      if (!token){ 
+        setIsFetching(false)
+        router.replace('/Login')  
+        return;
+      }
+      const res = await fetch(`${BASE_URL}/users/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      console.log(data)
+      if(!data.user) {
+        setIsFetching(false)
+        return  router.replace('/Login')
+      }
+      setUser(data.user);
+    };
+  
+    autoLogin();
+  }, []);
 
-
+  if (isFetching) {
+    return  <AuthLoadingScreen />
+  }  
 
   return (
-   
-    <SafeAreaProvider> 
-      {/* <ImageBackground
-      style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
-        paddingBottom:Platform.OS == "ios" ? insets.bottom : insets.bottom
+    <View 
+      style={{ 
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom
       }} 
-      source={images.night_bg}
-      className="w-[100%]  h-[100%] justify-center items-center "> */}
-                <View 
-                style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
-                  paddingBottom:Platform.OS == "ios" ? insets.bottom : insets.bottom
-                }} 
-                className="w-[100%]  h-[100%] flex-col justify-center items-center b b g-black py- 6 " >   
-                 
-                     
-                      <View className="min-w-[100%] h-[50%] flex- 1 p- 2 flex-col justify-center items-center gap-4 mt- auto " >
-                                        <Text style={{
-                                           fontSize: 30,
-                                           color: '#D2691E',
-                                           fontWeight: '800',
-                                           }}> 💪     🎬     🏆</Text>
-                                        <Text 
-                                            style={{fontSize:16}}
-                                            className=" text-center text-white  font-black text-md ">
-                                                 Push your limits with
-                                        </Text> 
-                                        <Text
-                                         className=" text-center text-blue-400 mt-8 mb-8 font-black tex t-3xl "
-                                         style={{
-                                            fontSize: 44,
-                                            fontWeight: '600',
-                                            // marginTop:"auto"
-                                           }}> Challengify</Text>
-                                      
-
-                                      {isFetching && (
-                                          <View >
-                                            <ActivityIndicator size="large" color="white" />
-                                          </View>
-                                      )}
-                      </View>   
-    
-                           
-                </View>
-                       
-              
-        
-          {/* </ImageBackground> */}
-    
-
-        
-      </SafeAreaProvider>
-
-      
- 
+      className="w-full h-full flex-col justify-center items-center bg-black py-6"
+    >   
+               
+    </View>
   )
 }
-

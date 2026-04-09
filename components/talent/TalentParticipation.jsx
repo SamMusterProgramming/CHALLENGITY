@@ -9,12 +9,13 @@ import * as ImagePicker from 'expo-image-picker';
 import { icons } from '../../constants';
 import { AntDesign } from '@expo/vector-icons';
 import { formatTime } from '../../helper';
-import { _uploadVideoAsync, compressImage, compressVideo, storage, uploadThumbnail } from '../../firebase';
-import { BASE_URL } from '../../apiCalls';
+// import { _uploadVideoAsync, compressImage, compressVideo, storage, uploadThumbnail } from '../../firebase';
+import { api, BASE_URL } from '../../apiCalls';
 import { generateThumbnail } from '../../videoFiles';
 import axios from 'axios';
 import { deleteObject, getStorage, ref } from 'firebase/storage'
 import {  getUploadImageUrl, getUploadVideoUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from '../../uploadFileToBlackBlaze';
+import { compressImage } from '../../utilities/fileCompressor';
 
 
 export default function TalentParticipation({talentRoom, setReplayRecording , user, setNewChallenge, setSelectedContestant 
@@ -84,7 +85,7 @@ const toggleVideoPlaying = () =>{
 
   const requestMediaPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
+    if (status == 'granted') {
       alert('Permission to access media library is required!');
       return false;
     }
@@ -159,10 +160,11 @@ const toggleVideoPlaying = () =>{
         setNewChallenge(false)
         setStage(true)
       }, 500); 
-  
+      
+      const compressed = await compressImage(thumbNailURL)
       const [videoUpload, thumbnailUpload] = await Promise.all([
         uploadVideoToBackblaze(videoRes, videoUri),
-        uploadImageToBlackBlaze(thumbRes, thumbNailURL),
+        uploadImageToBlackBlaze(thumbRes, compressed),
       ]);
      
    
@@ -193,7 +195,7 @@ const toggleVideoPlaying = () =>{
 
       if(participation == "new" || participation == "queue"){
         try {
-          const res = await axios.post(`${BASE_URL}/talents/uploads/${talentRoom._id}`, body);
+          const res = await api.post(`/talents/uploads/${talentRoom._id}`, body);
 
           if (res.data === "challenge expired") {
             return setIsExpired(true);
@@ -222,7 +224,7 @@ const toggleVideoPlaying = () =>{
      
 
        if(participation == "update" || participation == "qupdate" || participation == "eupdate" ){
-       await  axios.patch(BASE_URL +`/talents/update/${talentRoom._id}`,body)
+       await  api.patch(`/talents/update/${talentRoom._id}`,body)
         .then(   
           res =>  {
               if(res.data === "challenge expired") return setIsExpired(true)

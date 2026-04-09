@@ -20,9 +20,9 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
   
     Animated.timing(sidebarAnimation, {
       toValue: 
-         show ? 0 :  width ,
+         show ? 0 :  width + 100 ,
         // right && show ? width : 0,
-      duration: 700,
+      duration: 300,
       useNativeDriver: true,
     }).start();
 
@@ -33,18 +33,17 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
 
     <Animated.View 
 
-    // className=" flex-col justify-evenly  items-center  "
+    className="absolute flex-col justify-center rounded-tr-xl rounded-br-xl items-start  "
     style={[
-        // styles.sidebar
         {
-            top:top && top,
+            // top:top && top,
             bottom:bottom && bottom,
             right:right && right,
             position: 'absolute',
-            // height: height, 
+            height: height, 
             // backgroundColor: '',
             // padding: 20,
-            // width:width ,
+            width:width ,
             // zIndex: 1,
             // elevation:12
         }
@@ -54,12 +53,12 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
 
        <View    
       
-       className ="w- [100%] h- [100%] bg -white flex-col  gap-[1.56%] pr- 1  justify-start items-center">
+      className ="w-[100%]  max- h-[100%] pt-2 flex-col b g-white  gap-[1.5%] pr- 1  justify-end items-center">
           {contestants.map((contestant , index) => {
                return (
                 <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} 
                 participantTrackerId = {participantTrackerId} setSelectedContestant={setSelectedContestant} 
-                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={(index + 1 ) * 2 + 3 } w={"100%"} h={"13.7%"}/>
+                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={(index + 1 ) * 2 + 3 } w={"100%"} h={width}/>
                 
                 )
           })}

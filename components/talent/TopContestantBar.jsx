@@ -21,7 +21,7 @@ const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, region
     
     Animated.timing(sidebarAnimation, {
       toValue: 
-         show ? 0 :  -width ,
+         show ? 0 :  - width - 100 ,
         // right && show ? width : 0,
       duration: 700,
       useNativeDriver: true,
@@ -34,7 +34,7 @@ const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, region
 
  
     <Animated.View 
-    className=" flex-row justify-center rounded-tr-xl rounded-br-xl items-start "
+    className=" flex-row justify-center rounded-tr-xl pl-3 rounded-br-xl items-start "
     style={[
         // styles.sidebar
         {
@@ -43,10 +43,10 @@ const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, region
             left:left && left ,
             right:right && right,
             position: 'absolute',
-            // height: height, 
+            height: height, 
             // backgroundColor: '#022f2f',
             // padding: 20,
-            width:width ,
+            // width:width ,
             // zIndex: 1,
             // elevation:12
         }
@@ -55,12 +55,12 @@ const TopContestantBar = ({ show, height, width ,top ,bottom,left ,right, region
   
 
        <View 
-       className ="w- [100%] h- [100%] py-1 px- 1  flex-row gap-[2.5%] pr- 1  justify-center items-center">
+       className ="w- [100%] h- [100%] py-1 px- 1  flex-row-reverse gap-[2.5%] pr- 1  justify-center items-center">
           {contestants.map((contestant , index) => {
                return (
                 <Contestant key={index} contestant={contestant} selectedContestant={selectedContestant} participantTrackerId={participantTrackerId}
                  setSelectedContestant={setSelectedContestant} 
-                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +1} w={"12%"} h={"100%"}/>
+                talentRoom={talentRoom} regionIcon={regionIcon} selectedIcon= {selectedIcon} index ={index +1} w={"12%"} h={height}/>
    
                   
                 )

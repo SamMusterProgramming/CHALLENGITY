@@ -5,48 +5,32 @@ import { addContestantToQue, addTalentRoomToFavourite,  backInQueue,  createTale
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
-import demo from "../assets/video/demo1.mp4"
 import { icons } from '../constants';
 import SideBarLeft from '../components/talent/SideBarLeft';
 import SideBarRight from '../components/talent/SideBarRight';
-import TopBar from '../components/talent/TopBar';
-import BottomBar from '../components/talent/BottomBar';
 import { useGlobalContext } from '../context/GlobalProvider';
 import ProgresssBarVideo from '../components/custom/ProgresssBarVideo';
-import Slider from '@react-native-community/slider';
 import VolumeControl from '../components/custom/VolumeControl';
 import DisplayContestant from '../components/talent/DisplayContestant';
-import TopContestantBar from '../components/talent/TopContestantBar';
 import ChallengeAction from '../components/modal/ChallengeAction';
-import TalentRoomIntroduction from '../components/talent/TalentRoomIntroduction';
 import { MotiView } from 'moti';
 import ContestantRoom from '../components/talent/ContestantRoom';
 import ContestantPostDetails from '../components/talent/ContestantPostDetails';
-import CommentDisplayer from '../components/comments/CommentDisplayer';
-import CommentModal from '../components/talent/modal/CommentModal';
-import BottomContestantBar from '../components/talent/BottomContestantBar';
-
-
-import ContestantList from '../components/talent/ContestantList';
 import { useKeepAwake } from 'expo-keep-awake';
 import CentralContestantPlayer from '../components/talent/CentralContestantPlayer';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-import { getIcon, getStageLogo } from '../helper';
-import SwingingTitle from '../components/custom/SwingingTitle';
 import CentralQueuePlayer from '../components/talent/CentralQueuePlayer';
 import CentralElimineePlayer from '../components/talent/CentralElimineePlayer';
 import TalentParticipation from '../components/talent/TalentParticipation';
-import { getVideo, getVideoUrl, migrateToBackblaze } from '../videoFiles';
-import { getUploadUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from '../uploadFileToBlackBlaze';
-import CommentDrawer from '../components/talent/modal/CommentDrawer';
 import CommentSheet from '../components/talent/modal/CommentDrawer';
-import { continentIcons, stageIcons } from '../utilities/TypeData';
+import {  countries, stageIcons } from '../utilities/TypeData';
 import AuthLoadingScreen from '../components/auth/authLoadingScreen';
+import { useLoading } from '../context/loadingContext';
 
 
 
 export default function TalentContestRoom() {
-const {user , setUserTalents ,setGlobalRefresh , favouriteList,setFavouriteList, setUserTalentPerformance} = useGlobalContext()
+const {user , setUserTalents ,globalRefresh,setGlobalRefresh , favouriteStages , favouriteList , setFavouriteList, setFavouriteStages, setUserTalentPerformance} = useGlobalContext()
 
 const {region, regionIcon, selectedTalent , selectedIcon ,startIntroduction ,contestant_id , showGo , location} =  useLocalSearchParams(); 
 const [talentRoom , setTalentRoom] = useState(null)
@@ -91,15 +75,11 @@ const [stage , setStage] = useState(true)
 const [performanceIndex , setPerformanceIndex] = useState (0)
 const [performanceToDelete , setPerformanceToDelete] = useState (null)
 const [contestantsPerformanceIndex , setContestantsPerformanceIndex] = useState ([])
-
-
-const [selectedThumbnailUrl , setSelectedThumbnailUrl] = useState(null)
-const [selectedVideoUrl , setSelectedVideoUrl] = useState(null)
 const [selectedPerformance , setSelectedPerformance] = useState(null)
-
-const [currentVideoUrl, setCurrentVideoUrl] = useState(null);
-const [nextVideoUrl, setNextVideoUrl] = useState(null);
 const [videoCount , setVideoCount] = useState(0)
+
+const { showLoading, hideLoading } = useLoading();
+
 
 const SCREEN_HEIGHT = height - insets.top
 const MENU_HEIGHT =  SCREEN_HEIGHT / 7.3
@@ -132,7 +112,7 @@ const player = useVideoPlayer
 
 const nextPlayer = useVideoPlayer(null, (player) => {
   player.loop = false;
-  player.pause(); 
+  player.volume = volume
   player.pause();
   player.timeUpdateEventInterval = 0.1;
 });
@@ -181,6 +161,7 @@ useEffect(() => {
     const temp = playerRef.current;
     playerRef.current = nextPlayerRef.current;
     nextPlayerRef.current = temp;
+    nextPlayerRef.current.pause()
   };
 
   const handleNextPerformance = () => {
@@ -188,23 +169,33 @@ useEffect(() => {
   
     const total = selectedContestant.performances.length;
   
-    if (getPerformanceIndex(selectedContestant._id) + 1 < total) {
-      console.log("swapping")
+    if (getPerformanceIndex(selectedContestant._id)  < total - 1) {
       swapPlayers();
       setVideoCount(prev => prev + 1)
       setIsPlaying(true);
       playerRef.current.play();
       updatePerformanceIndex(selectedContestant._id , getPerformanceIndex(selectedContestant._id) + 1)
-
     } else {
-      setIsPlaying(false);
-      playerRef.current.pause();
+        const next =  getNextContestant(selectedContestant.rank)
+        if(next) {
+          swapPlayers();
+          setVideoCount(prev => prev + 1)
+          setIsPlaying(true);
+          playerRef.current.play();
+          updatePerformanceIndex(next._id , 0)
+          setSelectedContestant({...next})
+        }
+        if(!next){
+          setIsPlaying(false);
+          playerRef.current.pause();
+        } 
     }
   };
 
 
 
 useEffect(() => {
+    showLoading("Stage is Loading...")
     createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation, setEdition, setIsLoading)
 }, [])
 
@@ -224,6 +215,7 @@ useEffect(() => {
 
 useEffect(() => {
    if (talentRoom) {
+     showLoading("Stage is Loading...")
      setIsPlaying(false)
      setNumberOfContestants(talentRoom.contestants.length)
      if(talentRoom.contestants.length > 0) {     
@@ -247,20 +239,13 @@ useEffect(() => {
       talentRoom.contestants.forEach((p , index) => {
           d.push({...p,rank:index + 1})
       })
-      setData([...d])
-
-      // !participantTrackerId && talentRoom.contestants.length > 0 &&  setParticipantTrackerId(talentRoom.contestants[0]._id) 
-      // participantTrackerId && talentRoom.contestants.length == 0 &&  setParticipantTrackerId(null) 
-
-      
+      setData([...d])    
      if(selectedContestant){
         if(talentRoom.contestants.find(c=> c.user_id === selectedContestant.user_id)){
-          // setParticipantTrackerId(selectedContestant)
           setSelectedContestant(d.find(p => p.user_id ===  selectedContestant.user_id))
         }else {
           setSelectedContestant(null)
-          // setParticipantTrackerId(talentRoom.contestants[0]._id)
-          // setSelectedPostIndex(0)
+       
         }
      }
 
@@ -277,15 +262,15 @@ useEffect(() => {
          contestantsIndex.push(obj)
      })
      setContestantsPerformanceIndex(contestantsIndex)
-
+     hideLoading()
    }
   
 }, [talentRoom])
 
 
 useEffect(() => {
-  favouriteList && talentRoom &&  setIsFavourite(favouriteList.favourites.find(f=> f._id == talentRoom._id))
-}, [favouriteList])
+    favouriteList && talentRoom &&  setIsFavourite(favouriteList.favourites.some(f=> f._id == talentRoom._id))
+}, [favouriteList , talentRoom])
 
 
 //******************************handle actions , participation , resign .....  */
@@ -295,11 +280,11 @@ const handleTalentParticipation  = () => {
     setNewChallenge(true)
 }
 
-const handleDeleteContestantStage = () => {
+const handleDeleteContestantStage = async() => {
       setIsModalVisible(false)
       setParticipationType("")
       let post_id = userParticipation._id  ;
-      deleteContestantStage(
+      await deleteContestantStage(
                            talentRoom._id,
                            {
                             user_id:user._id, 
@@ -309,15 +294,16 @@ const handleDeleteContestantStage = () => {
                            setUserParticipation, 
                            setIsLoading
                           )
+      setGlobalRefresh(true)
 }
 
-const handleDeleteContestantQueue = () => {
+const handleDeleteContestantQueue = async() => {
   setIsModalVisible(false)
   setParticipationType("")
   let post_id = talentRoom.queue.find(c => c.user_id == user._id)._id || null; 
   if(!post_id) return 
   console.log("mmm heerrre")
-  deleteContestantQueue(
+  await deleteContestantQueue(
                        talentRoom._id,
                        {
                         user_id:user._id, 
@@ -327,14 +313,15 @@ const handleDeleteContestantQueue = () => {
                        setUserParticipation, 
                        setIsLoading
                       )
+ setGlobalRefresh(true)
 }
 
-const handleDeleteContestantElimination = () => {
+const handleDeleteContestantElimination = async() => {
   setIsModalVisible(false)
   setParticipationType("")
   let post_id = talentRoom.eliminations.find(c => c.user_id == user._id)._id || null; 
   if(!post_id) return 
-  deleteContestantElimination(
+  await deleteContestantElimination(
                               talentRoom._id,
                               {
                                 user_id:user._id, 
@@ -344,12 +331,13 @@ const handleDeleteContestantElimination = () => {
                               setUserParticipation,
                               setIsLoading
                             )
+  setGlobalRefresh(true)
 }
 
-const handleQueue = () => {
+const handleQueue = async() => {
  setIsModalVisible(false)
  setParticipationType("")
- addContestantToQue(talentRoom._id,
+ await addContestantToQue(talentRoom._id,
                     {
                     user_id:user._id,
                     profile_img:user.profile_img,
@@ -357,14 +345,15 @@ const handleQueue = () => {
                     },
                     setTalentRoom , setIsLoading
                     )
+setGlobalRefresh(true)
 }
 
-const handleDeletePerformanceStage = () => {
+const handleDeletePerformanceStage = async() => {
     setIsModalVisible(false)
     setParticipationType("")
     let post_id = userParticipation?._id || null;;
     if(!post_id) return ; 
-    deletePerformanceStage(
+    await deletePerformanceStage(
                             talentRoom._id,
                             {
                             user_id:user._id, 
@@ -376,14 +365,15 @@ const handleDeletePerformanceStage = () => {
                             setIsLoading
                         )
     setPerformanceIndex(performanceIndex == 0 ? 0 : performanceIndex - 1)
+    setGlobalRefresh(true)
 }
 
-const handleDeletePerformanceQueue = () => {
+const handleDeletePerformanceQueue = async() => {
   setIsModalVisible(false)
   setParticipationType("")
   let post_id = talentRoom.queue.find(c => c.user_id == user._id)._id || null;
   if(!post_id) return ; 
-  deletePerformanceQueue(
+  await deletePerformanceQueue(
                           talentRoom._id,
                           {
                           user_id:user._id, 
@@ -394,14 +384,15 @@ const handleDeletePerformanceQueue = () => {
                           setUserParticipation,
                           setIsLoading
                       )
+  setGlobalRefresh(true)
 }
 
-const handleBackInQueue = () => {
+const handleBackInQueue = async() => {
   setIsModalVisible(false)
   setParticipationType("")
   let post_id = talentRoom.eliminations?.find(c => c.user_id == user._id)._id || null;
   if(!post_id) return ; 
-  backInQueue(
+  await backInQueue(
                           talentRoom._id,
                           {
                           user_id:user._id, 
@@ -411,16 +402,19 @@ const handleBackInQueue = () => {
                           setUserParticipation,
                           setIsLoading
                       )
+  setGlobalRefresh(true)
 }
 
 
-const addFavourite  = () => {
+const addFavourite  = async() => {
   setIsModalVisible(false)
-  addTalentRoomToFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
+  await addTalentRoomToFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
+  setGlobalRefresh(true)
 }
-const removeFromFavourite = ()=> {
+const removeFromFavourite = async()=> {
   setIsModalVisible(false)
-  removeTalentRoomFromFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
+  await removeTalentRoomFromFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
+  setGlobalRefresh(true)
 }
 
 useEffect(() => {
@@ -496,6 +490,10 @@ useEffect(() => {
           setAction("OK")
           setText("can't play a post from the queue , the contestant needs to enter the stage ")
           break;
+    case "CNTJ":
+          setAction("OK")
+          setText("can't join the stage , only users from Stage region who can join the stage ")
+          break;
     case "help":
           setAction("help")
           setText("can't play a post from the queue , the contestant needs to enter the stage ")
@@ -513,7 +511,7 @@ const getPerformanceIndex = (_id)=> {
 }
 
 const getPerformanceNumber = (_id)=> {
-  return contestantsPerformanceIndex.find (c => c._id == _id).numberPerformances
+  return contestantsPerformanceIndex.find(c => c._id === _id).numberPerformances
 }
 
 const updatePerformanceIndex = (contestantId, newIndex) => {
@@ -526,78 +524,41 @@ const updatePerformanceIndex = (contestantId, newIndex) => {
   );
 };
 
+const getNextContestant = (rank) =>{
+   const index = (rank) % data.length
+   const next  =  data[index]
+   return next ;
+}
+
+
+
 
 useEffect(() => {
-  if (!selectedContestant?.performances?.length) return;
-
+  if (!selectedContestant?.performances?.length || !data) return;
   const performances = selectedContestant.performances;
   const index = getPerformanceIndex(selectedContestant._id)
   const current = performances[index];
-  const next = performances[index + 1];
+  let  next = null;
 
+  if(index === getPerformanceNumber(selectedContestant._id) - 1){
+                    const nextContestant = getNextContestant(selectedContestant.rank)
+                    next = nextContestant?.performances[0];
+  } else{
+                     next = performances[index + 1];
+  }
   const loadVideos = async () => {
-    if (current?.video?.cdnUrl) {
-      await playerRef.current.replaceAsync(current.video.cdnUrl);
+    if (current?.video?.cdnUrl && !isPlaying) {
+      await playerRef.current.replaceAsync(current.video.cdnUrl)
     }
 
     if (next?.video?.cdnUrl) {
-      await nextPlayerRef.current.replaceAsync(next.video.cdnUrl);
+        new Promise((resolve) => setTimeout(resolve, 4000));
+        await nextPlayerRef.current.replaceAsync(next.video.cdnUrl);
     }
   };
 
-  loadVideos();
+  loadVideos(); 
 }, [selectedContestant, contestantsPerformanceIndex]);
-
-
-
-// useEffect(() => {
-//    const loadVideo = async()=>{
-//     if ( ! talentRoom || ! selectedContestant) return;
-//     try {
-//       const index = getPerformanceIndex(selectedContestant._id)
-//       setSelectedPerformance({...selectedContestant.performances[index]})
-//       setSelection("stage");
-//     } catch (err) {
-//       console.error("Error loading video:", err);
-//     }
-//    }
-//   loadVideo()
-// }, [selectedContestant])
-
-
-// useEffect(() => {
-//   if(!selectedPerformance) return ;
-//   const url = selectedPerformance.video?.cdnUrl;
-//   if (url !== currentVideoUrl) {
-
-//       setCurrentVideoUrl(url);
-//       const next =
-//       getPerformanceIndex(selectedContestant._id) + 1 < getPerformanceNumber(selectedContestant._id)
-//         ? selectedContestant.performances[getPerformanceIndex(selectedContestant._id) + 1]
-//         : null;
-//       setNextVideoUrl(next?.video?.cdnUrl || null);
-
-//   }
-// }, [selectedPerformance])
-
-
-// useEffect(() => {
-//   if (!currentVideoUrl) return;
-//   playerRef.current
-//     .replaceAsync(currentVideoUrl)
-//     .then(() => {
-    
-//     })
-//     .catch((error) => console.error('Error loading current video:', error));
-// }, [currentVideoUrl]);
-
-// useEffect(() => {
-//   if (!nextVideoUrl) return;
-//   nextPlayerRef.current
-//     .replaceAsync(nextVideoUrl)
-//     .catch((error) => console.error('Error preloading next video:', error));
-// }, [nextVideoUrl]);
-
 
 
 useEffect(() => {
@@ -608,10 +569,11 @@ useEffect(() => {
 
 const handleRefresh =()=> {
   setIsRefreshing(true)
+  showLoading("refreshing , please wait ...")
   createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation,setEdition, setIsLoading)
   setTimeout(() => {
        setIsRefreshing(false)
-  }, 400);
+  }, 400);  
 }
 
 if (isLoading) {
@@ -642,7 +604,7 @@ return (
                                               > 
                                               
                                               <View
-                                              className = {!isPlaying ? "opacity-20 w-[100%] " : "w-[100vw]  opacity-100"}>
+                                              className = {!isPlaying ? "opacity-40 w-[100%] " : "w-[100vw]  opacity-100"}>
                                                   
                                                          <VideoView 
                                                                   style={{ width:'100%' ,height:'100%'}}
@@ -666,8 +628,8 @@ return (
                                                   rank={selectedContestant.rank}
                                                   handleRefresh ={handleRefresh}
                                                   openComments ={openComments}
-                                                  width ={width -  2* CARD_DIMENSION - 30} height={3 * CARD_DIMENSION}
-                                                   bottom = { MENU_HEIGHT +  10}  />       
+                                                  width ={width -  2 * CARD_DIMENSION - 10} height={4 * CARD_DIMENSION}
+                                                  bottom = { MENU_HEIGHT +  5}  />       
                                              
                                               <TouchableOpacity 
                                                   hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
@@ -758,11 +720,44 @@ return (
                     width : width ,
                     bottom: !newChallenge?  0 : 0,
                   }}
-                  className ="absolute py- 2 flex-col  border border-t-white  justify-start p -1  items-center" >
+                  className ="absolute py- 2 flex-col  bor der bo rder-t-white  justify-start p -1  items-center" >
                 <View
             
-                   className ="w-[100%] h- [100%] px-1 bg-[rgba(0,0,0,0.3)] gap-2 rounded-lg flex-row justify-center items-center">
+                   className ="w-[100%] py-1 h- [100%] px-1 bg-[rgba(5,5,5,0.5)] gap-2 rounded-lg flex-row justify-center items-center">
                         
+                      
+                        <TouchableOpacity
+                                                onPress={() =>
+                                                  {
+                                                  !isFavourite ? setParticipationType("addFavourite") : setParticipationType("removeFavourite")
+                                                  }}
+                                            
+                                                className = " p-2 rounded-full  flex-col justify-center items-center ">
+                                                        {isFavourite ?
+                                                        (
+                                                          <MaterialCommunityIcons name="heart" size={20} color = "red"  />
+                                                        ) : 
+                                                        (
+                                                          <MaterialCommunityIcons name="heart-outline" size={20} color = "red"  />
+                                                        )}
+                                                      
+                                                  
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                                                  onPress={() =>
+                                                            {
+                                                                  setParticipationType("help")
+                                                              }}
+                                                                            
+                                                                                  className = " p-2 mr-auto  rounded-full  flex-col justify-center items-center ">
+                                                                                    <View
+                                                                                    className = "p -1  rounde d-full ">
+                                                                                        <MaterialCommunityIcons name="help" size={20} color = "white"  />
+                                                                                        
+                                                                                    </View>
+                        </TouchableOpacity> 
+
                         <TouchableOpacity
                                                   onPress={()=> { 
                                                       !stage && setStage(!stage)
@@ -803,42 +798,11 @@ return (
                                                         </Text>
                                                   </View>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                                                onPress={() =>
-                                                  {
-                                                  !isFavourite ? setParticipationType("addFavourite") : setParticipationType("removeFavourite")
-                                                  }}
-                                            
-                                                className = " p-2 rounded-full ml-auto  flex-col justify-center items-center ">
-                                                        {isFavourite ?
-                                                        (
-                                                          <MaterialCommunityIcons name="heart" size={20} color = "#EC4899"  />
-                                                        ) : 
-                                                        (
-                                                          <MaterialCommunityIcons name="heart-outline" size={20} color = "#EC4899"  />
-                                                        )}
-                                                      
-                                                  
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                                                  onPress={() =>
-                                                            {
-                                                                  setParticipationType("help")
-                                                              }}
-                                                                            
-                                                                                  className = " p-2  rounded-full  flex-col justify-center items-center ">
-                                                                                    <View
-                                                                                    className = "p -1  rounde d-full ">
-                                                                                        <MaterialCommunityIcons name="help" size={20} color = "white"  />
-                                                                                        
-                                                                                    </View>
-                        </TouchableOpacity> 
 
                         <TouchableOpacity
                                     onPress={handleRefresh}
                               
-                                    className="p-2  rounded-tr-full flex-row g-green-600 -rota te-45   justify-center items-center">
+                                    className="p-2 ml-auto  rounded-tr-full flex-row g-green-600 -rota te-45   justify-center items-center">
                                         {isRefreshing ?(
                                               <ActivityIndicator size={20} color="red" />
                                         ):(
@@ -847,7 +811,7 @@ return (
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                                        onPress={() => router.back()}
+                                        onPress={() => !globalRefresh && router.back()}
                                         className="  flex-row  p-2  justify-center items-center">
                                                    <AntDesign name="close" size={20} color="white" /> 
                         </TouchableOpacity>
@@ -856,12 +820,12 @@ return (
                 </View>
 
                 <View
-                   
+                    style={{ backgroundColor: 'rgba(0,0, 0 , 0.7)' }}
                     className ="w-[100%] h- [100%] py-2 flex-1 rounded-lg flex-col  justify-center items-center">
                            
 
                            <View
-                           style={{ backgroundColor: 'rgba(0,0, 0 , 0.1)' }}
+                          //  style={{ backgroundColor: 'rgba(0,0, 0 , 0.5)' }}
                            className = "w-[100%] mt- auto p- 1 border- b- 2 bord er-blue-300 rounded-lg flex-col b g-[#0d123c] shad ow-white justify-start items-center  gap- 1">
                                     
                                       <View
@@ -895,33 +859,33 @@ return (
                            </View>
 
                           <View
-                          className = "flex-col absolute top-2 left-[20]    justify-center items-center gap- 2">
+                          className = "flex-col absolute top-4 left-[20]    justify-center items-center gap-2">
                                 <View className=" items-center justify-center">
                                     
                                     <Text 
-                                    style={{ fontSize : width/17}}
-                                    className="text-white  font-extrabold tracking-widest">
+                                  style={{  width: width/6 , fontSize : width/17}}
+                                  className="text-white text-center font-extrabold tracking-widest">
                                         {stageIcons[talentRoom.name]}
                                     </Text>
                                     <Text 
-                                    style={{ fontSize : width/49}}
-                                    className="text-white t font-extrabold tracking-widest">
+                                  style={{ width: width/6 , fontSize : width/42}}
+                                  className="text-white text-center font-bebas tracking-widest">
                                         {talentRoom.name}
                                     </Text>
                                   </View>
                           </View>
                           <View
                           className = "flex-col absolute  top-4 right-[20]    justify-center items-center gap-2">
-                               <View className=" rounded-full items-center justify-center">
+                               <View className=" items-center justify-center">
                                   <Text 
-                                  style={{ fontSize : width/17}}
-                                  className="text-white t font-extrabold tracking-widest">
-                                      {continentIcons[talentRoom.region]}
+                                  style={{  width: width/6 , fontSize : width/17}}
+                                  className="text-white text-center font-extrabold tracking-widest">
+                                      {countries.find( c => c.code === talentRoom.region).flag}
                                   </Text>
-                                  <Text 
-                                  style={{ fontSize : width/49}}
-                                  className="text-white t font-extrabold tracking-widest">
-                                      {talentRoom.region}
+                                  <Text   
+                                  style={{ width: width/6 , fontSize : width/42}}
+                                  className="text-white text-center font-bebas tracking-widest">
+                                      {countries.find( c => c.code === talentRoom.region).name}
                                   </Text>
                                 </View>                
                           </View>
@@ -975,13 +939,13 @@ return (
              left ={0} right ={null} regionIcon ={regionIcon}  contestants = { edition.round >= 4 ? data.slice(0,4) :data.slice(0,4)} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/>
              */}
             <SideBarLeft show = {!isPlaying && show && !newChallenge && stage} width ={CARD_DIMENSION} height = {PANEL_HEIGHT } top = {insets.top} 
-             bottom = { MENU_HEIGHT + 10}       participantTrackerId={participantTrackerId}
-             left ={2} right ={null} regionIcon ={regionIcon} selectedIcon={selectedIcon}  
-             contestants = {data.slice(0,20).filter((d,index) => index % 2 == 0 )  } 
+              bottom = { MENU_HEIGHT + CARD_DIMENSION + 15}       participantTrackerId={participantTrackerId}
+              left ={2} right ={null} regionIcon ={regionIcon} selectedIcon={selectedIcon}  
+              contestants = {data.slice(0,20).filter((d,index) => index % 2 == 0 )  } 
               talentRoom={talentRoom} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/>
            
             <SideBarRight show = {!isPlaying && show && !newChallenge && stage }  width ={CARD_DIMENSION} height = {PANEL_HEIGHT } top = { insets.top} participantTrackerId={participantTrackerId}
-             right = {2} left ={null} regionIcon ={regionIcon} selectedIcon={selectedIcon} bottom = { MENU_HEIGHT + 10} 
+             right = {2} left ={null} regionIcon ={regionIcon} selectedIcon={selectedIcon} bottom = { MENU_HEIGHT + CARD_DIMENSION + 15} 
              contestants = {
                data.slice(0,20).filter((d,index) => index % 2 ==1 ) } 
              talentRoom={talentRoom} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/>
@@ -1032,6 +996,7 @@ return (
 
            </>
          )}
+
           
 
       </View>

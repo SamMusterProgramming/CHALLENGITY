@@ -10,7 +10,7 @@ export const GlobalProvider =({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [user,setUser] =useState(null)
     const [trendingChallenges,setTrendingChallenges] = useState([])
-    const [isLoading ,setIsLoading] = useState(true)
+    const [isLoading ,setIsLoading] = useState(false)
     const [userPublicChallenges,setUserPublicChallenges] = useState([])
     const [userPrivateChallenges,setUserPrivateChallenges] = useState([])
     const [ publicParticipateChallenges,setPublicParticipateChallenges] = useState(null)
@@ -32,23 +32,24 @@ export const GlobalProvider =({children}) => {
    const [menuPanelBgColor, setMenuPanelBgColor] = useState("#2f3e42");
    const [boxBgColor,setBoxBgcolor] = useState("#0e121a") //("#d4d4d4")//("#d1d8eb")//useState("#f0f1f7")
    const [contestantBgColor,setContestantBgColor] = useState("#35383d")//("#1f1f21")
-//    const [topTalents, setTopTalents] = useState([])
    const [userProfileImg,setUserProfileImg] = useState(null)
    const [userCoverImg,setUserCoverImg] = useState(null)
    const [loading, setLoading] = useState(true);
 
+   const [allStages, setAllStages] = useState([]);
+   const [hotStages, setHotStages] = useState([]);
+   const [favouriteStages, setFavouriteStages] = useState([]);
+   const [gpsLocation , setGpsLocation] = useState(null)
+   const [regionStages , setRegionStages] = useState(null)
+
+   const [globalSelectedRegion , setGlobalSelectedRegion] = useState("DZ")
+   const [globalSelectedStageName , setGlobalSelectedStageName] = useState("Singing")
+   const [userCountryCode , setUserCountryCode] = useState([])
+   const [hotStageScrolledIndex , setHotStageScrolledIndex] = useState(0)
 
 
 
 
-    useEffect(() => {
-        // const unsubscribe = subscribeToAuthChanges((firebaseUser) => {
-        //     setUser(firebaseUser);
-        //     setLoading(false);
-        //   });
-      
-        //   return unsubscribe;
-    }, [])
     
     return (
         <GlobalContext.Provider
@@ -81,7 +82,16 @@ export const GlobalProvider =({children}) => {
             contestantBgColor,setContestantBgColor ,
             topTalents, setTopTalents,
             userProfileImg,setUserProfileImg ,
-            userCoverImg,setUserCoverImg
+            userCoverImg,setUserCoverImg,
+            allStages, setAllStages,
+            hotStages , setHotStages,
+            favouriteStages, setFavouriteStages,
+            gpsLocation , setGpsLocation ,
+            regionStages , setRegionStages,
+            globalSelectedStageName , setGlobalSelectedStageName ,
+            globalSelectedRegion , setGlobalSelectedRegion ,
+            userCountryCode , setUserCountryCode,
+            hotStageScrolledIndex , setHotStageScrolledIndex
             }
             } >
             {children}

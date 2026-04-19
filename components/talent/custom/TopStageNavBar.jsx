@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { useRef } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const tabs = [
   { name: "Home", icon: "home" },
@@ -18,9 +19,7 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex, width }) {
   const slideAnim = useRef(new Animated.Value(activeIndex * tabWidth +15)).current;
 
   const handlePress = (index) => {
-
     setActiveIndex(index);
-
     Animated.spring(slideAnim, {
       toValue: index * tabWidth + 15,
       useNativeDriver: true
@@ -29,14 +28,13 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex, width }) {
 
   return (
 
-    <View className="b g-[#1d1c1c] borde r-b-2 bor der-[#444040]">
+    <View className="bg-[#000000] borde r-b-2 bor der-[#444040]">
+ 
 
-      <View className="flex-row h-[100%] justify-center items-center ">
-
+      <View className="flex-row bg-[#10131f] rounde d-t-[50px] flex-1 justify-center items-center ">
+         
         {tabs.map((tab, index) => {
-
           const active = activeIndex === index;
-
           return (
             <TouchableOpacity
               key={tab.name}
@@ -44,17 +42,16 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex, width }) {
               className="items-center py-2"
               style={{ width: tabWidth }}
             >
-
               <View className={`px3 py-0 rounded-lg ${active ? "bg-[#F5C542]/20" : ""}`}>
                 <AntDesign
                   name={tab.icon}
-                  size={screenWidth/25}
+                  size={screenWidth/22}
                   color={active ? "#F5C542" : "#fff"}
                 />
               </View>
 
               <Text
-              style={{fontSize:width/47}}
+              style={{fontSize:width/50}}
                 className={`tex t-xs mt-1 font-bold ${
                   active ? "text-[#F5C542]" : "text-gray-200"
                 }`}
@@ -74,7 +71,7 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex, width }) {
       <Animated.View
         style={{
           // position: "absolute",
-          bottom: "17%",
+          bottom: "13%",
           height: 1,
           width: tabWidth - 30,
           backgroundColor: "#F5C542",

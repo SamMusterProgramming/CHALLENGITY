@@ -60,9 +60,15 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your camera to let you ...</string>
+    <string>Allow $(PRODUCT_NAME) to access your camera.</string>
     <key>NSContactsUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your contacts</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Allow YourApp to access your location in the background.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your location</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Allow YourApp to access your location while you are using it.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSMotionUsageDescription</key>
@@ -77,10 +83,6 @@
     <true/>
     <key>RCTRootViewBackgroundColor</key>
     <integer>4278190080</integer>
-    <key>UIBackgroundModes</key>
-    <array>
-      <string>audio</string>
-    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

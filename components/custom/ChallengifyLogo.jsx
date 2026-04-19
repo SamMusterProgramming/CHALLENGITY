@@ -7,7 +7,7 @@ export default function ChallengifyLogo({ size = 56, showText = true }) {
   const iconSize = size * 1.3;
 
   return (
-    <View className="flex-row h- [100%] p-1  items-end">
+    <View className="flex-row h- [100%] p- 1  items-end">
       {/* <LinearGradient
           pointerEvents="none"
           colors={["gray", "transparent"]}
@@ -52,10 +52,9 @@ export default function ChallengifyLogo({ size = 56, showText = true }) {
 
       {showText && (
         <Text
-        className="bord er -t-2 pt- 1 b order-[#152ac4]"
+        className="ml-2 b order-[#152ac4]"
           style={{
             fontSize: size * 0.60,
-            marginLeft: 5,
             color: "white",
             fontWeight: "900",
             letterSpacing: 1.5

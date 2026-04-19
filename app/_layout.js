@@ -5,6 +5,7 @@ import { GlobalProvider } from '../context/GlobalProvider'
 import * as SystemUI from 'expo-system-ui';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { LoadingProvider } from '../context/loadingContext';
 
 SystemUI.setBackgroundColorAsync('#000000');
 
@@ -17,6 +18,8 @@ export default function rootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
     <BottomSheetModalProvider>
     <GlobalProvider>
+    <LoadingProvider>
+
      <Stack
      screenOptions={{ 
      }}>
@@ -33,6 +36,8 @@ export default function rootLayout() {
        <Stack.Screen name='TalentContestRoom' options={{ headerShown:false,unmountOnBlur: true}} />
        <Stack.Screen name='DisplayEdition' options={{ headerShown:false,unmountOnBlur: true}} />
      </Stack>
+
+     </LoadingProvider>
      </GlobalProvider>
      </BottomSheetModalProvider>
      </GestureHandlerRootView>

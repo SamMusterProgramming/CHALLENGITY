@@ -16,7 +16,7 @@ export default function AuthLoadingScreen() {
             delay: i * 400,
             duration: 2000,
           }}
-          className="absolute w-32 h-32 rounded-full border border-yellow-500"
+          className="absolute w-32 h-32 rounded-full border border-gold"
         />
       ))}
 

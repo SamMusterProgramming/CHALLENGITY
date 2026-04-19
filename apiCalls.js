@@ -2,6 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import { auth } from './firebase/client'
+import { stageOrderMap } from './utilities/TypeData'
 
 const baseURL_DEVOLOPMENT = "http://localhost:8000"
 const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
@@ -904,7 +905,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
  export const deleteContestantStage = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
   try {
     setIsLoading(true)
-    await api.patch( BASE_URL + `/talents/delete/contestant/stage/${talentRoom_id}`,body)
+    await api.patch(`/talents/delete/contestant/stage/${talentRoom_id}`,body)
     .then(res =>  {
          setTalentRoom(res.data)
          setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
@@ -1049,7 +1050,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
  export const addTalentRoomToFavourite = async(user_id ,body, setData,setIsExpired)=>{
  
   try {
-      await axios.post( BASE_URL + `/talents/favourite/${user_id}`,body)
+      await api.post( BASE_URL + `/talents/favourite/${user_id}`,body)
       .then(res => {
          if(res.data === "talent expired") return setIsExpired(true)
           setData(res.data) 
@@ -1063,7 +1064,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
 export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
  
   try {
-      await axios.patch( BASE_URL + `/talents/favourite/${user_id}`,body)
+      await api.patch( BASE_URL + `/talents/favourite/${user_id}`,body)
       .then(res => {
           if(res.data === "talent expired") return setIsExpired(true)
           setData(res.data) 
@@ -1174,6 +1175,7 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
   
   export const generateChallengeTalentGuinessData = async(user_id , setData ) =>{
       try { 
+        // setIsFetching(true)
       await 
       api.get(`/talents/general/${user_id}`)
       .then(res =>  {
@@ -1187,17 +1189,17 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
           new Date(b.updatedAt) - new Date(a.updatedAt) )
         setData(data)
 
-        } )
-        
+        } ).finally(() =>{
+          // setIsFetching(false)
+        })
     } catch (error) {
       console.log(error)
     }
     }
      
-
-    export const getFavouriteTalents = async( user_id , data  , setFavourites) =>{
+    export const getFavouriteStageList = async( user_id ,  setFavourites) =>{
       try { 
-      await axios.post( BASE_URL + `/talents/favourites/${user_id}` , data)
+      await api.get( BASE_URL + `/talents/favourites/${user_id}`)
       .then(res =>  {
            setFavourites(res.data)
         } )
@@ -1208,6 +1210,22 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       console.log(error)
     }
     }
+
+    export const getFavouriteStages = async( user_id ,  setFavourites) =>{
+      try { 
+      await api.get( BASE_URL + `/talents/favouriteStages/${user_id}`)
+      .then(res =>  {
+           setFavourites(res.data)
+        } )
+        .finally(()=>{
+          // setIsLoading(false)
+        })
+    } catch (error) {
+      console.log(error)
+    }
+    }
+
+
     export const getFavouriteChallenges = async( user_id , data  , setFavourites) =>{
       try { 
       await axios.post( BASE_URL + `/challenges/favourites/${user_id}` , data)
@@ -1236,3 +1254,56 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
         console.log(error)
       }
      }
+
+     export const getRegionTalentStages = async(region , setTalentStages) =>{
+      try {
+        await api.get(`/talents/stages/region/${region}` )
+        .then(res =>  {
+          const stages = res.data ; 
+          const sortedStages = stages.sort((a, b) => {
+            return (
+              (stageOrderMap[a.name] || Number.MAX_SAFE_INTEGER) -
+              (stageOrderMap[b.name] || Number.MAX_SAFE_INTEGER)
+            );
+          });
+          setTalentStages([...sortedStages])  
+          })
+          .finally(()=>{
+            // setIsLoading(false)
+          })
+      } catch (error) {
+        console.log(error)
+      }
+     }
+
+     export const getStageByNameAndRegion = async(body ) =>{
+      try {
+        return await api.post(`/talents/findStage` ,body )
+        .then(res =>  {
+             return res.data 
+          })
+          .finally(()=>{
+            // setIsLoading(false)
+          })
+      } catch (error) {
+        console.log(error)
+      }
+     }
+
+
+     //****************geo location , ip , user location */
+
+     export const canAttendStage = async (room_id , gpsLocation ) => {
+      try {
+           const response = await api.post(
+          `/talents/geoAccess/${room_id}`,
+          {
+            gpsCountryCode: gpsLocation?.countryCode,
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Join stage error:", error.response?.data);
+        throw error;
+      }
+    };

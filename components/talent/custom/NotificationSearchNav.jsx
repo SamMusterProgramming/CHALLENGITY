@@ -19,24 +19,24 @@ export default function NotificationSearchNav({
 
       {/* Search */}
       <TouchableOpacity
-      className="h-[100%] justify-center items-end ">
+      className="h- [100%] justify-center items-center ">
         <Ionicons
           name="search-outline"
-          size={headerHeight * 0.3}
+          size={headerHeight * 0.24}
           color="white"
         />
       </TouchableOpacity>
 
       {/* Notifications */}
       <TouchableOpacity
-      className="h-[100%] justify-center items-end "
+      className="h- [100%] justify-center items-center "
         onPress={() => setShowNotifications(!showNotifications)}
         // className="relative"
       >
 
         <AntDesign
           name="bell"
-          size={headerHeight * 0.30}
+          size={headerHeight * 0.24}
           color="#FFD700"
         />
 

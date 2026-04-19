@@ -1,44 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { getFavouriteList, getFollowData, getFollowings, getNotificationByUser, getTopChallenges,  getTopTalents,  getUserFriendsData, 
-  getUserParticipateChallenges, getUserPrivateChallenges, getUserPrivateParticipateChallenges, getUserPublicChallenges, 
-  getUserPublicParticipateChallenges, getUserTalent, getUserTalentPerformances, 
+import { generateChallengeTalentGuinessData, getAllTalentStages, getFavouriteList, getFavouriteStageList, getFavouriteStages, getFollowData, getFollowings, getNotificationByUser, getRegionTalentStages, getTopTalents,  getUserFriendsData, 
+  getUserTalent, 
   saveToken} from '../apiCalls';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
   Image,
   Alert,
   Vibration,
   useWindowDimensions,
   Platform,
 } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
 import { useGlobalContext } from '../context/GlobalProvider';
 import { icons } from '../constants';
-import { api, authLogin, BASE_URL } from '../apiCalls';
+import {  authLogin, BASE_URL } from '../apiCalls';
 import { router } from 'expo-router';
-
-import {  loadLoginHint, login, logout, resendVerification, saveLoginHint, signUp, signUpWithEmail, waitForUser } from '../services/userServices';
-import axios from 'axios';
-import AuthLoadingScreen from '../components/auth/authLoadingScreen';
+import {  loadLoginHint, login,  resendVerification, saveLoginHint, signUp, signUpWithEmail, waitForUser } from '../services/userServices';
 import { getFirebaseErrorMessage } from '../utilities/firebaseEroors';
 import ErrorMessage from '../components/custom/errorMessage';
 import GoogleButton from '../components/custom/googleButton';
 import { auth } from '../firebase/client';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLoading } from '../context/loadingContext';
+import { useFonts } from 'expo-font';
 // import { signInWithGoogle } from '../services/googleLogin';
 
+import {
+  BebasNeue_400Regular,
+} from "@expo-google-fonts/bebas-neue";
+
+import {
+  Montserrat_400Regular,
+  Montserrat_600SemiBold,
+} from "@expo-google-fonts/montserrat";
+import { getUserCountry } from '../utilities/userGeoLocation';
 
 
 
 export default function Login() {
   // const { user, setUser } = useGlobalContext();
-  const {user,setUser , menuPanelBgColor, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteList,setUserTalents,setUserTalentPerformances,topTalents, setTopTalents
-    ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges,isLoggingOut, setIsLoggingOut
-    ,userProfileImg,setUserProfileImg , userCoverImg,setUserCoverImg} = useGlobalContext()  
+  const {user,setUser ,  allStages, setAllStages ,setFavouriteList,setUserTalents,setRegionStages, setTopTalents ,favouriteStages, setFavouriteStages
+    ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges,isLoggingOut, setIsLoggingOut
+    ,userProfileImg,setUserProfileImg ,hotStages, setHotStages , gpsLocation , setGpsLocation , setGlobalSelectedRegion ,  setUserCountryCode  } = useGlobalContext()  
   const [message, setMessage] = useState("")
   const [isPasswordWrong, setIsPasswordWrong] = useState(false); 
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false); 
@@ -60,8 +65,13 @@ export default function Login() {
   const insets = useSafeAreaInsets();
   const [googleHint, setGoogleHint] = useState(null);
   const [emailHint, setEmailHint] = useState(null);
+  const { showLoading, hideLoading } = useLoading();
 
-
+  const [fontsLoaded] = useFonts({
+    BebasNeue_400Regular,
+    Montserrat_400Regular,
+    Montserrat_600SemiBold,
+  });
   
 
   useEffect(() => {
@@ -77,8 +87,6 @@ export default function Login() {
      }
      loadHint()   
   }, [])
-  
-
 
   // ---------- LOGIN ----------
   const handleLogin2 = () => {
@@ -215,8 +223,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      // 1. Login with Firebase
-
+      
       const user = await login(form.email, form.password);
  
       if (!user.emailVerified) {
@@ -225,7 +232,7 @@ export default function Login() {
         setVerification(true)
         return;
       }
-      setLoading(true);
+      showLoading("logging , please wait ...")
       setError("")
       setVerification(false)
 
@@ -247,12 +254,12 @@ export default function Login() {
       setUser(data.user);
 
     } catch (error) {
-      setLoading(false);
+      hideLoading()
       setError(getFirebaseErrorMessage(error));
       setVerification(false)
 
     } finally {
-
+       
     }
   };
 
@@ -267,7 +274,7 @@ export default function Login() {
       // 2. Get Firebase ID token
       const token = await user.getIdToken();
 
-      setLoading(true);
+      showLoading("signing up , please wait ...")
       setError("")
       
       // 3. Call your backend
@@ -280,18 +287,16 @@ export default function Login() {
       });
 
       const data = await res.json();
-      console.log(data)
       setError(data.message)
       setMessageColor(data.color)
-      // await saveToken(data.token)
-      // setUser(data.user);
+
     } catch (e) {
       setError(getFirebaseErrorMessage(e));
       setMessageColor("pink")
       setVerification(false)
 
     } finally {
-       setLoading(false);
+       hideLoading()
     }
   };
 
@@ -321,29 +326,43 @@ export default function Login() {
      }
    }
 
- useEffect(() => {
-    if(user){
-      setLoading(true)
-      getUserTalent(user._id , setUserTalents)
-      // getUserTalentPerformances(user._id , setUserTalentPerformances)
-      getNotificationByUser(user._id , setNotifications)
-      getFollowings(user._id,setFollowings)
-      getUserFriendsData(user._id,setUserFriendData)
-      getFollowData(user._id,setFollow)
-      getFavouriteList(user._id,setFavouriteList)
-      // getTopChallenges(user._id,setTrendingChallenges) 
-      getTopTalents(user._id ,setTopTalents)
-      setUserProfileImg(user.profileImage?.publicUrl)
-      setTimeout(() => {
-        setLoading(false)
-        router.replace('/Home')
-      }, 2000);
+
+
+useEffect(() => {
+  if (!user) return;
+  const fetchUserData = async () => {
+    try {
+      await Promise.all([
+        getUserTalent(user._id, setUserTalents),
+        getNotificationByUser(user._id, setNotifications),
+        // getFollowings(user._id, setFollowings),
+        getUserFriendsData(user._id, setUserFriendData),
+        // getFollowData(user._id, setFollow),
+        getFavouriteStageList(user._id, setFavouriteList),
+        getFavouriteStages(user._id, setFavouriteStages),
+        // getTopTalents(user._id, setTopTalents),
+        // getAllTalentStages(setAllStages),
+        
+        // getRegionTalentStages("US" , setRegionStages),
+        generateChallengeTalentGuinessData(user._id, setHotStages),
+      ]);
+      await getUserCountry().then( async(res) => {
+                    setGlobalSelectedRegion(res)
+                    setUserCountryCode(res)
+                    await getRegionTalentStages(res, setRegionStages)
+                        })
+      setUserProfileImg(user.profileImage?.publicUrl);
+      router.replace("/Home");
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      hideLoading();
     }
- }, [user])    
+  };
+  fetchUserData();
+}, [user]);
  
- if (loading) {
-  return  <AuthLoadingScreen />
-}
+
   
   return (
     <View 
@@ -372,8 +391,7 @@ export default function Login() {
         shadowOpacity: 0.1,
         shadowRadius: 26,
         elevation: 3,
-      //  backgroundColor: '#303949',
-        // padding: 20,
+     
         width:"80%"}}> 
         <TextInput
           className="bg-[#1b1d1e] border border-[#2A2A2A"
@@ -423,21 +441,7 @@ export default function Login() {
           </Text>
         </View>
       </View>
-      {/* ) : (
-      <View style={{ marginTop: 30, backgroundColor: '#303949', padding: 20, borderRadius: 15 }}> 
-         <ActivityIndicator style={{ marginTop: 20 }} />
-      </View>
-      )} */}
 
-
-      {/* <TouchableOpacity
-        style={{ marginTop: 20, backgroundColor: '#de4d41', padding: 15, borderRadius: 10, flexDirection: 'row', justifyContent: 'center',width:"80%" }}
-      >
-        <FontAwesome name="google" size={20} color="white" />
-        <Text style={{ color: 'white', marginLeft: 10 }}>Continue with Google</Text>
-      </TouchableOpacity> */}
-
-    
       <View
       className ="h-[25%]  b g-yellow-100 flex-col justify-center gap-4 items-center"  >
          <ErrorMessage message ={error} color ={messageColor}/>
@@ -460,17 +464,6 @@ export default function Login() {
          
       </View>
   
-     
-      
-
-      {/* <TouchableOpacity
-        onPress={()=>handleAnonymous()}
-        style={{ marginTop: 15, backgroundColor: '#555', padding: 15, borderRadius: 10 }}
-      >
-        <Text style={{ color: 'white', textAlign: 'center' }}>Continue as Guest</Text>
-      </TouchableOpacity> */}
-
-      {/* {loading && <ActivityIndicator style={{ marginTop: 20 }} />} */}
     </View>
   );
 }

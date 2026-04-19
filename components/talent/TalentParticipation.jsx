@@ -16,6 +16,9 @@ import axios from 'axios';
 import { deleteObject, getStorage, ref } from 'firebase/storage'
 import {  getUploadImageUrl, getUploadVideoUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from '../../uploadFileToBlackBlaze';
 import { compressImage } from '../../utilities/fileCompressor';
+import { isFastStartVideo } from '../../ffmpeg/ffmpeg';
+import { useLoading } from '../../context/loadingContext';
+// import { makeFastStart, normalizePath } from '../../ffmpeg/ffmpeg';
 
 
 export default function TalentParticipation({talentRoom, setReplayRecording , user, setNewChallenge, setSelectedContestant 
@@ -31,6 +34,8 @@ export default function TalentParticipation({talentRoom, setReplayRecording , us
   const [isPlaying, setIsPlaying] = useState(false)
   const [visible, setVisible] = useState(false);
   const [thumbNailURL,setThumbNailURL] = useState(null)
+  const { showLoading, hideLoading } = useLoading();
+
   
   const videolURL = participation == "update"? userParticipation.video_url :
         participation == "qupdate" ? talentRoom.queue.find(u => u.user_id == user._id).video_url:
@@ -85,7 +90,7 @@ const toggleVideoPlaying = () =>{
 
   const requestMediaPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status == 'granted') {
+    if (status !== 'granted') {
       alert('Permission to access media library is required!');
       return false;
     }
@@ -144,31 +149,31 @@ const toggleVideoPlaying = () =>{
 
   }    
 
-
   const upload = async()=>{
     if(videoUri ){
       
-      /// upload blaze
-
+      showLoading("uploading the video ...")
+      const optimizedVideo = videoUri // await makeFastStart(videoUri);
+      // const checkFSTART = await  isFastStartVideo(videoUri)
+      // console.log(checkFSTART)
       const [videoRes, thumbRes] = await Promise.all([
          getUploadVideoUrl(user._id , user.name , "talent" ),
          getUploadImageUrl(user._id , user.name , "thumbnail" )
       ]);
 
       setTimeout(() => {
-        // setVisible(false)
         setNewChallenge(false)
         setStage(true)
-      }, 500); 
+      }, 1500); 
       
       const compressed = await compressImage(thumbNailURL)
       const [videoUpload, thumbnailUpload] = await Promise.all([
-        uploadVideoToBackblaze(videoRes, videoUri),
+        uploadVideoToBackblaze(videoRes, optimizedVideo),
         uploadImageToBlackBlaze(thumbRes, compressed),
       ]);
      
-   
-
+      hideLoading()
+ 
       let body = {
         publicUrl : user.profileImage.publicUrl,
         user_id : user._id,
@@ -229,15 +234,7 @@ const toggleVideoPlaying = () =>{
           res =>  {
               if(res.data === "challenge expired") return setIsExpired(true)
 
-                // let videoRef = ref(storage , videolURL); 
-                // let thumbnailRef = ref(storage , thumbURL); 
-                // Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
-                // .then(() => {
-                //   console.log("both deleted successfully!");
-                // })
-                // .catch((error) => {
-                //   console.error("Error deleting file:", error);
-                // });  
+            
                 setTalentRoom(res.data)
                 setTimeout(() => {
                       if(participation == "update"){

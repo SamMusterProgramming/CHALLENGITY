@@ -21,59 +21,46 @@ export default function HeaderApp({
 
   return (
     <View
-      style={{ height: headerHeight * 0.40 }}
-      className = "flex-row items-center w-full justify-between px-1 b g-[#0b1e35] "
+      style={{ height: headerHeight * 0.50 }}
+      className = "flex-row items-center w- full justify-start w-[100%] bg-[#000000] "
     >
-      <LinearGradient
+
+    {/* <LinearGradient
           pointerEvents="none"
-          colors={["rgba(50, 50, 120, 0.3)", "transparent"]}
+          colors={[ "rgba(55, 25, 255, 0.3)" ,"transparent"]}
           style={{
             position: "absolute",
             top: 0,
             alignSelf: "center",
             width: "100%",
             height: "70%",
-            // borderRadius: 10,
+         
           }}
-        />
-         <LinearGradient
-          pointerEvents="none"
-          colors={["transparent", "rgba(50, 50, 120, 0.3)"]}
-          style={{
-            position: "absolute",
-            bottom: 0,
-            alignSelf: "center",
-            width: "100%",
-            height: "70%",
-            // borderRadius: 10,
-          }}
-        />
+        /> */}
+     
+     
 
-      {/* LEFT - LOGO */}
-      {/* <View className="flex-row items-center"> */}
-        <ChallengifyLogo size={headerHeight/5} />
-      {/* </View> */}
 
-      {/* CENTER - TITLE */}
-      {/* <View className="flex-1 items-center">
-        <Text
-          className="text-white font-bold tracking-wider"
-          style={{ fontSize: headerHeight * 0.18 }}
-        >
-          {title}
-        </Text>
-      </View> */}
+        <Image
+              source={icons.challengify_logo}
+              style={{
+                width: avatarSize * 4,
+                height: avatarSize
+              }}
+              className="rounde d-full  b g-white"
+            />
+   
 
-      {/* RIGHT - ACTIONS */}
-      <View className="flex-row items-center gap-4">
-
+      <View 
+      className="flex-row flex-1 h-[80%] ml-auto  justify-end  pr-2 items-center bord er-b-2 bor der-red-600 gap-4">
+        
         <NotificationSearchNav
           showNotifications={showNotifications}
           setShowNotifications={setShowNotifications}
           headerHeight={headerHeight}
         />
 
-        {/* USER AVATAR */}
+       
         <TouchableOpacity
          onPress={()=> setShowProfile(true)}
         >
@@ -81,17 +68,17 @@ export default function HeaderApp({
             <Image
               source={{ uri: user?.profileImage?.publicUrl }}
               style={{
-                width: avatarSize,
-                height: avatarSize
+                width: avatarSize * 0.8,
+                height: avatarSize * 0.8
               }}
-              className="rounded-full border border-[#ffd700]"
+              className="rounded-full border  border-[#ffd700]"
             />
           ) : (
             <Image
               source={icons.avatar}
               style={{
-                width: avatarSize,
-                height: avatarSize
+                width: avatarSize * 0.8,
+                height: avatarSize * 0.8
               }}
               className="rounded-full"
             />

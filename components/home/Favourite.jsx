@@ -177,7 +177,6 @@ export default function Favourite() {
         favouriteList && favouriteList.favourites.forEach(f =>{
              f.dataType === "talent" && talentIds.push(f._id)
              f.dataType === "challenge" && challengeIds.push(f._id)
-
         })
         getFavouriteTalents(user._id , talentIds , setFavouriteTalents)
         getFavouriteChallenges(user._id , challengeIds , setFavouriteChallenges)

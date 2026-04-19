@@ -5,9 +5,7 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
   return (
     <View
       style={{
-    
         height : height ,
-  
         shadowColor:  "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.6 ,
@@ -16,45 +14,43 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
       }}
       className="gap-4  flex- 1 flex-row justify-start items-end  "
     >
-      {/* 🖼 Avatar */}
+   
       <Image
         className = "rounded-full "
         source={{ uri: selectedContestant.profile_img }}
         style={{
-          width: height * 0.8 ,
-          height: height * 0.8 ,
-        //   borderRadius: 10,
-        //   marginRight: 10,
+          width: height * 0.9 ,
+          height: height * 0.9 ,
+ 
           borderWidth:  1,
           borderColor:  "#374151",
         }}
       />
 
-      {/* 📊 Info */}
+ 
       <View 
       className ="justify-evenly flex-1 h-[100%]  pt-2 gap-1  items-start"
        style={{ 
-        // flex: 1  ,
-        backgroundColor:  "rgba(0 ,0 ,0 , 0.2)" ,
+  
 
        }}>
         <Text
-                    className="mb-auto"
+                    className="absolute font-bebas tracking-widest top-0 left-[70%] p-1 border-b bor der-white"
                     style={{
                         color:  "#fff",
                         fontWeight: "700",
-                        fontSize: width/32,
+                        fontSize: width/30,
                     }}
                     >
-                    {selectedContestant.rank <5 ? "Top " + selectedContestant.rank : "# " + selectedContestant.rank}
-       </Text>
+                    {selectedContestant.rank <5 ? "TOP " + selectedContestant.rank : "Rank " + selectedContestant.rank}
+        </Text>
     
         <Text
-                    className=""
+                    className="mt-auto"
                     style={{
                         color:  "#fff",
                         fontWeight: "700",
-                        fontSize: width/28,
+                        fontSize: width/30,
                     }}
                     >
                     {selectedContestant.name}
@@ -67,7 +63,7 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
                     <Text
                     style={{
                         color:  "#d1d5db",
-                        fontSize: width/28,
+                        fontSize: width/33,
                     }}
                     >
                     {selectedContestant.city}
@@ -75,8 +71,7 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
                     <Text
                     style={{
                         color:  "#d1d5db",
-                        fontSize: width/28,
-                        // marginTop: 8,
+                        fontSize: width/33,
                     }}
                     >
                     {selectedContestant.country}
@@ -87,12 +82,6 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
         </View>
 
        
-      
-    
-
-     
-     
-    
      </View>
 
 

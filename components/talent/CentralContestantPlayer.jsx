@@ -4,6 +4,7 @@ import { icons } from '../../constants';
 import { getIcon, getStageLogo, getTimeLapse } from '../../helper';
 import { router } from 'expo-router';
 import UserCard from './UserCard';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 /* ---------------- MAIN CAROUSEL ---------------- */
@@ -60,7 +61,7 @@ export default function CentralContestantPlayer({
           });
           const translateY = mainScrollX.interpolate({
             inputRange,
-            outputRange: [-20, 0, -20],
+            outputRange: [-40, 0, -40],
             extrapolate: "clamp",
           });
         
@@ -68,12 +69,13 @@ export default function CentralContestantPlayer({
           return (
           <Animated.View
             style={{
+              // backgroundColor :"rgba(0,0,0,0.3)",
               width: MAIN_ITEM_WIDTH,
               marginHorizontal: MAIN_ITEM_MARGIN,
               transform: [{ scale },{ translateY }],
               opacity
             }}
-            className ="flex-row justify-center  items-center"
+            className ="flex-row justify-center   items-center"
            >
           
                 <TouchableOpacity
@@ -90,7 +92,7 @@ export default function CentralContestantPlayer({
                                    
                                    <Image
                                     style={{width:  "100%" , height: "100%"}}
-                                    className=" opacity-50 shadow-lg elevation-2xl rounded-xl"
+                                    className=" opacity-100 shadow-lg elevation-2xl rounded-xl"
                                     source={{uri:item.thumbnail?.publicUrl ||  "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
                                     resizeMethod='contain'
                                     cachePolicy="memory-disk"
@@ -163,7 +165,6 @@ export default function CentralContestantPlayer({
         <View
       
         style={{
-          
           opacity: !isPlaying ? 1 : 0,
           height: height ,
           width: width,
@@ -174,51 +175,24 @@ export default function CentralContestantPlayer({
         > 
   
 
-                            
+                      <LinearGradient
+                              pointerEvents="none"
+                              colors={["rgba(0,0,0,0.95)", "transparent"]}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                alignSelf: "center",
+                                width: width,
+                                height: 2 * height,
+                                borderRadius: 0,
+                              }}
+                            />   
                 
                          
                           <View
                           style ={{height:CAROUSSEL_HEIGHT}}
-                          className ="flex- 1 w-[100%] h- [100%] b g-[#353434] items-center justify-center b g-[#9f9b9b]">
-                            {/* <Animated.FlatList
-                                        data={data}
-                                        ref={flatList}
-                                      
-                                        keyExtractor={(item, index) =>  
-                                          item.video?.fileId || index.toString()
-                                        }                                    
-                                        renderItem={renderItem}
-                                        removeClippedSubviews={true} 
-                                        scrollEventThrottle = {16}
-                                        showsHorizontalScrollIndicator ={false}
-                                   
-                                        horizontal={true}
-                                        onViewableItemsChanged={onViewableItemsChanged.current}
-                                        decelerationRate="fast"
-                                        bounces={false}
-                                        viewabilityConfig={{
-                                            itemVisiblePercentThreshold: 40, 
-                                          }}
-                                          getItemLayout={(data, index) => ({
-                                            length: MAIN_SNAP_INTERVAL,
-                                            offset: MAIN_SNAP_INTERVAL * index,
-                                            index,
-                                          })}
-                                       
-
-                                          contentContainerStyle={{
-                                            paddingHorizontal: SIDE_SPACING, 
-                                            alignItems: 'center',           
-                                          }}
-          
-                                        snapToInterval={MAIN_SNAP_INTERVAL}
-                                      
-                                        onScroll={Animated.event(
-                                            [{ nativeEvent: { contentOffset: { x: mainScrollX } } }],
-                                            { useNativeDriver: true }
-                                            )}
-                                        
-                                      />  */}
+                          className ="flex- 1 w-[100%] h- [100%] py-2 b g-[#353434] items-center justify-center b g-[#9f9b9b]">
+                          
                                     <Animated.FlatList
                                         data={data}
                                         ref={flatList}
@@ -240,11 +214,10 @@ export default function CentralContestantPlayer({
                                         onMomentumScrollEnd={(event) => {
                                           const offsetX = event.nativeEvent.contentOffset.x;
                                           const index = Math.round(offsetX / MAIN_SNAP_INTERVAL);
-                                          setSelectedPerformance(data[index]);
-                                          updatePerformanceIndex(selectedContestant._id,index)
+                                          // setSelectedPerformance(data[index]);
+                                         if(scrollToIndex !== index) updatePerformanceIndex(selectedContestant._id,index)
                                         }}
                                         renderItem={renderItem}
-
                                         initialNumToRender={2}
                                         maxToRenderPerBatch={2}
                                         windowSize={3}
@@ -257,7 +230,7 @@ export default function CentralContestantPlayer({
                                         // color:"#d1d5db", 
                                         marginTop: 0,
                                       }}
-                                      className=" font-semibold mb- 8 text-[#e49336]">Performances :{' '}
+                                      className=" font-semibold mt-4 text-[#e49336]">Performances :{' '}
                                         <Text 
                                             style ={{fontSize:width/45}}
                                             className="tex t-xl  font-black text-[#e49336]"> 

@@ -2,88 +2,108 @@
 
 
 import { Image, Text, View, TouchableOpacity } from "react-native";
-import NotificationSearchNav from "../talent/custom/NotificationSearchNav";
 import { icons } from "../../constants";
-import ChallengifyLogo from "../custom/ChallengifyLogo";
-import { LinearGradient } from "expo-linear-gradient";
-
+import { useGlobalContext } from "../../context/GlobalProvider";
 export default function HeaderApp({
   user,
   showNotifications,
   setShowNotifications,
   setShowProfile,
   width,
-  headerHeight,
+  height,
+
   title = "Challengify"
 }) {
 
-  const avatarSize = headerHeight * 0.35;
+  const { notifications } = useGlobalContext();
+  const unread = notifications.filter(n => !n.isRead).length;
+  const avatarSize = height* 0.04;
 
   return (
     <View
-      style={{ height: headerHeight * 0.50 }}
-      className = "flex-row items-center w- full justify-start w-[100%] bg-[#000000] "
+      className = "flex-row items-center py- 2 px -2  justify-between w-full b g-[#5b4c40]"
     >
-
-    {/* <LinearGradient
-          pointerEvents="none"
-          colors={[ "rgba(55, 25, 255, 0.3)" ,"transparent"]}
-          style={{
-            position: "absolute",
-            top: 0,
-            alignSelf: "center",
-            width: "100%",
-            height: "70%",
-         
-          }}
-        /> */}
-     
-     
-
-
-        <Image
-              source={icons.challengify_logo}
+      {/* <View
+      className="min-w-[33%]">
+          <Image
+              source={icons.talentify_logo}
+              style={{
+                width: avatarSize ,
+                height: avatarSize 
+              }}
+              resizeMethod="cover"
+              className="  b g-white"
+            />
+      </View> */}
+      
+       <View
+      //  style ={{width : avatarSize * 4}}
+       className=" bg-[#171717] w-[33%] justify-center rounded-tr-xl items-center">
+           <Image
+              source={icons.talentify_logo}
               style={{
                 width: avatarSize * 4,
-                height: avatarSize
+                height: avatarSize 
               }}
-              className="rounde d-full  b g-white"
+              resizeMethod="cover"
+              className="mt-1"
             />
-   
-
+      </View>
+      
       <View 
-      className="flex-row flex-1 h-[80%] ml-auto  justify-end  pr-2 items-center bord er-b-2 bor der-red-600 gap-4">
-        
-        <NotificationSearchNav
-          showNotifications={showNotifications}
-          setShowNotifications={setShowNotifications}
-          headerHeight={headerHeight}
-        />
+      className="flex-row w-[33%] h-[100%] b g-[white]  rounded-tl-xl justify-end   items-center  gap-4">
+  
+            <TouchableOpacity
+              className="h- [100%] justify-center items-center ">
+              <Image
+                source={icons.search}
+                style = {{ width:avatarSize * 0.8 , height:avatarSize * 0.8 }}
+                resizeMethod="cover"
+               />
+            </TouchableOpacity>
+         
+            <TouchableOpacity
+            className="h- [100%] justify-center items-center "
+              onPress={() => setShowNotifications(!showNotifications)}
+              >
+               <Image
+                source={icons.notification}
+                style = {{ width:avatarSize * 0.8  , height:avatarSize * 0.8  }}
+                resizeMethod="cover"
+               />
+              {unread > 0 && (
+                <View className="absolute top-0 -right-1 bg-red-800 w-4 h-4 rounded-full items-center justify-center">
+                  <Text className="text-white text-[10px] font-bebas tracking-wide">
+                    {unread}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
 
-       
-        <TouchableOpacity
-         onPress={()=> setShowProfile(true)}
-        >
-          {user ? (
-            <Image
-              source={{ uri: user?.profileImage?.publicUrl }}
-              style={{
-                width: avatarSize * 0.8,
-                height: avatarSize * 0.8
-              }}
-              className="rounded-full border  border-[#ffd700]"
-            />
-          ) : (
-            <Image
-              source={icons.avatar}
-              style={{
-                width: avatarSize * 0.8,
-                height: avatarSize * 0.8
-              }}
-              className="rounded-full"
-            />
-          )}
-        </TouchableOpacity>
+            <TouchableOpacity
+            onPress={()=> setShowProfile(true)}
+            className = "mr-2"
+            >
+              {user ? (
+                <Image
+                  source={{ uri: user?.profileImage?.publicUrl }}
+                  style={{
+                    width: avatarSize * 0.8,
+                    height: avatarSize * 0.8
+                  }}
+                  className="rounded-full  bor der-[#ffd700]"
+                />
+              ) : (
+                <Image
+                  source={icons.avatar}
+                  style={{
+                    width: avatarSize ,
+                    height: avatarSize 
+                  }}
+                  className="rounded-full"
+                />
+              )}
+            </TouchableOpacity>
 
       </View>
     </View>

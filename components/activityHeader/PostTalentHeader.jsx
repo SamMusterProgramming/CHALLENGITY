@@ -33,10 +33,10 @@ export default function PostTalentHeader({ data , width }) {
     if (joinedStatus) {
       avatars.push(
         <View  key="you"
-         className ="flex-row"
+         className ="flex-row mr-auto"
         >
         <View
-          // className = "rounded-full"
+          className = "rounded-full  "
           style={{
             width: width * 0.08,
             height: width * 0.08,
@@ -53,7 +53,7 @@ export default function PostTalentHeader({ data , width }) {
             style={{
               width: width * 0.075,
               height: width * 0.075,
-              borderRadius: 2,
+              // borderRadius: 2,
             }}
           />
           <Text
@@ -73,7 +73,7 @@ export default function PostTalentHeader({ data , width }) {
           </Text>
         </View>
         <Text
-        className = " p-1 mr-2 border-b-4 border-[#454242] text-orange-400 "
+        className = " p-1 mr-2 border-b-4 border-[#9f7a0b] text-orange-400 "
           style={{
             fontSize: width / 35 ,
             color: joinedStatus == "On Stage" ? 'lightgreen' :
@@ -84,9 +84,9 @@ export default function PostTalentHeader({ data , width }) {
         >
            {stageIcons[data.name]}
            <Text
-            className = " p-1 mr-2 border-b-4 border-[#454242] text-orange-400 "
+            className = " p-1 mr-2 border-b-4 border-[#a7850b] text-orange-400 "
               style={{
-                fontSize: width / 40 ,
+                fontSize: width / 45 ,
                 color: joinedStatus == "On Stage" ? 'lightgreen' :
                       joinedStatus == "In Queue" ? 'lightblue'  :
                       joinedStatus == "Eliminated" ? 'red' : "white", 
@@ -147,7 +147,7 @@ export default function PostTalentHeader({ data , width }) {
   return (
     <View
       style={{
-        minWidth: '100%',
+        width: '98%',
         paddingVertical: 4,
         paddingHorizontal: 8,
         // backgroundColor: '#1C1C1E', 
@@ -157,18 +157,16 @@ export default function PostTalentHeader({ data , width }) {
     >
       {/* Avatars + Status Row */}
       <View 
-      className = " justify-start w-[100%]"
-      style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+        className = " justify-start w-[100%] "
+        style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
         {renderAvatars()}
         {contestantFriends.length > 0 && (
           <Text
-          className = "mt- auto p-1 border-b-8 border-[#454242]"
-           style={{ fontSize: width / 39, color: 'white', fontWeight: '700' }}>
+          className = "mt- auto p-1 border-b-8 border-[#aa7a11]"
+           style={{ fontSize: width / 45, color: 'white', fontWeight: '700' }}>
           {contestantFriends.length > 3 ? `+  ${contestantFriends.length - 3} friends` : "" } Joined
           </Text>
         )}
-
-     
       </View>
 
     </View>

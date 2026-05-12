@@ -31,14 +31,8 @@ export default function UserProfile({user}) {
   if(!user) router.navigate('(auth)/login')
 
   useEffect(() => {
-    const splitName = user && user.name.split(" ")
-    user && setName({
-    part1 : splitName[0],
-    part2: splitName[1]
-     })
     const receivedNots = []
     const acceptedNots = []
-
     notifications.map((notification , index) => {
       if(notification.type === "friend request" && !notification.isRead ){
          receivedNots.push(notification)

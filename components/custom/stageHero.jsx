@@ -1,51 +1,51 @@
-import { View, Text, ImageBackground } from 'react-native';
+import { View, Text, ImageBackground, Dimensions } from 'react-native';
+import CarouselIndicator from './carouselIndicator';
+import { stageIcons } from '../../utilities/TypeData';
 
 export default function StageHero({
-  title = "Singing Stage",
+  title = "Singing",
   region = "United States",
   flag = "",
   description = "Step into the spotlight and let your voice move the world. This is your moment to shine, to be heard, and to rise.",
   image = "https://images.unsplash.com/photo-1511379938547-c1f69419868d"
 }) {
+
+
+    const { width ,height} = Dimensions.get("window");
+
+
   return (
-    <View className="w- full  flex- 1 h -54 roun ded-2xl overflow-hidden">
-      
-      {/* Background Image */}
-      <ImageBackground
-        source={{ uri: image }}
-        className="flex-1 justify-end"
-        resizeMode="cover"
-      > 
-          
-        {/* Dark Gradient Overlay */}
-        <View className="absolute inset-0 bg-black/70" />
+    <>
+
        
-        {/* Content */}
-        <View className="p-5">
+  
+        <View className="mt- 2 py- 2">
+    
+          <Text 
+            style={{
+                fontSize: width / 36,
+                lineHeight: width / 24,
+                letterSpacing: 0.3,
+              }}
+            className="text-white uppercase font-bold py-2 leading-tight">
+            {title}{' Stage   '} 
+                <Text
+                style={{fontSize:width/20}}
+                className="text-gray-100  font-bold  mb-">
+                     {stageIcons[title]} 
+                </Text>
+          </Text>
+          <Text 
+                    style={{fontSize:width/35}}
+                    className="text-gray-200 lowercase font-normal font-monts errat leading-relaxed">
+                        {description}
+          </Text>
+         
+
           
-          {/* Region */}
-         
-        
-
-          {/* Title */}
-          <Text className="text-white text-xl font-extrabold leading-tight">
-            {title} {'  -  '}
-             <Text className="text-gray-300 text-sm uppercase tracki ng-widest mb-1">
-               {region} {' '}
-                  <Text className="text-gray-300  text-lg  uppercase tracking-widest ">
-                   {flag}
-                  </Text>
-             </Text>
-          </Text>
-         
-
-          {/* Description */}
-          <Text className="text-gray-200 text-sm mt-2 leading-relaxed">
-            {description}
-          </Text>
 
         </View>
-      </ImageBackground>
-    </View>
+    </>
+
   );
 }

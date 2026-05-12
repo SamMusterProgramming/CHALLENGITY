@@ -63,11 +63,11 @@ export function concatenateAndSortByDate(arr1, arr2, dateKey) {
     } else if (minutes < 60) {
       return  `${minutes} Min`;
     } else if (hours < 24) {
-      return `${hours} Hours`;
+      return `${hours} Hrs`;
     } else if (days < 30) {
-      return `${days} Day `;
+      return `${days} D `;
     } else if (months < 12) {
-      return `${months} Month`;
+      return `${months} M`;
     } else {
       return `${years} Years`;
     }

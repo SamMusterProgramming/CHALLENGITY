@@ -1,83 +1,3 @@
-// import { View, Text, useWindowDimensions, Image, TextInput } from 'react-native'
-// import React, { useEffect, useState } from 'react'
-// import { useGlobalContext } from '../../context/GlobalProvider'
-// import { getIcon, getInition, getTimeLapse } from '../../helper';
-
-// export default function TalentActivityHeader({data , userProfile ,type , user}) {
-//   const {boxBgColor} = useGlobalContext()
-//   const { width, height } = useWindowDimensions();
-//   const [text , setText] = useState(null)
-  
-//   useEffect(() => {
-//    let t =  userProfile._id == user._id ? "You are " : userProfile.name + " is "
-//    t = data.contestants.find(c => c.user_id === userProfile._id) ?  t.concat( `on Stage ,`) : t.concat(``)
-//    t = data.queue.find(c => c.user_id === userProfile._id) ?  t.concat( `in Queue ,`) : t.concat(``)
-//    t = data.eliminations.find(c => c.user_id === userProfile._id) ?  t.concat( ` eliminated from Contest ,`) : t.concat(``)
-   
-//    if(data.contestants.find(c => c.user_id === userProfile._id)) {
-//     t =  t
-
-//     .concat( data.contestants.length > 1 ? data.contestants.length + ` others have joined the Contest` : "explore the contest for more details" )
-//    }
-//    if(data.queue.find(c => c.user_id === userProfile._id)) {
-//     t =  t.concat(userProfile._id == user._id ? `Your will be posted when a spot is available ` : `he will be posted when a spot is availabl `)
-//    }
-//    if(data.eliminations.find(c => c.user_id === userProfile._id)) {
-//     t =  t.concat( `update your post in order to get back in Queue` )
-//    }
-  
- 
-//    setText(t)
-//   }, [])
-  
-//   return (
-//     <View
-
-//     className ="w-[95%] rounded-lg  b g-[#252728] py- 1 mb-2  px-1 gap-2 flex-col justify-center items-center  bord er-[#d8caca]">
-//           <View
-//                 style={{height: width * 0.09 ,width: width * 0.09 }}
-//                 className ="w- [40%]  h- [100%] px- 1  rounde d-xl flex-row justify-center items-center gap- 2  b g-[#ffffff]">
-//                                 <View 
-//                                   className =" flex-col justify-center h- [100%]  items-center gap-1">
-//                                 <Image 
-//                                    style={{ width: width * 0.07 , height: width * 0.07 }}
-//                                    className = "rounded-full"
-//                                    source={{uri : userProfile.profileImage?.publicUrl}}
-//                                 />
-//                                 <Text 
-//                                    style={{fontSize:7}}
-//                                    className="font-bold absolute rounded-full bottom-0 left-0 p-1 bg-[#000000] text-gray-100">
-//                                            { getInition(userProfile.name)} 
-//                                 </Text> 
-//                               </View>                    
-                
-//          </View>
-
-//            <View
-//                 style={{
-                 
-//                   justifyContent: 'center',
-//                   alignItems: 'flex-start',
-//                 }}
-//                 className="rounded-full bg-gray-800/50"
-//               >
-//                     <Text
-//                       style={{
-//                         fontSize: width / 38,
-//                         lineHeight: width / 38,
-//                       }}
-//                       className="text-gray-100 font-bold tracking-wide"
-//                       numberOfLines={3} 
-//                       ellipsizeMode="tail" 
-//                     >
-//                       {text && text}
-//                     </Text>
-//               </View>
-       
-//    </View>
-//   )
-// }
-
 
 import { View, Text, useWindowDimensions, Image } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -141,7 +61,7 @@ export default function TalentActivityHeader({ data, userProfile, user ,width })
   return (
 
     <View
-      className="w-[87%]  rounded-xl b g-zinc-900 px-3 py-2 mb-2 flex-row items-end"
+      className="w-[80%]  rounded-xl b g-zinc-900 px-3 py-2 mb-2 flex-row items-end"
     >
 
       {/* Avatar */}

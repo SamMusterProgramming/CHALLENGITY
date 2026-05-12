@@ -7,7 +7,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 
 export const getUploadVideoUrl = async ( userId , name , type ) => {
    try {
-    const res = await axios.post(`${BASE_URL}/users/getUploadVideoUrl`, {
+    const res = await api.post(`/users/getUploadVideoUrl`, {
       userId,
       name,
       type,

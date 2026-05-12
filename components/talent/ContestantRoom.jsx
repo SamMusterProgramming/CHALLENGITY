@@ -1,460 +1,425 @@
-// import React, { useEffect, useRef, useState } from 'react';
-// import { View, Text, TouchableOpacity, ScrollView, Image, useWindowDimensions, Platform, Animated } from 'react-native';
 
-// import { icons } from '../../constants';
+// import React, { useEffect, useRef, useState, useMemo } from "react";
+// import {
+//   View,
+//   Text,
+//   Image,
+//   useWindowDimensions,
+//   Animated,
+//   Pressable,
+//   Platform,
+//   TouchableOpacity,
+// } from "react-native";
+// import { icons } from "../../constants";
+// import { useGlobalContext } from "../../context/GlobalProvider";
+// import UserCard from "./UserCard";
+// import ShuffleLetters from "../custom/ShuffleLetters";
+// import { getTimeLapse } from "../../helper";
+// import CountryFlag from "react-native-country-flag";
+// import { LinearGradient } from "expo-linear-gradient";
+// import CarouselIndicator from "../custom/carouselIndicator";
+// import StatusDisplayer from "../custom/statusDisplayer";
 
-// import ShuffleLetters from '../custom/ShuffleLetters';
-// import UserCard from './UserCard';
-// import { getTimeLapse } from '../../helper';
-// import { useGlobalContext } from '../../context/GlobalProvider';
-// // import Checkbox from 'expo-checkbox'; 
+// const ContestantRoom = ({
+//   user,
+//   userParticipation,
+//   confirmAction,
+//   setStage,
+//   player,
+//   isPlaying,
+//   setIsPlaying,
+//   setPerformanceToDelete,
+//   updatePerformanceIndex,
+//   w,
+//   h,
+//   top,
+//   bottom,
+//   numberOfContestants,
+//   setSelectedContestant,
+//   setParticipationType,
+//   talentRoom,
+//   edition,
+// }) => {
+//   const { userCountryCode } = useGlobalContext();
+//   const { width , height } = useWindowDimensions();
 
-// const ContestantRoom = ({user ,userParticipation ,confirmAction ,
-//    setStage, setIsPlaying , player , isPlaying,setPerformanceIndex,setPerformanceToDelete, updatePerformanceIndex,
-//    w , h , top ,numberOfContestants, setSelectedContestant, setParticipationType,talentRoom ,edition}) => {
+//   const flatListRef = useRef(null);
+//   const scrollX = useRef(new Animated.Value(0)).current;
 
-//   const {gpsLocation , setGpsLocation , userCountryCode } = useGlobalContext()
-//   const [isLoaded, setIsLoaded] = useState(false);
-//   const [showList, setShowList] = useState(false);
-//   // const [postData , setPostData] = useState(null)
-//   const [isExpired , setIsExipred] = useState(null)
-//   const [postTimeLaps , setPostTimeLaps] = useState(0)
-  
-//   const [status , setStatus] = useState(0)
-//   const MAXCONTESTANTS = talentRoom.MAXCONTESTANTS ;
-
-//   const [bgColor , setBgColor] = useState("white")
-//   const [textColor , setTextColor] = useState("")
-//   const [notation , setNotation] = useState("")
-
+//   const MAX = talentRoom.MAXCONTESTANTS;
 //   const [type , setType] = useState("")
-//   const [userQueueParticipation , setUserQueueParticipation] = useState(null)
-//   const [userEliminatedParticipation , setUserEliminatedParticipation] = useState(null)
-//   const {height ,width} = useWindowDimensions()
-//   const [index ,setIndex] = useState(0)
-  
+//   /* ---------------- DATA ---------------- */
 
-//   const flatList = useRef()
-//   const [viewableItems, setViewableItems] = useState([]);
-//   const [data,setData] = useState( 
-//                        userParticipation?.performances ||
-//                         talentRoom.queue.find(u =>u.user_id == user._id)?.performances ||
-//                         talentRoom.eliminations.find(u =>u.user_id == user._id)?.performances
-//                       )
+//   const userQueue = talentRoom.queue.find(u => u.user_id === user._id);
+//   const userEliminated = talentRoom.eliminations.find(u => u.user_id === user._id);
 
-//   const MAIN_ITEM_WIDTH = w * 0.65;
-//   const MAIN_ITEM_MARGIN = 2;
-//   const MAIN_SNAP_INTERVAL = MAIN_ITEM_WIDTH + MAIN_ITEM_MARGIN * 2;
-//   const SIDE_SPACING = (w - MAIN_ITEM_WIDTH) / 2;
+//   const data =
+//     userParticipation?.performances ||
+//     userQueue?.performances ||
+//     userEliminated?.performances ||
+//     null;
+//   // console.log(data)
+//   /* ---------------- STATUS LOGIC (CLEAN) ---------------- */
 
-
-//   const mainScrollX = useRef(new Animated.Value(0)).current;
-
-
-//   useEffect(() => {
-   
-
-//     if(userParticipation) {
-//       const createdAtDate = new Date(userParticipation.createdAt); 
-//       const timeDifferenceDays = (new Date().getTime() - createdAtDate.getTime() )/(1000*3600*24); 
-//       setPostTimeLaps(timeDifferenceDays)
-//             setNotation("On Stage")
-//             if(edition.round <4){
-//               setStatus("joined")
-//               setBgColor("lightpink")
-//               setTextColor("black")
-//               setType("deleteContestantStage")
-//             }
-//             else{
-//               setStatus("locked")
-//               setBgColor("white")
-//               setTextColor("black")
-//               setType("locked")
-//             }
-//     } else {
-//         if(talentRoom.eliminations.find(u =>u.user_id == user._id)){
-//           setNotation("Eliminated")
-//           setStatus("eliminated")
-//           setBgColor("#d1111e")
-//           setTextColor("white")
-//           setUserEliminatedParticipation(talentRoom.eliminations.find(u => u.user_id == user._id))
-//           setType("deleteContestantElimination")
-//         } else {
-//               if(talentRoom.queue.find(u =>u.user_id == user._id)){
-//                   setNotation("In Queue")
-//                   setStatus("queued")
-//                   setBgColor("#d1111e")
-//                   setTextColor("white")
-//                   setUserQueueParticipation(talentRoom.queue.find(u => u.user_id == user._id))
-//                   setType("deleteContestantQueue")
-//               }else{
-//                 if(numberOfContestants < MAXCONTESTANTS) {
-//                   if(talentRoom.queue.length < MAXCONTESTANTS - numberOfContestants ){
-//                     setNotation("Non Contestant")
-//                     if(edition.round < 4){
-//                       setStatus("join")
-//                       setBgColor("green")
-//                       setTextColor("white")
-//                       setType("new")
-//                     }else{
-//                       setStatus("queue")
-//                       setBgColor("white")
-//                       setTextColor("black")
-//                       setType("queue")
-//                     }
-//                   }else {
-//                     setNotation("Non Contestant")
-//                     setStatus("queue")
-//                     setBgColor("blue")
-//                     setTextColor("white")
-//                     setType("queue")
-//                   }
-//                 }else{
-//                   setNotation("Non Contestant")
-//                   setStatus("queue")
-//                   setBgColor("blue")
-//                   setTextColor("white")
-//                   setType("queue")
-//                 }     
-//             }
-//          } 
+//   const status = useMemo(() => {
+//     if (userParticipation){ setType("deleteContestantStage") ; return "Joined"};
+//     if (userEliminated) { setType("deleteContestantElimination") ;return "Eliminated"};
+//     if (userQueue) {setType("deleteContestantQueue"); return "Queued"};
+//     if (numberOfContestants < MAX) {
+//       edition.round < 4  && setType("new") 
+//       edition.round >= 4  && setType("queue") 
+//       return edition.round < 4 ? "Join" : "Queue";
 //     }
-   
-//        setIsLoaded(true)  
+//     setType("queue")
+//     return "Queue";
+//   }, [userParticipation, userQueue, userEliminated]);
 
-//   }, [userParticipation])      
+//   const statusLabel = {
+//     Joined: "Resign",
+//     Queued: "Delete",
+//     Eliminated: "Delete",
+//     Join: "Join",
+//     Queue: "Join Queue",
+//   };
 
+//   /* ---------------- LAYOUT ---------------- */
 
+//   const ITEM_WIDTH = w ;
+//   const SNAP = ITEM_WIDTH + 2;
+//   const SIDE = (w - ITEM_WIDTH) / 2;
 
-//   const onViewableItemsChanged = useRef(({ viewableItems }) => {
-//     if (!viewableItems || viewableItems.length === 0) return;
-  
+//   /* ---------------- HANDLERS ---------------- */
 
-//     const currentItem = viewableItems[0];
-   
-//   });
+//   const handlePlay = async (item, index) => {
+//     if (!item?.video?.cdnUrl) return;
 
-//   const renderItem = ({ item ,index }) => {
+//     setSelectedContestant(userParticipation);
+//     updatePerformanceIndex(userParticipation?._id, index);
+
+//     await player.replaceAsync(item.video.cdnUrl);
+
+//     setTimeout(() => {
+//       if (isPlaying) {
+//         player.pause();
+//         setIsPlaying(false);
+//       } else {
+//         player.play();
+//         setIsPlaying(true);
+//       }
+//     }, 200);
+//   };
+
+//   const handleDelete = (item) => {
+//     setPerformanceToDelete(item);
+
+//     if (userParticipation) {
+//       setParticipationType("DeletePerformanceStage");
+//     } else if (userQueue) {
+//       setParticipationType(
+//         data.length > 1
+//           ? "DeletePerformanceQueue"
+//           : "DeleteContestantQueue"
+//       );
+//     }
+
+//     confirmAction();
+//   };
+
+//   /* ---------------- RENDER ITEM ---------------- */
+
+//   const renderItem = ({ item, index }) => {
 //     const inputRange = [
-//       (index - 1) * MAIN_SNAP_INTERVAL,
-//       index * MAIN_SNAP_INTERVAL,
-//       (index + 1) * MAIN_SNAP_INTERVAL,
+//       (index - 1) * SNAP,
+//       index * SNAP,
+//       (index + 1) * SNAP,
 //     ];
-  
-//     const scale = mainScrollX.interpolate({
+//     const scale = scrollX.interpolate({
 //       inputRange,
-//       outputRange: [0.85, 1, 0.85], // ✅ symmetric
+//       outputRange: [0.85, 1, 0.85],
 //       extrapolate: "clamp",
 //     });
-  
-//     const opacity = mainScrollX.interpolate({
-//       inputRange,
-//       outputRange: [0.6, 1, 0.6],
-//       extrapolate: "clamp",
-//     });
-//     const translateY = mainScrollX.interpolate({
-//       inputRange,
-//       outputRange: [10, 0, 10],
-//       extrapolate: "clamp",
-//     });
-  
 
 //     return (
-//     <Animated.View
-//       style={{
-//         width: MAIN_ITEM_WIDTH,
-//         marginHorizontal: MAIN_ITEM_MARGIN,
-//         transform: [{ scale },{ translateY }],
-//         opacity
-//       }}
-//       className ="flex-col justify-center  items-center"
-//      >
-    
-//           <TouchableOpacity
-//                onPress={async()=> {
-//                 userParticipation && setStage(true)
-//                 userParticipation && setSelectedContestant(userParticipation && userParticipation )
-//                 updatePerformanceIndex(userParticipation._id , index)
-//                 // console.log(userQueueParticipation.performances)
-//                 userQueueParticipation  && await player.replaceAsync(item.video?.cdnUrl)
-//                 setTimeout(() => {
-//                   userParticipation && (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
-//                   userQueueParticipation && (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
-//                 }, 300);
-//                     }}
-//                 style ={{ 
-    
-//               }}
-//                 className="min  w-[100%] h-[45%]   b g-black border- borde-[white] flex-col justify-center items-center   ">
-//                              <Image
-//                               style={{width:  "100%" , height: "100%"}}
-//                               className=" opacity-100 shadow-lg elevation-2xl rounded-xl"
-//                               source={{uri:item.thumbnail?.publicUrl ||  "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
-//                               resizeMethod='cover'
-//                               cachePolicy="memory-disk"
-//                                /> 
-//                               <Image
-//                               className="absolute w-10 h-10 rounded-xl"
-//                               source={icons.play} 
-//                               resizeMethod='cover'/> 
-//                               <View
-//                               className="p-2 gap-1 w-[100%] flex-row px-1 justify-between"
-//                               >
-//                                   <Text 
-//                                                   style ={{fontSize:width/39}}
-//                                                   className="p- 2 text-center rounded-xl bg-rgba(0 ,0 ,0 , 0.7) font-black text-[#464749]"> 
-                                                
-//                                                       <Text 
-//                                                         style ={{fontSize:width/55}}
-//                                                         className="tex t-xl  font-black text-gray-400"> 
-//                                                         {index == 0 ? "Latest" : "Previous"}  
-//                                                       </Text>     
-//                                   </Text>
-//                                   <Text 
-//                                                   style ={{fontSize:width/55}}
-//                                                   className=" p- 2 text-center bg- black font-black text-gray-400"> 
-//                                                     {getTimeLapse(item.date)}
-//                                                     <Text 
-//                                                       style ={{fontSize:width/55}}
-//                                                       className="t font-black text-gray-400"> 
-//                                                       {' '} ago
-//                                                     </Text>
-//                                   </Text>
-//                               </View>
-//            </TouchableOpacity>
-//            <TouchableOpacity
-//                                                  onPress={ confirmAction }
-//                                                  onPressIn = { ()=> { 
-//                                                    userParticipation && setParticipationType("DeletePerformanceStage")
-//                                                    if(userQueueParticipation) {
-//                                                             console.log(data.length)
-//                                                             if(data) { 
-//                                                                   data.length > 1 ? setParticipationType("DeletePerformanceQueue"):
-//                                                                   setParticipationType("DeleteContestantQueue")
-//                                                                 }
-//                                                             }
-//                                                    setPerformanceToDelete(item)
-//                                                        }}
-//                                                   className ="w- [100%] h- [60%] p-2 b g-[#7a2038] rounded- xl  g-white  flex-row justify-center items-center">
-//                                                   <View
-//                                                     style={{backgroundColor: userEliminatedParticipation ? "#232222" : "#2d1219"}}
-//                                                     className =" px-4 py-2 bg-[#232222] min-w -[20%] rounded -t-md flex-row justify-center items-center">
-//                                                         <Text    
-//                                                               style ={{
-//                                                                 fontSize: width/55,
-//                                                                 color: "white"
-//                                                               }}
-//                                                               className="text -xl font-black  text-gray-300"> 
-//                                                                 Delete
-//                                                         </Text>
-//                                                   </View>
-//            </TouchableOpacity>
-//            </Animated.View>
-//  )}
+//       <Animated.View
+//         style={{
+//           width: ITEM_WIDTH,
+//           height: h ,
+//           // height:h/2 ,
+//           // marginHorizontal: 4,
+//           transform: [{ scale }],
+//         }}
+//         className="items-center "
+//       > 
+       
+//         {/* VIDEO CARD */}
+//         <Pressable
+//           onPress={async()=> {
+//                      userParticipation && setStage(true)
+//                      userParticipation && setSelectedContestant(userParticipation && userParticipation )
+//                      updatePerformanceIndex(userParticipation._id , index)
+//                      userQueue  && await player.replaceAsync(item.video?.cdnUrl)
+//                      setTimeout(() => {
+//                        userParticipation && (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
+//                        userQueue && (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
+//                        }, 300);
+//                    }}
+//           className="w-full h-[100%]  rounde d-2xl overflow-hidden bo rder bo rder-yellow-700/30"
+//         >
+//           <Image
+//             source={{
+//               uri:
+//                 item.thumbnail?.publicUrl ||
+//                 "https://images.unsplash.com/photo-1511379938547-c1f69419868d",
+//             }}
+//             className="w-full h-full opacity-80"
+//           />
 
+//           {/* overlay */}
+//           <View className="absolute inset-0 bg-black/40" />
 
-//  const handleScrollEnd = (event) => {
-//   const offsetX = event.nativeEvent.contentOffset.x;
-//   const index = Math.round(offsetX / MAIN_SNAP_INTERVAL);
-//   setIndex(index);
-// };
+//           {/* play icon */}
+//           <Image
+//             source={icons.play}
+//             className="absolute w-10 h-10 self-center top-[40%]"
+//           />
 
-  
+//           {/* bottom info */}
+//           <View className="absolute bottom-2 w-full px-3 flex-row justify-between">
+//             <Text className="text-xs text-gray-300">
+//               {index === 0 ? "Latest" : "Previous"}
+//             </Text>
+//             <Text className="text-xs text-gray-400">
+//               {getTimeLapse(item.date)} ago
+//             </Text>
+//           </View>
+//         </Pressable>
+
+//         {/* DELETE BUTTON */}
+//         <Pressable
+//           onPress={() => {
+//                            if(userParticipation) {
+//                             if(data) { 
+//                               data.length > 1 ? setParticipationType("DeletePerformanceStage"):
+//                                                 setParticipationType("DeleteContestantStage")
+//                                    }
+//                                } 
+//                             if(userQueue) {
+//                               if(data) { 
+//                                    data.length > 1 ? setParticipationType("DeletePerformanceQueue"):
+//                                                      setParticipationType("DeleteContestantQueue")
+//                                         }
+//                                        }
+//                             if(userEliminated) {
+//                                 if(data) { 
+//                                     data.length > 1 ? setParticipationType("DeletePerformanceQueue"):
+//                                              setParticipationType("DeleteContestantQueue")
+//                                           }
+//                                         }
+//                               setPerformanceToDelete(item)
+//                               confirmAction
+//                           }}
+            
+//           className=" px-4   absolute top-0  py-4 rounded-lg bor der bor der-yellow-700/30"
+//         >
+//           <Text className="text-xs text-yellow-400 font-semibold">
+//             Remove
+//           </Text>
+//         </Pressable>
+       
+//       </Animated.View>
+//     );
+//   };
+
+//   /* ---------------- UI ---------------- */
 
 //   return (
-  
-//   <>
-//   {isLoaded && (
-
-
-       
 //     <View
- 
-//     className=" b g-black absolute b g-white flex-col justify-center items-center"
-//     style ={{ 
-//       opacity: !isPlaying ? 1 : 0,
-//       height: h  ,
-//       width : w ,
-//       top : Platform.OS == "ios" ?  10 : 10
-//      }}>
-   
-//      <UserCard selectedContestant={{...userParticipation,
-//                                      profile_img:user.profileImage.publicUrl ,
-//                                      name:user.name , city :user.city , country:user.country }} 
-//                                      height={height/15} 
-//                                      width={w * 0.75} 
-//                                      />
+//       style={{
+//         position: "absolute",
+//         top: top,
+//         height: h,
+//         width: w,
+//       }}
+//       className="bg-[#0a0a0f] justify-center items-center "
+//     >
+      
+      
 
-         
-         
-//      <View
-//                 className = " absolute top-2 right-4 gap-2">  
-//                     <ShuffleLetters textSize={h/65} text = {userParticipation ?"On stage":
-//                                                           userQueueParticipation ? "In Queue":
-//                                                           userEliminatedParticipation ?"Eliminated":
-//                                                           "Join"
-//                     }/>
-//      </View>
-    
-//      <View
-//           className ="flex-1 h- [100%] b g-[#353434] items-center justify-center b g-[#9f9b9b]">
-//             {data ? (
-//                   <Animated.FlatList
-//                       data={data}
-//                       ref={flatList}
-//                       // extraData={data}
-//                       keyExtractor={(item, index) =>
-//                         item.video?.fileId || index.toString()
-//                       }                                    
-//                       renderItem={renderItem}
-//                       removeClippedSubviews={true} 
-//                       scrollEventThrottle = {16}
-//                       showsHorizontalScrollIndicator ={false}
-//                       horizontal={true}
-//                       onViewableItemsChanged={onViewableItemsChanged.current}
-//                       decelerationRate="fast"
-//                       bounces={false}  
-//                       viewabilityConfig={{
-//                           itemVisiblePercentThreshold: 70, 
-//                         }}
-//                         getItemLayout={(data, index) => ({
-//                           length: MAIN_SNAP_INTERVAL,
-//                           offset: MAIN_SNAP_INTERVAL * index,
-//                           index,
-//                         })}
+//       <View
+//         className ="flex-1 py- 4 items-center"
+//         style={{
+//           width: w,
+//         }}
+//       > 
+//         {data ? (
+//              <Animated.FlatList
+//              ref={flatListRef}
+//              data={data}
+//              horizontal
+//              keyExtractor={(item, i) => item.video?.fileId || i.toString()}
+//              renderItem={renderItem}
+//              snapToInterval={SNAP}
+//              showsHorizontalScrollIndicator={false}
+//              contentContainerStyle={{
+//                paddingHorizontal: SIDE /2,
+//              }}
+//              onScroll={Animated.event(
+//                [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+//                { useNativeDriver: true }
+//              )}
+//            />
 
-//                       snapToInterval={MAIN_SNAP_INTERVAL}
-//                       contentContainerStyle={{
-//                           paddingHorizontal: SIDE_SPACING,
-//                           // marginVertical: 20,
-//                           }}
-                      
-//                       onScroll={Animated.event(
-//                             [{ nativeEvent: { contentOffset: { x: mainScrollX } } }],
-//                             { useNativeDriver: true }
-//                             )}
-//                       onMomentumScrollEnd={handleScrollEnd}
-
-//                   /> 
-//             ):(
-//               <View
-//               style={{width:w - w * 0.5 , 
-//                       backgroundColor:  'rgba(0,0, 0 , 0.1)'
-//                 }}
-//                 className = " flex-col px-2 py-4 text-center mt- auto justify-center gap-4 b g-black rounded-xl items-center ">
-//                         <Text 
-//                             style ={{fontSize:10, }}
-//                             className="text-xl font-bold text-center  text-gray-200"> 
-//                                 { status == "join" ?"Join the contest, shine on stage, and show the world what you’ve got! The audience will watch, vote, and judge your performance." :
-//                                 status == "queue"?"The stage is full ! Join the queue, get ready to shine, and soon the audience will watch, vote, and judge your talent." :
-//                                 " You're not on stage yet! Want to showcase your talent? Join the challenge below"} 
-//                         </Text>
-//                         <Image 
-//                         className="w-[30px] h-[30px] rounded-full"
-//                         resizeMethod='cover'
-//                         source={icons.down_arrow}/>
-//               </View>
-//             )}
-           
-//                {data && (
-//                    <Text 
-//                    style ={{fontSize:width/35 , 
-//                      marginTop: 0,
-//                    }}
-//                    className=" font-semibold mb-8 text-[#e49336]">Performances :{' '}
-//                      <Text 
-//                          style ={{fontSize:width/40}}
-//                          className="tex t-xl  font-black text-[#e49336]"> 
-//                              {data && data.length}
+//         ) : (
+          
+//              <View
+//                  style={{ 
+//                           backgroundColor:  'rgba(0,0, 0 , 0.1)'
+//                       }}
+//                  className = "flex-1 w-[70%] flex-col px-2 py-4 text-center mt- auto justify-center gap-4 b g-black rounded-xl items-center ">
+//                     <Text 
+//                         style ={{fontSize:width/35, }}
+//                         className="text-xl font-bold text-center font-bebas tracking-widest  text-gray-200"> 
+//                              { status == "join" ?"Join the contest, shine on stage, and show the world what you’ve got! The audience will watch, vote, and judge your performance." :
+//                                status == "queue"?"The stage is full ! Join the queue, get ready to shine, and soon the audience will watch, vote, and judge your talent." :
+//                                " You're not on stage yet! Want to showcase your talent? Join the Stage below"} 
 //                      </Text>
-                     
-//                     </Text>
-//                )}
-               
-//               </View>
-
-
-
-//               <View
-//                className="flex- 1 w-[100%] bg -white flex-row justify-center gap-6 items-center">
-//                 <TouchableOpacity
-//                           onPressIn={async()=> {
-//                             // const res = await canAttendStage(talentRoom._id , gpsLocation)
-//                             // console.log(res)
-//                             if(userCountryCode !== talentRoom.region){
-//                               setParticipationType("CNTJ")
-//                               return ;
-//                             }
-//                             setParticipationType(type)
-//                           }}
-//                           onPress={confirmAction}
+//                     <Image 
+//                        className="w-[30px] h-[30px] rounded-full"
+//                        resizeMethod='cover'
+//                        source={icons.down_arrow}/>
+//              </View>
                         
-//                           className="  flex-row py-4  justify-center items-center">
-//                           <View
-//                           style={{                       
-//                             backgroundColor:"#3f2326",
-//                           }}
-//                           className=" px-6 py- 2 justify-center items-center rounded-md  ">
-//                                 <Text 
-//                                     style ={{fontSize:w/45,
-//                                       color:"white"
-//                                     }}
-//                                     className="text-xl font-bold mb- text-gray-100"> 
-//                                       {
-//                                         status == "locked" ?"Locked":
-//                                         status =="joined" ?"Resign": 
-//                                         status =="join" ?"Join":
-//                                         status == "queue"? "Join Queue":
-//                                         status == "queued" ? "Delete": "Delete"
-//                                       }  
-//                                 </Text>
-//                           </View>        
-//                 </TouchableOpacity>
-
-//                 {(userParticipation || userEliminatedParticipation || userQueueParticipation) && (
-//                   <TouchableOpacity
-//                             onPress={ confirmAction}
-//                             onPressIn={()=> { 
-//                               userQueueParticipation &&  setParticipationType("qupdate")
-//                               userEliminatedParticipation && setParticipationType("backInQueue")
-//                               // postTimeLaps < 3 ?
-//                               userParticipation && setParticipationType("update")
-//                               // :setParticipationType("action")
-//                                   }}
-//                             style={{
-//                               }}
-//                             className="  px-2  ] flex-row py-2 justify-center items-start">
-//                                 <View
-//                                   style={{                       
-//                                     backgroundColor: userEliminatedParticipation ? "#29282a" : "#3c2c19"
-//                                   }}
-//                                   className=" px-6 py-2 justify-center bg-[#3c2c19] items-center  rounded-md">
-//                                       <Text 
-//                                           style ={{fontSize:width/45,
-//                                             // color:postTimeLaps > 3 ?"blue" :"white",
-//                                           }}
-//                                           className="text- xl font-bold mb- text-gray-100"> 
-//                                            {!userEliminatedParticipation ? "Add Performance " : "Back in Queue"} 
-//                                       </Text>
-//                               </View>
-//                   </TouchableOpacity>
-//                   )}
-//                </View>
+//         )}
+          
+//       </View>
+//       <LinearGradient
+//            pointerEvents="none"
+//            colors={[ "transparent" , "rgba(0,0,0,0.95)"]}
+//                 style={{
+//                  position: "absolute",
+//                  bottom: 0,
+//                  alignSelf: "center",
+//                  width: width,
+//                  height:  height/10,
+//                  borderRadius: 0,
+//                }}
+//       />   
   
-// </View>
+//       {/* 🔻 BOTTOM ACTIONS */}
+//       <View
+//       className="p- 2 w-full absolute bottom-0 flex-row justify-center items-end"
+//         style={{
+//           width: "100%",
+//           // gap: 12,
+//         }}
+//       >
+//         <View
+//         className ="min-w-[25%] flex-row justify-center pb-2 items-center ">
+//           <Pressable
+//             onPress={() => {
+//               if ( status == "Join" &&  userCountryCode !== talentRoom.region) {
+//                 setParticipationType("CNTJ");
+//                 return;
+//               }
+//               setParticipationType(type);
+//               confirmAction
+//             }}
+//             className="px-6 py-2 border border-black-200 rounded-md bg-[#111110]"
+//           >
+//             <Text
+//               style = {{ 
+//                 color: status == "Join" ? "orange" : status == "Queue" ? "lightblue" : "#EF4444",
+//                 fontSize : width/38
+//               }}
+//               className="text-yellow-400 font-bebas tracking-widest">
+//               {statusLabel[status]}
+//             </Text>
+//           </Pressable>
+//         </View>
 
+//         <View
+//                            style ={{ 
+//                            // backgroundColor :"rgba(0,0,0,0.4)"
+//                            }}
+//                            className= "flex-row gap-4 p-2 w-[40%] rounded-lg justify-center items-end">
+//                               <TouchableOpacity
+//                                           style={{
+//                                           //   width : width 
+//                                           }}
+//                                           className="flex- 1   flex-col justify-start  items-center gap-2 ">
+                                                
+//                                                 <UserCard   selectedContestant={userParticipation || userQueue || userEliminated || 
+//                                                            {...user , profile_img: user.profileImage.publicUrl}}  
+//                                                             height={height/22} width={width * 0.7 } />
+                                                
+//                               </TouchableOpacity>
+                            
+//          </View>
 
+//          <View
+//          className ="min-w-[25%] flex- 1 bg -white flex-row justify-center pb-2 items-center ">
+//          {(userParticipation || userQueue || userEliminated) && (
+//           <Pressable
+            
+//             onPressIn={()=> { 
+//                             userQueue &&  setParticipationType("qupdate")
+//                             userEliminated && setParticipationType("backInQueue")
+//                              // postTimeLaps < 3 ?
+//                             userParticipation && setParticipationType("update")
+//                             // :setParticipationType("action")
+//                             confirmAction;
+//                              }}
+//             className="px-4 py-2  rounded-md pt- 2 border border-yellow-700/40"
+//           >
+//             <Text 
+//               style = {{ fontSize : width/44}}
+//               className="text-white font-bebas tracking-wider">
+//               {userEliminated ? "Back In Queue" : "Add Performance"}
+//             </Text>
+//           </Pressable>
+//         )}
+//         </View>
+//       </View>
+//       {data  && (
+//         <>
+//             <CarouselIndicator
+//             count = {data && data.length}
+//             scrollX = {scrollX}
+//             width = {width}
+//             position = {
+//                   {
+//                     bottom : h/12 ,
+//                     right : null
+//                   }
+//             }
+//             rank = {userParticipation?.rank || null }
+//             votes={userParticipation?.votes + 1 || null}
+//             status={status}
+//           />
+//           <StatusDisplayer status ={status} bottom = {h/9} />
+//         </>
+//       )}
 
+      
 
-//      )} 
-
-
-//     </>
+     
+  
+//     </View>
 //   );
-// }
+// };
+
 // export default ContestantRoom;
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
+
+
+
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
+
 import {
   View,
   Text,
@@ -462,14 +427,21 @@ import {
   useWindowDimensions,
   Animated,
   Pressable,
-  Platform,
+  StatusBar,
 } from "react-native";
+
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
+
 import UserCard from "./UserCard";
-import ShuffleLetters from "../custom/ShuffleLetters";
+import CarouselIndicator from "../custom/carouselIndicator";
+import StatusDisplayer from "../custom/statusDisplayer";
+
 import { getTimeLapse } from "../../helper";
-import CountryFlag from "react-native-country-flag";
+import { stageIcons } from "../../utilities/TypeData";
 
 const ContestantRoom = ({
   user,
@@ -483,406 +455,790 @@ const ContestantRoom = ({
   updatePerformanceIndex,
   w,
   h,
+  top,
+  bottom,
   numberOfContestants,
   setSelectedContestant,
   setParticipationType,
   talentRoom,
   edition,
 }) => {
+
   const { userCountryCode } = useGlobalContext();
-  const { width } = useWindowDimensions();
+
+  const { width, height } = useWindowDimensions();
 
   const flatListRef = useRef(null);
-  const scrollX = useRef(new Animated.Value(0)).current;
+
+  const scrollX = useRef(
+    new Animated.Value(0)
+  ).current;
 
   const MAX = talentRoom.MAXCONTESTANTS;
-  const [type , setType] = useState("")
-  /* ---------------- DATA ---------------- */
 
-  const userQueue = talentRoom.queue.find(u => u.user_id === user._id);
-  const userEliminated = talentRoom.eliminations.find(u => u.user_id === user._id);
+  const [type, setType] = useState("");
+
+  /* ---------------------------------- */
+  /* USER STATES */
+  /* ---------------------------------- */
+
+  const userQueue = talentRoom.queue.find(
+    (u) =>
+      String(u.user_id) === String(user._id)
+  );
+
+  const userEliminated =
+    talentRoom.eliminations.find(
+      (u) =>
+        String(u.user_id) ===
+        String(user._id)
+    );
+
+  const contestant =
+    userParticipation ||
+    userQueue ||
+    userEliminated;
 
   const data =
-    userParticipation?.performances ||
-    userQueue?.performances ||
-    userEliminated?.performances ||
-    null;
+    contestant?.performances
+      ?.slice()
+      .reverse() || [];
 
-  /* ---------------- STATUS LOGIC (CLEAN) ---------------- */
+  /* ---------------------------------- */
+  /* STATUS */
+  /* ---------------------------------- */
 
   const status = useMemo(() => {
-    if (userParticipation){ setType("deleteContestantStage") ; return "Joined"};
-    if (userEliminated) { setType("deleteContestantElimination") ;return "Eliminated"};
-    if (userQueue) {setType("deleteContestantQueue");return "Queued"};
-    if (numberOfContestants < MAX) {
-      edition.round < 4  && setType("new") 
-      edition.round >= 4  && setType("queue") 
-      return edition.round < 4 ? "Join" : "Queue";
-    }
-    setType("queue")
-    return "queue";
-  }, [userParticipation, userQueue, userEliminated]);
-
-  const statusLabel = {
-    Joined: "Resign",
-    Queued: "Delete",
-    Eliminated: "Delete",
-    Join: "Join",
-    Queue: "Join Queue",
-  };
-
-  /* ---------------- LAYOUT ---------------- */
-
-  const ITEM_WIDTH = w * 0.90;
-  const SNAP = ITEM_WIDTH + 2;
-  const SIDE = (w - ITEM_WIDTH) / 2;
-
-  /* ---------------- HANDLERS ---------------- */
-
-  const handlePlay = async (item, index) => {
-    if (!item?.video?.cdnUrl) return;
-
-    setSelectedContestant(userParticipation);
-    updatePerformanceIndex(userParticipation?._id, index);
-
-    await player.replaceAsync(item.video.cdnUrl);
-
-    setTimeout(() => {
-      if (isPlaying) {
-        player.pause();
-        setIsPlaying(false);
-      } else {
-        player.play();
-        setIsPlaying(true);
-      }
-    }, 200);
-  };
-
-  const handleDelete = (item) => {
-    setPerformanceToDelete(item);
 
     if (userParticipation) {
-      setParticipationType("DeletePerformanceStage");
-    } else if (userQueue) {
+      setType("DeleteContestantStage");
+      return "Joined";
+    }
+
+    if (userEliminated) {
+      setType(
+        "DeleteContestantElimination"
+      );
+      return "Eliminated";
+    }
+
+    if (userQueue) {
+      setType("DeleteContestantQueue");
+      return "Queued";
+    }
+
+    if (numberOfContestants < MAX) {
+
+      edition.round < 4
+        ? setType("new")
+        : setType("queue");
+
+      return edition.round < 4
+        ? "Join"
+        : "Queue";
+    }
+
+    setType("queue");
+
+    return "Queue";
+
+  }, [
+    userParticipation,
+    userQueue,
+    userEliminated,
+    numberOfContestants,
+    edition,
+  ]);
+
+  const statusLabel = {
+    Joined: "RESIGN",
+    Queued: "LEAVE QUEUE",
+    Eliminated: "REMOVE",
+    Join: "JOIN STAGE",
+    Queue: "JOIN QUEUE",
+  };
+
+  /* ---------------------------------- */
+  /* CAROUSEL */
+  /* ---------------------------------- */
+
+  const ITEM_WIDTH = width;
+
+  const ITEM_HEIGHT = h;
+
+  const SNAP = ITEM_WIDTH;
+
+  /* ---------------------------------- */
+  /* ACTIONS */
+  /* ---------------------------------- */
+
+  const togglePlayback = async (
+    item,
+    index
+  ) => {
+
+    if (!item?.video?.cdnUrl) return;
+
+    setSelectedContestant(contestant);
+
+    updatePerformanceIndex(
+      contestant?._id,
+      index
+    );
+
+    await player.replaceAsync(
+      item.video.cdnUrl
+    );
+
+    setTimeout(() => {
+
+      if (isPlaying) {
+
+        player.pause();
+
+        setIsPlaying(false);
+
+      } else {
+
+        player.play();
+
+        setIsPlaying(true);
+      }
+
+    }, 120);
+  };
+
+  const deletePerformance = (item) => {
+    setPerformanceToDelete(item);
+    if (userParticipation) {
+      setParticipationType(
+        data.length > 1
+          ? "DeletePerformanceStage"
+          : "DeleteContestantStage"
+      );
+    }
+    if (userQueue || userEliminated) {
       setParticipationType(
         data.length > 1
           ? "DeletePerformanceQueue"
           : "DeleteContestantQueue"
       );
     }
-
-    confirmAction();
+    confirmAction;
   };
 
-  /* ---------------- RENDER ITEM ---------------- */
+  /* ---------------------------------- */
+  /* RENDER ITEM */
+  /* ---------------------------------- */
 
-  const renderItem = ({ item, index }) => {
-    const inputRange = [
-      (index - 1) * SNAP,
-      index * SNAP,
-      (index + 1) * SNAP,
-    ];
+  const renderItem = useCallback(
+    ({ item, index }) => {
 
-    const scale = scrollX.interpolate({
-      inputRange,
-      outputRange: [0.85, 1, 0.85],
-      extrapolate: "clamp",
-    });
+      const inputRange = [
+        (index - 1) * width,
+        index * width,
+        (index + 1) * width,
+      ];
+  
+      /* 🎬 FLIP EFFECT */
+      const rotateY = scrollX.interpolate({
+        inputRange,
+        outputRange: ["90deg", "0deg", "-90deg"],
+        extrapolate: "clamp",
+      });
+  
+      const opacity = scrollX.interpolate({
+        inputRange,
+        outputRange: [0.3, 1, 0.3],
+        extrapolate: "clamp",
+      });
+
+      return (
+        <View 
+      className ="flex-1"
+         style={{ 
+           width: w,
+          height: h,
+         }}
+         >
+            <Animated.View
+              style={{
+                flex:1,
+                transform: [
+                  { perspective: 1000 },
+                  { rotateY },
+                ],
+              }}
+            >
+
+              <Pressable
+                // activeOpacity={1}
+                onPress={async () => {
+
+                  setStage(true);
+
+                  await togglePlayback(
+                    item,
+                    index
+                  );
+                }}
+                style={{
+                  flex:1
+                }}
+                className="fl ex-1"
+              >
+
+                {/* BACKGROUND IMAGE */}
+
+                <Image
+                  source={{
+                    uri:
+                      item.thumbnail?.publicUrl ||
+                      "https://images.unsplash.com/photo-1511379938547-c1f69419868d",
+                  }}
+                  resizeMode="cover"
+                  style={{
+                    width:"100%",
+                  height: "100%",
+                  }}
+                  className=""
+                />
+
+                {/* CINEMATIC OVERLAY */}
+
+                <LinearGradient
+                  colors={[
+                    "rgba(0,0,0,0.15)",
+                    "rgba(0,0,0,0.45)",
+                    "rgba(0,0,0,0.92)",
+                  ]}
+                  style={{
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+
+                {/* TOP LIVE BADGE */}
+
+                <View className="absolute top-2  left-2">
+
+                  <BlurView
+                    intensity={25}
+                    tint="dark"
+                    style={{
+                      borderRadius: 999,
+                      overflow: "hidden",
+                    }}
+                  >
+
+                    <View className="px-3 py-2 flex-row items-center">
+
+                      <View className="w-3 h-3 rounded-xl bg-red-500 mr-2" />
+
+                      <Text 
+                        style={{
+                          fontSize:
+                            width / 39,
+                        }}
+                        className="text-white font-bold track ing-wide"
+                      >
+                        LIVE PERFORMANCE
+                      </Text>
+
+                    </View>
+
+                  </BlurView>
+
+                </View>
+
+                {/* CENTER PLAY */}
+
+                <View className="absolute inset-0 justify-center items-center">
+
+                  <View className="w-20 h-20 rounded-full bg-black/40 border border-white/10 justify-center items-center">
+
+                    <Image
+                      source={icons.play}
+                      className="w-8 h-8"
+                      tintColor="white"
+                    />
+
+                  </View>
+
+                </View>
+
+                {/* BOTTOM PERFORMANCE INFO */}
+
+                <View 
+                  style = {{
+                  bottom: bottom * 2  }}
+                  className="absolute flex-row px-4 w-full">
+                  
+                  
+            
+                  <View className=" flex-row items-end flex-1 justify-between">
+
+                    {/* TIME */}
+
+                    <BlurView
+                      intensity={20}
+                      tint="dark"
+                      style={{
+                        borderRadius: 999,
+                        overflow: "hidden",
+                      }}
+                    >
+                     
+                      <View className="px-4 flex-row py-2 gap-1">
+                      <Text
+                          style={{
+                            fontSize:
+                              width / 45,
+                          }}
+                          className="text-gray-300 "
+                        >
+                          {index === 0
+                            ? "Most Recent "
+                            : "Previous "}
+                        </Text>
+
+                        <Text
+                          style={{
+                            fontSize:
+                              width / 45,
+                          }}
+                          className="text-white font-semibold"
+                        >
+                          {getTimeLapse(
+                            item.date
+                          )} ago
+                        </Text>
+
+                      </View>
+
+                    </BlurView>
+                    
+                    
+
+                    {/* REMOVE */}
+
+                    <Pressable
+                      onPress={() =>{
+                        // deletePerformance(item)
+                        setPerformanceToDelete(item);
+                        if (userParticipation) {
+                          setParticipationType(
+                            data.length > 1
+                              ? "DeletePerformanceStage"
+                              : "DeleteContestantStage"
+                          );
+                        }
+                        if (userQueue || userEliminated) {
+                          setParticipationType(
+                            data.length > 1
+                              ? "DeletePerformanceQueue"
+                              : "DeleteContestantQueue1"
+                          );
+                        }
+                        confirmAction;
+                      }
+                      }
+                      className="px-4 py-2 border border-red-500/20"
+                    >
+
+                      <BlurView
+                        intensity={20}
+                        tint="dark"
+                        style={{
+                          borderRadius: 24,
+                          overflow: "hidden",
+                        }}
+                      >
+
+                        {/* <View className="px-4 py-2 border border-red-500/20"> */}
+
+                          <Text
+                            style={{
+                              fontSize:
+                                width / 40,
+                            }}
+                            className="text-red-400 font-bold"
+                          >
+                            REMOVE
+                          </Text>
+
+                        {/* </View> */}
+
+                      </BlurView>
+
+                    </Pressable>
+
+                  </View>
+             
+
+                </View>
+
+              </Pressable>
+
+            </Animated.View>
+        </View>
+      );
+    },
+    [
+      isPlaying,
+      contestant,
+      data,
+    ]
+  );
+
+  /* ---------------------------------- */
+  /* EMPTY STATE */
+  /* ---------------------------------- */
+
+  const renderEmptyState = () => {
 
     return (
-      <Animated.View
-        style={{
-          width: ITEM_WIDTH,
-          // height:h/2 ,
-          marginHorizontal: 4,
-          transform: [{ scale }],
-        }}
-        className="items-center "
-      > 
-        <Pressable
-          onPress={() => {
-                           if(userParticipation) {
-                            if(data) { 
-                              data.length > 1 ? setParticipationType("DeletePerformanceStage"):
-                                                setParticipationType("DeleteContestantStage")
-                                   }
-                               } 
-                            if(userQueue) {
-                              if(data) { 
-                                   data.length > 1 ? setParticipationType("DeletePerformanceQueue"):
-                                                     setParticipationType("DeleteContestantQueue")
-                                        }
-                                       }
-                            if(userEliminated) {
-                                if(data) { 
-                                    data.length > 1 ? setParticipationType("DeletePerformanceQueue"):
-                                             setParticipationType("DeleteContestantQueue")
-                                          }
-                                        }
-                              setPerformanceToDelete(item)
-                              confirmAction
-                          }}
-            
-          className="mt-2 px-4 py-2 rounded-lg border border-yellow-700/30"
+
+      <View className="flex-1 justify-center items-center px-10">
+
+        <LinearGradient
+          colors={[
+            "rgba(255,255,255,0.03)",
+            "rgba(255,255,255,0.01)",
+          ]}
+          className="w-full rounded-[34px] p-8 border border-white/10"
         >
-          <Text className="text-xs text-yellow-400 font-semibold">
-            Remove
-          </Text>
-        </Pressable>
-        {/* VIDEO CARD */}
-        <Pressable
-          onPress={async()=> {
-                     userParticipation && setStage(true)
-                     userParticipation && setSelectedContestant(userParticipation && userParticipation )
-                     updatePerformanceIndex(userParticipation._id , index)
-                     userQueue  && await player.replaceAsync(item.video?.cdnUrl)
-                     setTimeout(() => {
-                       userParticipation && (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
-                       userQueue && (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
-                       }, 300);
-                   }}
-          className="w-full h-[90%]  rounde d-2xl overflow-hidden border border-yellow-700/30"
-        >
-          <Image
-            source={{
-              uri:
-                item.thumbnail?.publicUrl ||
-                "https://images.unsplash.com/photo-1511379938547-c1f69419868d",
-            }}
-            className="w-full h-full opacity-80"
-          />
 
-          {/* overlay */}
-          <View className="absolute inset-0 bg-black/40" />
+          <View className="items-center">
 
-          {/* play icon */}
-          <Image
-            source={icons.play}
-            className="absolute w-10 h-10 self-center top-[40%]"
-          />
-
-          {/* bottom info */}
-          <View className="absolute bottom-2 w-full px-3 flex-row justify-between">
-            <Text className="text-xs text-gray-300">
-              {index === 0 ? "Latest" : "Previous"}
+            <Text
+              style={{
+                fontSize:
+                  width / 7,
+              }}
+            >
+               {stageIcons[talentRoom.name]}
             </Text>
-            <Text className="text-xs text-gray-400">
-              {getTimeLapse(item.date)} ago
+
+            <Text
+              style={{
+                fontSize:
+                  width / 22,
+              }}
+              className="text-white font-black mt-4 text-center"
+            >
+              JOIN THE STAGE
             </Text>
+
+            <Text
+              style={{
+                fontSize:
+                  width / 30 ,
+                lineHeight: 26,
+              }}
+              className="text-gray-400 text-center mt-4"
+            >
+              Showcase your talent,
+              climb the rankings,
+              and captivate the audience.
+            </Text>
+
           </View>
-        </Pressable>
 
-        {/* DELETE BUTTON */}
-       
-      </Animated.View>
+        </LinearGradient>
+
+      </View>
     );
   };
 
-  /* ---------------- UI ---------------- */
+  /* ---------------------------------- */
+  /* MAIN UI */
+  /* ---------------------------------- */
 
   return (
+
     <View
       style={{
         position: "absolute",
-        top: 10,
-        height: h,
+        top,
         width: w,
+        height: h,
       }}
-      className="bg-[#0a0a0f] justify-center items-center "
+      className="bg-black flex -1 justify-center items-center "
     >
 
+      {/* <StatusBar barStyle="light-content" /> */}
 
-      <View
-        className="w-full flex-col justify-center items-center "  >
-      
-        <View className="w-full items-center">
-          <Image
-            source={{ uri: user.profileImage?.publicUrl }}
-            style={{
-              width: h/13,
-              height:  h/13,
+      {/* BACKGROUND */}
+
+      {/* <LinearGradient
+        colors={[
+          "#050507",
+          "#0B0B12",
+          "#111118",
+          "#050507",
+        ]}
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+        }}
+      /> */}
+
+      {/* CONTENT */}
+
+      {/* <View className="flex-1"> */}
+
+        {data?.length > 0 ? (
+   
+          <Animated.FlatList
+            ref={flatListRef}
+            horizontal
+            pagingEnabled
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item, i) =>
+              item.video?.fileId ||
+              i.toString()
+            }
+            snapToInterval={SNAP}
+            decelerationRate="fast"
+            disableIntervalMomentum
+            bounces={false}
+            removeClippedSubviews={false}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              // paddingHorizontal: 0,
             }}
-            className="rounded-full border border-yellow-700/40"
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      x: scrollX,
+                    },
+                  },
+                },
+              ],
+              {
+                useNativeDriver: true,
+              }
+            )}
+            scrollEventThrottle={16}
           />
 
-          {/* 👑 crown */}
-          {userParticipation?.rank === 1 && (
-            <Text className="absolute -top-2 right-0 text-lg">
-              👑
-            </Text>
-          )}
+        ) : (
+          renderEmptyState()
+        )}
+
+         {data.length > 0 && (
+         <CarouselIndicator
+              count={data.length}
+              scrollX={scrollX}
+              width={width}
+              position={{
+                bottom: bottom * 2 - 10,
+                right: null,
+                 }}
+              rank={
+                userParticipation?.rank ||
+                null
+              }
+              votes={
+                userParticipation?.votes +
+                  1 || null
+              }
+              status={status}
+            />
+           )} 
+      <View
+      style= {{ bottom:bottom }}
+       className="absolute gap-2 w-full px-2 " 
+       >
+        <View className="flex-row flex-1 items-center justify-center">
+            {/* SECONDARY BUTTON */}
+            {(userParticipation ||
+              userQueue ||
+              userEliminated) && (
+              <Pressable
+                onPress={() => {
+
+                  userQueue &&
+                    setParticipationType(
+                      "qupdate"
+                    );
+
+                  userEliminated &&
+                    setParticipationType(
+                      "backInQueue"
+                    );
+
+                  userParticipation &&
+                    setParticipationType(
+                      "update"
+                    );
+
+                  confirmAction;
+                }}
+                className ="flex-1"
+              >
+                  <View className="px-4 py-3 rounded-xl bg-gold/40 items-center flex-1 border border-white/10">
+                    <Text
+                      style={{
+                        fontSize:
+                          width / 46,
+                      }}
+                      className="text-white font-bold"
+                    >
+                      {userEliminated
+                        ? "BACK IN QUEUE"
+                        : "ADD PERFORMANCE"}
+                    </Text>
+
+                  </View>
+              </Pressable>
+            )}
         </View>
+        <BlurView
+          intensity={40}
+          tint="dark"
+          style={{
+            flex:1,
+            borderRadius: 18,
+            overflow: "hidden",
+          }} >    
+          <View className="px-2 py-4 w-full border gap-6 border-white/10">
 
+            <View className="flex-row w-full gap-6 justify-center  items-end">
 
-        <View className="p-2 w-full items-center justify-center">
+              <UserCard
+                selectedContestant={
+                  contestant || {
+                    ...user,
+                    profile_img:
+                      user.profileImage
+                        .publicUrl,
+                  }
+                }
+                height={height / 22}
+                width={width * 0.72}
+              />
+
+              <StatusDisplayer
+                          status={status}
+                          bottom={0}
+                        />
+
+             <Pressable
+                onPress={() => {
+
+                  if (
+                    status === "Join" &&
+                    userCountryCode !==
+                      talentRoom.region
+                  ) {
+                    setParticipationType(
+                      "CNTJ"
+                    );
+                    return;
+                  }
+
+                  setParticipationType(type);
+
+                  confirmAction;
+                }}
+                className ="flex- 1 ml-auto justify-start items-end"
+              >
+
+                <LinearGradient
+                  colors = {
+                    status === "Join"
+                      ? [
+                          "#F59E0B",
+                          "#EA580C",
+                        ]
+                      : status ===
+                        "Queue"
+                      ? [
+                          "#2563EB",
+                          "#0891B2",
+                        ]
+                      : [
+                          "#991B1B",
+                          "#DC2626",
+                        ]
+                  }
+                  style={{
+                    borderRadius: 11,
+                  }}
+                  
+                >
+
+                  <View className="px-4 py-3">
+
+                    <Text
+                      style={{
+                        fontSize:
+                          width / 48,
+                      }}
+                      className="text-white font-bold tracking-widest"
+                    >
+                      {
+                        statusLabel[
+                          status
+                        ]
+                      }
+                    </Text>
+
+                  </View>
+
+                </LinearGradient>
+
+              </Pressable>
+
+            </View>
 
      
-          {/* <View className="mb- 1">
-            <Text
-              style={{ fontSize: width / 38 }}
-              className="text-yellow-500 font-bold tracking-widest"
-            >
-              {userParticipation?.rank < 5
-                ? `TOP ${userParticipation?.rank}`
-                : `RANK ${userParticipation?.rank}`}
-            </Text>
 
-            subtle divider
-            <View className="w-16 h-[1px] bg-yellow-700/40 mt-1" /> */}
-         
-         
-          <Text
-            style={{ fontSize: width / 39 }}
-            className="text-white font-semibold"
-            numberOfLines={1}
-          >
-            {user.name}
-          </Text>
+           
 
-          {/* 🌍 LOCATION */}
-          <View className="flex-row items-center mt-1 gap-2">
-            <Text
-              style={{ fontSize: width / 39 }}
-              className="text-gray-400"
-            >
-              {user.city}
-            </Text>
-
-            <Text className="text-gray-500">•</Text>
-
-            <Text
-              style={{ fontSize: width / 39 }}
-              className="text-gray-400"
-            >
-              {user.country}
-            </Text>
-
-            <CountryFlag
-              isoCode={user.country || "US"}
-              size={width / 40}
-            />
           </View>
-      
 
-        </View>
+        </BlurView>
 
       </View>
 
-      <View className="flex-row items-center  gap-2">
-            <Text
-              style={{ fontSize: width / 39 }}
-              className="text-yellow-400"
-            >
-              Status
-            </Text>
-
-            <Text
-              style={{ fontSize: width / 39 }}
-              className="text-gray-400"
-            >
-              {status}
-            </Text>
-
-            
-      </View>
-  
-    
-      <View
-        className ="flex-1 py-4 items-center"
-        style={{
-          width: w,
-        }}
-      > 
-        {data ? (
-             <Animated.FlatList
-             ref={flatListRef}
-             data={data}
-             horizontal
-             keyExtractor={(item, i) => item.video?.fileId || i.toString()}
-             renderItem={renderItem}
-             snapToInterval={SNAP}
-             showsHorizontalScrollIndicator={false}
-             contentContainerStyle={{
-               paddingHorizontal: SIDE /2,
-             }}
-             onScroll={Animated.event(
-               [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-               { useNativeDriver: true }
-             )}
-           />
-
-        ) : (
-          
-             <View
-                 style={{ 
-                          backgroundColor:  'rgba(0,0, 0 , 0.1)'
-                      }}
-                 className = "flex-1 w-[70%] flex-col px-2 py-4 text-center mt- auto justify-center gap-4 b g-black rounded-xl items-center ">
-                    <Text 
-                        style ={{fontSize:width/35, }}
-                        className="text-xl font-bold text-center font-montserrat  text-gray-200"> 
-                             { status == "join" ?"Join the contest, shine on stage, and show the world what you’ve got! The audience will watch, vote, and judge your performance." :
-                               status == "queue"?"The stage is full ! Join the queue, get ready to shine, and soon the audience will watch, vote, and judge your talent." :
-                               " You're not on stage yet! Want to showcase your talent? Join the Stage below"} 
-                     </Text>
-                    <Image 
-                       className="w-[30px] h-[30px] rounded-full"
-                       resizeMethod='cover'
-                       source={icons.down_arrow}/>
-             </View>
-                        
-        )}
-          
-      </View>
-  
-      {/* 🔻 BOTTOM ACTIONS */}
-      <View
-      className="p-2 w-full flex-row justify-center items-center"
-        style={{
-          width: "100%",
-          gap: 12,
-        }}
-      >
-        <Pressable
-          onPress={() => {
-            if ( status == "join" &&  userCountryCode !== talentRoom.region) {
-              setParticipationType("CNTJ");
-              return;
+      {/* INDICATORS */}
+{/* 
+      {data?.length > 0 && (
+        <>
+          <CarouselIndicator
+            count={data.length}
+            scrollX={scrollX}
+            width={width}
+            position={{
+              bottom: h / 5.8,
+              right: null,
+            }}
+            rank={
+              userParticipation?.rank ||
+              null
             }
-            setParticipationType(type);
-            confirmAction
-          }}
-          className="px-6 py-2 rounded-md bg-[#3a2a1a]"
-        >
-          <Text
-            style = {{ fontSize : width/40}}
-            className="text-yellow-400 font-bold">
-            {statusLabel[status]}
-          </Text>
-        </Pressable>
-  
-        {(userParticipation || userQueue || userEliminated) && (
-          <Pressable
-            
-            onPressIn={()=> { 
-                            userQueue &&  setParticipationType("qupdate")
-                            userEliminated && setParticipationType("backInQueue")
-                             // postTimeLaps < 3 ?
-                            userParticipation && setParticipationType("update")
-                            // :setParticipationType("action")
-                            confirmAction;
-                             }}
-            className="px-6 py-2 rounded-md  border border-yellow-700/40"
-          >
-            <Text 
-              style = {{ fontSize : width/40}}
-              className="text-white font-semibold">
-              {userEliminated ? "Return" : "Add Performance"}
-            </Text>
-          </Pressable>
-        )}
-      </View>
-  
+            votes={
+              userParticipation?.votes +
+                1 || null
+            }
+            status={status}
+          />
+
+          <StatusDisplayer
+            status={status}
+            bottom={h / 4.4}
+          />
+        </>
+      )} */}
+
     </View>
   );
 };

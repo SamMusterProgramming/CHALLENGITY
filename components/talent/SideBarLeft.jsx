@@ -34,8 +34,8 @@ const SideBarLeft = ({ show, height, width ,top ,bottom,left ,right, regionIcon,
     className="absolute flex-col justify-center rounded-tr-xl rounded-br-xl items-start  "
     style={[
         {
-            // top: top && top,
-            bottom: bottom && bottom,
+            top: top && top,
+            // bottom: bottom && bottom,
             left:left && left ,
             right:right && right,
             position: 'absolute',

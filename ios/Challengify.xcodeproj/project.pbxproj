@@ -8,28 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		39C3E4C62F884C4CCD2B8548 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 073DCC43C3B8422969374A92 /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		454CDF88C9E5B5A0556CB81C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A08A1974483764106864CD /* ExpoModulesProvider.swift */; };
-		AA1CC01E16A7B10CA0A64CE4 /* Pods_Challengify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EF3154469C2B13C7A5104F4 /* Pods_Challengify.framework */; };
+		506A60410630216A1670A9C0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38EE0804F235117B195CD715 /* ExpoModulesProvider.swift */; };
+		7D4A2669E8C2CC6F108A8401 /* Pods_Challengify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36F2C3B23F7A9B7FED87358D /* Pods_Challengify.framework */; };
+		934827CC707D2A43E7915C90 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4BA67A4740C2CFF7D437EB38 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		073DCC43C3B8422969374A92 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Challengify/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		0EF3154469C2B13C7A5104F4 /* Pods_Challengify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Challengify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* Challengify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Challengify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Challengify/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Challengify/Info.plist; sourceTree = "<group>"; };
-		20FD7AF85786A1F8AA375EB4 /* Pods-Challengify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Challengify.debug.xcconfig"; path = "Target Support Files/Pods-Challengify/Pods-Challengify.debug.xcconfig"; sourceTree = "<group>"; };
-		58A08A1974483764106864CD /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Challengify/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		7C23C6734F15F092BEFAF210 /* Pods-Challengify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Challengify.release.xcconfig"; path = "Target Support Files/Pods-Challengify/Pods-Challengify.release.xcconfig"; sourceTree = "<group>"; };
+		36F2C3B23F7A9B7FED87358D /* Pods_Challengify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Challengify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		38EE0804F235117B195CD715 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Challengify/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		4BA67A4740C2CFF7D437EB38 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Challengify/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Challengify/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		CD4E5D442F25FB6C05086826 /* Pods-Challengify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Challengify.debug.xcconfig"; path = "Target Support Files/Pods-Challengify/Pods-Challengify.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Challengify/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Challengify-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Challengify-Bridging-Header.h"; path = "Challengify/Challengify-Bridging-Header.h"; sourceTree = "<group>"; };
+		F2EE3A08FF9FBA4A303D9179 /* Pods-Challengify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Challengify.release.xcconfig"; path = "Target Support Files/Pods-Challengify/Pods-Challengify.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA1CC01E16A7B10CA0A64CE4 /* Pods_Challengify.framework in Frameworks */,
+				7D4A2669E8C2CC6F108A8401 /* Pods_Challengify.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				073DCC43C3B8422969374A92 /* PrivacyInfo.xcprivacy */,
+				4BA67A4740C2CFF7D437EB38 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Challengify;
 			sourceTree = "<group>";
@@ -62,9 +62,27 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				0EF3154469C2B13C7A5104F4 /* Pods_Challengify.framework */,
+				36F2C3B23F7A9B7FED87358D /* Pods_Challengify.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		396E62724403370F9F2BC4D4 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				939735741449D3FD9EF64803 /* Challengify */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		5AF8933565465E2A950F92C6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CD4E5D442F25FB6C05086826 /* Pods-Challengify.debug.xcconfig */,
+				F2EE3A08FF9FBA4A303D9179 /* Pods-Challengify.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -81,8 +99,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				8ACE9A0B0EF9E73822B03E55 /* Pods */,
-				F5B481D9BD022C6444270E74 /* ExpoModulesProviders */,
+				5AF8933565465E2A950F92C6 /* Pods */,
+				396E62724403370F9F2BC4D4 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -97,20 +115,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8ACE9A0B0EF9E73822B03E55 /* Pods */ = {
+		939735741449D3FD9EF64803 /* Challengify */ = {
 			isa = PBXGroup;
 			children = (
-				20FD7AF85786A1F8AA375EB4 /* Pods-Challengify.debug.xcconfig */,
-				7C23C6734F15F092BEFAF210 /* Pods-Challengify.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		98B7C9371F552FEE4A174E5F /* Challengify */ = {
-			isa = PBXGroup;
-			children = (
-				58A08A1974483764106864CD /* ExpoModulesProvider.swift */,
+				38EE0804F235117B195CD715 /* ExpoModulesProvider.swift */,
 			);
 			name = Challengify;
 			sourceTree = "<group>";
@@ -124,14 +132,6 @@
 			path = Challengify/Supporting;
 			sourceTree = "<group>";
 		};
-		F5B481D9BD022C6444270E74 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				98B7C9371F552FEE4A174E5F /* Challengify */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Challengify" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				6D47C50631E5CE34CB641CC5 /* [Expo] Configure project */,
+				305B91E434CE000C72418A93 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				E6C1E7704C6E414CF3F10B22 /* [CP] Embed Pods Frameworks */,
+				222A847FB0B64F4B5EACA69A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				39C3E4C62F884C4CCD2B8548 /* PrivacyInfo.xcprivacy in Resources */,
+				934827CC707D2A43E7915C90 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,7 +242,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6D47C50631E5CE34CB641CC5 /* [Expo] Configure project */ = {
+		222A847FB0B64F4B5EACA69A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Challengify/Pods-Challengify-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Challengify/Pods-Challengify-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		305B91E434CE000C72418A93 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -322,28 +344,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Challengify/Pods-Challengify-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E6C1E7704C6E414CF3F10B22 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Challengify/Pods-Challengify-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Challengify/Pods-Challengify-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -352,7 +352,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				454CDF88C9E5B5A0556CB81C /* ExpoModulesProvider.swift in Sources */,
+				506A60410630216A1670A9C0 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,7 +361,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 20FD7AF85786A1F8AA375EB4 /* Pods-Challengify.debug.xcconfig */;
+			baseConfigurationReference = CD4E5D442F25FB6C05086826 /* Pods-Challengify.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -386,7 +386,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.Challengify;
-				PRODUCT_NAME = Challengify;
+				PRODUCT_NAME = "Challengify";
 				SWIFT_OBJC_BRIDGING_HEADER = "Challengify/Challengify-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -397,7 +397,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7C23C6734F15F092BEFAF210 /* Pods-Challengify.release.xcconfig */;
+			baseConfigurationReference = F2EE3A08FF9FBA4A303D9179 /* Pods-Challengify.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -417,7 +417,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.Challengify;
-				PRODUCT_NAME = Challengify;
+				PRODUCT_NAME = "Challengify";
 				SWIFT_OBJC_BRIDGING_HEADER = "Challengify/Challengify-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

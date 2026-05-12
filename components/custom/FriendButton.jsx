@@ -1,156 +1,181 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useGlobalContext } from '../../context/GlobalProvider'
-import { icons } from '../../constants'
-import { acceptFriendRequest, friendRequest, getNotificationByUser, removeFriendRequest, unfriendRequest } from '../../apiCalls'
+
+import { View, Text, TouchableOpacity, Image, useWindowDimensions } from "react-native";
+import React, { useEffect, useState, useMemo } from "react";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { icons } from "../../constants";
+import {
+  acceptFriendRequest,
+  friendRequest,
+  getNotificationByUser,
+  removeFriendRequest,
+  unfriendRequest,
+} from "../../apiCalls";
+
+export default function FriendButton({ userProfile }) {
+  const { user, userFriendData, setUserFriendData, notifications, setNotifications } =
+    useGlobalContext();
+
+  const [status, setStatus] = useState(null);
+  const [exist, setExist] = useState(null);
+  const [expired, setExpired] = useState(null);
+  const { width, height } = useWindowDimensions();
 
 
-export default function FriendButton({userProfile}) {
-  const {user,userFriendData,setUserFriendData , notifications ,setNotifications} = useGlobalContext()
-  
-  const [status,setStatus] = useState(null)
-  const [exist,setExist] = useState(null)
-  const [expired,setExpired] = useState(null)
-  // const [userProfileFriendData,setUserProfileFriendData] = useState(null)
+  // ---------- STATUS ----------
+  useEffect(() => {
+    const getStatus = () => {
+      console.log(userProfile._id)
+      if (userFriendData.friends.find((f) => f._id == userProfile._id)) {
+        return setStatus("Friend");
+      }
+      if (
+        userFriendData.friend_requests_sent.find(
+          f => f._id == userProfile._id
+        )
+      ) {
+        return setStatus("Pending");
+      }
 
+      if (
+        userFriendData.friend_requests_received.find(f => f._id == userProfile._id)
+      ) {
+        console.log("we are here")
+        return setStatus("Accept");
+      }
+      return setStatus("Add");
 
-  // useEffect(() => {
-    
-  // }, [])
-  
+      // const not = notifications.find(
+      //   (n) =>
+      //     n.type === "friend request" &&
+      //     n.content.sender_id === userProfile._id
+      // );
+
+      // if (not) return setStatus("Accept");
+      // return setStatus("Add");
+    };
+
+    getStatus();   
+    // setStatus(getStatus())
+  }, [userFriendData, notifications]);
+
+  // ---------- ACTION BODY ----------
+  const rawBody = useMemo(
+    () => ({
+      _id: user._id,
+      // name: user.name,
+      // email: user.email,
+      // profile_img: user.profileImage.publicUrl,
+      // cover_img: user.coverImage.publicUrl,
+    }),
+    [user]
+  );
+
+  const targetBody = useMemo(
+    () => ({
+      _id : userProfile._id,
+      // name : userProfile.name,
+      // email : userProfile.email,
+      // profile_img : userProfile.profileImage.publicUrl,
+      // cover_img : userProfile.coverImage.publicUrl,
+    }),
+    [userProfile]
+  );
+
+  // ---------- ACTIONS ----------
+  const sendFriendRequest = () =>
+    friendRequest(user._id, targetBody, setUserFriendData, setExist);
+
+  const unfriendFriendRequest = () =>
+    unfriendRequest(userProfile._id, rawBody, setUserFriendData);
+
+  const okFriendRequest = () =>
+    acceptFriendRequest(userProfile._id, rawBody, setUserFriendData, setExpired);
+
+  const cancelFriendRequest = () =>
+    removeFriendRequest(user._id, targetBody, setUserFriendData);
+
+  const handleRequest = () => {
+    switch (status) {
+      case "Add":
+        sendFriendRequest();
+        break;
+      case "Pending":
+        cancelFriendRequest();
+        break;
+      case "Accept":
+        okFriendRequest();
+        break;
+      case "Friend":
+        unfriendFriendRequest();
+        break;
+    }
+  };
+
+  // ---------- REFRESH NOTIFICATIONS ----------
+  useEffect(() => {
+    if (exist) {
+      getNotificationByUser(user._id, setNotifications);
+      setExist(false);
+    }
+  }, [exist]);
 
   useEffect(() => {
-      const getStatus = ()=> {
-         if(userFriendData.friends.find(f => f.user_id == userProfile._id )) {
-            return setStatus("Friend")
-         }else {
-            if(userFriendData.friend_request_sent.find(f => f.user_id == userProfile._id )){
-                return setStatus("Request is pending")
-            }else{
-                const not = notifications.find(n => n.type === "friend request" && n.content.sender_id === userProfile._id )
-
-                if(not)
-                {
-                    return setStatus("Accept request")
-                }else{
-                    return setStatus("Add Friend")
-                } 
-     
-            }
-         }
-      }
-      getStatus()
+    if (expired) {
+      getNotificationByUser(user._id, setNotifications);
+      setExpired(false);
     }
-  , [userFriendData,notifications])
+  }, [expired]);
 
+  // ---------- UI STYLE MAP ----------
+  const styleMap = {
+    Friend: {
+      bg: "bg-emerald-500/10",
+      text: "text-emerald-400",
+      icon: icons.check_red,
+    },
+    Pending: {
+      bg: "bg-yellow-500/10",
+      text: "text-yellow-400",
+    },
+    Accept: {
+      bg: "bg-blue-500/10",
+      text: "text-blue-400",
+    },
+    Add: {
+      bg: "bg-red-600",
+      text: "text-white",
+    },
+  };
 
-const sendFriendRequest = () => {    
-    const rawBody = {
-        _id:userProfile._id,
-        name:userProfile.name,
-        email:userProfile.email,
-        profile_img:userProfile.profile_img
-    }
-    friendRequest(user._id,rawBody,setUserFriendData,setExist)
- }   
-const unfriendFriendRequest = () => {
-    const rawBody ={
-        _id:user._id,
-        name:user.name,
-        email:user.email,
-        profile_img:user.profile_img
-      }
-  unfriendRequest(userProfile._id,rawBody,setUserFriendData)
-}
-const okFriendRequest = () => {
-  const rawBody ={
-    _id:user._id,
-    name:user.name,
-    email:user.email,
-    profile_img:user.profile_img
-  }
-  acceptFriendRequest(userProfile._id,rawBody,setUserFriendData,setExpired)
-}
-const cancelFriendRequest = () => {
-    const rawBody = {
-        _id:userProfile._id,
-        name:userProfile.name,
-        email:userProfile.email,
-        profile_img:userProfile.profile_img
-    }
-  removeFriendRequest(user._id,rawBody,setUserFriendData)
-}
+  const style = styleMap[status] || styleMap.Add;
 
-const handleRequest =() => {
-  switch (status) {
-    case "Add Friend":
-        sendFriendRequest()
-        break;
-    case "Request is pending":
-        cancelFriendRequest()
-        break;  
-    case "Accept request":
-        okFriendRequest()
-        break;  
-    case "Friend":
-            unfriendFriendRequest()
-            break;  
-    default:
-        break;
-  }
-}
+  if (!status) return null;
 
-useEffect(() => {
-  if(exist) {
-    getNotificationByUser(user._id,setNotifications)
-    setExist(false)
-  }
-}, [exist])
-useEffect(() => {
-    if(expired) {
-      getNotificationByUser(user._id,setNotifications)
-      setExpired(false)
-    }
-  }, [expired])
-
-return (
-    <>
-    {status && (
+  return (
     <TouchableOpacity
-                            onPress={handleRequest}
-                            className=" flex-row rounded-lg gap-4 justify-start py-2 px-8 ml-auto bg-gray-200 items-center">
-                           
-                          {/* <View
-                            className="flex-row items-center justify-center gap-1  w- [100%]">
-                                 <Image    
-                                    className="w-4 h-4"
-                                    resizeMode='fill'
-                                    source={icons.friend} 
-                                  />
-                               
-                          </View> */}
-                            {status === "Friend" && (
-                              <Image  
-                                    className={ "w-4 h-4 "  }
-                                    resizeMode='contain'
-                                    source={icons.check_red }
-                                    />
-                          )}
-                          <View
-                          className="flex-row  justify-center   items-center ">
-                                <Text 
-                                style={{fontSize:12 ,
-                                  color: status === "Friend" && "red"
-                                }}
-                                
-                                className={"text-gray-600   font-bold"}>
-                                 {status} 
-                                </Text>
-                          </View>
-                        
-                        
+      onPress={handleRequest}
+      activeOpacity={0.85}
+      className={`flex-row items-center gap-2 px-4 py-2 rounded-xl  ${style.bg}`}>
+      {status === "Friend" && (
+        <Image source={style.icon} className="w-4 h-4" resizeMode="contain" />
+      )}
+
+      {/* TEXT */}
+      <Text
+        style={{
+          fontSize: width/44,
+          letterSpacing: 0.5,
+        }}
+        className={`${style.text} font-semibold`}
+      >
+        {status === "Friend"
+          ? "Friends"
+          : status === "Pending"
+          ? "Requested"
+          : status === "Accept"
+          ? "Accept"
+          : "Add Friend"}
+      </Text>
     </TouchableOpacity>
-  )}
-  </>
-  )
+  );
 }

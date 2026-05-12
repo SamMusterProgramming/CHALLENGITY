@@ -27,7 +27,7 @@ export default function NotificationDrawer({ visible, onClose }) {
 const { width } = useWindowDimensions();
 const insets = useSafeAreaInsets();
 
-const drawerWidth = width * 0.9;
+const drawerWidth = width ;
 
 const translateX = useSharedValue(drawerWidth);
 

@@ -1,4 +1,4 @@
-import { View, Text, Platform, TouchableOpacity, Image, useWindowDimensions, Dimensions, ActivityIndicator, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, Platform, TouchableOpacity, Image, useWindowDimensions, Dimensions, ActivityIndicator, TouchableWithoutFeedback, Animated } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router';
 import { addContestantToQue, addTalentRoomToFavourite,  backInQueue,  createTalentRoom,  deleteContestantElimination,  deleteContestantQueue,  deleteContestantStage, deletePerformanceQueue, deletePerformanceStage, eliminationTalentRoom, getUserTalent, getUserTalentPerformances, removeTalentRoomFromFavourite } from '../apiCalls';
@@ -26,6 +26,18 @@ import CommentSheet from '../components/talent/modal/CommentDrawer';
 import {  countries, stageIcons } from '../utilities/TypeData';
 import AuthLoadingScreen from '../components/auth/authLoadingScreen';
 import { useLoading } from '../context/loadingContext';
+import UserModal from '../components/modal/userModal';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import ContestantsDisplayer from '../components/talent/contestantsDisplayer';
+import StageMenu from '../components/talent/stageMenu';
+import SidePostData from '../components/talent/sidePostData';
+
+
+
+
+
+
 
 
 
@@ -77,21 +89,20 @@ const [performanceToDelete , setPerformanceToDelete] = useState (null)
 const [contestantsPerformanceIndex , setContestantsPerformanceIndex] = useState ([])
 const [selectedPerformance , setSelectedPerformance] = useState(null)
 const [videoCount , setVideoCount] = useState(0)
-
+const [openUserModal,setOpenUserModal] = useState(false)
 const { showLoading, hideLoading } = useLoading();
 
-
 const SCREEN_HEIGHT = height - insets.top
-const MENU_HEIGHT =  SCREEN_HEIGHT / 7.3
+const MENU_HEIGHT =  SCREEN_HEIGHT / 6
 const STAGE_HEIGHT = SCREEN_HEIGHT -  MENU_HEIGHT 
 const CARD_DIMENSION = (STAGE_HEIGHT) / 15
 
 const PANEL_HEIGHT = STAGE_HEIGHT - (4 * CARD_DIMENSION) + 30
 const VERTICAL_CARD_COUNT  = (width % CARD_DIMENSION)
 
-
-
 const modalRef = useRef(null);
+const translateX = useRef(new Animated.Value(0)).current;
+const opacity = useRef(new Animated.Value(1)).current;
 
 const openComments = () => {
   modalRef.current?.present();
@@ -157,6 +168,40 @@ useEffect(() => {
     };
   }, [selectedContestant, contestantsPerformanceIndex]);
 
+
+
+
+  //************************** swap player , play next video with animation ************* */
+
+  const scale = useRef(new Animated.Value(1)).current;
+  const isTransitioning = useRef(false);
+
+  const animateZoom = (onSwapped) => {
+    if (isTransitioning.current) return;
+    isTransitioning.current = true;
+    // zoom OUT
+    Animated.timing(scale, {
+      toValue: 1.05,
+      duration: 120,
+      useNativeDriver: true,
+    }).start();
+    // 👉 swap EXACTLY in the middle
+    setTimeout(() => {
+      onSwapped?.();
+    }, 100);
+    // zoom IN
+    setTimeout(() => {
+      scale.setValue(0.76);
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 1080,
+        useNativeDriver: true,
+      }).start(() => {
+        isTransitioning.current = false; // unlock
+      });
+    }, 130);
+  };
+
   const swapPlayers = () => {
     const temp = playerRef.current;
     playerRef.current = nextPlayerRef.current;
@@ -165,41 +210,92 @@ useEffect(() => {
   };
 
   const handleNextPerformance = () => {
-    if (!selectedContestant?.performances?.length) return;
+    animateZoom(() => {
+      if (!selectedContestant?.performances?.length) return;
+      const total = selectedContestant.performances.length;
+      if (getPerformanceIndex(selectedContestant._id)  < total - 1) {
+        swapPlayers();
+        setVideoCount(prev => prev + 1)
+        setIsPlaying(true);
+        playerRef.current.play();
+        updatePerformanceIndex(selectedContestant._id , getPerformanceIndex(selectedContestant._id) + 1)
+      } else {
+          const next =  getNextContestant(selectedContestant.rank)
+          if(next) {
+            swapPlayers();
+            setVideoCount(prev => prev + 1)
+            setIsPlaying(true);
+            playerRef.current.play();
+            updatePerformanceIndex(next._id , 0)
+            setSelectedContestant({...next})
+          }
+          if(!next){
+            setIsPlaying(false);
+            playerRef.current.pause();
+          } 
+      }
+    });
   
-    const total = selectedContestant.performances.length;
-  
-    if (getPerformanceIndex(selectedContestant._id)  < total - 1) {
-      swapPlayers();
-      setVideoCount(prev => prev + 1)
-      setIsPlaying(true);
-      playerRef.current.play();
-      updatePerformanceIndex(selectedContestant._id , getPerformanceIndex(selectedContestant._id) + 1)
-    } else {
-        const next =  getNextContestant(selectedContestant.rank)
-        if(next) {
-          swapPlayers();
-          setVideoCount(prev => prev + 1)
-          setIsPlaying(true);
-          playerRef.current.play();
-          updatePerformanceIndex(next._id , 0)
-          setSelectedContestant({...next})
-        }
-        if(!next){
-          setIsPlaying(false);
-          playerRef.current.pause();
-        } 
-    }
   };
 
+  //**************** handle player touch */
 
+  const touchStart = useRef({ x: 0, y: 0 });
+
+  const handleTouchStart = (e) => {
+    touchStart.current = {
+      x: e.nativeEvent.pageX,
+      y: e.nativeEvent.pageY,
+      time: Date.now(),
+    };
+  };
+
+  const SWIPE_THRESHOLD = 70;   // slightly lower for Android stability
+  const TAP_MAX_MOVE = 12;
+
+  const handleTouchEnd = (e) => {
+    const dx = e.nativeEvent.pageX - touchStart.current.x;
+    const dy = e.nativeEvent.pageY - touchStart.current.y;
+    const dt = Date.now() - touchStart.current.time;
+  
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+  
+    const isSwipe = absX > SWIPE_THRESHOLD && absX > absY;
+  
+    if (Platform.OS === "ios" && isSwipe) {
+      if (dx < 0) handleNextPerformance();
+      else 
+      { 
+        getPerformanceIndex(selectedContestant._id) !== 0 &&  updatePerformanceIndex (selectedContestant._id,getPerformanceIndex(selectedContestant._id) - 1)}
+      return;
+    }
+    const isTap =
+      dt < 250 &&
+      absX < TAP_MAX_MOVE &&
+      absY < TAP_MAX_MOVE;
+  
+    if (isTap) {
+      togglePlayPause();
+    }
+   };
+
+  const togglePlayPause = () => {
+    if (!playerRef.current) return;
+  
+    if (isPlaying) {
+      playerRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      playerRef.current.play();
+      setIsPlaying(true);
+    }
+  };
 
 useEffect(() => {
     showLoading("Stage is Loading...")
     createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation, setEdition, setIsLoading)
 }, [])
-
-
 
 useEffect(() => {
  if(isExpired) {
@@ -216,7 +312,7 @@ useEffect(() => {
 useEffect(() => {
    if (talentRoom) {
      showLoading("Stage is Loading...")
-     setIsPlaying(false)
+    //  setIsPlaying(false)
      setNumberOfContestants(talentRoom.contestants.length)
      if(talentRoom.contestants.length > 0) {     
         const userP = talentRoom.contestants.find((contestant)=> contestant.user_id === user._id) 
@@ -276,6 +372,7 @@ useEffect(() => {
 //******************************handle actions , participation , resign .....  */
 const handleTalentParticipation  = () => {
     setIsModalVisible(false)
+    // setParticipationType("")
     // setParticipationType(null)
     setNewChallenge(true)
 }
@@ -283,7 +380,7 @@ const handleTalentParticipation  = () => {
 const handleDeleteContestantStage = async() => {
       setIsModalVisible(false)
       setParticipationType("")
-      let post_id = userParticipation._id  ;
+      let post_id = userParticipation._id ;
       await deleteContestantStage(
                            talentRoom._id,
                            {
@@ -458,19 +555,19 @@ useEffect(() => {
         setAction("NP")
         setText("Are you sure you want to reserve a pot in a que")
         break;
-    case "deleteContestantQueue":
+    case "DeleteContestantQueue":
         setAction("DCQ")
         setText("Are you sure you want to remove your reservation from the Queue")
         break;
-    case "DeleteContestantQueue":
+    case "DeleteContestantQueue1":
         setAction("DCQ")
         setText("Are you sure you want this Performance.You will loose your spot in the queue")
         break;
-    case "deleteContestantStage":
+    case "DeleteContestantStage":
       setAction("DCS")
       setText("Are you sure you want to Resign from Talent Contestant")
       break;
-    case "deleteContestantElimination":
+    case "DeleteContestantElimination":
       setAction("DCE")
       setText("Are you sure you want to delete you Elimination and delete all your performances")
       break;
@@ -535,28 +632,29 @@ const getNextContestant = (rank) =>{
 
 useEffect(() => {
   if (!selectedContestant?.performances?.length || !data) return;
+  // if(!isPlaying) {
+  //   handleNextPerformance();
+  //   return ; 
+  // }
   const performances = selectedContestant.performances;
   const index = getPerformanceIndex(selectedContestant._id)
   const current = performances[index];
   let  next = null;
-
   if(index === getPerformanceNumber(selectedContestant._id) - 1){
                     const nextContestant = getNextContestant(selectedContestant.rank)
                     next = nextContestant?.performances[0];
   } else{
-                     next = performances[index + 1];
+                    next = performances[index + 1];
   }
   const loadVideos = async () => {
-    if (current?.video?.cdnUrl && !isPlaying) {
+    if (current?.video?.cdnUrl ) {
       await playerRef.current.replaceAsync(current.video.cdnUrl)
     }
-
     if (next?.video?.cdnUrl) {
         new Promise((resolve) => setTimeout(resolve, 4000));
         await nextPlayerRef.current.replaceAsync(next.video.cdnUrl);
     }
   };
-
   loadVideos(); 
 }, [selectedContestant, contestantsPerformanceIndex]);
 
@@ -566,7 +664,6 @@ useEffect(() => {
   !selectedContestant && talentRoom && setSelectedContestant(talentRoom.contestants[0])
 }, [stage])
 
-
 const handleRefresh =()=> {
   setIsRefreshing(true)
   showLoading("refreshing , please wait ...")
@@ -575,6 +672,8 @@ const handleRefresh =()=> {
        setIsRefreshing(false)
   }, 400);  
 }
+
+
 
 if (isLoading) {
   return  <AuthLoadingScreen />
@@ -588,7 +687,7 @@ return (
   style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top  }}
   className=" flex-1  min-w-[100vw] min-h-full flex-row justify-center items-center   bg-[#000000]" >
       <View
-       className=" flex-1  min-w-[100%] min-h-[100%] flex-row justify-center items-center   bg-black [#3d3c3a] [#041539]   [#786d6d]">
+       className=" flex-1  w-[100%] h-[100%] flex-row justify-center items-center   bg-black [#3d3c3a] [#041539]   [#786d6d]">
            {!isLoading && ! isExpired && talentRoom && data && (
          
                  <>
@@ -596,65 +695,130 @@ return (
 
                                 <>
                                     {selectedContestant && (
-                                      
-                                          <TouchableOpacity
-                                          activeOpacity={1}
-                                          onPress={toggleVideoPlaying}
+                                          
+                                          <View
                                           className={ "w-[100vw] h-[100%] b g-white flex-col justify-center items-center "}
                                               > 
-                                              
-                                              <View
-                                              className = {!isPlaying ? "opacity-40 w-[100%] " : "w-[100vw]  opacity-100"}>
-                                                  
-                                                         <VideoView 
-                                                                  style={{ width:'100%' ,height:'100%'}}
-                                                                  player={playerRef.current}
-                                                                  contentFit='cover'
-                                                                  nativeControls ={false}
-                                                                  pointerEvents='box-only'
-                                                        />
-                                                        <VideoView
-                                                          style={{ width: 0, height: 0 }}
-                                                          player={nextPlayerRef.current}
-                                                        />
+
+                                              {isPlaying ? (
                                                
-                                              </View>
-                                              
+                                              <Animated.View
+                                                 style={{
+                                                  flex: 1,
+                                                  transform: [ {scale}],
+                                                 }}
+                                                 onStartShouldSetResponder={() => true}
+                                                 onResponderGrant={handleTouchStart}
+                                                 onResponderRelease={handleTouchEnd}
+                                                //  style={{ flex: 1 }}
+                                                 className = {!isPlaying ? "opacity-40 w-[100%] " : "w-[100vw]  opacity-100"}>
+                                                     
+                                                            <VideoView 
+                                                                     style={{ width:'100%' ,height:'100%'}}
+                                                                     player={playerRef.current}
+                                                                     contentFit='cover'
+                                                                     nativeControls ={false}
+                                                                     pointerEvents="none" 
+                                                                      />
+                                                           {/* <VideoView
+                                                             style={{ width: 0, height: 0 }}
+                                                             player={nextPlayerRef.current}
+                                                           /> */}
+                                                  
+                                                 </Animated.View>
+                                          
+                                                 
+                                              ):(
+                                                <View
+                                                className={ "flex-1  flex-col justify-center items-center "}
+                                                    /> 
+                                              )
+                                              }
                                              
-                                              <ContestantPostDetails user={user} show = { !isPlaying && selectedContestant} displayComment ={displayComment}
+                                             <LinearGradient
+                                                        pointerEvents="none"
+                                                        colors={[ "transparent" , "rgba(0,0,0,0.6)"]}
+                                                              style={{
+                                                              position: "absolute",
+                                                              bottom: 0,
+                                                              alignSelf: "center",
+                                                              width: width,
+                                                              height:  height/5,
+                                                              borderRadius: 0,
+                                                            }}
+                                                    />   
+
+                                          
+
+                                              {!newChallenge && selectedContestant &&
+                                                // selection === "stage" && stage &&
+                                                (
+                                                <CentralContestantPlayer
+                                                  key={selectedContestant?._id} CAROUSSEL_HEIGHT = { 4 * CARD_DIMENSION}
+                                                  data={selectedContestant.performances} 
+                                                  setSelectedPerformance={setSelectedPerformance} selectedContestant = {selectedContestant}
+                                                  participantTrackerId = {participantTrackerId} setParticipantTrackerId={setParticipantTrackerId} talentRoom={talentRoom}
+                                                  isScrolling = {isScrolling} setIsScrolling = {setIsScrolling} setIsPlaying = {setIsPlaying} isPlaying ={isPlaying} player ={playerRef.current}
+                                                  selectedPostIndex = {selectedPostIndex}
+                                                  width ={width} 
+                                                  height ={height - insets.top}
+                                                  // top={0} 
+                                                  scrollToIndex = {getPerformanceIndex(selectedContestant._id)} 
+                                                  updatePerformanceIndex={updatePerformanceIndex}
+                                                  setSelectedContestant={setSelectedContestant} user={user}/>
+                                              )}
+                                             
+                                              <ContestantPostDetails user={user} show = { selectedContestant} displayComment ={displayComment}
                                                   setDisplayComment = {setDisplayComment} selectedContestant={selectedContestant} setIsExpired={setIsExpired} talentRoom={talentRoom}
                                                   // confirmAction = {confirmAction} setAction ={setAction} setText ={setText}
                                                   setParticipationType ={setParticipationType}
                                                   rank={selectedContestant.rank}
                                                   handleRefresh ={handleRefresh}
                                                   openComments ={openComments}
-                                                  width ={width -  2 * CARD_DIMENSION - 10} height={4 * CARD_DIMENSION}
-                                                  bottom = { MENU_HEIGHT +  5}  />       
+                                                  width ={width} height={4 * CARD_DIMENSION}
+                                                  bottom = { MENU_HEIGHT +  10}    
+                                                  setOpenUserModal={setOpenUserModal} 
+                                                  isPlaying={isPlaying}
+                                                  />       
+                                              
+                                              <SidePostData user={user} show = { selectedContestant} displayComment ={displayComment}
+                                                  setDisplayComment = {setDisplayComment} selectedContestant={selectedContestant} setIsExpired={setIsExpired} talentRoom={talentRoom}
+                                                  // confirmAction = {confirmAction} setAction ={setAction} setText ={setText}
+                                                  setParticipationType ={setParticipationType}
+                                                  rank={selectedContestant.rank}
+                                                  handleRefresh ={handleRefresh}
+                                                  openComments ={openComments}
+                                                  // width ={width}
+                                                  height={4 * CARD_DIMENSION}
+                                                  bottom = { MENU_HEIGHT +  height/10} 
+                                                  setOpenUserModal={setOpenUserModal} 
+                                                  isPlaying={isPlaying}
+                                                  />       
                                              
-                                              <TouchableOpacity 
-                                                  hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
-                                               
-                                                  onPress={ () => { (!isPlaying ? ( playerRef.current.play(), setIsPlaying(true) ) : ( playerRef.current.pause() , setIsPlaying(false) ) )} }
-                                                  className={
-                                                          "w-full h-full  flex-col absolute top-  justify-center items-center"
-                                                  }>
-                                                    <Image
-                                                    style ={{opacity: isPlaying ? 0 : 1}}
-                                                    className=" w-10 h-10 opacity-50 rounded-xl"
-                                                    source={icons.play} 
-                                                    resizeMethod='cover' /> 
-                                              </TouchableOpacity>
-
-                                                {isPlaying && (<ProgresssBarVideo  player={playerRef.current} visible={isPlaying} bottom={62} />)}
+                                        
+                                                {isPlaying && (<ProgresssBarVideo  player={playerRef.current} visible={isPlaying} bottom={MENU_HEIGHT/1.3} />)}
                                                 {isPlaying &&  (
                                               <VolumeControl volume = {volume} setVolume={setVolume} bottom = {95} right ={4} />
                                               )}
-                                          </TouchableOpacity>
+ 
+                                              <ContestantsDisplayer 
+                                                                  //  key={selectedContestant._id}
+                                                                   show={!isPlaying} contestants={data} 
+                                                                   setSelectedContestant={setSelectedContestant} 
+                                                                   selectedContestant={selectedContestant} />
+
+
+                                              
+                                          </View>
+                                      
                                     )}
                                       
                                 </>
-                            ) : (
-                              <>
+                              ) : (
+                              <View
+                              className={ "w-[100vw] h-[100%]  flex-col justify-center items-center "}
+                                  > 
+                                 
                                  {!newChallenge ? (
                                   <>
                                   {isPlaying && (
@@ -680,237 +844,37 @@ return (
                                        </View>
                                       
                                   )}
+                                  
                                     <ContestantRoom regionIcon = {regionIcon} selectedIcon = {selectedIcon} user={user}  setShow ={setShow} 
                                     setPerformanceToDelete = {setPerformanceToDelete} updatePerformanceIndex={updatePerformanceIndex}
-                                    setIsPlaying={setIsPlaying} isPlaying={isPlaying} player={playerRef.current}
-                                    h={STAGE_HEIGHT -30} w={width} top={insets.top} setStage ={setStage} setParticipationType={setParticipationType}
-                                    setSelectedContestant={setSelectedContestant} userParticipation ={userParticipation} userContestantStatus ={userContestantStatus} setStart={setStart}
-                                    numberOfContestants={numberOfContestants}  talentRoom={talentRoom} edition={edition}/>
-                          
+                                    setIsPlaying={setIsPlaying} isPlaying={isPlaying} player={playerRef.current} top={0}
+                                    h ={height - insets.top}
+                                    w = {width} bottom = {MENU_HEIGHT + 5} setStage ={setStage} setParticipationType={setParticipationType}
+                                    setSelectedContestant={setSelectedContestant} userParticipation ={userParticipation}
+                                    userContestantStatus ={userContestantStatus} setStart={setStart}
+                                    numberOfContestants={numberOfContestants}  talentRoom={talentRoom} edition={edition}
+                                    />
+                            
                                  </>
                                 ):(
                                   <TalentParticipation talentRoom= {talentRoom} setReplayRecording={setReplayRecording} setNewChallenge={setNewChallenge} 
-                                  participation = {participationType} userParticipation ={userParticipation}
+                                  participation = {participationType} userParticipation ={userParticipation} bottom = {MENU_HEIGHT + 5} 
                                   user={user} setSelectedContestant={setSelectedContestant} setStage={setStage} setTalentRoom={setTalentRoom} setIsExpired={setIsExpired}
                                    />
                                   )}
-                               </>
+                               </View>
                             )}
                           
-         
+              {!isPlaying  && !replayRecording &&  (
+                <StageMenu  height={MENU_HEIGHT} width ={width} setParticipationType={setParticipationType} isFavourite={isFavourite}
+                            stage={stage} setStage = {setStage} handleRefresh ={handleRefresh} talentRoom ={talentRoom}
+                            globalRefresh ={globalRefresh} edition ={edition}  isRefreshing ={isRefreshing} setNewChallenge={setNewChallenge}/>
 
-
-                    
-         {!isPlaying && (
-            <View
-            style = {{ top : height * 0.1 ,left :10}}
-                  className="w- [100%] h- [15%] absolute top-8 flex-col  justify-center  items-center ">
-                     
-            </View>
-         )}
-
-      {/* bottom menue */}
-             {!isPlaying  && !replayRecording &&  (
-                <MotiView
-                  from={{ opacity: 0, translateY: 40 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  transition={{ delay: 400, type: 'timing', duration: 600 }}
-                  style = {{
-                    height: MENU_HEIGHT,
-                    width : width ,
-                    bottom: !newChallenge?  0 : 0,
-                  }}
-                  className ="absolute py- 2 flex-col  bor der bo rder-t-white  justify-start p -1  items-center" >
-                <View
-            
-                   className ="w-[100%] py-1 h- [100%] px-1 bg-[rgba(5,5,5,0.5)] gap-2 rounded-lg flex-row justify-center items-center">
-                        
-                      
-                        <TouchableOpacity
-                                                onPress={() =>
-                                                  {
-                                                  !isFavourite ? setParticipationType("addFavourite") : setParticipationType("removeFavourite")
-                                                  }}
-                                            
-                                                className = " p-2 rounded-full  flex-col justify-center items-center ">
-                                                        {isFavourite ?
-                                                        (
-                                                          <MaterialCommunityIcons name="heart" size={20} color = "red"  />
-                                                        ) : 
-                                                        (
-                                                          <MaterialCommunityIcons name="heart-outline" size={20} color = "red"  />
-                                                        )}
-                                                      
-                                                  
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                                                  onPress={() =>
-                                                            {
-                                                                  setParticipationType("help")
-                                                              }}
-                                                                            
-                                                                                  className = " p-2 mr-auto  rounded-full  flex-col justify-center items-center ">
-                                                                                    <View
-                                                                                    className = "p -1  rounde d-full ">
-                                                                                        <MaterialCommunityIcons name="help" size={20} color = "white"  />
-                                                                                        
-                                                                                    </View>
-                        </TouchableOpacity> 
-
-                        <TouchableOpacity
-                                                  onPress={()=> { 
-                                                      !stage && setStage(!stage)
-                                                      // setPerformanceIndex(0)
-                                                    }
-                                                  }
-                                                  className ="w- [100%] h- [60%] p- 2 b g-[#7a2038] rounded- xl  g-white  flex-row justify-center items-center">
-                                                  <View
-                                                    style={{backgroundColor:stage ? "#871f30" : "#313536"}}
-                                                    className =" px-4 bg-[#6f6b6c] min-w-[20%] rounded -t-md flex-row justify-center items-center">
-                                                        <Text    
-                                                              style ={{
-                                                                fontSize: stage ? width/50 : width/55,
-                                                                color: stage ? "white":"gray"
-                                                              }}
-                                                              className="text-xl font-black  text-gray-300"> 
-                                                                Stage
-                                                        </Text>
-                                                  </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                                                  onPress={()=> {
-                                                    
-                                                      stage && setStage(!stage)
-                                                    }
-                                                  }
-                                                  className ="w- [100%] h- [60%] p- 2 b g-[#7a2038] rounded- xl  g-white  flex-row justify-center items-center">
-                                                  <View
-                                                    style={{backgroundColor:stage ? "#313536" : "#871f30"}}
-                                                    className =" px-4 bg-[#d7b6be] rounded  flex-row justify-center items-center">
-                                                        <Text    
-                                                              style ={{
-                                                                 fontSize: !stage ? width/50 : width/55,
-                                                                  color: !stage ? "white":"gray"
-                                                              }}
-                                                              className="text-xl font-black  text-white"> 
-                                                                Performance
-                                                        </Text>
-                                                  </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                                    onPress={handleRefresh}
-                              
-                                    className="p-2 ml-auto  rounded-tr-full flex-row g-green-600 -rota te-45   justify-center items-center">
-                                        {isRefreshing ?(
-                                              <ActivityIndicator size={20} color="red" />
-                                        ):(
-                                          <AntDesign name="reload" size={20} color="white" /> 
-                                        )}
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                                        onPress={() => !globalRefresh && router.back()}
-                                        className="  flex-row  p-2  justify-center items-center">
-                                                   <AntDesign name="close" size={20} color="white" /> 
-                        </TouchableOpacity>
-                        
-
-                </View>
-
-                <View
-                    style={{ backgroundColor: 'rgba(0,0, 0 , 0.7)' }}
-                    className ="w-[100%] h- [100%] py-2 flex-1 rounded-lg flex-col  justify-center items-center">
-                           
-
-                           <View
-                          //  style={{ backgroundColor: 'rgba(0,0, 0 , 0.5)' }}
-                           className = "w-[100%] mt- auto p- 1 border- b- 2 bord er-blue-300 rounded-lg flex-col b g-[#0d123c] shad ow-white justify-start items-center  gap- 1">
-                                    
-                                      <View
-                                      className = "w-[100%] pb -2  flex-row  rounded-xl text-center   g-[#065e7c] shadow-black justify-center items-center gap-1">
-                                              <Text 
-                                                style ={{fontSize:9}}
-                                                className="text-xl  font-black   text-yellow-500"> 
-                                                  {talentRoom.name} -
-                                              </Text> 
-                                              <Text 
-                                                style ={{fontSize:10}}
-                                                className="text-xl  font-black   text-white"> 
-                                                  Stage
-                                              </Text> 
-                                              <Text 
-                                                style ={{fontSize:9}}
-                                                className="text-xl  font-black   text-yellow-500"> 
-                                                  - {talentRoom.region} 
-                                              </Text> 
-                                      </View>
-                                      <View
-                                      className = "w-[100%] pb-2  flex-row  rounded-xl text-center   g-[#065e7c] shadow-black justify-center items-center gap-1">
-                                              <Text 
-                                                style ={{fontSize:9}}
-                                                className="text-xl  font-black   text-orange-500"> 
-                                                  {edition.title} 
-                                              </Text> 
-                          
-                                      </View>
-                                
-                           </View>
-
-                          <View
-                          className = "flex-col absolute top-4 left-[20]    justify-center items-center gap-2">
-                                <View className=" items-center justify-center">
-                                    
-                                    <Text 
-                                  style={{  width: width/6 , fontSize : width/17}}
-                                  className="text-white text-center font-extrabold tracking-widest">
-                                        {stageIcons[talentRoom.name]}
-                                    </Text>
-                                    <Text 
-                                  style={{ width: width/6 , fontSize : width/42}}
-                                  className="text-white text-center font-bebas tracking-widest">
-                                        {talentRoom.name}
-                                    </Text>
-                                  </View>
-                          </View>
-                          <View
-                          className = "flex-col absolute  top-4 right-[20]    justify-center items-center gap-2">
-                               <View className=" items-center justify-center">
-                                  <Text 
-                                  style={{  width: width/6 , fontSize : width/17}}
-                                  className="text-white text-center font-extrabold tracking-widest">
-                                      {countries.find( c => c.code === talentRoom.region).flag}
-                                  </Text>
-                                  <Text   
-                                  style={{ width: width/6 , fontSize : width/42}}
-                                  className="text-white text-center font-bebas tracking-widest">
-                                      {countries.find( c => c.code === talentRoom.region).name}
-                                  </Text>
-                                </View>                
-                          </View>
-                </View>
-            </MotiView>
-
-            )}
-
+              )}
 
 
            
-           {  !newChallenge && selectedContestant &&
-               selection === "stage" && stage &&
-              (
-              <CentralContestantPlayer
-                key={selectedContestant?._id} CAROUSSEL_HEIGHT = { 4 * CARD_DIMENSION}
-                data={selectedContestant.performances} setSelectedPerformance={setSelectedPerformance} selectedContestant = {selectedContestant}
-                participantTrackerId = {participantTrackerId} setParticipantTrackerId={setParticipantTrackerId} talentRoom={talentRoom}
-                isScrolling = {isScrolling} setIsScrolling = {setIsScrolling} setIsPlaying = {setIsPlaying} isPlaying ={isPlaying} player ={playerRef.current}
-                selectedPostIndex = {selectedPostIndex} width ={width } height ={4 * CARD_DIMENSION}
-                top={0} 
-                scrollToIndex = {getPerformanceIndex(selectedContestant._id)} 
-                updatePerformanceIndex={updatePerformanceIndex}
-                setSelectedContestant={setSelectedContestant} user={user}/>
-             )}
+          
 
              {!isPlaying &&  !newChallenge && !selectedContestant && 
                selection === "queue" && stage &&
@@ -931,24 +895,24 @@ return (
              )}
  
  
-            <DisplayContestant show = {false}  selectedContestant={selectedContestant} 
-             width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} /> 
+            {/* <DisplayContestant show = {false}  selectedContestant={selectedContestant} 
+             width ={width } height={height} top = { insets.top} setIsExpired={setIsExpired} />  */}
            
             {/* <TopContestantBar show = {!isPlaying && show && !newChallenge && stage  } width ={ CARD_DIMENSION * 3 } height={ CARD_DIMENSION } top={0}
              selectedIcon={selectedIcon} talentRoom={talentRoom} participantTrackerId={participantTrackerId}
              left ={0} right ={null} regionIcon ={regionIcon}  contestants = { edition.round >= 4 ? data.slice(0,4) :data.slice(0,4)} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/>
              */}
-            <SideBarLeft show = {!isPlaying && show && !newChallenge && stage} width ={CARD_DIMENSION} height = {PANEL_HEIGHT } top = {insets.top} 
+            {/* <SideBarLeft show = {!isPlaying && show && !newChallenge && stage} width ={CARD_DIMENSION} height = {PANEL_HEIGHT } top = {30} 
               bottom = { MENU_HEIGHT + CARD_DIMENSION + 15}       participantTrackerId={participantTrackerId}
               left ={2} right ={null} regionIcon ={regionIcon} selectedIcon={selectedIcon}  
               contestants = {data.slice(0,20).filter((d,index) => index % 2 == 0 )  } 
-              talentRoom={talentRoom} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/>
+              talentRoom={talentRoom} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/> */}
            
-            <SideBarRight show = {!isPlaying && show && !newChallenge && stage }  width ={CARD_DIMENSION} height = {PANEL_HEIGHT } top = { insets.top} participantTrackerId={participantTrackerId}
+            {/* <SideBarRight show = {!isPlaying && show && !newChallenge && stage }  width ={CARD_DIMENSION} height = {PANEL_HEIGHT } top = {30} participantTrackerId={participantTrackerId}
              right = {2} left ={null} regionIcon ={regionIcon} selectedIcon={selectedIcon} bottom = { MENU_HEIGHT + CARD_DIMENSION + 15} 
              contestants = {
                data.slice(0,20).filter((d,index) => index % 2 ==1 ) } 
-             talentRoom={talentRoom} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/>
+             talentRoom={talentRoom} selectedContestant={selectedContestant} setSelectedContestant ={setSelectedContestant}/> */}
             
             {/* <BottomContestantBar show = {!isPlaying && show && !newChallenge  && stage } width ={width - 2 * CARD_DIMENSION } height = { CARD_DIMENSION } bottom = { MENU_HEIGHT + 10} 
              selectedIcon={selectedIcon} talentRoom={talentRoom} participantTrackerId={participantTrackerId}
@@ -993,13 +957,21 @@ return (
                  )} */}
 
 
-
            </>
          )}
 
-          
+
 
       </View>
+      {openUserModal && (
+           <UserModal 
+           user_id= {selectedContestant && selectedContestant.user_id}
+           visible = {openUserModal}
+           // setOpenUserModal ={setIsModalVisible}
+           onClose={() => setOpenUserModal(false)}
+          />
+      )}
+     
       <CommentSheet modalRef={modalRef} selectedContestant={ selectedContestant} user={user}/>
       {isModalVisible && (     
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}

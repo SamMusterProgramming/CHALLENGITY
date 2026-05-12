@@ -27,10 +27,8 @@ export const setLoadingBarAxios = (loadingRef) => {
   });
   axios.interceptors.response.use((response) => {
     loadingRef.current.complete();
-    
   }, (error) => {
     loadingRef.current.complete();
-
   });
 }
 
@@ -150,7 +148,7 @@ export const authRegister = async(credentiels,setUser,setMessage,setIsFetching)=
   
 export const getUserById = async(user_id,setUserProfile) =>{
     try {
-        await axios.get(BASE_URL+`/users/user/${user_id}`)
+        await api.get(`/users/user/${user_id}`)
         .then(res => 
           { 
             // res.data.profile_img = "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68"
@@ -570,19 +568,18 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
     export const getFollowData = async(user_id ,setFollower)=>{
       try {
-        await axios.get( BASE_URL + `/users/follow/data/${user_id}`)
+        await api.get(`/users/follow/data/${user_id}`)
         .then(res =>  
           setFollower({...res.data}) 
        )
       } catch (error) {
         console.log(error)
       }
-     }
-
+    }
 
     export const isfollowing = async(user_id , follower_id, setIsFollowing)=>{
       try {
-        await axios.post( BASE_URL + `/users/followers/${user_id}` ,{follower_id:follower_id} )
+        await api.post(`/users/followers/${user_id}` ,{follower_id:follower_id} )
         .then(res =>  { 
           setIsFollowing({isfollowing:res.data.isfollowing})
       } )
@@ -596,7 +593,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
     export const addFollowing = async(user_id , rawBody , setFollow) =>{
       try {
-        await axios.post( BASE_URL + `/users/followings/add/${user_id}`, rawBody )
+        await api.post(  `/users/followings/add/${user_id}`, rawBody )
         .then(res =>  { 
           setFollow({...res.data});
           } )
@@ -608,7 +605,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
     export const getFollowings = async(user_id , setFollowings)=>{
       try {
-        await axios.get( BASE_URL + `/users/followings/${user_id}` )
+        await api.get(`/users/followings/${user_id}` )
         .then(res =>  { 
           setFollowings(res.data)
       } )
@@ -619,7 +616,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
      export const unFollowings = async(user_id ,rawBody, setFollow)=>{
       try {
-        await axios.patch( BASE_URL + `/users/unfollowing/${user_id}`,rawBody )
+        await api.patch(  `/users/unfollowing/${user_id}`,rawBody )
         .then(res =>  { 
           setFollow({...res.data})
       } )
@@ -634,7 +631,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
    
   export const friendRequest = async(receiver_id , rawBody , setFriendRequest , setExist) =>{
     try {
-      await axios.post( BASE_URL + `/users/friends/request/${receiver_id}`, rawBody )
+      await api.post(  `/users/friends/request/${receiver_id}`, rawBody )
       .then(res =>  { 
         if(res.data == "exist"){
             setExist(true)
@@ -648,7 +645,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
    }
    export const unfriendRequest = async(receiver_id , rawBody , setFriendRequest) =>{
     try {
-      await axios.post( BASE_URL + `/users/friends/unfriend/${receiver_id}`, rawBody )
+      await api.post( `/users/friends/unfriend/${receiver_id}`, rawBody )
       .then(res =>  { 
         setFriendRequest({...res.data});
         } )
@@ -659,7 +656,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
    }
    export const removeFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
     try {
-      await axios.post( BASE_URL + `/users/friends/cancel/${receiver_id}`, rawBody )
+      await api.post(  `/users/friends/cancel/${receiver_id}`, rawBody )
       .then(res =>  {  
         setFriendRequest({...res.data});
         } )
@@ -669,7 +666,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
    }
    export const getUserFriendsData = async(receiver_id , setFriendRequest) =>{
     try {
-      await axios.get( BASE_URL + `/users/friends/list/${receiver_id}` )
+      await api.get(  `/users/friends/list/${receiver_id}` )
       .then(res =>  { 
         setFriendRequest({...res.data}) 
         } )
@@ -681,7 +678,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
    export const denyFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
     try {
-      await axios.post( BASE_URL + `/users/friends/deny/${receiver_id}`, rawBody )
+      await api.post(  `/users/friends/deny/${receiver_id}`, rawBody )
       .then(res =>  { 
         setFriendRequest({...res.data});
         } )
@@ -693,7 +690,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
 
    export const acceptFriendRequest = async(receiver_id,rawBody,setFriendRequest , setExpired)=>{
     try {
-      await axios.post( BASE_URL + `/users/friends/accept/${receiver_id}`, rawBody )
+      await api.post(  `/users/friends/accept/${receiver_id}`, rawBody )
       .then(res =>  {  
         if(res.data == "expired"){
           setExpired(true)
@@ -1177,7 +1174,7 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       try { 
         // setIsFetching(true)
       await 
-      api.get(`/talents/general/${user_id}`)
+      api.get(`/talents/hotStages/${user_id}`)
       .then(res =>  {
         const data = []
         if(res.data.length > 0) {

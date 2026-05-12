@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { View, Text, Pressable, Animated } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function VoteButton({setIsModalVisible,width ,
+export default function VoteButton({setIsModalVisible,width , height,
                                    voteTimeLaps , talentRoom , user ,
                                    postData , setAction,setText,
                                    voterEntry, selectedContestant
@@ -51,55 +51,69 @@ export default function VoteButton({setIsModalVisible,width ,
         }
         
      }
-      className =""
+      className ="flex-row flex- 1 gap-2"
       style={{
         alignItems: "center",
         justifyContent: "center", 
         paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
         borderRadius: 5,
+        height: height,
         backgroundColor:postData.votes.find(vote => vote.voter_id == user._id)?"rgba(255,215,0,0.15)":"rgba(255,255,255,0.15)" // "rgba(255,215,0,0.15)",
       }}
     >
 
       <Animated.View
-        className= "justify-center items- end"
+        className= "justify-center  items- end"
         style={{
           flexDirection: "row",
           transform: [{ scale: scaleAnim }],
         }}
-      >
-
+        >
         <MaterialCommunityIcons
           name="trophy"
-          size={width/24}
+          size = { postData.votes.find(vote => vote.voter_id == user._id)? width/18 : width/22}
           color={postData.votes.find(vote => vote.voter_id == user._id)? "gold":"white"}
         />
-
-        <Text
+        {/* <Text
         className ="border-b border-white"
           style={{
             color: "white",
             marginLeft: 6,
             fontWeight: "700",
-            fontSize: width/35,
+            fontSize: width/45,
           }}
         >
               {postData.votes.length} 
-        </Text>
+        </Text> */}
 
       </Animated.View>
-
-      <Text
-        style={{
-          color:postData.votes.find(vote => vote.voter_id == user._id)? "#FFD700":"white",
-          fontSize: width/37,
-          marginTop: 5,
-          fontWeight: "700",
-        }}
-      >
-        {postData.votes.find(vote => vote.voter_id == user._id)? "Voted" : "Vote"}
-      </Text>
+      <View
+      className = "flex-col items-center" >
+         <Text
+        className ="bord er-b bor der-white"
+          style={{
+            color: "white",
+            // marginLeft: 6,
+            fontWeight: "700",
+            fontSize: width/40,
+          }}
+        >
+              {postData.votes.length}
+        </Text>
+          <Text
+            style={{
+              color:postData.votes.find(vote => vote.voter_id == user._id)? "#FFD700":"white",
+              fontSize: width/49,
+              marginTop: 5,
+              fontWeight: "700",
+             }}
+            >
+            {postData.votes.find(vote => vote.voter_id == user._id)?`votes` : `Vote`}
+            {/* {postData.votes.find(vote => vote.voter_id == user._id)?`You've Voted for ${selectedContestant.name}'s performance` : `Vote for ${selectedContestant.name}'s performance`} */}
+          </Text>
+      </View>
+      
 
     </Pressable>
 

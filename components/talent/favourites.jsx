@@ -83,7 +83,7 @@ export default function Favourites({ user }) {
         <View className="px-5  pt-12 pb-2 bg-darkBg">
         <Text
             style ={{}}
-            className="font-bebas text-lg text-netflixRed tracking-widest mb-1" >
+            className="font-bebas text-lg text-pink-400 tracking-widest mb-1" >
             Favorite Stages
         </Text>
         <Text

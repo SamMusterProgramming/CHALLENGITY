@@ -17,7 +17,7 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
    
       <Image
         className = "rounded-full "
-        source={{ uri: selectedContestant.profile_img }}
+        source={{ uri: selectedContestant.profileImage.publicUrl }}
         style={{
           width: height * 0.9 ,
           height: height * 0.9 ,
@@ -29,12 +29,12 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
 
  
       <View 
-      className ="justify-evenly flex-1 h-[100%]  pt-2 gap-1  items-start"
+      className ="justify-evenly flex-  1 h-[100%]  pt-2 gap-2  items-start"
        style={{ 
   
 
        }}>
-        <Text
+        {/* <Text
                     className="absolute font-bebas tracking-widest top-0 left-[70%] p-1 border-b bor der-white"
                     style={{
                         color:  "#fff",
@@ -43,7 +43,7 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
                     }}
                     >
                     {selectedContestant.rank <5 ? "TOP " + selectedContestant.rank : "Rank " + selectedContestant.rank}
-        </Text>
+        </Text> */}
     
         <Text
                     className="mt-auto"
@@ -78,7 +78,7 @@ const UserCard = ({ selectedContestant , data ,height , width}) => {
                     </Text>
                     < CountryFlag
                         isoCode={selectedContestant.country || "US"}
-                        size={width/28}/>
+                        size={width/33}/>
         </View>
 
        

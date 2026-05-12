@@ -62,8 +62,9 @@ export default function ProgresssBarVideo({player,visible,bottom ,key}) {
             }}
             />)}
 
-       <Text className="text-white text-sm absolute font-black "
-        style={{position:"absolute" ,bottom:bottom-8}}>
+       <Text 
+       className="text-white text-sm absolute font-black "
+        style={{position:"absolute" ,bottom:bottom-8 , fontSize:8}}>
                          {formatTime(player.currentTime * 1000)}
       </Text>     
            

@@ -3,7 +3,7 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { getUploadImageUrl, getUploadUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from './uploadFileToBlackBlaze';
 import axios from 'axios';
-import { BASE_URL } from './apiCalls';
+import { api, BASE_URL } from './apiCalls';
 
 
 
@@ -250,8 +250,8 @@ export const  migrateToBackblaze2 = async ( roomId , contestantId ) => {
 
 
 export const getVideoUrl = async (roomId , contestantId) => {
-  const response = await axios.post(
-    `${BASE_URL}/talents/video-url`,
+  const response = await api.post(
+    `/talents/video-url`,
     {
       roomId,
       contestantId,

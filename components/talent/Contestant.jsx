@@ -15,11 +15,11 @@ export default function Contestant({contestant , selectedContestant , setSelecte
   const [contestantImg , setContestantImg] = useState(null)
 
   const bgColor = ( selectedContestant && selectedContestant._id === contestant._id) 
-    || ( participantTrackerId && participantTrackerId === contestant._id) ? '#37a4cc':
+    || ( participantTrackerId && participantTrackerId === contestant._id) ? 'rgba(55, 164, 204, 0.5)':
    user._id === contestant.user_id ?"white":"white"
    const textColor =     
     ( selectedContestant && selectedContestant._id === contestant._id)    
-   || ( participantTrackerId && participantTrackerId === contestant._id) ? 'black' : 'white'
+   || ( participantTrackerId && participantTrackerId === contestant._id) ? 'white' : 'white'
     
    useEffect(() => {   
     const loadVideo = async () => {
@@ -37,8 +37,8 @@ export default function Contestant({contestant , selectedContestant , setSelecte
                   style ={{
                     // borderColor : selectedContestant && selectedContestant._id === contestant._id ? "green" : "transparent" ,
                     backgroundColor: 
-                    selectedContestant && selectedContestant._id === contestant._id ? 'white':
-                    user._id === contestant.user_id ?'transparent':"transparent",
+                    selectedContestant && selectedContestant._id === contestant._id ? bgColor:
+                    user._id === contestant.user_id ?'rgba(0,0,0,0.3)':"rgba(0,0,0,0.3)",
                         height : f?  f + f * 0.2 : h  + 2 ,
                         width :f?  f + f * 0.2 : h,
                         // backgroundColor: bgColor,
@@ -137,7 +137,7 @@ export default function Contestant({contestant , selectedContestant , setSelecte
                                                         size={f?6:width/65}
                                               />
                             </View>
-                            {/* {  selectedContestant && selectedContestant._id === contestant._id && left && (
+                            {  selectedContestant && selectedContestant._id === contestant._id && left && (
                                        <View
                                        className="absolute top-0 right-[-25] b g-black p- 1 rounded-full flex-row justify-center items-center">
                                          <MaterialCommunityIcons name="arrow-left"  size={width/20} color="white" />
@@ -146,9 +146,9 @@ export default function Contestant({contestant , selectedContestant , setSelecte
                             {  selectedContestant && selectedContestant._id === contestant._id &&  (
                                        <View
                                        className="absolute top-0 left-[-25] b g-black p- 1 rounded-full flex-row justify-center items-center">
-                                         <MaterialCommunityIcons name="arrow-right"  size={width/20} color="white" />
+                                         <MaterialCommunityIcons name="arrow-right"  size={width/20} color="white/80" />
                                       </View>
-                            )} */}
+                            )}
                         
                           
                 </TouchableOpacity>

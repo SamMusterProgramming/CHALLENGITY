@@ -113,10 +113,12 @@ import comedystage from '../assets/icons/comedystage.png'
 import eatingstage from '../assets/icons/eatingstage.png'
 import sportstage from '../assets/icons/sportstage.png'
 import stage_bg from '../assets/icons/stage_bg.png'
+import talentify_logo  from '../assets/icons/talentify.png'
 
 
 
 export default {
+  talentify_logo,
   stage_bg , 
   sportstage,
   eatingstage,

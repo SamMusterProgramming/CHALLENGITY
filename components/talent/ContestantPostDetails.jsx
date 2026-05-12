@@ -17,8 +17,8 @@ import CommentButton from '../custom/commentButton';
 import ReportButton from '../custom/reportButton';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function ContestantPostDetails({user,show ,  width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
-  ,setParticipationType  ,rank,handleRefresh, setIsExpired ,openComments}) {
+export default function ContestantPostDetails({user,show , setOpenUserModal, width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
+  ,setParticipationType  ,rank,handleRefresh, setIsExpired ,openComments , isPlaying}) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
   const [voteTimeLaps,setVoteTimeLaps] = useState(30)
@@ -28,24 +28,29 @@ export default function ContestantPostDetails({user,show ,  width ,top ,bottom,l
   const [voted,setVoted] = useState(false)
   const {height} = useWindowDimensions()
 
-  
-
   const [voterEntry , setVoterEntry] = useState(talentRoom.voters.find(v=> v.voter_id == user._id))
-
   
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  width )).current;
 
+  const verticalAnimation = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
-  
     Animated.timing(sidebarAnimation, {
       toValue: 
-         show ? 0 :  width ,
+      show ? 0 :  width ,
       duration: 700,
       useNativeDriver: true,
     }).start();
-
-   
   }, [show]);
+
+
+  useEffect(() => {
+   Animated.timing(verticalAnimation, {
+     toValue: isPlaying ? bottom -20 : 0, 
+     duration: 400,
+     useNativeDriver: true,
+   }).start();
+ }, [isPlaying]);
 
 
   useEffect(() => {
@@ -118,82 +123,110 @@ export default function ContestantPostDetails({user,show ,  width ,top ,bottom,l
      <>
        
          < Animated.View
-             className = " absolute gap- 2 b g-white flex-col justify-end  items-center  "
+             className = " absolute px-4 flex-row justify-start gap-4 items-end  "
              style={[
                {
-                  // backgroundColor :"rgba(0,0,0,0.4)",
-
-                  // width: width * 0.7,
-                  // height : height,
+                  // backgroundColor :"rgba(0,0,0,0.2)",
                   elevation:22,  
-                  // justifyContent: 'center', 
-                  // alignItems: 'center', 
-                  zIndex: 3 ,
+                  // zIndex: 3 ,
                   opacity:1,
                   width:width ,
-                  bottom:bottom,
-                //   top:0,
-                  left:left
-                //   top:top 
+                  bottom:bottom ,
+                  left:left,
+                  height:height /18,
                }
                , 
-           { transform: [{ translateX: sidebarAnimation }] }]}>
-           
-                  
+           { transform: [ { translateY: verticalAnimation }] }]}>
+                         <TouchableOpacity
+                                onPress={ () => {
+                                           setOpenUserModal(true)
+                                             }
+                                         }
+                                            style={{
+                                            //   width : width 
+                                            }}
+                                            className="flex- 1  pr -2 flex-col justify-start  items-center gap-2 ">
+                              <Image
+                                 className = "rounded-full "
+                                 source={{ uri: selectedContestant.profileImage.publicUrl }}
+                                 style={{
+                                    width: height /18 ,
+                                    height: height /18,
+                                    borderWidth:  1,
+                                    borderColor:  "#374151",
+                                 }}
+                              />
+                        </TouchableOpacity>
                         <View
-                        style ={{
-                           // backgroundColor :"rgba(0,0,0,0.4)"
+                           className="flex-1 px-4 justify-center items-center"
+                           style={{
+                              minHeight: height / 18,
+                              backgroundColor: "rgba(0,0,0,0.28)",
+                           }}
+                           >
+                           <Text
+                              numberOfLines={2}
+                              style={{
+                                 color: postData.votes.find(
+                                 vote => vote.voter_id == user._id
+                                 )
+                                 ? "#FFD700"
+                                 : "rgba(255,255,255,0.92)",
+
+                                 fontSize: width / 52,
+
+                                 lineHeight: width / 24,
+
+                                 fontWeight: "600",
+
+                                 letterSpacing: 0.4,
+
+                                 textAlign: "center",
+
+                                 width: "100%",
+                              }}
+                           >
+                              {postData.votes.find(
+                                 vote => vote.voter_id == user._id
+                              )
+                                 ? `Your vote supports ${selectedContestant.name}'s performances`
+                                 : `Watch ${selectedContestant.name}'s performances and cast your vote to support their journey`}
+                           </Text>
+                           </View>
+                        <View
+                          style ={{
+                           // backgroundColor :"rgba(173, 216, 230,0.25)"
                         }}
-                        className ="flex-1 w-[90%] px -2 rounded-t-lg flex-row  pt-2 justify-evenly items-center">
-                      
+                        className =" flex-row ml-auto flex- 1 rounded-xl justify-center items-center">
+                             <VoteButton 
+                                    setIsModalVisible={setIsModalVisible} width={width} height = {height/18}
+                                    voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
+                                    postData ={postData} setAction={setAction} setText={setText} user={user}
+                                    voterEntry={voterEntry} selectedContestant={selectedContestant} />
+                        </View>
+                        
+                        {/* <View
+                        className ="flex-1 b g-white/20  flex-row bo rder-2 bor der-gold/30 rounded-md  justify-evenly items-center">
                              <LikeButton
                                setIsModalVisible={setIsModalVisible} width = {width}
                                talentRoom={talentRoom} 
                                postData ={postData}  user={user}
                                handleLikePost={handleLikePost} selectedContestant={selectedContestant} />
-                            <CommentButton
+                             <CommentButton
                                setIsModalVisible={setIsModalVisible} width = {width}
                                talentRoom={talentRoom} 
                                postData ={postData}  user={user}
                                openComments={openComments} selectedContestant={selectedContestant} />
-
-                       
-
-                              <ReportButton
+                             <ReportButton
                                setIsModalVisible={setIsModalVisible} width={width}
                                voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
                                postData ={postData} setAction={setAction} setText={setText} user={user}
                                selectedContestant={selectedContestant} />
-                         
-                          </View>
-                     
-                         
-        
-                  <View
-                  style ={{ 
-                     // backgroundColor :"rgba(0,0,0,0.4)"
-                  }}
-                  className= "flex-row p-2 w-[100%] rounded-lg justify-between items-end">
-                        <TouchableOpacity
-                                    style={{
-                                    //   width : width 
-                                    }}
-                                     className="flex-1   flex-col justify-start  items-center gap-2 ">
-                                           
-                                            <UserCard selectedContestant={selectedContestant}  height={height/18} width={width } />
-                                           
-                        </TouchableOpacity>
-                        <VoteButton 
-                               setIsModalVisible={setIsModalVisible} width={width}
-                               voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
-                               postData ={postData} setAction={setAction} setText={setText} user={user}
-                               voterEntry={voterEntry} selectedContestant={selectedContestant} />
-                  </View>
-
+                        </View> */}
 
                   
-
-                
+                    
+                     
          </Animated.View>
 
          {isModalVisible && (  

@@ -279,7 +279,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
       className="justify-start items-center"
     >
       {/* 🎬 Cinematic Container */}
-      <View className="flex-1 w-full items-center bg-[#010101] [#0a0a0a] bor der bo rder-yellow-500/20">
+      <View className="flex-1 w-full items-center bg-black-100 [#0a0a0a] bor der bo rder-yellow-500/20">
 
         {/* ✨ Gold Glow Edges */}
         {/* <LinearGradient
@@ -321,23 +321,23 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
                 },
               })
             }
-            className="w-[95%] p- 4 flex-1 bg-black-100 flex-row justify-center items-center overf low-hidden"
+            className="w-[95%] p-4 flex-1 bg-black -100 flex-row justify-center items-center overf low-hidden"
           >
             {/* 🎥 Background Image */}
             <Image
-              className="w-[100%] h-[100%]  opacity-70"
+              className="w-[100%] h-[100%] rounded-lg opacity-70"
               source={{ uri: selectedContestant?.performances[0].thumbnail?.publicUrl }}
               resizeMethod="cover"
             />
 
             {/* 🎬 Cinematic Overlay */}
             {/* <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.9)"]}
+              colors={["transparent", "rgba(0,0,90,0.9)"]}
               style={{
                 position: "absolute",
-                bottom: 0,
+                bottom: 4,
                 width: "100%",
-                height: "60%",
+                height: "20%",
                 borderRadius: 8,
               }}
             /> */}
@@ -373,7 +373,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
                 },
               })
             }
-            className="w-[95%]  flex-1 mt- 2 justify-center items-center bg-black-100 bor der bo rder-yellow-500/20"
+            className="w-[95%]  flex-1 p-4 justify-center items-center bg-black bor der bo rder-yellow-500/20"
           >
             <Text
               style={{ fontSize: width / 7 }}
@@ -388,7 +388,6 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
           </Pressable>
         )}
 
-        {/* 🎬 Footer */}
         <PostTalentHeader data={userTalent} width={width} user={user} />
       </View>
     </View>

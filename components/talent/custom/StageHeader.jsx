@@ -109,7 +109,7 @@ export default function StageHeader({
   return (
     <View className="w-full px-2 pt-2 pb-1">
 
-      <View className="b g-[#0b0b0f] bo rder bor der-yellow-500/20 rounded-lg overflow-hidden">
+      <View className="b g-[#0b0b0f] bo rder bor der-yellow-500/20 rounded-lg ">
 
         {/* ✨ Subtle Top Glow */}
        

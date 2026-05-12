@@ -95,13 +95,11 @@ export default function HomePage() {
     homeState.scrollY = offset; // persist
   };
 
-
   if (!isFocused) { return null; }
 
 
   return (
-
-
+    
     <View
     className="flex-1 w-[100%] bg-black">
       <FlatList

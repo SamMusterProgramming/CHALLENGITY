@@ -1,42 +1,71 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useGlobalContext } from '../../context/GlobalProvider'
-import { router } from 'expo-router'
-import { MotiView } from 'moti'
-import { getVideo } from '../../videoFiles'
+import { View, Text, Image, Pressable } from "react-native";
+import React from "react";
+import { router } from "expo-router";
+import { MotiView } from "moti";
 
-export default function Friend({friend , w , h ,index}) {
-  const {user,setUser,isViewed ,setIsViewed} = useGlobalContext()
-  const [friendImg , setFriendImg] = useState(null)
-  useEffect(() => {
-    getVideo(friend.profile_img).then(path =>{
-      setFriendImg(path)
-     });
-  }, [])
-  
+export default function Friend({ friend, w, index }) {
+
   return (
-
-    <TouchableOpacity
-     onPress={()=> {router.push({ pathname: '/ViewProfile', params: {user_id:friend.user_id} })}}
-     className=" p- 2 flex-col gap-2 justify-center items-center rounded-lg bg-gray-800 bg -[#313435] ">
-        <MotiView
-        from={{ opacity: 0, translateY: 40 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 100, type: 'timing', duration:index * 100 }}
-        className=" p-2 flex-col gap-2 justify-start items-center px-2"
-        style={{width:w/6 , height:w/5.7}}
+    <MotiView
+      from={{ opacity: 0, translateY: 30 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{
+        delay: index * 60,
+        type: "timing",
+        duration: 400,
+      }}
+      style={{
+        width: "31%", // 3 columns clean
+        marginBottom: 18,
+      }}
+    >
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "/ViewProfile",
+            params: { user_id: friend.user_id },
+          })
+        }
+        style={({ pressed }) => ({
+          transform: [{ scale: pressed ? 0.96 : 1 }],
+          opacity: pressed ? 0.85 : 1,
+        })}
       >
-      {friendImg && (
-       <Image
-         style={{width:w/10 , height:w/10}}
-         className="w-12 h-12 rounded-xl full"
-         source={{uri:friendImg  }}
-        />
-      )}
-      <Text className="text-gray-100 text-xs font-black"
-      style={{fontSize:8}}>{friend.name.slice(0,10)}</Text>
-        </MotiView>
-    </TouchableOpacity>
+        <View
+          style={{
+            borderRadius: 14,
+            backgroundColor: "rgba(255,255,255,0.04)",
+            paddingVertical: 14,
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: "rgba(255,255,255,0.05)",
+          }}
+        >
+          {/* IMAGE */}
+          <Image
+            source={{ uri: friend.profileImage?.publicUrl}}
+            style={{
+              width: w / 6,
+              height: w / 6,
+              borderRadius: 12,
+              marginBottom: 10,
+            }}
+          />
 
-  )
+          {/* NAME */}
+          <Text
+            numberOfLines={1}
+            style={{
+              color: "#E5E7EB",
+              fontSize: w / 40,
+              letterSpacing: 0.8,
+            }}
+            className="font-bebas"
+          >
+            {friend.name}
+          </Text>
+        </View>
+      </Pressable>
+    </MotiView>
+  );
 }

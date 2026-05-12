@@ -258,6 +258,8 @@ export default function ViewProfile() {
      })
     }
   }, [userProfile])
+ 
+
 
   useEffect ( () => {     
     getUserById(user_id, setUserProfile)

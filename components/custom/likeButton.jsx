@@ -13,11 +13,11 @@ export default function LikeButton({setIsModalVisible,width ,
 
     <Pressable
     onPress={ handleLikePost   }
-    className ="w-[30%] px- 6"
+    className ="w- [25%] p-3 flex-row-reverse"
       style={{
         alignItems: "center",
         justifyContent: "center", 
-        paddingVertical: 10,
+        // paddingVertical: 5,
         // paddingHorizontal: 10,
         borderRadius: 5,
         // backgroundColor:postData.likes.find(like => like.liker_id == user._id)?"rgba(173, 216, 230,0.25)":"rgba(255,255,255,0.15)" // "rgba(255,215,0,0.15)",
@@ -25,46 +25,33 @@ export default function LikeButton({setIsModalVisible,width ,
     >
 
       <Animated.View
-        className= "justify-start items- end"
+        className= "justify-center gap-2 items-center"
         style={{
-          flexDirection: "row",
+          flexDirection: "col",
           transform: [{ scale: scaleAnim }],
         }}
       >
 
-        {/* <MaterialCommunityIcons
-          name="trophy"
-          size={width/18}
-          color={postData.votes.find(vote => vote.voter_id == user._id)? "gold":"white"}
-        /> */}
-        <FontAwesome name="thumbs-up" size={width/25} color={postData.likes.find(like => like.liker_id == user._id) 
+      
+        <FontAwesome name="thumbs-up" size={width/20} color={postData.likes.find(like => like.liker_id == user._id) 
                     ?"lightblue":"white" } />
 
-
         <Text
-        className ="border-b border-white"
+          className ="text-center"
+          numberOfLines={1}
           style={{
             color: "white",
-            marginLeft: 6,
             fontWeight: "700",
-            fontSize: width/35,
+            fontSize: width/40,
+            minWidth:width/12
           }}
         >
-              {postData.likes.length} 
+              {postData.likes.length}6
         </Text>
 
       </Animated.View>
 
-      <Text
-        style={{
-          color:postData.likes.find(like => like.liker_id == user._id)? "white":"white",
-          fontSize: width/37,
-          marginTop: 5,
-          fontWeight: "700",
-        }}
-      >
-        {postData.likes.find(like => like.liker_id == user._id)? "Liked" : "Like"}
-      </Text>
+     
 
     </Pressable>
 

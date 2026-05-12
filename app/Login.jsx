@@ -11,13 +11,12 @@ import {
   Alert,
   Vibration,
   useWindowDimensions,
-  Platform,
 } from 'react-native';
 import { useGlobalContext } from '../context/GlobalProvider';
 import { icons } from '../constants';
 import {  authLogin, BASE_URL } from '../apiCalls';
 import { router } from 'expo-router';
-import {  loadLoginHint, login,  resendVerification, saveLoginHint, signUp, signUpWithEmail, waitForUser } from '../services/userServices';
+import {  loadLoginHint, login,  loginAnonymouslyUser,  resendVerification, saveLoginHint, signUp,  waitForUser } from '../services/userServices';
 import { getFirebaseErrorMessage } from '../utilities/firebaseEroors';
 import ErrorMessage from '../components/custom/errorMessage';
 import GoogleButton from '../components/custom/googleButton';
@@ -326,6 +325,44 @@ export default function Login() {
      }
    }
 
+   const handleAnonymousLogin = async () => {
+    try {
+      showLoading("Entering as guest...");
+  
+      // 1. Firebase anonymous login
+      const user = await loginAnonymouslyUser();
+  
+      // 2. Get token
+      const token = await user.getIdToken();
+  
+      // 3. Call backend
+      const res = await fetch(`${BASE_URL}/users/auth/anonymous`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token,
+                               email: form.email, }),
+      });
+      
+      const data = await res.json();
+      // 4. Save JWT
+      await saveToken(data.token);
+  
+      // 5. Optional: save hint
+      await saveLoginHint("guest");
+  
+      // 6. Set global user
+      setUser(data.user);
+  
+    } catch (e) {
+      console.log("ANONYMOUS LOGIN ERROR:", e);
+      setError("Guest login failed");
+    } finally {
+      hideLoading();
+    }
+  };
+
 
 
 useEffect(() => {
@@ -337,7 +374,7 @@ useEffect(() => {
         getNotificationByUser(user._id, setNotifications),
         // getFollowings(user._id, setFollowings),
         getUserFriendsData(user._id, setUserFriendData),
-        // getFollowData(user._id, setFollow),
+        getFollowData(user._id, setFollow),
         getFavouriteStageList(user._id, setFavouriteList),
         getFavouriteStages(user._id, setFavouriteStages),
         // getTopTalents(user._id, setTopTalents),
@@ -364,106 +401,213 @@ useEffect(() => {
  
 
   
-  return (
-    <View 
-    className="flex-col flex-1 justify-between items-center"
-    style={{ flex: 1, backgroundColor: '#0B0D0F', padding: 0, 
-      paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
-      paddingBottom : insets.bottom
-     }}>
-    
+return (
+  <View
+    style={{
+      flex: 1,
+      backgroundColor: "#070809",
+      paddingTop: insets.top,
+      paddingBottom: insets.bottom,
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+
+    {/* -------- LOGO -------- */}
+    <View style={{ height: "20%", justifyContent: "center" }}>
+      <Image
+        source={icons.challengify_logo}
+        resizeMode="contain"
+        style={{
+          width: width * 0.55,
+          height: "100%",
+          opacity: 0.85,
+        }}
+      />
+    </View>
+
+    {/* -------- FORM -------- */}
+    <View
+      style={{
+        width: "82%",
+        gap: 18,
+      }}
+    >
+
+      {/* EMAIL */}
       <View
-      className ="h-[15%] w-[100%] justify-center items-center"
+        className = " rounded-md"
+        style={{
+          borderWidth: 0.6,
+          borderColor: "rgba(255,255,255,0.15)",
+          padding: 10,
+        }}
       >
-          <Image  
-            source={icons.challengify_logo}
-            style={{ width: "90%", height: "100%", alignSelf: 'center' }}
-            resizeMode="contain"
-          />
-      </View>
-     
-     
-      <View 
-      className="h-[60%] justify-center rounded-md"
-      style={{ 
-        marginTop: 30,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 26,
-        elevation: 3,
-     
-        width:"80%"}}> 
         <TextInput
-          className="bg-[#1b1d1e] border border-[#2A2A2A"
           placeholder="Email"
-          placeholderTextColor="#888"
+          placeholderTextColor="rgba(255,255,255,0.35)"
           value={form.email}
           onChangeText={(e) => setForm({ ...form, email: e })}
-          style={{ color: 'white', padding: 12, borderRadius: 5, marginBottom: 10 }}
+          style={{
+            color: "#fff",
+            fontSize: width / 28,
+            letterSpacing: 0.5,
+          }}
         />
+      </View>
+
+      {/* PASSWORD */}
+      <View
+        className = " rounded-md"
+        style={{
+          borderWidth: 0.6,
+          borderColor: "rgba(255,255,255,0.15)",
+          padding: 10,
+        }}
+      >
         <TextInput
-          className="bg-[#1b1d1e]  border border-[#2A2A2A"
           placeholder="Password"
-          placeholderTextColor="#888"
+          placeholderTextColor="rgba(255,255,255,0.35)"
           secureTextEntry
           value={form.password}
           onChangeText={(e) => setForm({ ...form, password: e })}
-          style={{  color: 'white', padding: 12, borderRadius: 5 }}
+          style={{
+            color: "#fff",
+            fontSize: width / 28,
+            letterSpacing: 0.5,
+          }}
         />
+      </View>
 
-        <View style={{ flexDirection: 'row', marginTop: 15 }}>
-          <TouchableOpacity 
-           onPress={handleLogin}
-           style={{ flex: 1, backgroundColor: '#EAB308', padding: 12, borderRadius: 10, marginRight: 5 }}>
-            <Text style={{ color: 'black', textAlign: 'center',fontWeight :600 }}>Login</Text>
-          </TouchableOpacity>
+      {/* -------- ACTIONS -------- */}
+      <View style={{ marginTop: 15, gap: 12 }}>
 
-          <TouchableOpacity 
-          onPress={()=> handleSignUp()}
-           style={{ flex: 1, backgroundColor: '#3ecf8e', padding: 12, borderRadius: 10, marginLeft: 5 }}>
-            <Text style={{ color: 'black', textAlign: 'center' ,fontWeight :600 }}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-        <GoogleButton   onPress={handleGoogleLogin}   />
-        <View
-        className ="w-full"
-         style={{ marginTop: 30 }}>
+        {/* LOGIN (PRIMARY) */}
+        <TouchableOpacity
+          onPress={handleLogin}
+          activeOpacity={0.85}
+          style={{
+            paddingVertical: 11,
+            borderRadius: 999,
+            backgroundColor: "#E6C068",
+            alignItems: "center",
+            shadowColor: "#E6C068",
+            shadowOpacity: 0.25,
+            shadowRadius: 12,
+            elevation: 6,
+          }}
+        >
           <Text
-          className="text-gray-200"
             style={{
-              fontSize: 11,
-              textAlign: "center",
+              color: "#0A0B0D",
+              fontSize: width / 35,
+              fontWeight: "600",
+              letterSpacing: 1.5,
             }}
           >
-            * {googleHint 
-              ? `You previously signed in with Google as ${googleHint}`
-              : `Continue with your email: ${emailHint || ""}`} 
+            LOGIN
           </Text>
-        </View>
+        </TouchableOpacity>
+
+        {/* SIGN UP (SECONDARY GHOST) */}
+        <TouchableOpacity
+          onPress={handleSignUp}
+          activeOpacity={0.8}
+          className ="bg-black-100 rounded-xl"
+          style={{
+            paddingVertical: 12,
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              color: "#E6C068",
+              fontSize: width / 32,
+              letterSpacing: 1.2,
+              opacity: 0.9,
+            }}
+          >
+            Create Account
+          </Text>
+        </TouchableOpacity>
+
       </View>
 
-      <View
-      className ="h-[25%]  b g-yellow-100 flex-col justify-center gap-4 items-center"  >
-         <ErrorMessage message ={error} color ={messageColor}/>
-         {verification && (
-         <TouchableOpacity
-           onPress={sendVerification}
-           style={{
-             backgroundColor: 'white',
-             padding: 12,
-             borderRadius: 11,
-             marginLeft: 5
-           }}
-           className="" >
-            <Text 
-            style={{fontSize: width/38 , color: 'blue', textAlign: 'center', fontWeight: 600 }}>
-              Resend Verification
-            </Text>
-         </TouchableOpacity>
-         )}
-         
+      {/* GOOGLE */}
+      <View style={{ marginTop: 10 }}>
+        <GoogleButton onPress={handleGoogleLogin} />
       </View>
-  
+
+      {/* anonymous buttom */}
+      <TouchableOpacity
+        onPress={handleAnonymousLogin}
+        style={{
+          marginTop: 12,
+          paddingVertical: 12,
+          borderRadius: 12,
+          backgroundColor: "rgba(255,255,255,0.05)",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            color: "#aaa",
+            letterSpacing: 1,
+            fontSize: width / 32,
+          }}
+        >
+          CONTINUE AS GUEST
+        </Text>
+      </TouchableOpacity>
+
+      {/* HINT */}
+      <Text
+        style={{
+          marginTop: 12,
+          fontSize: width / 42,
+          color: "rgba(255,255,255,0.4)",
+          textAlign: "center",
+        }}
+      >
+        {googleHint
+          ? `Google: ${googleHint}`
+          : emailHint
+          ? `Last used: ${emailHint}`
+          : ""}
+      </Text>
+
     </View>
-  );
+
+    {/* -------- FOOTER -------- */}
+    <View
+      style={{
+        height: "18%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <ErrorMessage message={error} color={messageColor} width={width} />
+
+      {verification && (
+        <TouchableOpacity
+          onPress={sendVerification}
+          style={{
+            marginTop: 10,
+          }}
+        >
+          <Text
+            style={{
+              color: "#E6C068",
+              fontSize: width / 34,
+              letterSpacing: 1,
+            }}
+          >
+            Resend Verification
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
+
+  </View>
+);
 }

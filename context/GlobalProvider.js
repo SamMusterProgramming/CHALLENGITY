@@ -44,13 +44,10 @@ export const GlobalProvider =({children}) => {
 
    const [globalSelectedRegion , setGlobalSelectedRegion] = useState("DZ")
    const [globalSelectedStageName , setGlobalSelectedStageName] = useState("Singing")
-   const [userCountryCode , setUserCountryCode] = useState([])
+   const [userCountryCode , setUserCountryCode] = useState("")
    const [hotStageScrolledIndex , setHotStageScrolledIndex] = useState(0)
 
 
-
-
-    
     return (
         <GlobalContext.Provider
             value= { 

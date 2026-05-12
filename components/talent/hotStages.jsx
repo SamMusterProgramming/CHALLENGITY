@@ -4,9 +4,11 @@ import { View, Text, Animated,  Dimensions } from "react-native";
 import StageDisplayer from "../talent/stageDisplayer";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import LoadingActivity from "../modal/loadingActivity";
-import { countries } from "../../utilities/TypeData";
+import { countries, stageDescriptions, stageImages } from "../../utilities/TypeData";
 import { useFocusEffect } from "expo-router";
 import { getStageByNameAndRegion } from "../../apiCalls";
+import CarouselIndicator from "../custom/carouselIndicator";
+import StageHero from "../custom/stageHero";
 
 const { width ,height } = Dimensions.get("window");
 
@@ -23,7 +25,7 @@ const SNAP_INTERVAL = ITEM_WIDTH;
 /* ---------------- MAIN CAROUSEL ---------------- */
 
 const MAIN_ITEM_WIDTH = width * 0.94;
-const MAIN_ITEM_MARGIN = 2;
+const MAIN_ITEM_MARGIN = 8;
 const MAIN_SNAP_INTERVAL = MAIN_ITEM_WIDTH + MAIN_ITEM_MARGIN * 2;
 const SIDE_SPACING = (width - MAIN_ITEM_WIDTH) / 2;
 
@@ -86,10 +88,11 @@ export default function HotStage({ user }) {
     return (
       <Animated.View
         style={{
-          width: MAIN_ITEM_WIDTH,
+          width: MAIN_ITEM_WIDTH ,
           marginHorizontal: MAIN_ITEM_MARGIN,
           transform: [{ scale } , {translateY}],
         }}
+        className =""
       >
         <StageDisplayer
           userTalent={item}
@@ -132,10 +135,11 @@ export default function HotStage({ user }) {
   useFocusEffect(
     useCallback(() => {
       const timeout = setTimeout(() => {
-        console.log(hotStageScrolledIndex)
+        const offset = hotStageScrolledIndex * MAIN_SNAP_INTERVAL ;
         mainFlatListRef.current?.scrollToOffset({
-                            offset: hotStageScrolledIndex * MAIN_SNAP_INTERVAL,
+                            offset: offset,
                              animated: false });
+        mainScrollX.setValue(offset);
       }, 80); 
       return () =>  {
                 clearTimeout(timeout);}
@@ -147,14 +151,14 @@ export default function HotStage({ user }) {
   return (
     <>
         
-        <View className="px-5 mt-5 pt-6 pb-2 bg-darkBg">
+        <View className="px-5 mt-5 pt-4 pb-2 bg-darkBg">
       
         <Text
             style ={{}}
-            className="font-bebas text-xl text-gold tracking-widest mb-1" >
-             TRENDING STAGES
+            className="font-bebas text-lg text-white tracking-widest mb- 1" >
+             HOT STAGES
         </Text>
-        <Text className="text-gray-200 text-sm mt-2 leading-relaxed">
+        <Text className="text-gray-200 text-sm mt- 2 leading-relaxed">
             Competition is heating up. Watch, vote, and join when a spot opens.
         </Text>
         
@@ -162,12 +166,12 @@ export default function HotStage({ user }) {
 
         <View
           style={{  minHeight: width /2  + width / 4.5 + width * 0.1   }}
-          className="flex-1  items-center justify-center">
+          className="flex -1  items-center justify-center">
                 <LoadingActivity visible = {isLoading} />
                 <Animated.FlatList
                     ref={mainFlatListRef}
                     horizontal
-                    data={hotStages}
+                    data={hotStages.slice(0,20)}
                     extraData={globalRefresh}
                     renderItem={renderMainItem}
                     keyExtractor={(item) => item._id}
@@ -189,30 +193,68 @@ export default function HotStage({ user }) {
                     windowSize={5}
                     onMomentumScrollEnd={handleScrollEnd} 
                     getItemLayout={getItemLayout} 
-                />
+                 />
+               
             
             </View>
 
        
        
        
-       <View className="px-5">
+       {/* <View className="px-5">
      
-         <Text className="text-white text-xl font-extrabold leading-tight">
-           {stageData.name} Stage {'  -  '}
-            <Text className="text-gray-300 text-sm uppercase tracki ng-widest mb-1">
-              {countries.find(c => c.code === stageData.region)?.name} {' '}
-                 <Text className="text-gray-300  text-lg  uppercase tracking-widest ">
-                  {countries.find(c => c.code === stageData.region)?.flag}
-                 </Text>
+            <View className=" w-full">
+                <Text 
+                style={{fontSize:width/30}}
+                className="text-white text-lg font-extrabold leading-tight">
+                {stageData.name} Stage {'  -  '}        
+                </Text>
+                <CarouselIndicator
+                        title = "Stages"
+                        count = {8}
+                        scrollX = {mainScrollX}
+                        width = {width}
+                        position = {
+                          {
+                            top : 0 ,
+                            right : 20
+                          }
+                        }
+                />
+            </View>
+            <Text 
+                style={{fontSize:width/40}}
+                className="text-gray-100 text-sm uppercase font-bebas tracking-widest mt-1 1">
+                        {countries.find(c => c.code === stageData.region)?.name} {' '}
+                     <Text 
+                        style={{fontSize:width/35}}
+                        className="text-gray-100 text-lg uppercase tracking-widest">
+                        {countries.find(c => c.code === stageData.region)?.flag}
+                    </Text>
             </Text>
-         </Text>
         
-         <Text className="text-gray-200 text-sm mt-2 leading-relaxed">
-             Step into the spotlight and let your voice move the world. This is your moment to shine, to be heard, and to rise
-         </Text>
+            <Text className="text-gray-200 text-sm mt-1 leading-relaxed">
+                {stageDescriptions[stageData.name]}
+            </Text>
 
-       </View>
+        </View> */}
+        <View className="w-full px-5 flex- 1 mt- 2 py-2 overflow-hidden">
+                    <StageHero title={stageData.name + " Stage"} 
+                        image={null}
+                        region={countries.find( c => c.code == stageData.region).name}
+                        flag = {countries.find( c => c.code == stageData.region).flag}
+                        description={stageDescriptions[stageData.region.name]}/>
+                    <CarouselIndicator
+                            title="Stages"
+                            count={8}
+                            scrollX={mainScrollX}
+                            width={width}
+                            position={{
+                              top: 0,
+                              right: 20,
+                            }}
+                          /> 
+        </View>
    
 
     </>

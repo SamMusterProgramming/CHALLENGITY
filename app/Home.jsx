@@ -1,5 +1,5 @@
 import { ActivityIndicator,Platform,  useWindowDimensions, View } from 'react-native'
-import React, {  useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import {  useSafeAreaInsets } from 'react-native-safe-area-context';
 import NotificationsModal from '../components/talent/modal/NotificationsModal';
 import HomePage from '../components/home/HomePage';
@@ -14,7 +14,7 @@ import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
 import ProfileDrawer from '../components/modal/profileDrawer';
 
-import { getUserCountry } from '../utilities/userGeoLocation';
+
 
 
 // import { getUserCountryFromGPS } from '../utilities/userGeoLocation';
@@ -26,45 +26,20 @@ import { getUserCountry } from '../utilities/userGeoLocation';
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const {user,isLoggingOut, gpsLocation , setGpsLocation , isLoading , setIsLoading} = useGlobalContext()  
+  const {user,isLoggingOut} = useGlobalContext()  
   const { width, height } = useWindowDimensions();
   const [selectedPage , setSelectedPage] = useState(null)
   const [displayNotificationsModal , setDisplayNotificationsModal] = useState(false)
-  const [refresh , setRefresh] = useState(false)
-  const [reset , setReset] = useState(false)
-  const [name , setName] = useState(null)
+ 
   const [isFetching, setIsFetching] = useState(false);
-  const [authType, setAuthType] = useState("login");
 
-  const iconColor = "#ffffff" 
-  const selectedIconColor = "lightblue"
-  const iconSize = width/20
   const [activeIndex, setActiveIndex] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [appReady , setAppReady] = useState(false)
-
-
-
-
-
-  // useEffect(() => {
-  //   const run = async () => {
-  //     const location = await getUserLocationSafe();
-  //     setGpsLocation(location);
-  //   };
-  
-  //   setTimeout(run, 2000);
-  // }, []);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const location = await getUserCountry()
-  //     console.log("location" + location.countryCode);
-  //   })();
-  // }, []);
 
   const headerHeight = height * 0.13;
+
+  if(!user) return ;
 
 
   return (
@@ -74,28 +49,24 @@ export default function Home() {
             paddingTop:Platform.OS == "ios" ? insets.top : insets.top
           }}
            className=" flex-1  flex-col justify-start items-center py- bg-black primary [#0f1010]">
-
+         
           <View
-            style={{ height: headerHeight }}
-            className="w-full bg-black justify-center items-center"
-          >
+            className="w-full bg-black justify-center items-center " >
             <HeaderApp
               user={user && user || null}
               showNotifications={showNotifications}
               setShowNotifications={setShowNotifications}
               setShowProfile={setShowProfile}
               width={width}
+              height = {height}
+            />
+       
+            <TopStageNavBar
+              width={width}
+              activeIndex={activeIndex}
+              setActiveIndex={setActiveIndex}
               headerHeight={headerHeight}
             />
-            <View className="flex- 1 h-[50%] bor der-t bo rder-[#434242] flex-row items-center">
-                <TopStageNavBar
-                  width={width}
-                  activeIndex={activeIndex}
-                  setActiveIndex={setActiveIndex}
-                />
-            </View>
-          
-
           </View>
  
 
@@ -119,7 +90,7 @@ export default function Home() {
                         {activeIndex === 2 && ! isFetching && (
                           <Challenge setSelectedPage={setSelectedPage} />
                         )}
-                        {activeIndex === 4 && ! isFetching && ! isLoggingOut && (
+                        {activeIndex === 3 && ! isFetching && ! isLoggingOut && (
                           <UserProfile user={user} />
                         )}
                         {selectedPage == "notification" && ! isFetching && (
@@ -161,10 +132,13 @@ export default function Home() {
           visible={showNotifications}
           onClose={() => setShowNotifications(false)}
           />
-          <ProfileDrawer
-          visible={showProfile}
-          onClose={() => setShowProfile(false)}
-          />
+          {showProfile && (
+             <ProfileDrawer
+             visible={showProfile}
+             onClose={() => setShowProfile(false)}
+             />
+          )}
+         
  
       </View>
        

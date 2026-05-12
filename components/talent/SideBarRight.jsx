@@ -36,8 +36,8 @@ const SideBarRight = ({ show, onClose , height, width ,top ,bottom ,right ,regio
     className="absolute flex-col justify-center rounded-tr-xl rounded-br-xl items-start  "
     style={[
         {
-            // top:top && top,
-            bottom:bottom && bottom,
+            top:top && top,
+            // bottom:bottom && bottom,
             right:right && right,
             position: 'absolute',
             height: height, 

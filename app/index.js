@@ -7,7 +7,7 @@ import "../global.css";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGlobalContext } from '../context/GlobalProvider';
 
-import {  BASE_URL, generateChallengeTalentGuinessData, getAllTalentStages, getFavouriteList, getFavouriteStageList, getFavouriteStages, getFollowData, getFollowings, getNotificationByUser, getRegionTalentStages, getToken, getTopTalents, getUserFriendsData, getUserTalent } from '../apiCalls';
+import {  BASE_URL, generateChallengeTalentGuinessData, getFavouriteStageList, getFavouriteStages, getFollowData,  getNotificationByUser, getRegionTalentStages, getToken, getUserFriendsData, getUserTalent } from '../apiCalls';
 import { useFonts } from 'expo-font';
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
 import {
@@ -35,7 +35,6 @@ export default function App() {
     ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg ,
     gpsLocation , setGpsLocation  , setGlobalSelectedRegion , setUserCountryCode } = useGlobalContext()  
 
-  const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
@@ -94,7 +93,7 @@ useEffect(() => {
           getNotificationByUser(user._id, setNotifications),
           // getFollowings(user._id, setFollowings),
           getUserFriendsData(user._id, setUserFriendData),
-          // getFollowData(user._id, setFollow),
+          getFollowData(user._id, setFollow),
           getFavouriteStageList(user._id, setFavouriteList),
           getFavouriteStages(user._id, setFavouriteStages),
           // getTopTalents(user._id, setTopTalents),
@@ -106,6 +105,7 @@ useEffect(() => {
         await getUserCountry().then( async(res) =>{
                            setGlobalSelectedRegion(res)
                            setUserCountryCode(res)
+                           console.log(res)
                            await getRegionTalentStages(res, setRegionStages)
                        })
         setUserProfileImg(user.profileImage?.publicUrl);

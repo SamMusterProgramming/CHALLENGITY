@@ -26,7 +26,7 @@ const SNAP_INTERVAL = ITEM_WIDTH;
 /* ---------------- MAIN CAROUSEL ---------------- */
 
 const MAIN_ITEM_WIDTH = width * 0.94;
-const MAIN_ITEM_MARGIN = 2;
+const MAIN_ITEM_MARGIN = 8;
 const MAIN_SNAP_INTERVAL = MAIN_ITEM_WIDTH + MAIN_ITEM_MARGIN * 2;
 const SIDE_SPACING = (width - MAIN_ITEM_WIDTH) / 2;
 
@@ -85,21 +85,20 @@ function PerformanceDescription({stageData , user}) {
                 You are on stage and currently{" "}
                 {stageData.contestants.find(c => c.user_id === user._id).rank <= 4 ? `Top ${stageData.contestants.find(c => c.user_id === user._id).rank}` : 
                 `Ranked #${stageData.contestants.find(c => c.user_id === user._id).rank}`}.{" "}
-                You’ve earned {stageData.contestants.find(c => c.user_id === user._id).votes} votes .{" "}
-                Step in, stay active, shine and inspire more votes by adding performances.
+                You've earned {stageData.contestants.find(c => c.user_id === user._id).votes} votes .{" "}
+                 shine and inspire more votes by adding performances.
             </Text>
         ) }
         {stageData.queue?.find(c => c.user_id === user._id) && (
             <Text className="text-gray-300 text-sm leading-relaxed">
                 Your performance is in queue. You will be notified when you reach the stage.{" "}
-                Enter the stage to track progress and stay close to the competition.
+                Enter the stage to track progress.
             </Text>
         ) }
          {stageData.eliminations?.find(c => c.user_id === user._id) && (
             <Text className="text-gray-300 text-sm leading-relaxed">
                 You have been eliminated from the contest. Don’t give up — you can return
-                by updating your performances or rejoining the queue.{" "}
-                Enter the stage to follow progress and make your comeback.
+                by updating your performances to rejoining the queue.
             </Text>
         ) }
       
@@ -184,11 +183,11 @@ export default function Performances({ user }) {
   return (
     <>
         
-        <View className="px-5  pt-3 pb-2 bg-darkBg">
+        <View className="px-5  pt-3 pb- 2 bg-darkBg">
       
         <Text
             style ={{}}
-            className="font-bebas text-lg text-goldSoft tracking-widest mb-1" >
+            className="font-bebas text-lg text-white tracking-widest mb- 1" >
             Progress & Performances
         </Text>
         

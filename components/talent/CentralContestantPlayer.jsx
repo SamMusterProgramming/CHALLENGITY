@@ -1,248 +1,207 @@
-import { View, Text, Platform, FlatList, TouchableOpacity, Image, useWindowDimensions, Animated } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { icons } from '../../constants';
-import { getIcon, getStageLogo, getTimeLapse } from '../../helper';
-import { router } from 'expo-router';
-import UserCard from './UserCard';
-import { LinearGradient } from 'expo-linear-gradient';
 
 
-/* ---------------- MAIN CAROUSEL ---------------- */
-
-
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  Image,
+  Animated,
+  Pressable,
+} from "react-native";
+import { icons } from "../../constants";
+import CarouselIndicator from "../custom/carouselIndicator";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function CentralContestantPlayer({
-         selectedContestant ,data, width,height , top , left, right ,user,
-         setSelectedContestant , selectedPostIndex,isScrolling,
-         setSelectedPerformance , scrollToIndex ,CAROUSSEL_HEIGHT,  setIsPlaying , 
-         isPlaying ,player , updatePerformanceIndex }) {
-       
-        const flatList = useRef()
-        const [viewableItems, setViewableItems] = useState([]);
-       
+  data,
+  width,
+  height,
+  top,
+  left,
+  isPlaying,
+  setIsPlaying,
+  player,
+  updatePerformanceIndex,
+  selectedContestant,
+  scrollToIndex
+}) {
+  const flatList = useRef(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
 
-        const MAIN_ITEM_WIDTH = width * 0.35;
-        const MAIN_ITEM_MARGIN = 2;
-        const MAIN_SNAP_INTERVAL = MAIN_ITEM_WIDTH + MAIN_ITEM_MARGIN * 2;
-        const SIDE_SPACING = (width - MAIN_ITEM_WIDTH) / 2;
-
-
-        const mainScrollX = useRef(new Animated.Value(0)).current;
-
-
-        const onViewableItemsChanged = useRef(({ viewableItems }) => {
-          if (!viewableItems || viewableItems.length === 0) return;
-        
-          const mostVisible = viewableItems.reduce((prev, current) =>
-            prev.itemVisiblePercent > current.itemVisiblePercent ? prev : current
-          );
-          setSelectedPerformance(mostVisible.item);
-        });
-
-    
-        
-        const renderItem = useCallback(({ item ,index }) => {
-          const inputRange = [
-            (index - 1) * MAIN_SNAP_INTERVAL,
-            index * MAIN_SNAP_INTERVAL,
-            (index + 1) * MAIN_SNAP_INTERVAL,
-          ];
-        
-          const scale = mainScrollX.interpolate({
-            inputRange,
-            outputRange: [0.65, 1, 0.65], // ✅ symmetric
-            extrapolate:  "clamp",
-          });
-        
-          const opacity = mainScrollX.interpolate({
-            inputRange,
-            outputRange: [0.6, 1, 0.6],
-            extrapolate: "clamp",
-          });
-          const translateY = mainScrollX.interpolate({
-            inputRange,
-            outputRange: [-40, 0, -40],
-            extrapolate: "clamp",
-          });
-        
-
-          return (
-          <Animated.View
-            style={{
-              // backgroundColor :"rgba(0,0,0,0.3)",
-              width: MAIN_ITEM_WIDTH,
-              marginHorizontal: MAIN_ITEM_MARGIN,
-              transform: [{ scale },{ translateY }],
-              opacity
-            }}
-            className ="flex-row justify-center   items-center"
-           >
-          
-                <TouchableOpacity
-                     onPress={
-                      () =>  {
-                    
-                         (!isPlaying ? ( player.play(), setIsPlaying(true) ) : ( player.pause() , setIsPlaying(false) ) )
-
-                     }}
-                      style ={{ 
-          
-                    }}
-                      className="min  w-[100%] h-[70%]   b g-black border- borde-[white] flex-col justify-center items-center   ">
-                                   
-                                   <Image
-                                    style={{width:  "100%" , height: "100%"}}
-                                    className=" opacity-100 shadow-lg elevation-2xl rounded-xl"
-                                    source={{uri:item.thumbnail?.publicUrl ||  "https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"}}
-                                    resizeMethod='contain'
-                                    cachePolicy="memory-disk"
-                                     /> 
-                                     <View
-                                    className="p-2 flex-row justify-between w-[100%] gap-1"
-                                    >
-                                        <Text 
-                                                        style ={{fontSize:width/59}}
-                                                        className="p- 2 text-center rounded-xl bg-rgba(0 ,0 ,0 , 0.7) font-black text-[#464749]"> 
-                                                      
-                                                            <Text 
-                                                              style ={{fontSize:width/65}}
-                                                              className="tex t-xl  font-black text-gray-100"> 
-                                                              {index == 0 ? "Latest" : "Previous"}  
-                                                            </Text>     
-                                        </Text>
-                                        <Text 
-                                                        style ={{fontSize:width/65}}
-                                                        className=" p- 2 text-center bg- black font-black text-gray-100"> 
-                                                          {getTimeLapse(item.date)}
-                                                          <Text 
-                                                            style ={{fontSize:width/65}}
-                                                            className="t font-black text-gray-100"> 
-                                                            {/* {' '} ago */}
-                                                          </Text>
-                                        </Text>
-                                    </View>
-                                    <Image
-                                    className="absolute w-10 h-10 opacity-50 rounded-xl"
-                                    source={icons.play} 
-                                    resizeMethod='cover' /> 
-
-                                    
-                 </TouchableOpacity>
-                 </Animated.View>
-       )}, [isPlaying]);
-
-
-
-       const handleScrollEnd = (event) => {
-        const offsetX = event.nativeEvent.contentOffset.x;
-        const index = Math.round(offsetX / SNAP_INTERVAL);
-        
-      };
-    
-      useEffect(() => {
-        if (flatList.current) {
-          flatList.current.scrollToOffset({
-            offset: scrollToIndex * MAIN_SNAP_INTERVAL, 
-            animated:false,          
-          });
-        }
-      }, [scrollToIndex]);  
-
-      
-      // useEffect(() => {
-      //   if (flatList.current && data?.length > 0) {
-      //     flatList.current.scrollToOffset({
-      //       offset: 0, 
-      //       animated: false,
-      //     });
-      //     setSelectedPerformance(data[0]); 
-      //   }
-      // }, [data]);
-      
-
-
-      return (
-        <View
-      
-        style={{
-          opacity: !isPlaying ? 1 : 0,
-          height: height ,
-          width: width,
-          top:top,
-          left:left
-          }}
-        className="absolute  bg- white  flex-col  justify-start items-center  rounded-xl "
-        > 
-  
-
-                      <LinearGradient
-                              pointerEvents="none"
-                              colors={["rgba(0,0,0,0.95)", "transparent"]}
-                              style={{
-                                position: "absolute",
-                                top: 0,
-                                alignSelf: "center",
-                                width: width,
-                                height: 2 * height,
-                                borderRadius: 0,
-                              }}
-                            />   
-                
-                         
-                          <View
-                          style ={{height:CAROUSSEL_HEIGHT}}
-                          className ="flex- 1 w-[100%] h- [100%] py-2 b g-[#353434] items-center justify-center b g-[#9f9b9b]">
-                          
-                                    <Animated.FlatList
-                                        data={data}
-                                        ref={flatList}
-                                        horizontal
-                                        showsHorizontalScrollIndicator={false}
-                                        snapToInterval={MAIN_SNAP_INTERVAL}
-                                        decelerationRate="fast"
-                                        getItemLayout={(data, index) => ({
-                                          length: MAIN_SNAP_INTERVAL,
-                                          offset: MAIN_SNAP_INTERVAL * index,
-                                          index,
-                                        })}
-                                        contentContainerStyle={{ paddingHorizontal: SIDE_SPACING }}
-                                        onScroll={Animated.event(
-                                          [{ nativeEvent: { contentOffset: { x: mainScrollX } } }],
-                                          { useNativeDriver: false } // must be false for JS index calculation
-                                        )}
-                                        scrollEventThrottle={16}
-                                        onMomentumScrollEnd={(event) => {
-                                          const offsetX = event.nativeEvent.contentOffset.x;
-                                          const index = Math.round(offsetX / MAIN_SNAP_INTERVAL);
-                                          // setSelectedPerformance(data[index]);
-                                         if(scrollToIndex !== index) updatePerformanceIndex(selectedContestant._id,index)
-                                        }}
-                                        renderItem={renderItem}
-                                        initialNumToRender={2}
-                                        maxToRenderPerBatch={2}
-                                        windowSize={3}
-                                        removeClippedSubviews={true}
-                                        updateCellsBatchingPeriod={50}
-                                      />
-
-                                    <Text 
-                                      style ={{fontSize:width/45 , 
-                                        // color:"#d1d5db", 
-                                        marginTop: 0,
-                                      }}
-                                      className=" font-semibold mt-4 text-[#e49336]">Performances :{' '}
-                                        <Text 
-                                            style ={{fontSize:width/45}}
-                                            className="tex t-xl  font-black text-[#e49336]"> 
-                                                {data.length}
-                                        </Text>
-                                        
-                                    </Text>
-                          </View>
-
-
-                       
-                              
-        </View>
-      )
+  const handlePress = () => {
+    if (isPlaying) {
+      setTimeout(() => {
+        player.pause();
+        setIsPlaying(false);
+      }, 500);
+   
+    } else {
+      setTimeout(() => {
+        player.play();
+        setIsPlaying(true);    
+      }, 500);
+ 
     }
+  };
+
+  const renderItem = ({ item, index }) => {
+    const inputRange = [
+      (index - 1) * width,
+      index * width,
+      (index + 1) * width,
+    ];
+
+    /* 🎬 FLIP EFFECT */
+    const rotateY = scrollX.interpolate({
+      inputRange,
+      outputRange: ["90deg", "0deg", "-90deg"],
+      extrapolate: "clamp",
+    });
+
+    const opacity = scrollX.interpolate({
+      inputRange,
+      outputRange: [0.3, 1, 0.3],
+      extrapolate: "clamp",
+    });
+
+    return (
+      <View 
+      className ="flex-1"
+         style={{ width, height }}
+         >
+        <Animated.View
+          style={{
+            flex: 1,
+            transform: [
+              { perspective: 1000 },
+              { rotateY },
+            ],
+            opacity,
+          }}
+        >
+          <Pressable
+            onPress={handlePress}
+            style={{ flex: 1 }}
+          >
+            <Image
+              source={{
+                uri:
+                  item.thumbnail?.publicUrl ||
+                  "https://images.unsplash.com/photo-1511379938547-c1f69419868d",
+              }}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              resizeMode="cover"
+            />
+
+            {/* dark cinematic overlay */}
+            <View
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(0,0,0,0.4)",
+              }}
+            />
+
+            {/* play icon */}
+            <Image
+              source={icons.play}
+              style={{
+                position: "absolute",
+                width: 50,
+                height: 50,
+                alignSelf: "center",
+                top: "45%",
+                opacity: 0.6,
+              }}
+            />
+          </Pressable>
+        </Animated.View>
+      </View>
+    );
+  };
+
+
+  useEffect(() => {
+    if (scrollToIndex == null || !flatList.current) return;
+    const timeout = setTimeout(() => {
+      flatList.current.scrollToIndex({
+        index: scrollToIndex,
+        animated: false,
+      });
+    }, 50); // small delay is IMPORTANT for Android
+  
+    return () => clearTimeout(timeout);
+  }, [scrollToIndex]);
+
+
+  return (
+    <View
+      className ="flex-center flex- 1 items-center"
+      style={{
+        position: "absolute",
+        top:0,
+        // left,
+        width,
+        height,
+        opacity: !isPlaying ? 1 : 0,
+        backgroundColor: "#000",
+      }}
+     
+    >
+      <Animated.FlatList
+        data={data}
+        horizontal
+        ref={flatList}
+        pagingEnabled // ✅ native paging (no snap logic)
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item, i) =>
+          item.video?.fileId || i.toString()
+        }
+        renderItem={renderItem}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true }
+        )}
+        onMomentumScrollEnd={(e) => {
+          const index = Math.round(
+            e.nativeEvent.contentOffset.x / width
+          );
+            updatePerformanceIndex(
+            selectedContestant._id,
+            index
+          );
+        }}
+        scrollEventThrottle={16}
+      />
+
+        <LinearGradient
+           pointerEvents="none"
+           colors={[ "transparent" , "rgba(0,0,0,0.95)"]}
+                style={{
+                 position: "absolute",
+                 bottom: 0,
+                 alignSelf: "center",
+                 width: width,
+                 height:  height/1.5,
+                 borderRadius: 0,
+               }}
+      />   
+      <CarouselIndicator
+          count = {data.length}
+          scrollX = {scrollX}
+          width = {width}
+          position = {
+                {
+                  bottom : height/6 + height/11 ,  
+                  right : null //(width - (height/14 + width * 0.22 )) / 4
+                }
+          }
+          rank = {selectedContestant.rank}
+          votes = {selectedContestant.votes + 1}
+        />
+    </View>
+  );
+}

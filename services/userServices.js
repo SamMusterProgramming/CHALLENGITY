@@ -104,3 +104,8 @@ export const logoutUser = async (setUser, router) => {
       return {};
     }
   };
+
+  export const loginAnonymouslyUser = async () => {
+    const userCredential = await signInAnonymously(auth);
+    return userCredential.user;
+  };

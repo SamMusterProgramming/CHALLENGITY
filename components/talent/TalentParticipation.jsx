@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, Image, StyleSheet, Platform, Dimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
@@ -18,11 +18,14 @@ import {  getUploadImageUrl, getUploadVideoUrl, uploadImageToBlackBlaze, uploadV
 import { compressImage } from '../../utilities/fileCompressor';
 import { isFastStartVideo } from '../../ffmpeg/ffmpeg';
 import { useLoading } from '../../context/loadingContext';
+import { LinearGradient } from 'expo-linear-gradient';
 // import { makeFastStart, normalizePath } from '../../ffmpeg/ffmpeg';
 
 
-export default function TalentParticipation({talentRoom, setReplayRecording , user, setNewChallenge, setSelectedContestant 
-   ,userParticipation,participation , setStage , setTalentRoom , setIsExpired}) {
+export default function TalentParticipation({talentRoom, setReplayRecording , user,
+                                             setNewChallenge, setSelectedContestant 
+                                             ,userParticipation,participation , setStage , 
+                                             setTalentRoom , setIsExpired , bottom}) {
   const { globalRefresh, setGlobalRefresh} = useGlobalContext()
   const cameraRef = useRef(null);
   const [facing, setFacing] = useState('back');
@@ -35,6 +38,8 @@ export default function TalentParticipation({talentRoom, setReplayRecording , us
   const [visible, setVisible] = useState(false);
   const [thumbNailURL,setThumbNailURL] = useState(null)
   const { showLoading, hideLoading } = useLoading();
+  const { width ,height} = Dimensions.get("window");
+
 
   
   const videolURL = participation == "update"? userParticipation.video_url :
@@ -90,7 +95,7 @@ const toggleVideoPlaying = () =>{
 
   const requestMediaPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
+    if (status == 'granted') {
       alert('Permission to access media library is required!');
       return false;
     }
@@ -151,7 +156,6 @@ const toggleVideoPlaying = () =>{
 
   const upload = async()=>{
     if(videoUri ){
-      
       showLoading("uploading the video ...")
       const optimizedVideo = videoUri // await makeFastStart(videoUri);
       // const checkFSTART = await  isFastStartVideo(videoUri)
@@ -160,20 +164,18 @@ const toggleVideoPlaying = () =>{
          getUploadVideoUrl(user._id , user.name , "talent" ),
          getUploadImageUrl(user._id , user.name , "thumbnail" )
       ]);
-
+      
       setTimeout(() => {
         setNewChallenge(false)
         setStage(true)
       }, 1500); 
-      
       const compressed = await compressImage(thumbNailURL)
       const [videoUpload, thumbnailUpload] = await Promise.all([
         uploadVideoToBackblaze(videoRes, optimizedVideo),
         uploadImageToBlackBlaze(thumbRes, compressed),
       ]);
-     
+
       hideLoading()
- 
       let body = {
         publicUrl : user.profileImage.publicUrl,
         user_id : user._id,
@@ -201,7 +203,6 @@ const toggleVideoPlaying = () =>{
       if(participation == "new" || participation == "queue"){
         try {
           const res = await api.post(`/talents/uploads/${talentRoom._id}`, body);
-
           if (res.data === "challenge expired") {
             return setIsExpired(true);
           }
@@ -232,9 +233,7 @@ const toggleVideoPlaying = () =>{
        await  api.patch(`/talents/update/${talentRoom._id}`,body)
         .then(   
           res =>  {
-              if(res.data === "challenge expired") return setIsExpired(true)
-
-            
+              if(res.data === "challenge expired") return setIsExpired(true)      
                 setTalentRoom(res.data)
                 setTimeout(() => {
                       if(participation == "update"){
@@ -263,117 +262,6 @@ const toggleVideoPlaying = () =>{
     }
   }
 
-
-  const handleSumitChallenge =  () => {
-    if(videoUri ){
-      
-      /// upload blaze
-    
-
-
-      setTimeout(() => {
-        // setVisible(false)
-        setNewChallenge(false)
-        setStage(true)
-      }, 500); 
-
-       Promise.all([compressVideo(videoUri),compressImage(thumbNailURL)]).then(results => { 
-       Promise.all([_uploadVideoAsync(results[0], user.email,user.name),uploadThumbnail(results[1], user.email)])
-       .then((urls) => {
-        let body = {
-          profile_img:user.profile_img,
-          user_id : user._id,
-          name:user.name,
-          video_url : urls[0],
-          email:user.email,
-          city: user.city,
-          country:user.country,
-          thumbNail:urls[1],
-          room_id:talentRoom._id,
-          type:participation
-            }
-                if(participation == "new" || participation == "queue"){
-                  axios.post(BASE_URL +`/talents/uploads/${talentRoom._id}`,body)
-                  .then(   
-                    res =>  {
-                    if(res.data === "challenge expired") return setIsExpired(true)
-                        setTalentRoom(res.data)
-                        setTimeout(() => {
-                            if(participation == "new")
-                                {
-                               setGlobalRefresh(true)
-                               setStage(true)
-                               setSelectedContestant({...res.data.contestants.find( c => c.user_id == user._id),rank:res.data.contestants.length})
-                               }
-                            if(participation == "queue"){
-                                setGlobalRefresh(true)
-                                setStage(false)
-                                setSelectedContestant(null)
-                             }
-                        }
-                        , 500);   
-                    }
-                    
-                      )
-                 }
-               
-
-                 if(participation == "update" || participation == "qupdate" || participation == "eupdate" ){
-                  axios.patch(BASE_URL +`/talents/update/${talentRoom._id}`,body)
-                  .then(   
-                    res =>  {
-                        if(res.data === "challenge expired") return setIsExpired(true)
-
-                          let videoRef = ref(storage , videolURL); 
-                          let thumbnailRef = ref(storage , thumbURL); 
-                          Promise.all( [deleteObject(videoRef),deleteObject(thumbnailRef)])
-                          .then(() => {
-                            console.log("both deleted successfully!");
-                          })
-                          .catch((error) => {
-                            console.error("Error deleting file:", error);
-                          });  
-                          setTalentRoom(res.data)
-                          setTimeout(() => {
-                                if(participation == "update"){
-                                    setGlobalRefresh(true)
-                                    setStage(true)
-                                    const rank = res.data.contestants.findIndex( c => c.user_id == user._id)
-                                    setSelectedContestant({...res.data.contestants.find( c => c.user_id == user._id),rank:rank +1 })
-                                }
-                                if(participation == "qupdate" || participation == "eupdate"){
-                                    setGlobalRefresh(true)
-                                    setStage(false)
-                                    setSelectedContestant(null)
-                                }
-                          } , 500); 
-                          
-                        //   setTimeout(() => {
-                        //     router.navigate({ pathname: '/TalentContestRoom',params: {
-                        //         region:talentRoom.region,
-                        //         selectedTalent:talentRoom.name, 
-                        //         selectedIcon: selectedIcon,
-                        //         regionIcon : regionIcon,
-                        //         startIntroduction :"false",
-                        //         location: participation == "update"? "contest" : "queue" ,
-                        //         showGo:"true",
-                        //         contestant_id : user._id
-                        //       } }) 
-                        
-                        //   }, 2500); 
-                      
-                    }
-                    
-                      )
-                 }
-
-
-              FileSystem.deleteAsync(results[0], { idempotent: true }).then(res=> console.log("file deleted ayhoo"));
-
-          })   
-        })   
-      }
-    }
 
   return ( 
   <>
@@ -447,14 +335,27 @@ const toggleVideoPlaying = () =>{
                 facing={facing}
                 style={{minWidth:'100%',minHeight:'100%',opacity:0.5}}   
                   />   
+                   <LinearGradient
+                      colors={[
+                        "rgba(0,0,0,0.75)",
+                        "transparent",
+                        "rgba(0,0,0,0.95)",
+                      ]}
+                      style={{
+                        position: "absolute",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
                {!isRecording && (
                  <View 
-                 style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
-                 className="absolute bottom-[25vh] w-[100%] flex-col justify-start items-center -auto bg- opacity-100 ">
-                     <View className="flex-row min-w-full mt-auto  px-8 justify-between  items-center  opacity-85  h-[7vh]">       
-                     {!isRecording && (
+                 style={{backgroundColor: !isRecording ?"#523c2":"transparent" ,
+                  bottom:bottom
+                 }}
+                 className="absolute  w-[100%] flex-row justify-between  items-center  opacity-85 "
+                 > 
                        <TouchableOpacity
-                           className="flex-col justify-center gap-1 items-center h-[100%]  g-green-500 -[33%] "
+                           className="flex-col justify-center gap-1 items-center  "
                            onPress={isRecording? stopRecording : startRecording}
                            onPressIn={()=>{setReplayRecording(true)}}
 
@@ -472,11 +373,29 @@ const toggleVideoPlaying = () =>{
                                </Text>
                            </View>      
                        </TouchableOpacity>
-                       )}   
-
-                       {!isRecording && (
+                   
                        <TouchableOpacity
-                           className="flex-col justify-center gap-1 items-center  g-blue-500 h-[100%] -[33%] "
+                           className="flex-col justify-center gap-1 items-center  "
+                           onPress={toggleCameraFacing}
+                                >
+                              <Image
+                              className="w-10 h-10"
+                              source ={icons.flip}
+                              resizeMode='contain'
+                              />
+                              <View className=" flex-col justify-end  ">
+                               <Text
+                               style={{fontSize:8}}
+                               className="text-white text-xs font-black">
+                                 Flip
+                               </Text>
+                              </View>  
+                              
+                       </TouchableOpacity>
+
+                    
+                       <TouchableOpacity
+                           className="flex-col justify-center gap-1 items-center   "
                            onPress={uploadVideo}
                            >     
                            <Image    
@@ -484,7 +403,7 @@ const toggleVideoPlaying = () =>{
                            source={icons.upload}
                            resizeMode='contain'
                            />
-                           <View className="h- [50%] flex-col justify-end  ">
+                           <View className=" flex-col justify-end  ">
                                <Text 
                              style={{fontSize:8}}
                              className="text-white text-xs font-black">
@@ -492,31 +411,18 @@ const toggleVideoPlaying = () =>{
                              </Text>
                            </View>        
                        </TouchableOpacity>
-                       )}    
-
-                     </View>
-
+                      
                </View>
               )}
 
              {!isRecording && (  
                  <>
-                               <TouchableOpacity
-                                   className=" absolute   flex-row justify-center    items-center  "
-                                   onPress={toggleCameraFacing}
-                                     >
-                                   <Image
-                                   className="w-10 h-10"
-                                   source ={icons.flip}
-                                   resizeMode='contain'
-                                   />
-                               </TouchableOpacity>
-
+                             
                                <TouchableOpacity style={styles.buttonContainer} 
-                               className="absolute top-[25vh]"
+                               className="absolute top-2 right-4"
                                   onPress={()=> {setNewChallenge(false)}}>
                                      <View style={styles.iconWrapper}>
-                                     <AntDesign name="closecircle" size={30} color="white" /> 
+                                     <AntDesign name="close" size={width/20} color="white" /> 
                                      </View>
                                </TouchableOpacity>
                  </>

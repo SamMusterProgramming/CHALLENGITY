@@ -20,19 +20,19 @@ export default function ReportButton({  setIsModalVisible,width ,
            `Are you sure you want to flag  ${selectedContestant.name} 's post` 
            :`Are you sure you want to unflag  ${selectedContestant.name} 's post ` )
      }}
-    className ="min- w-[30%] "
+    className ="w- [25%] p-3 "
       style={{
         alignItems: "center",
         justifyContent: "center", 
-        paddingVertical: 10,
-        // paddingHorizontal: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
         borderRadius: 5,
         // backgroundColor:postData.flags.find(flag => flag.flagger_id == user._id)?"rgba(250, 160, 160,0.25)":"rgba(255,255,255,0.15)" // "rgba(255,215,0,0.15)",
       }}
     >
 
       <Animated.View
-        className= "justify-start items- end"
+        className= "justify-start items-end"
         style={{
           flexDirection: "row",
           transform: [{ scale: scaleAnim }],
@@ -40,37 +40,39 @@ export default function ReportButton({  setIsModalVisible,width ,
       >
 
           {!postData.flags.find(flag => flag.flagger_id == user._id) && (  
-                                       <Ionicons name="flag" size={width/25} color="white" />
+                                       <Ionicons name="flag" size={width/20} color="white" />
                                     )}
           {postData.flags.find(flag => flag.flagger_id == user._id) && (
-                                       <Ionicons name="flag" size={width/25} color="red" />
+                                       <Ionicons name="flag" size={width/20} color="red" />
                                     )}
 
 
-        <Text
-        className ="border-b border-white"
+        {/* <Text
+        className ="bord er-b bord er-white"
           style={{
             color: "white",
             marginLeft: 6,
             fontWeight: "700",
-            fontSize: width/35,
+            fontSize: width/40,
+            minWidth:width/12
+
           }}
         >
-              x 
-        </Text>
+              X
+        </Text> */}
 
       </Animated.View>
 
-      <Text
+      {/* <Text
         style={{
           color:postData.likes.find(like => like.liker_id == user._id)? "white":"white",
-          fontSize: width/37,
+          fontSize: width/47,
           marginTop: 5,
           fontWeight: "700",
         }}
       >
-        {postData.flags.find(flag => flag.flagger_id == user._id)? "Flagged" : "Flag"}
-      </Text>
+        {postData.flags.find(flag => flag.flagger_id == user._id)? "Flag" : "Flag"}
+      </Text> */}
 
     </Pressable>
 

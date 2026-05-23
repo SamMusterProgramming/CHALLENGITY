@@ -26,18 +26,18 @@ import ProfileDrawer from '../components/modal/profileDrawer';
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const {user,isLoggingOut} = useGlobalContext()  
+  const {user,isLoggingOut , activeIndex, setActiveIndex} = useGlobalContext()  
   const { width, height } = useWindowDimensions();
   const [selectedPage , setSelectedPage] = useState(null)
   const [displayNotificationsModal , setDisplayNotificationsModal] = useState(false)
  
   const [isFetching, setIsFetching] = useState(false);
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  // const [activeIndex, setActiveIndex] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
-  const headerHeight = height * 0.13;
+  const headerHeight = height * 0.12;
 
   if(!user) return ;
 
@@ -59,6 +59,8 @@ export default function Home() {
               setShowProfile={setShowProfile}
               width={width}
               height = {height}
+              headerHeight={headerHeight}
+
             />
        
             <TopStageNavBar

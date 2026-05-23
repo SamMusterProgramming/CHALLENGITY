@@ -10,35 +10,29 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // ---------------- getFirebaseAuth METHODS ----------------
 
   
-export const login = async (email, password) => {
-  const userCredential = await signInWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
-  return userCredential.user;
-};
+  export const login = async (email, password) => {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return userCredential.user;
+  };
   
-  
-export const logoutUser = async (setUser, router) => {
-  try {
-    // 1. Firebase logout
-    await signOut(auth);
-
-    // 2. Remove backend JWT
-    await removeToken();
-
-    // 3. Clear global state
-    setUser(null);
-
-    // 4. Redirect to login
-    router.replace("/Login");
-
-  } catch (error) {
-    console.log("Logout error:", error);
-  }
-};
-  
+  export const logoutUser = async (setUser, router) => {
+    try {
+      // 1. Firebase logout
+      await signOut(auth);
+      await removeToken();
+      // 3. Clear global state
+      setUser(null);
+      // 4. Redirect to login
+      router.replace("/Login");
+    } catch (error) {
+      console.log("Logout error:", error);
+    }
+  };
+    
   // ---------------- EMAIL FLOW ----------------
   export const signUp = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(
@@ -47,7 +41,7 @@ export const logoutUser = async (setUser, router) => {
       password
     );
     const user = userCredential.user;
-    await sendEmailVerification(user);
+    // await sendEmailVerification(user);
     return user;
   };
   
@@ -64,7 +58,6 @@ export const logoutUser = async (setUser, router) => {
     await sendEmailVerification(user);
   };
 
-
  export  const waitForUser = () => {
     return new Promise((resolve, reject) => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -73,7 +66,6 @@ export const logoutUser = async (setUser, router) => {
           resolve(user);
         }
       });
-  
       // safety timeout
       setTimeout(() => {
         unsubscribe();
@@ -97,7 +89,6 @@ export const logoutUser = async (setUser, router) => {
     try {
       const provider = await AsyncStorage.getItem("lastProvider");
       const email = await AsyncStorage.getItem("lastEmail");
-  
       return { provider, email };
     } catch (e) {
       console.log("Load hint error:", e);

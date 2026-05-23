@@ -19,6 +19,10 @@ import { compressImage } from '../../utilities/fileCompressor';
 import { isFastStartVideo } from '../../ffmpeg/ffmpeg';
 import { useLoading } from '../../context/loadingContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import UploadVideoButton from '../custom/uploadVideoButton';
+import RecordVideoButton from '../custom/recordVideoButton';
+import RecordingButton from '../custom/recordingButton';
+import { RecordingTimer } from '../custom/recordingTimer';
 // import { makeFastStart, normalizePath } from '../../ffmpeg/ffmpeg';
 
 
@@ -39,7 +43,8 @@ export default function TalentParticipation({talentRoom, setReplayRecording , us
   const [thumbNailURL,setThumbNailURL] = useState(null)
   const { showLoading, hideLoading } = useLoading();
   const { width ,height} = Dimensions.get("window");
-
+  const [loading, setLoading] = useState(false)
+  const timerRef = useRef(null);
 
   
   const videolURL = participation == "update"? userParticipation.video_url :
@@ -64,17 +69,32 @@ export default function TalentParticipation({talentRoom, setReplayRecording , us
 const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
 
 
+// useEffect(() => {
+//   let interval;
+//   if (isRecording) {
+//     interval = setInterval(() => {
+//       setTimer((prev) => prev + 1);
+//     }, 1000);
+//   } else {
+//     clearInterval(interval);
+//   }
+//   return () => clearInterval(interval);
+// }, [isRecording]);
+
 useEffect(() => {
-   if(videoUri){
-    setReplayRecording(true)
-    player.replaceAsync(videoUri).then(()=> {setIsPlaying(true)});
-    player.play()
-   }
    const makeThumbNail = async () => {
     if(videoUri)
-      {
+      { 
+       setLoading(true)
        const imageUrl = await generateThumbnail(videoUri)
-       setThumbNailURL(imageUrl.uri)
+       const compressed = await compressImage(imageUrl.uri)
+       setThumbNailURL(compressed)
+       setTimeout(() => {
+        setLoading(false)
+        setReplayRecording(true)
+        player.replaceAsync(videoUri).then(()=> {setIsPlaying(true)});
+        player.play()
+       }, 1000);
       }
    }
    makeThumbNail()
@@ -101,7 +121,6 @@ const toggleVideoPlaying = () =>{
     }
     return true;
   };
-
   useEffect(() => {
     requestPermission()
     requestAudioPermission()
@@ -111,35 +130,85 @@ const toggleVideoPlaying = () =>{
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  const startRecording = async() =>{
-    setVideoUri(null)
-    setReplayRecording(true)
-  try {
-    setIsRecording(true)
-    let options ={
-      maxDuration: 120,
+  // const startRecording = async() =>{
+  //   setVideoUri(null)
+  //   setReplayRecording(true)
+  //   setTimer(0)
+  //   setIsRecording(true)
+  //   timerRef.current = setInterval(() => {
+  //     setTimer((prev) => prev + 1);
+  //   }, 1000);
+  //   try {
+  //     let options ={
+  //       maxDuration: 120,
+  //     }
+  //     await cameraRef.current.recordAsync(options)
+  //     .then((video)=>{
+  //       setVideoUri(video.uri)
+  //       setIsRecording(false)
+  //       clearInterval(timerRef.current);
+  //     })
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  //  }
+
+  
+  const startRecording = async () => {
+    try {
+      setVideoUri(null);
+      setReplayRecording(true);
+      let options = {
+        maxDuration: 120,
+      };
+      // IMPORTANT: start recording FIRST
+      const videoPromise = cameraRef.current.recordAsync(options);
+      // NOW start timer AFTER recording is truly running
+      setIsRecording(true);
+      setTimer(0);
+      timerRef.current = setInterval(() => {
+        setTimer((prev) => prev + 1);
+      }, 1000);
+      const video = await videoPromise;
+      setVideoUri(video.uri);
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+      setIsRecording(false);
+    } catch (err) {
+      console.log(err);
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+      setIsRecording(false);
     }
-     await cameraRef.current.recordAsync(options)
-    .then((video)=>{
-      setVideoUri(video.uri)
-      setIsRecording(false)
-    })
-  } catch (err) {
-    console.log(err)
-  }
-   }
+  };
 
-   const stopRecording = async()=>{
-    await  cameraRef.current.stopRecording();
-      setIsRecording(false)
-      setReplayRecording(false)
+  // const stopRecording = async()=>{
+  //     await  cameraRef.current.stopRecording();
+  //     setIsRecording(false)
+  //     setReplayRecording(false)
+  // }
 
-     }
+  const stopRecording = async () => {
+    try {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      console.log(timer)
+      await cameraRef.current?.stopRecording();
+      setIsRecording(false);
+      setReplayRecording(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
 
    const uploadVideo =async()=>{
     try {
       const permissionGranted = await requestMediaPermissions();
-      if (!permissionGranted) return;
+      if (!permissionGranted || loading) return;
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Videos,
         allowsEditing: true,
@@ -147,12 +216,18 @@ const toggleVideoPlaying = () =>{
         quality: 1,
       });
       setVideoUri(result.assets[0].uri)
-
     } catch (error) {
       console.log(error)
     }
-
   }    
+
+  // useEffect(() => 
+  //   {
+  //     if(videoUri)
+  //     console.log(videoUri)
+  //   }
+  // , [videoUri])
+  
 
   const upload = async()=>{
     if(videoUri ){
@@ -161,18 +236,17 @@ const toggleVideoPlaying = () =>{
       // const checkFSTART = await  isFastStartVideo(videoUri)
       // console.log(checkFSTART)
       const [videoRes, thumbRes] = await Promise.all([
-         getUploadVideoUrl(user._id , user.name , "talent" ),
-         getUploadImageUrl(user._id , user.name , "thumbnail" )
+         getUploadVideoUrl(user._id , user.email , "talent" ),
+         getUploadImageUrl(user._id , user.email , "thumbnail")
       ]);
-      
       setTimeout(() => {
         setNewChallenge(false)
         setStage(true)
       }, 1500); 
-      const compressed = await compressImage(thumbNailURL)
+      // const compressed = await compressImage(thumbNailURL)
       const [videoUpload, thumbnailUpload] = await Promise.all([
         uploadVideoToBackblaze(videoRes, optimizedVideo),
-        uploadImageToBlackBlaze(thumbRes, compressed),
+        uploadImageToBlackBlaze(thumbRes, thumbNailURL),
       ]);
 
       hideLoading()
@@ -255,17 +329,13 @@ const toggleVideoPlaying = () =>{
           
             )
        }
-
-      
-
-
     }
   }
 
 
   return ( 
   <>
-  {videoUri ? (
+  {videoUri && !loading  ? (
         <>
              <VideoView 
                      style={{ minWidth:'100%' ,minHeight:'100%',opacity:100}}
@@ -301,7 +371,7 @@ const toggleVideoPlaying = () =>{
                          style={{fontSize:9}}
                          className="text-white text-xs font-black">Cancel</Text>
                          <Image      
-                         className="w-5 h-5 "
+                         className="w-5 h-5"
                          source={icons.back}
                          resizeMode='contain'
                          />  
@@ -312,7 +382,6 @@ const toggleVideoPlaying = () =>{
                          className="flex-row justify-center py-2 bg-[#04198e] gap-2 items-center h- [95%] w-[95%] rounded-xl"
                           //  onPress={handleSumitChallenge}
                            onPress={upload}
-
                              >
                          <Image      
                          className="w-5 h-5 "
@@ -352,74 +421,16 @@ const toggleVideoPlaying = () =>{
                  style={{backgroundColor: !isRecording ?"#523c2":"transparent" ,
                   bottom:bottom
                  }}
-                 className="absolute  w-[100%] flex-row justify-between  items-center  opacity-85 "
-                 > 
-                       <TouchableOpacity
-                           className="flex-col justify-center gap-1 items-center  "
-                           onPress={isRecording? stopRecording : startRecording}
-                           onPressIn={()=>{setReplayRecording(true)}}
-
-                             >
-                           <Image    
-                           className="w-8 h-8 "
-                           source={isRecording ? icons.camera_recording : icons.camera}
-                           resizeMode='contain'
-                           />
-                           <View className="h- [50%] flex-col justify-end  ">
-                               <Text
-                               style={{fontSize:8}}
-                               className="text-white text-xs font-black">
-                                 {isRecording? "Recording":"Record "}
-                               </Text>
-                           </View>      
-                       </TouchableOpacity>
-                   
-                       <TouchableOpacity
-                           className="flex-col justify-center gap-1 items-center  "
-                           onPress={toggleCameraFacing}
-                                >
-                              <Image
-                              className="w-10 h-10"
-                              source ={icons.flip}
-                              resizeMode='contain'
-                              />
-                              <View className=" flex-col justify-end  ">
-                               <Text
-                               style={{fontSize:8}}
-                               className="text-white text-xs font-black">
-                                 Flip
-                               </Text>
-                              </View>  
-                              
-                       </TouchableOpacity>
-
-                    
-                       <TouchableOpacity
-                           className="flex-col justify-center gap-1 items-center   "
-                           onPress={uploadVideo}
-                           >     
-                           <Image    
-                           className="w-9 h-9"
-                           source={icons.upload}
-                           resizeMode='contain'
-                           />
-                           <View className=" flex-col justify-end  ">
-                               <Text 
-                             style={{fontSize:8}}
-                             className="text-white text-xs font-black">
-                               Upload
-                             </Text>
-                           </View>        
-                       </TouchableOpacity>
+                 className="absolute  w-[100%] flex-row justify-evenly items-center  opaci ty-85" > 
+                       <RecordVideoButton onPress={isRecording? stopRecording : startRecording}  />
+                       <UploadVideoButton onPress={uploadVideo} loading = {loading} />
                       
                </View>
               )}
-
              {!isRecording && (  
                  <>
-                             
                                <TouchableOpacity style={styles.buttonContainer} 
-                               className="absolute top-2 right-4"
+                                  className="absolute top-4 right-8"
                                   onPress={()=> {setNewChallenge(false)}}>
                                      <View style={styles.iconWrapper}>
                                      <AntDesign name="close" size={width/20} color="white" /> 
@@ -427,13 +438,32 @@ const toggleVideoPlaying = () =>{
                                </TouchableOpacity>
                  </>
                              )}
-
+              {!isRecording && (  
+              <TouchableOpacity
+                           className="flex-col absolute left-8 top-4 justify-center gap-1 items-center  "
+                           onPress={toggleCameraFacing}
+                                >
+                              <Image
+                              className="w-10 h-10"
+                              source ={icons.flip}
+                              resizeMode='contain'
+                              />
+                              {/* <View className=" flex-col justify-end  ">
+                               <Text
+                               style={{fontSize:8}}
+                               className="text-white text-xs font-black">
+                                 Flip
+                               </Text>
+                              </View>   */}
+                              
+             </TouchableOpacity> 
+              )}
 
              {isRecording && ( 
              <View 
                      style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
-                     className="absolute bottom-[15vh] w-[100%] flex-col justify-start items-center  bg- opacity-100 ">
-                           {isRecording && (   
+                     className="absolute bottom-10 w-[100%] flex-col justify-start items-center  bg- opacity-100 ">
+                           {/* {isRecording && (   
                              <View
                                className="flex-row justify-center   items-end h-[100%] w-[33%] ">   
                                <Text 
@@ -461,8 +491,17 @@ const toggleVideoPlaying = () =>{
                                    style={{fontSize:10}}
                                    className="text-white text-xl">{formatTime(timer)}</Text>
                            </View>
-                           )}
+                           )} */}
+                           <RecordingButton  onPress = {stopRecording } loading={loading} />
+                           <RecordingTimer timer={timer} />
+                           {/* <View
+                               className="flex-row justify-center   items-center end h- [100%] w-[33%] ">   
+                               <Text 
+                                   style={{fontSize:10}}
+                                   className="text-white text-xl">{formatTime(timer)}</Text>
+                           </View> */}
               </View>
+              
              )}
        </>
      )}
@@ -492,3 +531,4 @@ fontSize: 16,
 fontWeight: 'bold',
 },
 });
+

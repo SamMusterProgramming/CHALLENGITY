@@ -23,7 +23,7 @@ export const setLoadingBarAxios = (loadingRef) => {
   axios.interceptors.request.use(async(config) => {
     loadingRef.current.continuousStart();
   }, (error) => {
-    loadingRef.current.complete();
+    loadingRef.current.complete(); 
   });
   axios.interceptors.response.use((response) => {
     loadingRef.current.complete();
@@ -31,6 +31,7 @@ export const setLoadingBarAxios = (loadingRef) => {
     loadingRef.current.complete();
   });
 }
+
 
 api.interceptors.request.use(
   async (config) => {
@@ -656,7 +657,7 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
    }
    export const removeFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
     try {
-      await api.post(  `/users/friends/cancel/${receiver_id}`, rawBody )
+      await api.post(`/users/friends/cancel/${receiver_id}`, rawBody )
       .then(res =>  {  
         setFriendRequest({...res.data});
         } )
@@ -1091,14 +1092,18 @@ export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsE
   }
  }
 
- export const voteTalentPost = async(post_id , body, setPostData ,setIsExpired) =>{
+ export const voteTalentPost = async(post_id , body, setPostData ,setVoted , setIsExpired) =>{
   try { 
   await api.post( `/talents/votes/${post_id}`, body )
   .then(res =>  {
       if(res.data === "expired") {
-      return setIsExpired(true)
-      } else
-       setPostData(res.data)
+       setIsExpired(true)
+       setVoted(false)
+       return ; 
+      } else{
+        setVoted(true)
+        setPostData(res.data)
+      }
     } )
     .finally(()=>{
       // setIsLoading(false)
@@ -1145,7 +1150,7 @@ export const flagTalentPost = async(post_id , body, setPostData ,setIsExpired) =
 
 export const addCommentContestant = async(post_id,body,setPostData) =>{
   try {
-    await api.post( `/talents/posts/${post_id}`,body)
+    await api.post( `/talents/post/comment/${post_id}`,body)
     .then(res =>  { 
          setPostData({...res.data})
       } )
@@ -1154,12 +1159,10 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
   }
  }
 
- 
-
  export const deleteTalentCommentsById = async(post_id,body,setPostData) =>{
   try {
-  
-    await api.patch(`/talents/posts/comment/${post_id}`,body )
+
+    await api.patch(`/talents/post/comment/${post_id}`,body )
     .then(res =>  {
       setPostData({...res.data})
       } )

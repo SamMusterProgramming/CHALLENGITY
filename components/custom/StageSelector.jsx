@@ -379,6 +379,7 @@ import { createTalentRoom, getRegionTalentStages } from "../../apiCalls";
 import StageHero from "./stageHero";
 import CountrySelectorModal from "../modal/countrySelectorModal";
 import CarouselIndicator from "./carouselIndicator";
+import RegionalStages from "../talent/regionalStages";
 
 const { width , height } = Dimensions.get("window");
 
@@ -393,20 +394,14 @@ const SIDE_SPACING = (width - MAIN_ITEM_WIDTH) / 2;
 /* ---------------- STAGES ---------------- */
 
 const talentStages = [
-  // { id: "20", name: "Global Stages" },
-  // { id: "0", name: "Trending Stages" },
-  // { id: "1", name: "Hot Stages" },
   { id: "1", name: "Singing" },
   { id: "2", name: "Dancing" },
   { id: "3", name: "Fitness" },
   { id: "4", name: "Magic" },
-  // { id: "5", name: "Food" },
-  // { id: "6", name: "Adventure" },
-  { id: "7", name: "Sport" },
-  { id: "8", name: "Melody" },
-  // { id: "9", name: "Gaming" },
-  { id: "10", name: "Art" },
-  { id: "12", name: "Comedy" },
+  { id: "5", name: "Sport" },
+  { id: "6", name: "Melody" },
+  { id: "7", name: "Art" },
+  { id: "8", name: "Comedy" },
 ];
 
 const stageIcons = {
@@ -597,142 +592,205 @@ export default function StageSelector({ user ,onReady }) {
          
   return (
     <View
-     className ="flex-1 items-center  ">
-
-      <View className="px-3 w-full pt-6 pb-2 bg-dark Bg">
-            <Text className="font-bebas text-lg text-white tracking-widest mb- 1">
+     className ="flex- 1 items-center mb-6 px-2 ">
+      
+      <View className="px- 2 w-full pt-6 pb- 2 bg-dark Bg">
+            <Text className="font-bebas text-xl text-white tracking-widest mb- 1">
               EXPLORE STAGES
             </Text>
             <Text
               style={{
-                fontSize: width / 36,
+                fontSize: width / 32,
                 lineHeight: width / 24,
                 letterSpacing: 0.3,
               }}
-              className="text-gray-200 fo nt-medium  leading-relaxed px- 2"
-            >
+              className="text-gray-200 fo nt-medium  leading-relaxed px- 2" >
               Discover extraordinary talent from across the globe.
              Explore performances from different cultures, rising stars, and unique creative worlds.
             </Text>
-           
       </View>
-      
       
 
       <View
-        className="w-[94%] items-center justify-center px- 3 mt-2" >
+      className="flex-1 justify-start items-center"
+      >
+        <RegionalStages regionStages={regionStages} region = {globalSelectedRegion} width={width} height={1 * height} user={user} />
+        
         <View
-          style={{
-            // height: width / 11.5,
-            // backgroundColor: "rgba(255,255,255,0.04)",
-            borderColor: "rgba(255,255,255,0.06)",
-          }}
-          className="flex-row w- full items-center gap-2 justify-between"
-        >
+        className="absolute top-3 right-0 px-2 gap-2 flex-row items-center justify-center " >
+              <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() =>
+                    setGlobalSelectedRegion(userCountryCode)
+                  }
+                  style={{
+                    backgroundColor:
+                      globalSelectedRegion === userCountryCode
+                        ? "rgba(212,175,55,0.25)"
+                        : "rgba(212,175,55,0.11)",
 
-          {/* YOUR REGION */}
 
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() =>
-              setGlobalSelectedRegion(userCountryCode)
-            }
-            style={{
-              backgroundColor:
-                globalSelectedRegion === userCountryCode
-                  ? "rgba(212,175,55,0.18)"
-                  : "rgba(255,255,255,0.08)",
-            }}
-            className="flex- 1 w-[50%] py-2 justify-center items-center rounded-md"
-          >
-            <Text
-              style={{
-                fontSize: width / 35,
-                color:
-                  globalSelectedRegion === userCountryCode
-                    ? "#F5D77A"
-                    : "#8E8E93",
-                letterSpacing: 1,
-              }}
-              className="font-bebas"
-            >
-              Your Region
-            </Text>
-          </TouchableOpacity>
+                    shadowColor:
+                      globalSelectedRegion === userCountryCode
+                        ? "#D4AF37"
+                        : "transparent",
 
-          {/* SELECT REGION */}
+                    shadowOpacity:
+                      globalSelectedRegion === userCountryCode
+                        ? 0.22
+                        : 0,
 
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => setOpen(true)}
-            style={{
-              backgroundColor:
-                globalSelectedRegion !== userCountryCode
-                  ? "rgba(212,175,55,0.18)"
-                  : "rgba(255,255,255,0.08)",
-            }}
-            className="py-2 w-[50%] justify-center items-center rounded-md"
-          >
-            <Text
-              style={{
-                fontSize: width / 35,
-                color:
-                  globalSelectedRegion !== userCountryCode
-                    ?"#F5D77A"
-                    : "#8E8E93",
-                letterSpacing: 1,
-              }}
-              className="font-bebas" >
-              Select Region
-            </Text>
-          </TouchableOpacity>
+                    shadowRadius: 10,
 
-        </View>
-      </View>
+                    shadowOffset: {
+                      width: 0,
+                      height: 3,
+                    },
 
-      <View className=" w-[96%] py-1 roun ded-full mt-2  text-center bg- blue-400 flex-row items-center justify-start">
-               <Text
-                style={{fontSize:width/30}}
-                className="text-gray-100  font-bold  mb- 1">
-                    {/* {' '} Region  {"  "} */}
-                   
-              </Text>
-              <Text
-                style={{fontSize:width/20}}
-                className="text-gray-100  font-bold  mb-1">
-                    {countries.find( c => c.code == globalSelectedRegion).flag}{"  "}
-                   
-              </Text>
-              <Text
-                    style={{fontSize:width/40}}
-                    className="text-gray-300  t ext-lg  uppercase tracki ng-widest ">
-                        {countries.find( c => c.code == globalSelectedRegion).name} {' '}
-              </Text>
-              <View className ="ml-auto mr-2"  >
-              <CarouselIndicator
-                      title="Stages"
-                      count={regionStages.length}
-                      scrollX={mainScrollX}
-                      width={width * 1}
-                      // position={{
-                      //   bottom: 0,
-                      //   right: 0,
-                      // }}
-                      absolute = {false}
-                      size = {width/34}
+                    // elevation:
+                    //   globalSelectedRegion === userCountryCode
+                    //     ? 4
+                    //     : 0,
+                  }}
+                  className="
+                    w- [52px]
+                    h- [52px]
+                    rounded-[10px]
+                    bor der
+                    items-center
+                    justify-center
+                    overflow-hidden
+                    p-2
+                  "
+                >
+
+                  {/* TOP LIGHT LINE */}
+                 
+
+                  {/* ACTIVE DOT */}
+                  {globalSelectedRegion === userCountryCode && (
+                    <View
+                      className="
+                        absolute
+                        top-[3px]
+                        right-[3px]
+                        w-[6px]
+                        h-[6px]
+                        rounded-full
+                        bg-[#F5D77A]
+                      "
                     />
-              </View>
-             
-      </View>
+                  )}
 
-      <View
+                  {/* ICON */}
+                  <Text
+                    style={{
+                      fontSize: width / 20,
+                      color:
+                        globalSelectedRegion === userCountryCode
+                          ? "#F5D77A"
+                          : "#A1A1AA",
+                    }}
+                  >
+                    📍
+                  </Text>
+
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => setOpen(true)}
+                style={{
+                  backgroundColor:
+                    globalSelectedRegion !== userCountryCode
+                      ? "rgba(212,175,55,0.20)"
+                      : "rgba(212,175,55,0.11)",
+
+                  borderColor:
+                    globalSelectedRegion !== userCountryCode
+                      ? "rgba(245,215,122,0.28)"
+                      : "rgba(255,255,255,0.05)",
+
+                  shadowColor:
+                    globalSelectedRegion !== userCountryCode
+                      ? "#D4AF37"
+                      : "transparent",
+
+                  shadowOpacity:
+                    globalSelectedRegion !== userCountryCode
+                      ? 0.22
+                      : 0,
+
+                  shadowRadius: 10,
+
+                  shadowOffset: {
+                    width: 0,
+                    height: 3,
+                  },
+
+                  // elevation:
+                  //   globalSelectedRegion !== userCountryCode
+                  //     ? 4
+                  //     : 0,
+                }}
+                className="
+                  w- [52px]
+                  h- [52px]
+                  rounded-[10px]
+                  bor der
+                  items-center
+                  justify-center
+                  overflow-hidden
+                  p-2
+                "
+              >
+
+               
+
+                {/* ACTIVE DOT */}
+                {globalSelectedRegion !== userCountryCode && (
+                  <View
+                    className="
+                      absolute
+                      top-[3px]
+                      right-[3px]
+                      w-[6px]
+                      h-[6px]
+                      rounded-full
+                      bg-[#F5D77A]
+                    "
+                  />
+                )}
+
+                {/* ICON */}
+                <Text
+                  style={{
+                    fontSize: width / 20,
+                    color:
+                      globalSelectedRegion !== userCountryCode
+                        ? "#F5D77A"
+                        : "#A0A1AA",
+                  }}
+                >
+                  🌐
+                </Text>
+
+              </TouchableOpacity>
+          </View>
+      </View>
+      {/* <View
         style={{
-          height: 0.50 * height,
+          height: 0.49 * height,
           width,
         }}
-        className="flex- 1 w-full flex-row justify-center items-center bg-[#392a0e]/30" >
+        className="flex-1 w-full flex-row justify-center items-center bg-[#392a0e]/30" >
         {loadingStages ? (
-          <View className="flex-1 justify-center items-center">
+          <View 
+          style={{
+            height: 0.49 * height,
+            width,
+          }}
+          className="flex-1 justify-center items-center">
             <ActivityIndicator
               size="small"
               color="#D4AF37"
@@ -747,8 +805,6 @@ export default function StageSelector({ user ,onReady }) {
             </Text>
           </View>
         ) : showCarousel && regionStages?.length > 0  ? (
-          <>
-           
             <Animated.FlatList
               // key={`${globalSelectedRegion}-${initialStageIndex}`}
               horizontal
@@ -790,28 +846,21 @@ export default function StageSelector({ user ,onReady }) {
               maxToRenderPerBatch={2}
               windowSize={3}
             />
-          </>
+        
 
         ) : null}
-      </View>      
-  
-      <View className=" w-[95%] justify-start py- 2">
+      </View>       */}
+      {/* <View className=" w-[95%] justify-start ">
               <StageHero title={globalSelectedStageName} 
                   image={stageImages[globalSelectedStageName]}
                   region={countries.find( c => c.code == globalSelectedRegion).name}
                   flag = {countries.find( c => c.code == globalSelectedRegion).flag}
                   description={stageDescriptions[globalSelectedStageName]}/>
-              {/* <CarouselIndicator
-                  title="Stages"
-                  count={regionStages.length}
-                  scrollX={mainScrollX}
-                  width={width * 1}
-                  position={{
-                    top : 0,
-                    right: 0,
-                  }}
-                /> */}
       </View>
+
+
+      <View className=" w-[95%] h-[1] bg-white/40 mt-4 mb-4" /> */}
+
       <CountrySelectorModal
         visible={open}
         onClose={() => setOpen(false)}

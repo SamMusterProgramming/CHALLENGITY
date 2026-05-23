@@ -5,11 +5,11 @@ import * as FileSystem from 'expo-file-system/legacy';
 
 
 
-export const getUploadVideoUrl = async ( userId , name , type ) => {
+export const getUploadVideoUrl = async ( userId , email , type ) => {
    try {
     const res = await api.post(`/users/getUploadVideoUrl`, {
       userId,
-      name,
+      email,
       type,
     });
     return res.data
@@ -19,13 +19,11 @@ export const getUploadVideoUrl = async ( userId , name , type ) => {
   }
 };
 
-
-
-export const getUploadImageUrl = async ( userId , name , type ) => {
+export const getUploadImageUrl = async ( userId , email , type ) => {
   try {
    const res = await api.post(`/users/getUploadImageUrl`, {
      userId,
-     name,
+     email,
      type,
    });
    return res.data

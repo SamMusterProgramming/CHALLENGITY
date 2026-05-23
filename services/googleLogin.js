@@ -1,31 +1,4 @@
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
-// import { signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
-// import { getFirebaseAuth } from '../firebase/client';
 
-
-// export const signInWithGoogle = async () => {
-//   try {
-//     await GoogleSignin.hasPlayServices();
-//     const userInfo = await GoogleSignin.signIn();
-//     const idToken = userInfo.idToken;
-//     if (!idToken) throw new Error('No ID token');
-//     // Firebase login
-//     const credential = GoogleAuthProvider.credential(idToken);
-//     const userCredential = await signInWithCredential(
-//       getFirebaseAuth(),
-//       credential
-//     );
-//     // 🔥 GET Firebase ID TOKEN (this is what you send to backend)
-//     const firebaseIdToken = await userCredential.user.getIdToken();
-//     return {
-//       user: userCredential.user,
-//       idToken: firebaseIdToken,
-//     };
-//   } catch (error) {
-//     console.log('❌ Google Sign-In Error:', error);
-//     throw error;
-//   }
-// };
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../firebase/client';
@@ -64,5 +37,19 @@ export const signInWithGoogle = async () => {
     }
 
     throw error;
+  }
+};
+
+
+export const googleLogout = async () => {
+  try {
+    // FIREBASE LOGOUT
+    await auth.signOut();
+    // GOOGLE LOGOUT
+    await GoogleSignin.signOut();
+    // OPTIONAL
+    await GoogleSignin.revokeAccess();
+  } catch (e) {
+    console.log(e);
   }
 };

@@ -15,37 +15,33 @@ export default function StageHero({
 
 
   return (
-    <>
-
-       
-  
-        <View className="mt- 2 py- 2">
-    
+    // <>
+        <View className="mt- 2 py-2">
           <Text 
             style={{
-                fontSize: width / 36,
-                lineHeight: width / 24,
+                fontSize: width / 40,
+                lineHeight: width / 36,
                 letterSpacing: 0.3,
               }}
-            className="text-white uppercase font-bold py-2 leading-tight">
-            {title}{' Stage   '} 
+            className="text-white uppercase font-bold py-1  leading-tight">
+               {title}{' Stage   '} 
                 <Text
-                style={{fontSize:width/20}}
-                className="text-gray-100  font-bold  mb-">
+                  style={{fontSize:width/39}}
+                  className="text-gray-100  font-bold  mb-">
                      {stageIcons[title]} 
                 </Text>
           </Text>
           <Text 
-                    style={{fontSize:width/35}}
-                    className="text-gray-200 lowercase font-normal font-monts errat leading-relaxed">
-                        {description}
+                style={{
+                  fontSize: width / 32,
+                  lineHeight: width / 24,
+                  letterSpacing: 0.3,
+                }}
+                className="text-gray-200 lowercase font-normal leading-relaxed">
+                    {description && description}
           </Text>
-         
-
-          
-
         </View>
-    </>
+   
 
   );
 }

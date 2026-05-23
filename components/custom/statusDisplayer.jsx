@@ -4,7 +4,7 @@ import { View, Text, useWindowDimensions } from "react-native";
 export default function StatusDisplayer({ status , bottom }) {
   const { width } = useWindowDimensions();
 
-  if (!status || status == "Join") return null;
+  if (!status || status =="Queue" || status == "Join") return null;
 
   const getColor = () => {
     switch (status) {
@@ -12,6 +12,10 @@ export default function StatusDisplayer({ status , bottom }) {
         return "#22c55e"; // green
       case "Queued":
         return "#38bdf8"; // light blue
+      case "Join":
+        return "orange";
+      case "Queue":
+          return "#38bdf8";
       default:
         return "#ef4444"; // red
     }
@@ -23,6 +27,12 @@ export default function StatusDisplayer({ status , bottom }) {
         return "on stage";
       case "Queued":
         return "in queue";
+      case "Eliminated":
+          return "from the contest";
+      case "Join":
+        return "on stage";
+      case "Queue":
+          return "Spot in the Queue";
       default:
         return "from the contest";
     }
@@ -32,10 +42,7 @@ export default function StatusDisplayer({ status , bottom }) {
     <View 
     // style = {{ bottom : bottom}}
     className="w- [50%] flex-1 justify-end items-start gap-2 ">
-      
-
       <View className="flex-row items-end gap- 2">
-        
          <Text
             style={{
             fontSize: width / 39,
@@ -54,7 +61,7 @@ export default function StatusDisplayer({ status , bottom }) {
           }}
           className="font-bebas"
         >
-        {status}
+        {status == "Queue"  ? "Reserve": status == "Join" ? "Shine" : status}
         </Text>
 
         {/* SUBTEXT */}

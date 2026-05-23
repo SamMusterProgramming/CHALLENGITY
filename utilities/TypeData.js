@@ -64,13 +64,9 @@ export const stageIcons = {
   Dancing: "💃",
   Fitness: "🏋️",
   Magic: "🪄",
-  // Food: "🍔",
-  // Adventure: "🏕️",
   Sport: "⚽",
   Melody: "🎸",
-  // Gaming: "🎮",
   Art: "🎨",
-  // Tech: "🧠",
   Comedy: "🎭",
 };
 
@@ -81,40 +77,25 @@ export const continentIcons = {
     Europe: "🌍",      // Reuse Africa/Europe globe for Europe
   };
 
-
-  export const stageImages = {
+export const stageImages = {
     Singing: "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
-  
     Dancing: "https://images.unsplash.com/photo-1515168833906-d2a3b82b302a",
-  
     Fitness: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438",
-  
     Magic: "https://images.unsplash.com/photo-1520975922284-9e0ce8273b8d",
-  
     Sport: "https://images.unsplash.com/photo-1505842465776-3bfd18837915",
-  
     Melody: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
-  
     Art: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-  
     Comedy: "https://images.unsplash.com/photo-1541534401786-2077eed87a74",
   };
 
   export const stageDescriptions = {
     Singing: "Let your voice be heard. Step into the spotlight, captivate the audience, and rise with every note.",
-  
     Dancing: "Feel the rhythm, own the stage, and tell your story through movement. Every step brings you closer to the top.",
-  
     Fitness: "Push your limits, show your strength, and inspire discipline. Every performance proves your power.",
-  
     Magic: "Create the impossible. Captivate minds, spark wonder, and leave the audience questioning reality.",
-  
     Sport: "Bring the energy, the skill, and the drive. Compete, perform, and prove your dominance on stage.",
-  
     Melody: "Let your sound speak. Craft emotions through every note and move the crowd with your vibe.",
-  
     Art: "Turn creativity into expression. Paint, design, and showcase your vision to the world.",
-  
     Comedy: "Own the moment with laughter. Entertain, connect, and light up the stage with your humor.",
   };
 

@@ -16,9 +16,10 @@ import CommentButton from '../custom/commentButton';
 
 import ReportButton from '../custom/reportButton';
 import { LinearGradient } from 'expo-linear-gradient';
+import ShareButton from '../custom/shareButton';
 
 export default function SidePostData({user,show , setOpenUserModal ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
-  ,setParticipationType  ,rank,handleRefresh, setIsExpired ,openComments , isPlaying}) {
+  ,setParticipationType  ,rank,handleRefresh, setIsExpired , onPress, isPlaying}) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
   const [voteTimeLaps,setVoteTimeLaps] = useState(30)
@@ -85,6 +86,7 @@ export default function SidePostData({user,show , setOpenUserModal ,top ,bottom,
     // }
    }, [show])
    
+  if(isPlaying) return null ;
 
   return (
     <>
@@ -110,23 +112,23 @@ export default function SidePostData({user,show , setOpenUserModal ,top ,bottom,
                         
                         <View
                         className ="flex- 1 bg -white flex-col gap-6 rounded-md  justify-evenly items-center">
-                             <LikeButton
-                               setIsModalVisible={setIsModalVisible} width = {width}
-                               talentRoom={talentRoom} 
-                               postData ={postData}  user={user}
-                               handleLikePost={handleLikePost} selectedContestant={selectedContestant} />
+                           
                             <LikeButton
-                               setIsModalVisible={setIsModalVisible} width = {width}
+                               setIsModalVisible={setIsModalVisible} width = {width} height={height}
                                talentRoom={talentRoom} 
                                postData ={postData}  user={user}
                                handleLikePost={handleLikePost} selectedContestant={selectedContestant} />
                              <CommentButton
-                               setIsModalVisible={setIsModalVisible} width = {width}
+                               width = {width} height={height}
                                talentRoom={talentRoom} 
                                postData ={postData}  user={user}
-                               openComments={openComments} selectedContestant={selectedContestant} />
+                               onPress={onPress} selectedContestant={selectedContestant} />
+                             <ShareButton
+                               setIsModalVisible={setIsModalVisible} width = {width} height={height}
+                               user={user}
+                               selectedContestant={selectedContestant} />
                              <ReportButton
-                               setIsModalVisible={setIsModalVisible} width={width}
+                               setIsModalVisible={setIsModalVisible} width={width} height={height}
                                voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
                                postData ={postData} setAction={setAction} setText={setText} user={user}
                                selectedContestant={selectedContestant} />

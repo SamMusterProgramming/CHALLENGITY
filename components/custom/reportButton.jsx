@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { View, Text, Pressable, Animated } from "react-native";
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function ReportButton({  setIsModalVisible,width ,
+export default function ReportButton({  setIsModalVisible,width , height,
                                         user ,
                                         postData , setAction,setText,
                                         handleLikePost, selectedContestant
@@ -20,25 +20,23 @@ export default function ReportButton({  setIsModalVisible,width ,
            `Are you sure you want to flag  ${selectedContestant.name} 's post` 
            :`Are you sure you want to unflag  ${selectedContestant.name} 's post ` )
      }}
-    className ="w- [25%] p-3 "
+    className ="w- [25%] rounded-full p -3 "
       style={{
         alignItems: "center",
         justifyContent: "center", 
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 5,
+        height :height/15 ,
+        width :height/15 ,
         // backgroundColor:postData.flags.find(flag => flag.flagger_id == user._id)?"rgba(250, 160, 160,0.25)":"rgba(255,255,255,0.15)" // "rgba(255,215,0,0.15)",
       }}
     >
 
       <Animated.View
-        className= "justify-start items-end"
+        className= "justify-center  items-center"
         style={{
-          flexDirection: "row",
+          flexDirection: "col",
           transform: [{ scale: scaleAnim }],
         }}
       >
-
           {!postData.flags.find(flag => flag.flagger_id == user._id) && (  
                                        <Ionicons name="flag" size={width/20} color="white" />
                                     )}
@@ -48,12 +46,12 @@ export default function ReportButton({  setIsModalVisible,width ,
 
 
         {/* <Text
-        className ="bord er-b bord er-white"
+        className ="py-2 bord er-white"
           style={{
             color: "white",
             marginLeft: 6,
             fontWeight: "700",
-            fontSize: width/40,
+            fontSize: width/44,
             minWidth:width/12
 
           }}

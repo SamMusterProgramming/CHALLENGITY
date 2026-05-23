@@ -1,32 +1,40 @@
-import { TouchableOpacity, Text, View, Image } from "react-native";
+import { TouchableOpacity, Text, View, Image, useWindowDimensions } from "react-native";
 
 const GoogleButton = ({ onPress }) => {
+  const {width ,height} = useWindowDimensions()  
+
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.85}
-      className="w-[100%] mt-4 flex-row items-center justify-center bg-white py-3 rounded-md border border-gray-200"
+      className="w-[100%] py-4 flex-row items-center justify-center bg-white/90  rounded-lg border border-gray-200"
       style={{
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 3,
+        marginTop: 12,
+        height: height/18,
       }}
     >
-      {/* GOOGLE LOGO */}
+   
       <Image
         source={{
           uri: "https://developers.google.com/identity/images/g-logo.png",
         }}
-        style={{ width: 18, height: 18, marginRight: 10 }}
+        style={{ width: 15, height: 15, marginRight: 10 }}
       />
-
-      {/* TEXT */}
+  
       <Text
-        style={{ fontSize: 14 }}
-        className="text-black font-medium"
+        style={{
+          // color: "#E7C977",
+          fontSize: width / 32,
+          // letterSpacing: 1,
+          fontWeight: "600",
+        }}
+        className="text-black  fon t-me dium"
       >
-        Continue with Google
+         Continue with Google
       </Text>
     </TouchableOpacity>
   );

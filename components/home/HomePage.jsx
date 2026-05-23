@@ -77,22 +77,23 @@ export default function HomePage() {
   useFocusEffect(
     useCallback(() => {
       setIsFocused(true);
-      const timeout = setTimeout(() => {
-        flatListRef.current?.scrollToOffset({
-          offset: homeState.scrollY || 0,
-          animated: false,
-        });
-      }, 80); 
+      // const timeout = setTimeout(() => {
+      //   flatListRef.current?.scrollToOffset({
+      //     offset: homeState.scrollY || 0,
+      //     animated: false,
+      //   });
+      // }, 80); 
       return () =>  {
                 setIsFocused(false);
-                clearTimeout(timeout);}
+                // clearTimeout(timeout);
+              }
     }, [])
   );
   
   const handleScroll = (e) => {
-    const offset = e.nativeEvent.contentOffset.y;
-    scrollY.current = offset;
-    homeState.scrollY = offset; // persist
+    // const offset = e.nativeEvent.contentOffset.y;
+    // scrollY.current = offset;
+    // homeState.scrollY = offset; 
   };
 
   if (!isFocused) { return null; }

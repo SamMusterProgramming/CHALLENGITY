@@ -7,12 +7,13 @@ import {
   Animated,
   Image
 } from "react-native";
+import { getInition } from "../../helper";
 
 const { width ,height} = Dimensions.get("window");
 
-const ITEM_SIZE = height/14;
-const SPACING = 14;
-const SNAP = ITEM_SIZE + SPACING;
+const ITEM_SIZE = Math.round(height / 10);
+const SPACING = 20;
+const SNAP = Math.round(ITEM_SIZE + SPACING);
 
 export default function ContestantsDisplayer({
   contestants = [],
@@ -45,129 +46,308 @@ export default function ContestantsDisplayer({
 
 
 
+  // const renderItem = ({ item, index }) => {
+   
+  //   const inputRange = [
+  //     (index - 1) * SNAP,
+  //     index * SNAP,
+  //     (index + 1) * SNAP,
+  //   ];
+
+  //   // cinematic transforms
+  //   const scale = scrollX.interpolate({
+  //     inputRange,
+  //     outputRange: [0.82, 1.0, 0.82],
+  //     extrapolate: "clamp",
+  //   });
+
+  //   const opacity = scrollX.interpolate({
+  //     inputRange,
+  //     outputRange: [0.28, 1, 0.28],
+  //     extrapolate: "clamp",
+  //   });
+
+  //   const rotate = scrollX.interpolate({
+  //     inputRange,
+  //     outputRange: ["18deg", "0deg", "-18deg"],
+  //     extrapolate: "clamp",
+  //   });
+
+  //   const blur = scrollX.interpolate({
+  //     inputRange,
+  //     outputRange: [12, 0, 12],
+  //     extrapolate: "clamp",
+  //   });
+
+  //   return (
+  //     <Animated.View
+  //       className = "items-center  justify-center"
+  //       style={{
+  //         width: ITEM_SIZE,
+  //         marginHorizontal: SPACING / 2,
+  //         alignItems: "center",
+  //         transform: [
+  //           // { translateY },
+  //           { scale },
+  //           { rotate },
+  //         ],
+  //         opacity,
+  //       }} >
+  //       {/* glow */}
+  //       <Animated.View
+  //         className = "items-center justify-center"
+  //         style={{
+  //           position: "absolute",
+  //           width: ITEM_SIZE + 10,
+  //           height: ITEM_SIZE + 10,
+  //           borderRadius: 999,
+  //           backgroundColor: "rgba(255,255,255,0.12)",
+  //           opacity: scale,
+  //         }}  />
+
+  //       {/* avatar */}
+  //       <Image
+  //         source={{ uri: item.profileImage.publicUrl }}
+  //       //   blurRadius={index === 0 ? 0 : 2}
+  //         style={{
+  //           width: ITEM_SIZE,
+  //           height: ITEM_SIZE,
+  //           borderRadius: 999,
+  //           borderWidth: item.rank === 1 ? 3 : 2,
+  //           borderColor:
+  //             item.rank === 1
+  //               ? "#FFD700"
+  //               : "rgba(255,255,255,0.25)",
+  //         }}
+  //       />
+  //     </Animated.View>
+  //   );
+  // };
+
   const renderItem = ({ item, index }) => {
+
     const inputRange = [
       (index - 1) * SNAP,
       index * SNAP,
       (index + 1) * SNAP,
     ];
-
+  
     // cinematic transforms
     const scale = scrollX.interpolate({
       inputRange,
-      outputRange: [0.72, 1.15, 0.72],
+      outputRange: [0.82, 1.0, 0.82],
       extrapolate: "clamp",
     });
-
+  
     const opacity = scrollX.interpolate({
       inputRange,
-      outputRange: [0.48, 1, 0.48],
+      outputRange: [0.28, 1, 0.28],
       extrapolate: "clamp",
     });
-
-    const rotate = scrollX.interpolate({
-      inputRange,
-      outputRange: ["14deg", "0deg", "-14deg"],
-      extrapolate: "clamp",
-    });
-
-    const translateY = scrollX.interpolate({
-      inputRange,
-      outputRange: [18, -12, 18],
-      extrapolate: "clamp",
-    });
-
-    const blur = scrollX.interpolate({
-      inputRange,
-      outputRange: [12, 0, 12],
-      extrapolate: "clamp",
-    });
-
+  
+    // const rotate = scrollX.interpolate({
+    //   inputRange,
+    //   outputRange: ["18deg", "0deg", "-18deg"],
+    //   extrapolate: "clamp",
+    // });
+  
     return (
+  
       <Animated.View
-        className = "items-center  justify-center"
+        className="items-center justify-center"
         style={{
-          width: ITEM_SIZE,
+          width: ITEM_SIZE ,
+          height: ITEM_SIZE ,
           marginHorizontal: SPACING / 2,
-          alignItems: "center",
           transform: [
-            { translateY },
             { scale },
-            { rotate },
+            // { rotate },
           ],
           opacity,
         }}
       >
-        {/* glow */}
+  
+        {/* CINEMATIC GLOW */}
         <Animated.View
-          className = "items-center justify-center"
+          className="absolute items-center  justify-center"
           style={{
-            position: "absolute",
-            width: ITEM_SIZE + 18,
-            height: ITEM_SIZE + 18,
+            width: ITEM_SIZE ,
+            height: ITEM_SIZE ,
             borderRadius: 999,
-            backgroundColor: "rgba(255,255,255,0.12)",
+            // backgroundColor:
+            //   item.rank === 1
+            //     ? "rgba(255,215,0,0.18)"
+            //     : "rgba(255,255,255,0.08)",
             opacity: scale,
           }}
-         
         />
-
-        {/* avatar */}
-        <Image
-          source={{ uri: item.profileImage.publicUrl }}
-        //   blurRadius={index === 0 ? 0 : 2}
+  
+        {/* AVATAR WRAPPER */}
+        <View
+          className="items-center p-4 justify-center"
           style={{
-            width: ITEM_SIZE,
+            width: ITEM_SIZE  ,
             height: ITEM_SIZE,
-            borderRadius: 999,
-            borderWidth: item.rank === 1 ? 3 : 2,
-            borderColor:
-              item.rank === 1
-                ? "#FFD700"
-                : "rgba(255,255,255,0.25)",
-          }}
-        />
-
-        {/* rank */}
-        {/* <View
-          style={{
-            position: "absolute",
-            bottom: -6,
-            backgroundColor: "black",
-            paddingHorizontal: 10,
-            paddingVertical: 4,
-            borderRadius: 999,
-            borderWidth: 1,
-            borderColor: "rgba(255,255,255,0.15)",
           }}
         >
-          <Text
+            {/* PROFILE IMAGE */}
+            <Image
+              source={{
+                uri: item.profileImage.publicUrl
+              }}
+              style={{
+                // width: ITEM_SIZE,
+                // height: ITEM_SIZE,
+                borderRadius: 999,
+                borderWidth:
+                  item.rank === 1 ? 3 : 2,
+                borderColor:
+                  item.rank === 1
+                    ? "#FFD700"
+                    : "rgba(255,255,255,0.22)",
+              }}
+              className ="flex-1 w-[100%] h-[100%]"
+            />
+        </View>
+
+          <View
+            className="
+              absolute
+              bottom-[-15]
+              left -[0]
+              px-1
+              py-[3px]
+              w-[100%]
+              rounded-[5px]
+              bo rder
+              border-white/10
+              bg-[white]/10
+              items-center
+            "
+          >
+            <Text
+            numberOfLines={1}
+              className="
+                text-white
+                font-bebas
+                tracking-[1px]
+                w-[100%]
+                text-center
+              "
+              style={{
+                fontSize: width / 47,
+              }}
+            >
+              {item?.name}
+            </Text>
+          </View>
+  
+          {/* TOP RIGHT — RANK */}
+          <View
+            className="
+              absolute
+              flex-row
+              gap -3
+              top-[-15]
+              rig ht-[-6]
+              min -w -[42px]
+              px-2
+              py-[4px]
+              rounded-md
+              items-center
+              justify-center
+              bor der
+            "
             style={{
-              color: "white",
-              fontWeight: "800",
-              fontSize: 11,
+              backgroundColor:
+                item.rank < 4
+                  ? "rgba(255,215,0,0.16)"
+                  : "rgba(0,0,0,0.72)",
+  
+              borderColor:
+                item.rank < 4
+                  ? "rgba(255,215,0,0.25)"
+                  : "rgba(255,255,255,0.08)",
             }}
           >
-            #{item.rank}
-          </Text>
-        </View> */}
+  
+            <Text
+              className="
+                font-bebas
+                tracking-[1px]
+                text-[white]/70
+              "
+              style={{
+                fontSize: width / 49,
+               
+              }}
+            >
+             Ranked #{item.rank}  .{'  '}
+            </Text>
+
+            <Text
+              className="
+                text-[white]/70
+                font-bebas
+                tracking-[1px]
+              "
+              style={{
+                fontSize: width / 49,
+              }}
+            >
+               VOTES {item?.votes || 0}
+            </Text>
+  
+          </View>
+  
+         
+  
+  
+          {/* GOLD DOT FOR #1 */}
+          {item.rank <= 3 && (
+            <View
+              className="
+                absolute
+                bottom-[12]
+                right-[8]
+                w-[6px]
+                h-[6px]
+                rounded-full
+                bg-[#FFD700]
+              "
+              style={{
+                shadowColor: "#FFD700",
+                shadowOpacity: 0.9,
+                shadowRadius: 8,
+                shadowOffset: {
+                  width: 0,
+                  height: 0,
+                },
+              }}
+            />
+          )}
+  
+    
+  
       </Animated.View>
     );
   };
 
+  if(!show) return null ; 
+
   return (
     <Animated.View
-      pointerEvents={!show ? "none" : "auto"}
+      // pointerEvents={!show ? "none" : "auto"}
       style={{
         // width: "100%",
-        height:height/6,
+        // height:height/6,
         alignItems: "center",
         // marginTop: 18,
         top:0,
         opacity: opacityAnim,
         transform: [{ translateY }],
       }}
-       className ="absolute w-full"
+       className ="absolute w-full "
     >
 
       <LinearGradient
@@ -184,7 +364,11 @@ export default function ContestantsDisplayer({
       />   
       {/* selected contestant title */}
       <View
-      className = "flex-1 justify-start items-center">
+       style={{
+        // width: "100%",
+        height:height/7
+      }}
+      className = "flex-1 w-full  justify-start items-center">
             <Animated.FlatList
                 ref={flatList}
                 data={contestants}
@@ -192,6 +376,8 @@ export default function ContestantsDisplayer({
                 keyExtractor={(item) => item._id}
                 snapToInterval={SNAP}
                 decelerationRate="fast"
+                // disableIntervalMomentum
+                pagingEnabled={false}
                 bounces={false}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
@@ -200,14 +386,26 @@ export default function ContestantsDisplayer({
                 justifyContent : "center"
                 }}
                 renderItem={renderItem}
+                // onMomentumScrollEnd={(e) => {
+                // const index = Math.round(
+                //     e.nativeEvent.contentOffset.x / SNAP
+                // );
+                // const contestant = contestants[index];
+                // if (contestant !== selectedContestant) {
+                //     setSelectedContestant({...contestant});
+                // }
+                // }}
                 onMomentumScrollEnd={(e) => {
-                const index = Math.round(
-                    e.nativeEvent.contentOffset.x / SNAP
-                );
-                const contestant = contestants[index];
-                if (contestant !== selectedContestant) {
-                    setSelectedContestant({...contestant});
-                }
+
+                  const index = Math.round(
+                      e.nativeEvent.contentOffset.x / SNAP
+                  );
+          
+                  const contestant = contestants[index];
+          
+                  if (contestant !== selectedContestant) {
+                      setSelectedContestant({ ...contestant });
+                  }
                 }}
                 onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -217,7 +415,6 @@ export default function ContestantsDisplayer({
                 )}
                 scrollEventThrottle={16}
                 initialScrollIndex={selectedContestant.rank-1}
-                
                 getItemLayout={(data, index) => ({
                     length: SNAP,
                     offset: SNAP * index,
@@ -225,37 +422,37 @@ export default function ContestantsDisplayer({
                 })}
             />
       </View>
-
+{/* 
       <View
-        className = "w-full items-center"
+        className = "w- full px-4 p-2 bg-primary/40 rounded-2xl items-center"
         style={{
         //   marginBottom: 22,
           alignItems: "center",
         }} >
         <Text
-        className = "font-bold tracking-wider"
+        className = "font-bebas tracking-widest"
           style={{
             color: "white",
-            fontSize: width/42,
+            fontSize: width/40,
             fontWeight: "900",
-            letterSpacing: 0.5,
+            // letterSpacing: 0.5,
           }}
         >
-          {selectedContestant?.name}
+          { getInition(selectedContestant?.name)}
         </Text>
 
         <Text
           style={{
-            color: "rgba(255,255,255,0.6)",
+            color: "rgba(255,255,255,0.8)",
             marginTop: 4,
             fontSize:  width/49,
-            fontWeight: "600",
+            fontWeight: "700",
           }}
         >
           {selectedContestant?.rank <4 ? "TOP" : "RANK"} {selectedContestant?.rank} {"  "}•{"  "}
            VOTES {selectedContestant?.votes || 0}
         </Text>
-      </View>
+      </View> */}
 
     </Animated.View>
   );

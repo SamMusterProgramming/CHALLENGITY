@@ -2,27 +2,25 @@ import React, { useRef, useState } from "react";
 import { View, Text, Pressable, Animated } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function LikeButton({setIsModalVisible,width , height,
+export default function ShareButton({setIsModalVisible,width , height,
                                     talentRoom , user ,
                                    postData , 
-                                   handleLikePost, selectedContestant
                                 }) {
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   return (
 
     <Pressable
-    onPress={ handleLikePost   }
-    className ="w- [25%] rounded-full p-  3 flex-row-reverse"
+    // onPress={ handleLikePost   }
+    className ="w- [25%] rounded-full"
       style={{
         alignItems: "center",
         justifyContent: "center", 
         // paddingVertical: 5,
         // paddingHorizontal: 10,
-        // borderRadius: 5,
-        height :height/15 ,
-        width :height/15 ,
-        // backgroundColor:postData.likes.find(like => like.liker_id == user._id)?"rgba(173, 216, 230,0.15)":"rgba(255,255,255,0.15)" // "rgba(255,215,0,0.15)",
+        height :height/16 ,
+        width :height/16 ,
+        // backgroundColor:"rgba(255,255,255,0.15)" 
       }}
     >
 
@@ -35,8 +33,7 @@ export default function LikeButton({setIsModalVisible,width , height,
       >
 
       
-        <FontAwesome name="thumbs-up" size={width/18} color={postData.likes.find(like => like.liker_id == user._id) 
-                    ?"lightblue":"white" } />
+        <FontAwesome name="share" size={width/20} color={"white"} />
 
         <Text
           className ="text-center"
@@ -46,9 +43,8 @@ export default function LikeButton({setIsModalVisible,width , height,
             fontWeight: "700",
             fontSize: width/44,
             minWidth:width/12
-          }}
-        >
-              {postData.likes.length}
+          }}  >
+             112
         </Text>
 
       </Animated.View>

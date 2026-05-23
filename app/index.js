@@ -29,7 +29,6 @@ import { getUserCountry } from '../utilities/userGeoLocation';
 export default function App() {
   const videoRef = useRef()
   const { showLoading, hideLoading } = useLoading();
-
   const [isFetching, setIsFetching] = useState(false);
   const {user,setUser , setFavouriteList,setUserTalents,setTopTalents , setRegionStages, allStages, setAllStages ,hotStages , setHotStages,favouriteStages, setFavouriteStages
     ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg ,

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, Animated } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -7,9 +7,7 @@ export default function VoteButton({setIsModalVisible,width , height,
                                    postData , setAction,setText,
                                    voterEntry, selectedContestant
                                 }) {
-
   const scaleAnim = useRef(new Animated.Value(1)).current;
-
   const handleVote = () => {
     Animated.sequence([
       Animated.spring(scaleAnim, {
@@ -22,6 +20,9 @@ export default function VoteButton({setIsModalVisible,width , height,
       }),
     ]).start();
   };
+
+
+  
 
   return (
 
@@ -44,7 +45,7 @@ export default function VoteButton({setIsModalVisible,width , height,
            setText(
               !voterEntry? `Are you sure you want to cast your vote for ${selectedContestant.name}`:
               voterEntry.post_id == selectedContestant._id ?
-              `Are you sure you want to remove your vote   for ${selectedContestant.name}` :
+              `Are you sure you want to remove your vote for ${selectedContestant.name}` :
               `You 've previously cast your vote for ${voterEntry.name}. Would you like to change your vote to ${selectedContestant.name}?`
             );
            }

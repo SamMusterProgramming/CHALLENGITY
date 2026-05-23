@@ -24,7 +24,7 @@ const SNAP_INTERVAL = ITEM_WIDTH;
 
 /* ---------------- MAIN CAROUSEL ---------------- */
 
-const MAIN_ITEM_WIDTH = width * 0.94;
+const MAIN_ITEM_WIDTH = width * 0.96;
 const MAIN_ITEM_MARGIN = 8;
 const MAIN_SNAP_INTERVAL = MAIN_ITEM_WIDTH + MAIN_ITEM_MARGIN * 2;
 const SIDE_SPACING = (width - MAIN_ITEM_WIDTH) / 2;
@@ -149,24 +149,34 @@ export default function HotStage({ user }) {
   if(globalRefresh) return null ; 
 
   return (
-    <>
+    <View
+    className ="flex- 1 items-center   ">
         
-        <View className="px-5 mt-5 pt-4 pb-2 bg-darkBg">
+        <View className="px-3 w-full pb-4 b g-darkBg">
       
         <Text
             style ={{}}
-            className="font-bebas text-lg text-white tracking-widest mb- 1" >
+            className="font-bebas text-xl text-white tracking-widest mb- 1" >
              HOT STAGES
         </Text>
-        <Text className="text-gray-200 text-sm mt- 2 leading-relaxed">
+        <Text 
+             style={{
+              fontSize: width / 32,
+              lineHeight: width / 24,
+              letterSpacing: 0.3,
+            }}
+            className="text-gray-200 te xt-sm mt- 2 leading-relaxed">
             Competition is heating up. Watch, vote, and join when a spot opens.
         </Text>
         
         </View>
 
         <View
-          style={{  minHeight: width /2  + width / 4.5 + width * 0.1   }}
-          className="flex -1  items-center justify-center">
+          style={{
+            height: 0.49 * height,
+            width,
+          }}
+          className="flex-1 w-full items-center justify-center  bg-[#392a0e]/30">
                 <LoadingActivity visible = {isLoading} />
                 <Animated.FlatList
                     ref={mainFlatListRef}
@@ -181,7 +191,7 @@ export default function HotStage({ user }) {
                     bounces={false}
                     contentContainerStyle={{
                     paddingHorizontal: SIDE_SPACING - MAIN_ITEM_MARGIN,
-                    marginVertical: 20,
+                    // marginVertical: 20,
                     }}
                     onScroll={Animated.event(
                     [{ nativeEvent: { contentOffset: { x: mainScrollX } } }],
@@ -198,66 +208,30 @@ export default function HotStage({ user }) {
             
             </View>
 
-       
-       
-       
-       {/* <View className="px-5">
-     
-            <View className=" w-full">
-                <Text 
-                style={{fontSize:width/30}}
-                className="text-white text-lg font-extrabold leading-tight">
-                {stageData.name} Stage {'  -  '}        
-                </Text>
-                <CarouselIndicator
-                        title = "Stages"
-                        count = {8}
-                        scrollX = {mainScrollX}
-                        width = {width}
-                        position = {
-                          {
-                            top : 0 ,
-                            right : 20
-                          }
-                        }
-                />
+            <View className="w-full px-3 items-end py-2 ">
+                        <StageHero title={stageData.name} 
+                            image={null}
+                            region={countries.find( c => c.code == stageData.region).name}
+                            flag = {countries.find( c => c.code == stageData.region).flag}
+                            description={stageDescriptions[stageData.region.name]}/>
+                        <CarouselIndicator
+                                title="Stages"
+                                count={8}
+                                scrollX={mainScrollX}
+                                width={width}
+                                absolute = {false}
+                                // position={{
+                                //   bottom: 0,
+                                //   right: 6,
+                                // }}
+                                size={width/34}
+                              /> 
             </View>
-            <Text 
-                style={{fontSize:width/40}}
-                className="text-gray-100 text-sm uppercase font-bebas tracking-widest mt-1 1">
-                        {countries.find(c => c.code === stageData.region)?.name} {' '}
-                     <Text 
-                        style={{fontSize:width/35}}
-                        className="text-gray-100 text-lg uppercase tracking-widest">
-                        {countries.find(c => c.code === stageData.region)?.flag}
-                    </Text>
-            </Text>
-        
-            <Text className="text-gray-200 text-sm mt-1 leading-relaxed">
-                {stageDescriptions[stageData.name]}
-            </Text>
+      
+            <View className=" w-[95%] h-[1] bg-white/40 mt-4 mb-4" />
 
-        </View> */}
-        <View className="w-full px-5 flex- 1 mt- 2 py-2 overflow-hidden">
-                    <StageHero title={stageData.name + " Stage"} 
-                        image={null}
-                        region={countries.find( c => c.code == stageData.region).name}
-                        flag = {countries.find( c => c.code == stageData.region).flag}
-                        description={stageDescriptions[stageData.region.name]}/>
-                    <CarouselIndicator
-                            title="Stages"
-                            count={8}
-                            scrollX={mainScrollX}
-                            width={width}
-                            position={{
-                              top: 0,
-                              right: 20,
-                            }}
-                          /> 
-        </View>
-   
 
-    </>
+    </View>
 
   );
 }

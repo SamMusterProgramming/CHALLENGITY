@@ -11,6 +11,8 @@ expo-env.d.ts
 android/
 ios/
 
+note.doc
+
 # Native
 *.orig.*
 *.jks

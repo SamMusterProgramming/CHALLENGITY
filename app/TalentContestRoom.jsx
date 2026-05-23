@@ -46,6 +46,7 @@ const {user , setUserTalents ,globalRefresh,setGlobalRefresh , favouriteStages ,
 
 const {region, regionIcon, selectedTalent , selectedIcon ,startIntroduction ,contestant_id , showGo , location} =  useLocalSearchParams(); 
 const [talentRoom , setTalentRoom] = useState(null)
+const [stageName, setStageName] = useState(selectedTalent)
 const [isLoading ,setIsLoading] = useState(true)
 const [isPlaying, setIsPlaying] = useState(false);
 const [isFavourite, setIsFavourite] = useState(false);
@@ -91,6 +92,8 @@ const [selectedPerformance , setSelectedPerformance] = useState(null)
 const [videoCount , setVideoCount] = useState(0)
 const [openUserModal,setOpenUserModal] = useState(false)
 const { showLoading, hideLoading } = useLoading();
+const [openCommentModal , setOpenCommentModal] = useState(false)
+
 
 const SCREEN_HEIGHT = height - insets.top
 const MENU_HEIGHT =  SCREEN_HEIGHT / 6
@@ -128,10 +131,8 @@ const nextPlayer = useVideoPlayer(null, (player) => {
   player.timeUpdateEventInterval = 0.1;
 });
 
-
 const playerRef = useRef(player);
 const nextPlayerRef = useRef(nextPlayer);
-
 const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
 
 useEffect(() => {
@@ -167,9 +168,6 @@ useEffect(() => {
       statusSubscription.remove();
     };
   }, [selectedContestant, contestantsPerformanceIndex]);
-
-
-
 
   //************************** swap player , play next video with animation ************* */
 
@@ -294,19 +292,19 @@ useEffect(() => {
 
 useEffect(() => {
     showLoading("Stage is Loading...")
-    createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation, setEdition, setIsLoading)
-}, [])
+    setSelectedContestant(null)
+    createTalentRoom({region:region , name:stageName}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation, setEdition, setIsLoading)
+}, [stageName])
 
 useEffect(() => {
  if(isExpired) {
   createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation,setEdition, setIsLoading)
-  setSelectedContestant(null)
+  // setSelectedContestant(null)
   setTimeout(() => {
        setIsExpired(false)
-  }, 1500);    
+  }, 500);    
       }
 }, [isExpired])
-
 
 
 useEffect(() => {
@@ -322,29 +320,39 @@ useEffect(() => {
        setUserContestantStatus("NP")
        setUserParticipation(null)
       }
-      if (!usedLocalParams && contestant_id) {
-        if(talentRoom.contestants.length > 0) {     
+      if(!usedLocalParams) {
+        if(talentRoom.contestants.length > 0 && contestant_id) {     
            setSelectedContestant(location == "contest" ? talentRoom.contestants.find((contestant)=> contestant.user_id === contestant_id) 
-                                               : talentRoom.contestants[0])
+                                                       : talentRoom.contestants[0])
            setStage(showGo =="true"? true : false)
            setStart(true)
-           setUsedLocalParams(true)
-         } 
+         } else {
+          setSelectedContestant(null)
+         }
+         setUsedLocalParams(true)
       } 
       let d = [] ; 
       talentRoom.contestants.forEach((p , index) => {
           d.push({...p,rank:index + 1})
       })
       setData([...d])    
-     if(selectedContestant){
-        if(talentRoom.contestants.find(c=> c.user_id === selectedContestant.user_id)){
-          setSelectedContestant(d.find(p => p.user_id ===  selectedContestant.user_id))
-        }else {
-          setSelectedContestant(null)
-       
-        }
-     }
-
+      if(selectedContestant){
+          if(talentRoom.contestants.find(c => c.user_id === selectedContestant.user_id)){
+            setSelectedContestant(d.find(p => p.user_id ===  selectedContestant.user_id))
+          }else {
+          if(d.length > 0 ) setSelectedContestant(d[0]) 
+          else setSelectedContestant(null)
+          }
+      }
+      else {
+          if(usedLocalParams){
+             const contestant = talentRoom.contestants.find((contestant)=> contestant.user_id.toString() === user._id) || d[0];
+            //  if(d.length > 0 ) setSelectedContestant(d[0]) 
+            //  else setSelectedContestant(null)
+            setSelectedContestant(contestant)
+          }
+      }
+     
      if(favouriteList){
        setIsFavourite(favouriteList.favourites.find(f=> f._id == talentRoom._id))
      }else setIsFavourite(false)
@@ -502,7 +510,6 @@ const handleBackInQueue = async() => {
   setGlobalRefresh(true)
 }
 
-
 const addFavourite  = async() => {
   setIsModalVisible(false)
   await addTalentRoomToFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
@@ -567,6 +574,10 @@ useEffect(() => {
       setAction("DCS")
       setText("Are you sure you want to Resign from Talent Contestant")
       break;
+    case "DeleteContestantStage1":
+        setAction("DCS")
+        setText("if you delete this performance , you will automatically resign from Talent Contestant")
+        break;
     case "DeleteContestantElimination":
       setAction("DCE")
       setText("Are you sure you want to delete you Elimination and delete all your performances")
@@ -627,15 +638,8 @@ const getNextContestant = (rank) =>{
    return next ;
 }
 
-
-
-
 useEffect(() => {
   if (!selectedContestant?.performances?.length || !data) return;
-  // if(!isPlaying) {
-  //   handleNextPerformance();
-  //   return ; 
-  // }
   const performances = selectedContestant.performances;
   const index = getPerformanceIndex(selectedContestant._id)
   const current = performances[index];
@@ -658,16 +662,15 @@ useEffect(() => {
   loadVideos(); 
 }, [selectedContestant, contestantsPerformanceIndex]);
 
-
 useEffect(() => {
   if(!stage) return ;
   !selectedContestant && talentRoom && setSelectedContestant(talentRoom.contestants[0])
 }, [stage])
 
-const handleRefresh =()=> {
+const handleRefresh = ()=> {
   setIsRefreshing(true)
   showLoading("refreshing , please wait ...")
-  createTalentRoom({region:region , name:selectedTalent}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation,setEdition, setIsLoading)
+  createTalentRoom({region:region , name:stageName}, setTalentRoom , user._id , setUserContestantStatus , setUserParticipation , setEdition, setIsLoading)
   setTimeout(() => {
        setIsRefreshing(false)
   }, 400);  
@@ -675,33 +678,27 @@ const handleRefresh =()=> {
 
 
 
-if (isLoading) {
+
+
+if (isLoading ) {
   return  <AuthLoadingScreen />
 }
 
 return (
-    
-     
-        
   <View
   style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top  }}
   className=" flex-1  min-w-[100vw] min-h-full flex-row justify-center items-center   bg-[#000000]" >
       <View
        className=" flex-1  w-[100%] h-[100%] flex-row justify-center items-center   bg-black [#3d3c3a] [#041539]   [#786d6d]">
-           {!isLoading && ! isExpired && talentRoom && data && (
-         
+           {!isLoading && !isExpired && talentRoom && data && (
                  <>
                             {stage ? (
-
                                 <>
                                     {selectedContestant && (
-                                          
                                           <View
                                           className={ "w-[100vw] h-[100%] b g-white flex-col justify-center items-center "}
                                               > 
-
                                               {isPlaying ? (
-                                               
                                               <Animated.View
                                                  style={{
                                                   flex: 1,
@@ -710,7 +707,6 @@ return (
                                                  onStartShouldSetResponder={() => true}
                                                  onResponderGrant={handleTouchStart}
                                                  onResponderRelease={handleTouchEnd}
-                                                //  style={{ flex: 1 }}
                                                  className = {!isPlaying ? "opacity-40 w-[100%] " : "w-[100vw]  opacity-100"}>
                                                      
                                                             <VideoView 
@@ -724,8 +720,8 @@ return (
                                                              style={{ width: 0, height: 0 }}
                                                              player={nextPlayerRef.current}
                                                            /> */}
-                                                  
-                                                 </Animated.View>
+                          
+                                              </Animated.View>
                                           
                                                  
                                               ):(
@@ -769,45 +765,47 @@ return (
                                               )}
                                              
                                               <ContestantPostDetails user={user} show = { selectedContestant} displayComment ={displayComment}
-                                                  setDisplayComment = {setDisplayComment} selectedContestant={selectedContestant} setIsExpired={setIsExpired} talentRoom={talentRoom}
+                                                  setDisplayComment = {setDisplayComment} 
+                                                  selectedContestant={selectedContestant}
+                                                  setIsExpired={setIsExpired} 
+                                                  talentRoom={talentRoom}
                                                   // confirmAction = {confirmAction} setAction ={setAction} setText ={setText}
                                                   setParticipationType ={setParticipationType}
+                                                  isExpired={isExpired}
                                                   rank={selectedContestant.rank}
                                                   handleRefresh ={handleRefresh}
-                                                  openComments ={openComments}
                                                   width ={width} height={4 * CARD_DIMENSION}
-                                                  bottom = { MENU_HEIGHT +  10}    
+                                                  bottom = { MENU_HEIGHT + 10}    
                                                   setOpenUserModal={setOpenUserModal} 
                                                   isPlaying={isPlaying}
                                                   />       
                                               
-                                              <SidePostData user={user} show = { selectedContestant} displayComment ={displayComment}
-                                                  setDisplayComment = {setDisplayComment} selectedContestant={selectedContestant} setIsExpired={setIsExpired} talentRoom={talentRoom}
+                                              <SidePostData user={user} show = {selectedContestant} 
+                                                  displayComment ={displayComment}
+                                                  setDisplayComment = {setDisplayComment} 
+                                                  selectedContestant={selectedContestant} 
+                                                  setIsExpired={setIsExpired} 
+                                                  talentRoom={talentRoom}
                                                   // confirmAction = {confirmAction} setAction ={setAction} setText ={setText}
                                                   setParticipationType ={setParticipationType}
                                                   rank={selectedContestant.rank}
                                                   handleRefresh ={handleRefresh}
-                                                  openComments ={openComments}
+                                                  onPress ={openComments}
                                                   // width ={width}
                                                   height={4 * CARD_DIMENSION}
                                                   bottom = { MENU_HEIGHT +  height/10} 
                                                   setOpenUserModal={setOpenUserModal} 
                                                   isPlaying={isPlaying}
                                                   />       
-                                             
-                                        
                                                 {isPlaying && (<ProgresssBarVideo  player={playerRef.current} visible={isPlaying} bottom={MENU_HEIGHT/1.3} />)}
                                                 {isPlaying &&  (
-                                              <VolumeControl volume = {volume} setVolume={setVolume} bottom = {95} right ={4} />
+                                              <VolumeControl volume = {volume} setVolume={setVolume} bottom = {95} left ={12} />
                                               )}
- 
                                               <ContestantsDisplayer 
                                                                   //  key={selectedContestant._id}
-                                                                   show={!isPlaying} contestants={data} 
+                                                                   show={!isPlaying && !isRefreshing} contestants={data} 
                                                                    setSelectedContestant={setSelectedContestant} 
                                                                    selectedContestant={selectedContestant} />
-
-
                                               
                                           </View>
                                       
@@ -840,21 +838,21 @@ return (
                                                             "w-full h-full  flex-col absolute top-  justify-center items-center"
                                                     }>
                                                 </TouchableOpacity>
-                                        
+                                           
                                        </View>
                                       
                                   )}
                                   
-                                    <ContestantRoom regionIcon = {regionIcon} selectedIcon = {selectedIcon} user={user}  setShow ={setShow} 
+                                    <ContestantRoom regionIcon = {regionIcon} selectedIcon = {selectedIcon} user={user}  show ={!isRefreshing} 
                                     setPerformanceToDelete = {setPerformanceToDelete} updatePerformanceIndex={updatePerformanceIndex}
                                     setIsPlaying={setIsPlaying} isPlaying={isPlaying} player={playerRef.current} top={0}
                                     h ={height - insets.top}
                                     w = {width} bottom = {MENU_HEIGHT + 5} setStage ={setStage} setParticipationType={setParticipationType}
                                     setSelectedContestant={setSelectedContestant} userParticipation ={userParticipation}
                                     userContestantStatus ={userContestantStatus} setStart={setStart}
-                                    numberOfContestants={numberOfContestants}  talentRoom={talentRoom} edition={edition}
+                                    numberOfContestants={numberOfContestants}  talentRoom={talentRoom} edition={edition}   
                                     />
-                            
+                                    
                                  </>
                                 ):(
                                   <TalentParticipation talentRoom= {talentRoom} setReplayRecording={setReplayRecording} setNewChallenge={setNewChallenge} 
@@ -866,15 +864,12 @@ return (
                             )}
                           
               {!isPlaying  && !replayRecording &&  (
-                <StageMenu  height={MENU_HEIGHT} width ={width} setParticipationType={setParticipationType} isFavourite={isFavourite}
-                            stage={stage} setStage = {setStage} handleRefresh ={handleRefresh} talentRoom ={talentRoom}
-                            globalRefresh ={globalRefresh} edition ={edition}  isRefreshing ={isRefreshing} setNewChallenge={setNewChallenge}/>
-
+              <StageMenu  height={MENU_HEIGHT} width ={width} setParticipationType={setParticipationType} isFavourite={isFavourite}
+                          stage={stage} setStage = {setStage} handleRefresh ={handleRefresh} talentRoom ={talentRoom}
+                          globalRefresh ={globalRefresh} edition ={edition}  isRefreshing ={isRefreshing} setNewChallenge={setNewChallenge}
+                          stageName={stageName} setStageName={setStageName} setTalentRoom={setTalentRoom}
+                          />    
               )}
-
-
-           
-          
 
              {!isPlaying &&  !newChallenge && !selectedContestant && 
                selection === "queue" && stage &&
@@ -971,8 +966,11 @@ return (
            onClose={() => setOpenUserModal(false)}
           />
       )}
-     
-      <CommentSheet modalRef={modalRef} selectedContestant={ selectedContestant} user={user}/>
+
+   
+      <CommentSheet modalRef = {modalRef}  selectedContestant = {selectedContestant} user={user}/>
+  
+
       {isModalVisible && (     
                      <ChallengeAction text={text} action={action} isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}
                      handleTalentParticipation  = {handleTalentParticipation}

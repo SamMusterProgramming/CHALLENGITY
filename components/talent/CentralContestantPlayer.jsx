@@ -1,15 +1,17 @@
 
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Image,
   Animated,
   Pressable,
+  Text,
 } from "react-native";
 import { icons } from "../../constants";
 import CarouselIndicator from "../custom/carouselIndicator";
 import { LinearGradient } from "expo-linear-gradient";
+import { getTimeLapse } from "../../helper";
 
 export default function CentralContestantPlayer({
   data,
@@ -26,6 +28,7 @@ export default function CentralContestantPlayer({
 }) {
   const flatList = useRef(null);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const [index, setIndex] = useState(1)
 
   const handlePress = () => {
     if (isPlaying) {
@@ -49,7 +52,6 @@ export default function CentralContestantPlayer({
       index * width,
       (index + 1) * width,
     ];
-
     /* 🎬 FLIP EFFECT */
     const rotateY = scrollX.interpolate({
       inputRange,
@@ -132,7 +134,6 @@ export default function CentralContestantPlayer({
         animated: false,
       });
     }, 50); // small delay is IMPORTANT for Android
-  
     return () => clearTimeout(timeout);
   }, [scrollToIndex]);
 
@@ -173,6 +174,7 @@ export default function CentralContestantPlayer({
             selectedContestant._id,
             index
           );
+          setIndex(index + 1)
         }}
         scrollEventThrottle={16}
       />
@@ -189,19 +191,47 @@ export default function CentralContestantPlayer({
                  borderRadius: 0,
                }}
       />   
-      <CarouselIndicator
+      <View
+      style={{
+        bottom : height/6 + height/11 ,  
+        left : 15 
+       }}
+      className="absolute w- [60%] gap-8 flex-row items-center justify-start">
+          <CarouselIndicator
+            count = {data.length}
+            scrollX = {scrollX}
+            width = {width }
+            absolute = {false}
+            position = {
+                  {
+                    bottom : null ,// height/6 + height/11 ,  
+                    left : null, //15 
+                  }
+            }
+            rank = {selectedContestant.rank}
+            votes = {selectedContestant.votes + 1}
+            size={width/38}
+          />
+          <Text
+            style={{ fontSize: width/55 }}
+            className="text-white font-semibold ml-auto">
+              {index == 1 ?"Recent": "Prev"}  .  {getTimeLapse(data[index-1].date)} ago
+          </Text>
+      </View>
+      {/* <CarouselIndicator
           count = {data.length}
           scrollX = {scrollX}
-          width = {width}
+          width = {width }
           position = {
                 {
                   bottom : height/6 + height/11 ,  
-                  right : null //(width - (height/14 + width * 0.22 )) / 4
+                  left : 15 
                 }
           }
           rank = {selectedContestant.rank}
           votes = {selectedContestant.votes + 1}
-        />
+          size={width/38}
+        /> */}
     </View>
   );
 }

@@ -11,6 +11,7 @@ import {
   Alert,
   Vibration,
   useWindowDimensions,
+  Pressable,
 } from 'react-native';
 import { useGlobalContext } from '../context/GlobalProvider';
 import { icons } from '../constants';
@@ -35,6 +36,7 @@ import {
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
 import { getUserCountry } from '../utilities/userGeoLocation';
+import CreateAccountModal from '../components/modal/createAccountModal';
 
 
 
@@ -53,9 +55,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     email: "samcoeur2013@gmail.com",
-    password: '',
+    password: 'Samir@2024',
   });
-
+  const [name , SetName] = useState ({
+     firstname:"",
+     lastname:""
+  })
+  const [openCreateAcctModal , setOpenCreateAcctModal] = useState(false)
   const [error, setError] = useState("");
   const [messageColor, setMessageColor] = useState("pink");
   const [verification , setVerification] = useState(false)
@@ -72,7 +78,6 @@ export default function Login() {
     Montserrat_600SemiBold,
   });
   
-
   useEffect(() => {
      const loadHint = async() =>{
       const hint =  await loadLoginHint()
@@ -94,12 +99,13 @@ export default function Login() {
       setIsEmailInvalid(true)
       return;
     }
+
     if (!validatePassword(form.password)) {
       Vibration.vibrate();
       setIsPasswordInvalid(true)
       return;
     }
-    authLogin(form, setUser, setMessage, setIsFetching)
+    // authLogin(form, setUser, setMessage, setIsFetching)
   }
 
 
@@ -162,34 +168,29 @@ export default function Login() {
       Vibration.vibrate();
       setIsEmailWrong(true)
     }
-
     if (message === "invalid password") {
       Vibration.vibrate();
       setIsPasswordWrong(true)
     }
   }, [message])
 
+
+
   //*****************handle sign in with google  */
 
   const handleGoogleLogin = async () => {
     try {
       setError("");
-  
+
       // 🔥 Step 1: Google → Firebase
       await signInWithGoogle();
-  
       // 🔥 Step 2: Firebase token
-
       const user = await waitForUser();
-
       if (!user) {
         setError("user not found");
         throw new Error("User not found after Google login");
       }
-
       const token = await user.getIdToken(true);
-    
-
       // 🔥 Step 3: Backend
       const res = await fetch(`${BASE_URL}/users/auth/google`, {
         method: "POST",
@@ -204,8 +205,8 @@ export default function Login() {
       // if (!data.token) {
       //   return setError("token is null")
       // }
-      await saveToken(data.token);
-      await saveLoginHint("google", data.user.email)
+      if(data.token) await saveToken(data.token);
+      if(data.token)  await saveLoginHint("google", data.user.email)
   
       // 🔥 Step 5: Global state
       setUser(data.user);
@@ -222,9 +223,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      
-      const user = await login(form.email, form.password);
- 
+      const user = await login(form.email,form.password);
       if (!user.emailVerified) {
         setError("Please verify you email to continue")
         setMessageColor("yellow")
@@ -234,8 +233,6 @@ export default function Login() {
       showLoading("logging , please wait ...")
       setError("")
       setVerification(false)
-
-
       // 3. Get token
       const token = await user.getIdToken();
       // 4. Call backend (authenticate session / fetch user data)
@@ -266,16 +263,12 @@ export default function Login() {
 
   const handleSignUp = async () => {
     try {
-      
       // 1. Create user in Firebase
       const user = await signUp(form.email, form.password);
-      
       // 2. Get Firebase ID token
       const token = await user.getIdToken();
-
       showLoading("signing up , please wait ...")
       setError("")
-      
       // 3. Call your backend
       const res = await fetch(`${BASE_URL}/users/auth/signup`, {
         method: "POST",
@@ -284,40 +277,31 @@ export default function Login() {
         },
         body: JSON.stringify({ token }),
       });
-
       const data = await res.json();
       setError(data.message)
       setMessageColor(data.color)
-
     } catch (e) {
       setError(getFirebaseErrorMessage(e));
       setMessageColor("pink")
       setVerification(false)
-
     } finally {
        hideLoading()
     }
   };
 
 
-
   const sendVerification = async () => {
     try {
       const user = auth.currentUser;
-
       if (!user) {
         setError("Please sign up or login first");
         setMessageColor("red");
         return;
       }
-
       await resendVerification(user);
-
       setError("Verification email sent!");
       setMessageColor("green");
       setVerification(false)
-
-
     } catch (e) {
       console.log("RESEND ERROR:", e);
       setError("Failed to resend email");
@@ -328,13 +312,10 @@ export default function Login() {
    const handleAnonymousLogin = async () => {
     try {
       showLoading("Entering as guest...");
-  
       // 1. Firebase anonymous login
       const user = await loginAnonymouslyUser();
-  
       // 2. Get token
       const token = await user.getIdToken();
-  
       // 3. Call backend
       const res = await fetch(`${BASE_URL}/users/auth/anonymous`, {
         method: "POST",
@@ -342,19 +323,17 @@ export default function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ token,
-                               email: form.email, }),
+                               email : form.email,
+                             }),
       });
-      
       const data = await res.json();
+      console.log(data)
       // 4. Save JWT
       await saveToken(data.token);
-  
       // 5. Optional: save hint
       await saveLoginHint("guest");
-  
       // 6. Set global user
       setUser(data.user);
-  
     } catch (e) {
       console.log("ANONYMOUS LOGIN ERROR:", e);
       setError("Guest login failed");
@@ -399,215 +378,398 @@ useEffect(() => {
   fetchUserData();
 }, [user]);
  
-
-  
 return (
   <View
     style={{
       flex: 1,
-      backgroundColor: "#070809",
+      backgroundColor: "#050505",
       paddingTop: insets.top,
       paddingBottom: insets.bottom,
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "between",
     }}
   >
 
-    {/* -------- LOGO -------- */}
-    <View style={{ height: "20%", justifyContent: "center" }}>
-      <Image
-        source={icons.challengify_logo}
-        resizeMode="contain"
-        style={{
-          width: width * 0.55,
-          height: "100%",
-          opacity: 0.85,
-        }}
-      />
-    </View>
+    {/* subtle glow background */}
+    {/* <View
+      style={{
+        position: "absolute",
+        top: -200,
+        width: width * 1.4,
+        height: width * 1.4,
+        borderRadius: 999,
+        backgroundColor: "rgba(212,175,55,0.06)",
+      }}
+    /> */}
 
-    {/* -------- FORM -------- */}
     <View
       style={{
-        width: "82%",
-        gap: 18,
+        flex: 1,
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        // paddingHorizontal: 11,
       }}
     >
 
-      {/* EMAIL */}
+      {/* ===== HEADER ===== */}
       <View
-        className = " rounded-md"
+        className ="justify-center h-[20%]"
         style={{
-          borderWidth: 0.6,
-          borderColor: "rgba(255,255,255,0.15)",
-          padding: 10,
-        }}
-      >
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="rgba(255,255,255,0.35)"
-          value={form.email}
-          onChangeText={(e) => setForm({ ...form, email: e })}
-          style={{
-            color: "#fff",
-            fontSize: width / 28,
-            letterSpacing: 0.5,
-          }}
-        />
-      </View>
-
-      {/* PASSWORD */}
-      <View
-        className = " rounded-md"
-        style={{
-          borderWidth: 0.6,
-          borderColor: "rgba(255,255,255,0.15)",
-          padding: 10,
-        }}
-      >
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="rgba(255,255,255,0.35)"
-          secureTextEntry
-          value={form.password}
-          onChangeText={(e) => setForm({ ...form, password: e })}
-          style={{
-            color: "#fff",
-            fontSize: width / 28,
-            letterSpacing: 0.5,
-          }}
-        />
-      </View>
-
-      {/* -------- ACTIONS -------- */}
-      <View style={{ marginTop: 15, gap: 12 }}>
-
-        {/* LOGIN (PRIMARY) */}
-        <TouchableOpacity
-          onPress={handleLogin}
-          activeOpacity={0.85}
-          style={{
-            paddingVertical: 11,
-            borderRadius: 999,
-            backgroundColor: "#E6C068",
-            alignItems: "center",
-            shadowColor: "#E6C068",
-            shadowOpacity: 0.25,
-            shadowRadius: 12,
-            elevation: 6,
-          }}
-        >
-          <Text
-            style={{
-              color: "#0A0B0D",
-              fontSize: width / 35,
-              fontWeight: "600",
-              letterSpacing: 1.5,
-            }}
-          >
-            LOGIN
-          </Text>
-        </TouchableOpacity>
-
-        {/* SIGN UP (SECONDARY GHOST) */}
-        <TouchableOpacity
-          onPress={handleSignUp}
-          activeOpacity={0.8}
-          className ="bg-black-100 rounded-xl"
-          style={{
-            paddingVertical: 12,
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "#E6C068",
-              fontSize: width / 32,
-              letterSpacing: 1.2,
-              opacity: 0.9,
-            }}
-          >
-            Create Account
-          </Text>
-        </TouchableOpacity>
-
-      </View>
-
-      {/* GOOGLE */}
-      <View style={{ marginTop: 10 }}>
-        <GoogleButton onPress={handleGoogleLogin} />
-      </View>
-
-      {/* anonymous buttom */}
-      <TouchableOpacity
-        onPress={handleAnonymousLogin}
-        style={{
-          marginTop: 12,
-          paddingVertical: 12,
-          borderRadius: 12,
-          backgroundColor: "rgba(255,255,255,0.05)",
           alignItems: "center",
+          // marginBottom: 30,
+          // height: height * 0.25,
         }}
       >
+        <Image
+          source={icons.talentify_logo}
+          resizeMode="contain"
+          style={{
+            width: width * 0.95,
+            height: height * 0.15,
+          }}
+        />
+
         <Text
           style={{
-            color: "#aaa",
-            letterSpacing: 1,
-            fontSize: width / 32,
+            // marginTop: 10,
+            color: "rgba(255,255,255,0.65)",
+            fontSize: height / 64,
+            textAlign: "center",
+            width: "80%",
+            lineHeight: 20,
           }}
         >
-          CONTINUE AS GUEST
+          Compete. Perform. Get discovered worldwide.
         </Text>
-      </TouchableOpacity>
+      </View>
 
-      {/* HINT */}
-      <Text
+      {/* ===== LOGIN CARD (PREMIUM GLASS) ===== */}
+      <View
+      className ="justify-center bg- [#464343] px-8 py-4 h-[60%] "
         style={{
-          marginTop: 12,
-          fontSize: width / 42,
-          color: "rgba(255,255,255,0.4)",
-          textAlign: "center",
+          // flex:1,
+          width: "100%",
+          // height : height * 0.6 ,
+          // maxWidth: 420,
+          // borderRadius: 12,
+          // padding: 15,
+          // backgroundColor: "rgba(255,255,255,0.04)",
+          // borderWidth: 1,
+          // borderColor: "rgba(255,255,255,0.10)",
+          shadowColor: "#000",
+          shadowOpacity: 0.4,
+          shadowRadius: 30,
+          elevation: 10,
         }}
       >
-        {googleHint
-          ? `Google: ${googleHint}`
-          : emailHint
-          ? `Last used: ${emailHint}`
-          : ""}
-      </Text>
 
-    </View>
+        {/* TITLE */}
+        <View
+        style={{
+          marginBottom: 48
+        }}
+         className="">
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: width / 20,
+                fontWeight: "900",
+                textAlign: "center",
+              }}
+            >
+              Welcome back
+            </Text>
 
-    {/* -------- FOOTER -------- */}
-    <View
-      style={{
-        height: "18%",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <ErrorMessage message={error} color={messageColor} width={width} />
+            <Text
+              style={{
+                marginTop: 6,
+                // marginBottom: 28,
+                color: "rgba(255,255,255,0.45)",
+                fontSize: width / 36,
+                textAlign: "center",
+              }}
+            >
+              Sign in to continue your journey
+            </Text>
+        </View>
+       
 
-      {verification && (
-        <TouchableOpacity
-          onPress={sendVerification}
+        {/* ===== INPUTS ===== */}
+
+        <View 
+        style ={{
+          marginBottom: 48
+        }}
+        className="flex- 1">
+              {/* EMAIL */}
+              <View
+                style={{
+                  height: height/18,
+                  borderRadius: 5,
+                  justifyContent: "center",
+                  paddingHorizontal: 14,
+                  // backgroundColor: "rgba(255,255,255,0.04)",
+                  borderWidth: 1,
+                  borderColor: "rgba(255,255,255,0.42)",
+                  marginBottom: 24,
+                }} >
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontSize: width / 40,
+                    // fontWeight: "900",
+                    textAlign: "center",
+                    
+                    // backgroundColor: "rgba(255,255,255,0.04)",
+                  }}
+                  className="absolute top-[-10] pl-2 pr-4 bg-[#050505] tracking-wider font-montserrat  left-0"
+                >
+                  Email
+                </Text>
+                <TextInput
+                  placeholder="Email"
+                  placeholderTextColor="rgba(255,255,255,0.5)"
+                  value={form.email}
+                  onChangeText={(e) => setForm({ ...form, email: e })}
+                  style={{
+                    color: "#fff",
+                    fontSize: 15,
+                  }}
+                />
+              </View>
+
+              {/* PASSWORD */}
+              <View
+                style={{
+                  height: height/18,
+                  borderRadius: 5,
+                  justifyContent: "center",
+                  paddingHorizontal: 14,
+                  backgroundColor: "#050505",
+                  borderWidth: 1,
+                  borderColor: "rgba(255,255,255,0.42)",
+                  marginBottom: 24,
+                }}
+              >
+                 <Text
+                  style={{
+                    color: "#fff",
+                    fontSize: width / 40,
+                    // fontWeight: "900",
+                    textAlign: "center",
+                    // backgroundColor: "rgba(255,255,255,0.04)",
+                  }}
+                  className="absolute top-[-10] pl-2 pr-4 bg-[#050505] tracking-wider font-montserrat  left-0"
+                >
+                  Password
+                </Text>
+                <TextInput
+                  placeholder="Password"
+                  placeholderTextColor="rgba(255,255,255,0.35)"
+                  secureTextEntry
+                  value={form.password}
+                  onChangeText={(e) => setForm({ ...form, password: e })}
+                  style={{
+                    color: "#fff",
+                    fontSize: 15,
+                  }}
+                />
+              </View>
+
+              {/* ===== BUTTONS ===== */}
+
+              {/* PRIMARY LOGIN */}
+              <TouchableOpacity       
+                activeOpacity={0.9}
+                onPress={handleLogin}
+                style={{
+                  // marginTop: 12,
+                  height: height/18,
+                  borderRadius: 8,
+                  backgroundColor: "#D4AF37",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 12,
+                }} >
+                <Text
+                  style={{
+                    color: "#0A0A0A",
+                    fontSize: width /36 ,// 14,
+                    fontWeight: "800",
+                    letterSpacing: 0.6,
+                  }}
+                >
+                  LOGIN
+                </Text>
+              </TouchableOpacity>
+
+              {/* GOOGLE */}
+              <GoogleButton onPress={handleGoogleLogin} />
+          </View>
+
+          {/* <View>
+            <TouchableOpacity
+              // className = "mt-auto"
+              onPress= {() => {setOpenCreateAcctModal(true)}} // {handleSignUp}
+              activeOpacity={0.8}
+              style={{
+                // marginTop: 10,
+                height: height/18,
+                borderRadius: 8,
+                // borderWidth: 1,
+                // borderColor: "rgba(255,255,255,0.14)",
+                backgroundColor: "rgba(255,255,255,0.04)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "rgba(255,255,255,0.85)",
+                  fontSize: 13,
+                  fontWeight: "600",
+                }}
+              >
+                CREATE ACCOUNT
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleAnonymousLogin}
+              style={{
+                marginTop: 12,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "rgba(255,255,255,0.35)",
+                  fontSize: 12,
+                  letterSpacing: 0.8,
+                }}
+              >
+                Continue as Guest
+              </Text>
+            </TouchableOpacity>
+          </View> */}
+
+      <View
+        style={{
+          marginTop: 0,
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 4,
+        }}
+      >
+
+        {/* CREATE ACCOUNT */}
+        <Pressable
+            onPress= {() => {setOpenCreateAcctModal(true)}} // {handleSignUp}
+            android_ripple={{
+            color: "rgba(255,255,255,0.08)",
+            borderless: false,
+          }}
           style={{
-            marginTop: 10,
+            paddingVertical: 10,
+            // paddingHorizontal: 14,
+            borderRadius: 14,
+            backgroundColor: "rgba(255,255,255,0.03)",
+            borderWidth: 1,
+            borderColor: "rgba(255,255,255,0.06)",
           }}
         >
           <Text
             style={{
-              color: "#E6C068",
-              fontSize: width / 34,
-              letterSpacing: 1,
+              fontSize: width / 32,
+              // color: "#E5E7EB",
+              fontWeight: "600",
+              letterSpacing: 0.4,
+            }}
+            className = "text-[#7ea1e8]"
+          >
+           don't have an account ?  Sign up 
+          </Text>
+        </Pressable>
+
+        {/* GUEST */}
+        {/* <Pressable
+          onPress={handleAnonymousLogin}
+          android_ripple={{
+            color: "rgba(212,175,55,0.08)",
+            borderless: false,
+          }}
+          style={{
+            paddingVertical: 10,
+            paddingHorizontal: 14,
+            borderRadius: 14,
+            backgroundColor: "rgba(212,175,55,0.08)",
+            borderWidth: 1,
+            borderColor: "rgba(212,175,55,0.18)",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: width / 36,
+              color: "#D4AF37",
+              fontWeight: "700",
+              letterSpacing: 0.5,
             }}
           >
-            Resend Verification
+            Continue as Guest
           </Text>
-        </TouchableOpacity>
+        </Pressable> */}
+
+      </View>
+
+
+
+      </View> 
+     
+      {/* ===== FOOTER ===== */}
+      <View
+      className ="fle x-1 justify-center items-center gap-4 b g-white min-h-[20%]"
+        style={{
+          // height:height * 0.15,
+          // marginBottom: 8,
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <ErrorMessage
+          message={error}
+          color={messageColor}
+          width={width}
+        />
+        
+
+        {verification && (
+          <TouchableOpacity onPress={sendVerification}>
+            <Text
+              style={{
+                // marginTop: 10,
+                color: "#D4AF37",
+                fontWeight: "600",
+              }}
+            >
+              Resend verification email
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      {openCreateAcctModal && (
+      <CreateAccountModal 
+      setIsVisible = {setOpenCreateAcctModal}
+      form={form}
+      setForm={setForm}
+      name={name}
+      SetName={SetName}
+      onPress={handleSignUp}
+      width={width}
+      height={height} />
       )}
     </View>
-
   </View>
 );
 }

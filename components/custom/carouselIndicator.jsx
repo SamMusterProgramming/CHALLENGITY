@@ -23,20 +23,20 @@ export default function CarouselIndicator({
                top : absolute && position.top && position.top , 
                left: absolute && position.left && position.left,
                right: absolute && position.right && position.right}}
-    className=" flex-row items-center  gap-2  bg-black ">
+    className=" flex-row items-center  gap-2  b g-black ">
      
       <Text
         style={{ fontSize: size }}
         className="text-gray-200 font-bebas tracking-wider mb- 2" >
         {title}{" "}
-        <Text
+        {/* <Text
          style={{ fontSize: size  }}
          className="text-white font-semibold">
           {count}
-        </Text>
+        </Text> */}
       </Text>
 
-      <View className="flex-row items-center gap-2 ">
+      <View className="flex-row items-center gap-1 ">
         {Array.from({ length: count }).map((_, index) => {
           const inputRange = [
             (index - 1) * width,
@@ -62,12 +62,18 @@ export default function CarouselIndicator({
               style={{
                 opacity,
                 transform: [{ scale }],
-                width: width/70,
-                height: width/70,
+                width: width/60,
+                height: size,
                 borderRadius: 50,
-                backgroundColor:  "#facc15", 
+                // backgroundColor:  "#facc15", 
               }}
-            />
+            >
+                <Text
+                  style={{ fontSize: size /1.3 }}
+                  className="text-white font-bold">
+                     {index + 1}
+                </Text>
+            </Animated.View>
           );
         })}
       </View>

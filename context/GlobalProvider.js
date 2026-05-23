@@ -46,6 +46,8 @@ export const GlobalProvider =({children}) => {
    const [globalSelectedStageName , setGlobalSelectedStageName] = useState("Singing")
    const [userCountryCode , setUserCountryCode] = useState("")
    const [hotStageScrolledIndex , setHotStageScrolledIndex] = useState(0)
+   const [activeIndex, setActiveIndex] = useState(0);
+
 
 
     return (
@@ -88,7 +90,8 @@ export const GlobalProvider =({children}) => {
             globalSelectedStageName , setGlobalSelectedStageName ,
             globalSelectedRegion , setGlobalSelectedRegion ,
             userCountryCode , setUserCountryCode,
-            hotStageScrolledIndex , setHotStageScrolledIndex
+            hotStageScrolledIndex , setHotStageScrolledIndex,
+            activeIndex, setActiveIndex 
             }
             } >
             {children}

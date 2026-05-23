@@ -279,7 +279,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
       className="justify-start items-center"
     >
       {/* 🎬 Cinematic Container */}
-      <View className="flex-1 w-full items-center bg-black-100 [#0a0a0a] bor der bo rder-yellow-500/20">
+      <View className="flex-1 w-full items-center bor der bord er-gold/10 rounded-lg bg-[#18181b] /15  [#0a0a0a] bor der bo rder-yellow-500/20">
 
         {/* ✨ Gold Glow Edges */}
         {/* <LinearGradient

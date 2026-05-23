@@ -16,9 +16,10 @@ import CommentButton from '../custom/commentButton';
 
 import ReportButton from '../custom/reportButton';
 import { LinearGradient } from 'expo-linear-gradient';
+import CountryFlag from 'react-native-country-flag';
 
 export default function ContestantPostDetails({user,show , setOpenUserModal, width ,top ,bottom,left ,right,selectedContestant ,displayComment ,setDisplayComment,talentRoom
-  ,setParticipationType  ,rank,handleRefresh, setIsExpired ,openComments , isPlaying}) {
+  ,setParticipationType  ,rank,handleRefresh, setIsExpired ,isExpired , isPlaying}) {
   const [postData , setPostData] = useState(null)
   const [isLoading , setIsLoading] = useState(true)
   const [voteTimeLaps,setVoteTimeLaps] = useState(30)
@@ -27,12 +28,10 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
   const [action,setAction] = useState("")
   const [voted,setVoted] = useState(false)
   const {height} = useWindowDimensions()
-
-  const [voterEntry , setVoterEntry] = useState(talentRoom.voters.find(v=> v.voter_id == user._id))
-  
+  const [voterEntry , setVoterEntry] = useState(talentRoom.voters.find(v => v.voter_id == user._id))
   const sidebarAnimation = useRef(new Animated.Value( show ? 0 :  width )).current;
-
   const verticalAnimation = useRef(new Animated.Value(0)).current;
+
 
   useEffect(() => {
     Animated.timing(sidebarAnimation, {
@@ -83,16 +82,26 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
         voter_id : user._id,
         room_id : talentRoom._id
        }
-    voteTalentPost(selectedContestant._id,body,setPostData, setIsExpired)
-    setVoted(true)
+    voteTalentPost(selectedContestant._id,body , setPostData , setVoted,  setIsExpired)
+   
    //  handleRefresh()
   }
+
+//   useEffect(() => {
+//    if(isExpired) {
+//       handleRefresh()
+//       setIsExpired(false)
+//    }
+//   }, [isExpired])
 
   useEffect(() => {
    if(postData && voted)   {
       handleRefresh()
    }
-  }, [postData])
+  }, [postData , voted])
+
+ 
+
 
   useEffect(() => {
    if(voted){
@@ -114,9 +123,6 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
    flagTalentPost(selectedContestant._id,body,setPostData , setIsExpired)
  }
 
-
-
-
   return (
     <>
     {show && selectedContestant && postData && !displayComment && ( 
@@ -136,7 +142,7 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
                   height:height /18,
                }
                , 
-           { transform: [ { translateY: verticalAnimation }] }]}>
+               { transform: [ { translateY: verticalAnimation }] }]}>
                          <TouchableOpacity
                                 onPress={ () => {
                                            setOpenUserModal(true)
@@ -158,13 +164,47 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
                               />
                         </TouchableOpacity>
                         <View
-                           className="flex-1 px-4 justify-center items-center"
+                           className="flex-1 px-4  justify-evenly items-center"
                            style={{
                               minHeight: height / 18,
                               backgroundColor: "rgba(0,0,0,0.28)",
                            }}
                            >
+
                            <Text
+                                             className=""
+                                             style={{
+                                                   color:  "#fff",
+                                                   fontWeight: "700",
+                                                   fontSize: width/42,
+                                             }}
+                                             >
+                                             {selectedContestant.name}
+                           </Text>
+                           <View
+                                 className=" b g-black  gap- flex-row justify-center items-center">
+                                       
+                                       <Text
+                                       style={{
+                                             color:  "#d1d5db",
+                                             fontSize: width/43,
+                                       }}
+                                       >
+                                       {selectedContestant.city}{' '}
+                                       </Text>
+                                       <Text
+                                       style={{
+                                             color:  "#d1d5db",
+                                             fontSize: width/43,
+                                       }}
+                                       >
+                                       {selectedContestant.country}{'   '}
+                                       </Text>
+                                       < CountryFlag
+                                             isoCode={selectedContestant.country || "US"}
+                                             size={width/43}/>
+                           </View>
+                           {/* <Text
                               numberOfLines={2}
                               style={{
                                  color: postData.votes.find(
@@ -191,7 +231,7 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
                               )
                                  ? `Your vote supports ${selectedContestant.name}'s performances`
                                  : `Watch ${selectedContestant.name}'s performances and cast your vote to support their journey`}
-                           </Text>
+                           </Text> */}
                            </View>
                         <View
                           style ={{

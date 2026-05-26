@@ -16,9 +16,16 @@ import {
 } from "@expo-google-fonts/montserrat";
 import { useLoading } from '../context/loadingContext';
 import { getUserCountry } from '../utilities/userGeoLocation';
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotificationsAsync } from '../utilities/registerForPushNotifications';
 
-
-
+Notifications.setNotificationHandler({
+  handleNotification : async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 // import { configureGoogle } from '../config/google';
 
 ;
@@ -48,6 +55,12 @@ export default function App() {
   }, []); 
 
 
+
+
+
+useEffect(() => {
+    registerForPushNotificationsAsync();
+}, []);
 
 useEffect(() => {
   const autoLogin = async () => {

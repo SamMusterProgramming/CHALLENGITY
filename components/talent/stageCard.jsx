@@ -73,13 +73,15 @@ import React, {
   import {
     View,
     Text,
-    Image,
     TouchableOpacity,
     Pressable,
   } from "react-native";
-import { countries, stageIcons } from "../../utilities/TypeData";
+import { countries, stageCenterImages, stageCoverImages, stageIcons } from "../../utilities/TypeData";
 import { router } from "expo-router";
 import { getIcon } from "../../helper";
+import { Image } from "react-native";
+import { icons } from "../../constants";
+// import { Image } from 'expo-image';
   
 
   
@@ -165,10 +167,12 @@ import { getIcon } from "../../helper";
             rou nded-md
             overflow-hidden
             mb-2
-            b g-[#171718]
-            bo rder
-            bor der-[#F5D77A]/15
-            p-[2px]
+            bg-primary
+            border
+            border-[#343333] /15
+            rounded-[5px] 
+            p- [2px]
+
           "
         >
       
@@ -180,7 +184,7 @@ import { getIcon } from "../../helper";
               overflow-hidden
               bor der
               bor der-white/5
-              b g-[#111114]
+              b g-[#050556]
             "
           >
       
@@ -201,42 +205,84 @@ import { getIcon } from "../../helper";
                   },
                 })
               }
-             className="flex-1 relative">
+             className="flex-1  justify-center items-center ">
       
               {thumbnail ? (
-      
+              <>
                 <Image
                   source={{
-                    uri: thumbnail
+                    uri: thumbnail 
                   }}
-                  resizeMode="cover"
-                  className="w-full h-full absolute"
+                  resizeMethod="cover"
+                  // cachePolicy="disk"
+                  className="w-full h-full "
+                  style={{
+                    width: '100%',
+                    height: "100%",
+                  }}
                 />
-      
+                <Image
+                source={
+                   stageCoverImages[stage.name]
+                }
+                style={{
+                  position :"absolute",
+                  width: '100%',
+                  height: "100%",
+                }}
+                resizeMethod="cover"
+                //  cachePolicy="disk"
+                />
+              </>
               ) : (
-      
-                <View
-                  className="
-                    flex-1
-                    items-center
-                    justify-center
-                    bg-[#464648]
-                  "
-                >
-      
-                  <Text
-                    style={{
-                      fontSize: width * 0.07,
-                    }}
-                  >
-                    {stageIcons[stage.name]}
-                  </Text>
-      
-                </View>
-      
+              <>
+                 <Image
+                  source={
+                    stageCenterImages[stage.name]
+                  }
+                  resizeMethod="cover"
+                  // cachePolicy="disk"
+                  className="w-full h-full "
+                  style={{
+                    width: '100%',
+                    height: "100%",
+                  }}
+                />
+                <Image
+                source={
+                   stageCoverImages[stage.name]
+                }
+                style={{
+                  position :"absolute",
+                  width: '100%',
+                  height: "100%",
+                }}
+                resizeMethod="cover"
+                // cachePolicy="disk"
+                />
+               {/* <Text
+               style = {{
+                 fontSize : width / 20
+               }}
+               className = "absolute  text-white ">
+                  {stageIcons[stage.name]}
+               </Text> */}
+              </>
               )}
       
               {/* DARK CINEMATIC OVERLAY */}
+              <View className="absolute inset-0 justify-center items-center z-10">
+                <View className="bg-black/60 p-2 rounded-full border border-yellow-500/40">
+                  <Image
+                    style={{
+                      width: height / 16,
+                      height: height / 16,
+                    }}
+                    source={icons.play}
+                    contentFit="contain"
+                  />
+                </View>
+              </View>
               <View
                 className="
                   absolute
@@ -244,8 +290,6 @@ import { getIcon } from "../../helper";
                   bg-black/35
                 "
               />
-      
-     
               <View
                 className="
                   absolute

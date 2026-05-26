@@ -37,7 +37,7 @@ export default function Home() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
-  const headerHeight = height * 0.12;
+  const headerHeight = height * 0.14;
 
   if(!user) return ;
 
@@ -117,13 +117,13 @@ export default function Home() {
             
             )}
   
-           <View
+           {/* <View
              style={{ 
              height: Platform.OS =="ios" ? width/20 + 5 : width/20 ,
              width:"100%",
-             }}>
+             }}/> */}
 
-             </View>
+            
 
                  
           {displayNotificationsModal && 

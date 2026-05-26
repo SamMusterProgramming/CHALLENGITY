@@ -11,11 +11,9 @@
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#000000",
     "newArchEnabled": true,
-
     "androidNavigationBar": {
       "visible": "sticky-immersive"
     },
-
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Challengify",
@@ -24,7 +22,6 @@
         "NSLocationWhenInUseUsageDescription": "We use your location to verify eligibility for region-based talent stages."
       }
     },
-
     "android": {
       "permissions": [
         "ACCESS_COARSE_LOCATION",
@@ -46,7 +43,7 @@
       "expo-router",
       "expo-font",
       "expo-web-browser",
-
+      "expo-notifications",
       [
         "expo-image-picker",
         {

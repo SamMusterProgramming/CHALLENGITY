@@ -1,352 +1,4 @@
 
-// import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
-// import React from 'react'
-// import { MotiView } from 'moti'
-// import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-// import { router } from 'expo-router'
-// import { countries, stageIcons } from '../../utilities/TypeData'
-
-// export default function StageMenu({
-//   height,
-//   width,
-//   setParticipationType,
-//   isFavourite,
-//   stage,
-//   setStage,
-//   handleRefresh,
-//   talentRoom,
-//   globalRefresh,
-//   edition,
-//   isRefreshing,
-//   setNewChallenge
-// }) {
-
-//   const region = countries.find(
-//     c => c.code === talentRoom.region
-//   )
-
-//   /* ---------------- RESPONSIVE SIZES ---------------- */
-
-//   const ICON_BOX = height * 0.25
-//   const ICON_SIZE = height * 0.15
-
-//   const TOGGLE_HEIGHT = height * 0.25
-
-//   const TITLE_SIZE = height * 0.11
-//   const SUB_SIZE = height * 0.075
-
-//   const LABEL_SIZE = height * 0.08
-//   const EMOJI_SIZE = height * 0.17
-
-//   return (
-
-//     <MotiView
-//       from={{
-//         opacity: 0,
-//         translateY: height * 0.3
-//       }}
-//       animate={{
-//         opacity: 1,
-//         translateY: 0
-//       }}
-//       transition={{
-//         type: "timing",
-//         duration: 450
-//       }}
-//       style={{
-//         height,
-//         width,
-//         position: "absolute",
-//         bottom: 0,
-//       }}
-//     >
-
-//       {/* MAIN CONTAINER */}
-//       <View
-//         style={{
-//           flex: 1,
-//           backgroundColor: "rgba(8,8,12,0.72)",
-//           borderTopWidth: 1,
-//           borderColor: "rgba(255,255,255,0.06)",
-//           paddingHorizontal: width * 0.03,
-//           paddingTop: height * 0.05,
-//           paddingBottom: height * 0.04,
-//         }}
-//         className="rounded-t-[28px] justify-between"
-//       >
-
-//         {/* ================= TOP ROW ================= */}
-
-//         <View className="flex-row items-center justify-between">
-
-//           {/* LEFT ACTIONS */}
-//           <View className="flex-row items-center gap-2">
-
-//             <TouchableOpacity
-//               onPress={() =>
-//                 !isFavourite
-//                   ? setParticipationType("addFavourite")
-//                   : setParticipationType("removeFavourite")
-//               }
-//               style={{
-//                 width: ICON_BOX,
-//                 height: ICON_BOX,
-//                 borderRadius: 999,
-//                 backgroundColor: "rgba(255,255,255,0.06)",
-//               }}
-//               className="items-center justify-center"
-//             >
-//               <MaterialCommunityIcons
-//                 name={
-//                   isFavourite
-//                     ? "heart"
-//                     : "heart-outline"
-//                 }
-//                 size={ICON_SIZE}
-//                 color={
-//                   isFavourite
-//                     ? "#ff4d4d"
-//                     : "#a1a1aa"
-//                 }
-//               />
-//             </TouchableOpacity>
-
-//             <TouchableOpacity
-//               onPress={() =>
-//                 setParticipationType("help")
-//               }
-//               style={{
-//                 width: ICON_BOX,
-//                 height: ICON_BOX,
-//                 borderRadius: 999,
-//                 backgroundColor: "rgba(255,255,255,0.06)",
-//               }}
-//               className="items-center justify-center"
-//             >
-//               <MaterialCommunityIcons
-//                 name="help"
-//                 size={ICON_SIZE}
-//                 color="#d4d4d8"
-//               />
-//             </TouchableOpacity>
-
-//           </View>
-
-//           {/* TOGGLE */}
-//           <View
-//             style={{
-//               height: TOGGLE_HEIGHT,
-//               backgroundColor:
-//                 "rgba(255,255,255,0.05)",
-//               borderRadius: 9,
-//               padding: 3,
-//               width: width * 0.42,
-//             }}
-//             className="flex-row items-center"
-//           >
-
-//             {/* STAGE */}
-//             <TouchableOpacity
-//               onPress={() => {
-//                 !stage && setStage(true)
-//                 setNewChallenge(false)
-//               }}
-//               style={{
-//                 flex: 1,
-//                 height: "100%",
-//                 borderRadius: 9,
-//                 backgroundColor:
-//                   stage
-//                     ? "#D4AF37"
-//                     : "transparent",
-//               }}
-//               className="items-center justify-center"
-//             >
-//               <Text
-//                 style={{
-//                   fontSize: LABEL_SIZE,
-//                   color: stage
-//                     ? "#000"
-//                     : "#9ca3af",
-//                 }}
-//                 className="font-bebas tracking-widest"
-//               >
-//                 Stage
-//               </Text>
-//             </TouchableOpacity>
-
-//             {/* PERFORMANCE */}
-//             <TouchableOpacity
-//               onPress={() => {
-//                 stage && setStage(false)
-//               }}
-//               style={{
-//                 flex: 1,
-//                 height: "100%",
-//                 borderRadius: 9,
-//                 backgroundColor:
-//                   !stage
-//                     ? "#D4AF37"
-//                     : "transparent",
-//               }}
-//               className="items-center justify-center"
-//             >
-//               <Text
-//                 style={{
-//                   fontSize: LABEL_SIZE,
-//                   color: !stage
-//                     ? "#000"
-//                     : "#9ca3af",
-//                 }}
-//                 className="font-bebas tracking-widest"
-//               >
-//                 Perform
-//               </Text>
-//             </TouchableOpacity>
-
-//           </View>
-
-//           {/* RIGHT ACTIONS */}
-//           <View className="flex-row items-center gap-2">
-
-//             <TouchableOpacity
-//               onPress={handleRefresh}
-//               style={{
-//                 width: ICON_BOX,
-//                 height: ICON_BOX,
-//                 borderRadius: 999,
-//                 backgroundColor: "rgba(255,255,255,0.06)",
-//               }}
-//               className="items-center justify-center"
-//             >
-//               {isRefreshing ? (
-//                 <ActivityIndicator
-//                   size="small"
-//                   color="white"
-//                 />
-//               ) : (
-//                 <AntDesign
-//                   name="reload"
-//                   size={ICON_SIZE}
-//                   color="#d4d4d8"
-//                 />
-//               )}
-//             </TouchableOpacity>
-
-//             <TouchableOpacity
-//               onPress={() =>
-//                 !globalRefresh && router.back()
-//               }
-//               style={{
-//                 width: ICON_BOX,
-//                 height: ICON_BOX,
-//                 borderRadius: 999,
-//                 backgroundColor: "rgba(255,255,255,0.06)",
-//               }}
-//               className="items-center justify-center"
-//             >
-//               <AntDesign
-//                 name="close"
-//                 size={ICON_SIZE}
-//                 color="#d4d4d8"
-//               />
-//             </TouchableOpacity>
-
-//           </View>
-
-//         </View>
-
-//         {/* ================= INFO ROW ================= */}
-
-//         <View
-//           style={{
-//             marginTop: height * 0.04,
-//             paddingHorizontal: width * 0.02,
-//           }}
-//           className="flex-row flex-1 items-center justify-between"
-//         >
-
-//           {/* STAGE */}
-//           <View className="items-center w-[25%] justify-center">
-
-//             <Text
-//               style={{
-//                 fontSize: EMOJI_SIZE
-//               }}
-//             >
-//               {stageIcons[talentRoom.name]}
-//             </Text>
-
-//             <Text
-//               style={{
-//                 fontSize: LABEL_SIZE,
-//                 marginTop: 2,
-//               }}
-//               className="text-gray-200 font-bebas tracking-widest"
-//             >
-//               {talentRoom.name}
-//             </Text>
-
-//           </View>
-
-//           {/* CENTER INFO */}
-//           <View className="items-center w-[50%] justify-center">
-
-//             <Text
-//               style={{
-//                 fontSize: TITLE_SIZE,
-//               }}
-//               className="text-white font-bebas tracking-wider"
-//             >
-//               {talentRoom.name} STAGE
-//             </Text>
-
-//             <Text
-//               style={{
-//                 fontSize: SUB_SIZE,
-//                 marginTop: 1,
-//               }}
-//               className="text-yellow-500 font-semibold"
-//             >
-//               {edition.title}
-//             </Text>
-
-//           </View>
-
-//           {/* REGION */}
-//           <View className="items-center w-[25%] justify-center">
-
-//             <Text
-//               style={{
-//                 fontSize: EMOJI_SIZE
-//               }}
-//             >
-//               {region?.flag}
-//             </Text>
-
-//             <Text
-//               numberOfLines={1}
-//               style={{
-//                 fontSize: LABEL_SIZE,
-//                 marginTop: 2,
-//                 width:"100%"
-//               }}
-//               className="text-gray-200 font-bebas text-center tracking-widest"
-//             >
-//               {region?.name}
-//             </Text>
-
-//           </View>
-
-//         </View>
-
-//       </View>
-
-//     </MotiView>
-//   )
-// }
-
-
 import {
   View,
   Text,
@@ -397,7 +49,8 @@ export default function StageMenu({
   isRefreshing,
   setNewChallenge,
   stageName,
-  setStageName
+  setStageName,
+  setShowIntroduction 
 }) {
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -472,7 +125,7 @@ export default function StageMenu({
               {openStagesMenu && (
                 <View
                   style={{
-                    bottom: TOGGLE_HEIGHT + 10,
+                    bottom: TOGGLE_HEIGHT - height * 0.25,
                     left: 0,
                     width: width * 0.48,
                   }}
@@ -481,24 +134,20 @@ export default function StageMenu({
                     bg-[#111114]
                     border
                     border-white/10
-                    rounded-2xl
+                    rounded-xl
                     p-2
-                    z-50
-                  "
-                >
+                    z-50 " >
 
                   {talentStages.map((item) => (
                     <TouchableOpacity
                       key={item.id}
                       activeOpacity={0.85}
                       onPress={() => {
+                        
                         setStage(true)
                         setStageName(item.name)
                         setNewChallenge(false)
                         setOpenStagesMenu(false)
-                     
-                        // setTalentRoom(null)  
-                        /* YOUR SELECT LOGIC HERE */
                       }}
                       className="
                         flex-row
@@ -908,7 +557,7 @@ export default function StageMenu({
           {/* STAGE */}
 
           
-          <View className="items-center w-[25%] justify-center">
+           <View className="items-center w-[25%] justify-center">
                 <TouchableOpacity
                     // activeOpacity={0.9}
                     onPress={() => {
@@ -951,7 +600,7 @@ export default function StageMenu({
                     {talentRoom.name}
                   </Text>
 
-                </TouchableOpacity>
+              </TouchableOpacity>
           </View>
 
           {/* CENTER INFO */}

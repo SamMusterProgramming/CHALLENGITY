@@ -19,7 +19,8 @@ export default function HeaderApp({
 
   const { notifications } = useGlobalContext();
   const unread = notifications.filter(n => !n.isRead).length;
-  const avatarSize = headerHeight * 0.5;
+  const avatarSize = headerHeight * 0.4;
+  const MENU_HEIGHT = headerHeight /2 
 
   return (
     <View
@@ -46,7 +47,7 @@ export default function HeaderApp({
               source={icons.talentify_logo}
               style={{
                 width: "100%",
-                height: avatarSize 
+                height: headerHeight * 0.5
               }}
               resizeMethod="cover"
               className="mt- 1"
@@ -54,45 +55,20 @@ export default function HeaderApp({
       </View>
       
       <View 
-      className="flex-row w- [33%] pl-2 flex-1 h-[100%] b g-[white]  rounded-tl-xl justify-end   items-center  gap-2">
+      className="flex-row w- [33%] pr-2 flex-1 h-[100%] b g-[white]  rounded-tl-xl justify-end   items-center  gap-2">
   
-            {/* <TouchableOpacity
-              className="h- [100%] justify-center items-center ">
-              <Image
-                source={icons.search}
-                style = {{ width:avatarSize * 0.8 , height:avatarSize * 0.8 }}
-                resizeMethod="cover"
-               />
-            </TouchableOpacity> */}
-         
-            {/* <TouchableOpacity
-            className="h- [100%] justify-center items-center "
-              onPress={() => setShowNotifications(!showNotifications)}
-              >
-               <Image
-                source={icons.notification}
-                style = {{ width:avatarSize * 0.8  , height:avatarSize * 0.8  }}
-                resizeMethod="cover"
-               />
-            
-            </TouchableOpacity> */}
-
             <TouchableOpacity
               className="
                 rounded-xl
                 bg-primary
-                border border-[#453914]
+                bo rder border-[#453914]
                 items-center justify-center
                 shadow-lg
               "
               style={{
-                width:avatarSize * 0.8 ,
-                height :avatarSize * 0.8 , 
-                // shadowColor: "#F7D774",
-                // shadowOpacity: 0.35,
-                // shadowRadius: 10,
-                // shadowOffset: { width: 0, height: 4 },
-                // elevation: 8,
+                width:avatarSize  ,
+                height :avatarSize , 
+            
               }}
             >
               <Ionicons name="search" size={26} color="#fff" />
@@ -101,8 +77,8 @@ export default function HeaderApp({
             <TouchableOpacity
               onPress={() => setShowNotifications(!showNotifications)}
               style={{
-                width:avatarSize * 0.8 ,
-                height :avatarSize * 0.8 , 
+                width:avatarSize ,
+                height :avatarSize , 
                 // shadowColor: "#F7D774",
                 // shadowOpacity: 0.35,
                 // shadowRadius: 10,
@@ -112,7 +88,7 @@ export default function HeaderApp({
               className="
                 rounded-xl
                 bg-primary
-                border border-[#4b3f24]
+                bor der border-[#4b3f24]
                 items-center justify-center">
               <Ionicons name="notifications-outline" size={26} color="#F7D774" />
               {unread > 0 && (
@@ -126,16 +102,20 @@ export default function HeaderApp({
 
             <TouchableOpacity
             onPress={()=> setShowProfile(true)}
-            className = "mr- 2 ml-auto  border border-[#453914] rounded-xl p- 1"
+            className = "mr- 2 ml- auto  items-center justify-center bo rder border-[#453914] rounded-xl p-1"
+            style={{
+              width: avatarSize ,
+              height: avatarSize 
+            }}
             >
               {user ? (
                 <Image
                   source={{ uri: user?.profileImage?.publicUrl }}
                   style={{
-                    width: avatarSize * 0.8,
-                    height: avatarSize * 0.8
+                    width: "100%",
+                    height: "100%"
                   }}
-                  className="rounded-xl p-1 bor der-[#ffd700]"
+                  className="rounded-xl p- 1 bor der-[#ffd700]"
                 />
               ) : (
                 <Image

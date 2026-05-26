@@ -6,7 +6,7 @@ const tabs = [
   { name: "Performances" },
   { name: "Challenges" },
   // { name: "Stats" },
-  { name: "profile" }
+  { name: "Profile" }
 ];
 
 export default function TopStageNavBar({ activeIndex, setActiveIndex, width , headerHeight}) {
@@ -37,7 +37,7 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex, width , he
     >
       {/* 🔥 FIXED ROW */}
       <View 
-      className ="flex-1 items-center flex-row justify-evenly"
+      className ="flex-1 items-center flex-row justify-between px-3"
       style={{ flexDirection: "row" }}>
 
         {tabs.map((tab, index) => {
@@ -59,7 +59,7 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex, width , he
               onPress={() => setActiveIndex(index)}
               activeOpacity = {0.8}
               style={{
-                flex: 1,        
+                // flex: 1,        
                 alignItems: "center",  
                 justifyContent : "center",
               }}  >
@@ -73,19 +73,19 @@ export default function TopStageNavBar({ activeIndex, setActiveIndex, width , he
                 }} >
                 <Text
                   style={{
-                    fontSize: width / 35,
+                    fontSize: width / 36,
                     letterSpacing: 1.2,
                     color: index === activeIndex ? "#E6C068" : "white",
                   }}
-                  className="font-bebas" >
-                  {tab.name.toUpperCase()}
+                  className="font-bold" >
+                  {tab.name}
                 </Text>
                 
                 <Animated.View
-                  className = "justify-center absolute bottom-[22%] items-center mr-[2px]"
+                  className = "justify-center absolute bottom-[22%] items-center mr-[0px]"
                   style={{
                     // marginTop: 4,
-                    height: 2,
+                    height: 1,
                     width:  tab.name.length * 7,
                     borderRadius: 2,
                     backgroundColor:"#E6C068",

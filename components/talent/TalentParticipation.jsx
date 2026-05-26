@@ -68,19 +68,6 @@ export default function TalentParticipation({talentRoom, setReplayRecording , us
 
 const { playing } = useEvent(player, 'playingChange', { playing: player.playing });
 
-
-// useEffect(() => {
-//   let interval;
-//   if (isRecording) {
-//     interval = setInterval(() => {
-//       setTimer((prev) => prev + 1);
-//     }, 1000);
-//   } else {
-//     clearInterval(interval);
-//   }
-//   return () => clearInterval(interval);
-// }, [isRecording]);
-
 useEffect(() => {
    const makeThumbNail = async () => {
     if(videoUri)
@@ -115,7 +102,7 @@ const toggleVideoPlaying = () =>{
 
   const requestMediaPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status == 'granted') {
+    if (status !== 'granted') {
       alert('Permission to access media library is required!');
       return false;
     }
@@ -130,30 +117,6 @@ const toggleVideoPlaying = () =>{
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  // const startRecording = async() =>{
-  //   setVideoUri(null)
-  //   setReplayRecording(true)
-  //   setTimer(0)
-  //   setIsRecording(true)
-  //   timerRef.current = setInterval(() => {
-  //     setTimer((prev) => prev + 1);
-  //   }, 1000);
-  //   try {
-  //     let options ={
-  //       maxDuration: 120,
-  //     }
-  //     await cameraRef.current.recordAsync(options)
-  //     .then((video)=>{
-  //       setVideoUri(video.uri)
-  //       setIsRecording(false)
-  //       clearInterval(timerRef.current);
-  //     })
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  //  }
-
-  
   const startRecording = async () => {
     try {
       setVideoUri(null);
@@ -182,12 +145,6 @@ const toggleVideoPlaying = () =>{
     }
   };
 
-  // const stopRecording = async()=>{
-  //     await  cameraRef.current.stopRecording();
-  //     setIsRecording(false)
-  //     setReplayRecording(false)
-  // }
-
   const stopRecording = async () => {
     try {
       if (timerRef.current) {
@@ -202,7 +159,6 @@ const toggleVideoPlaying = () =>{
       console.log(err);
     }
   };
-
 
 
    const uploadVideo =async()=>{
@@ -221,115 +177,108 @@ const toggleVideoPlaying = () =>{
     }
   }    
 
-  // useEffect(() => 
-  //   {
-  //     if(videoUri)
-  //     console.log(videoUri)
-  //   }
-  // , [videoUri])
   
-
   const upload = async()=>{
     if(videoUri ){
       showLoading("uploading the video ...")
       const optimizedVideo = videoUri // await makeFastStart(videoUri);
-      // const checkFSTART = await  isFastStartVideo(videoUri)
-      // console.log(checkFSTART)
-      const [videoRes, thumbRes] = await Promise.all([
-         getUploadVideoUrl(user._id , user.email , "talent" ),
-         getUploadImageUrl(user._id , user.email , "thumbnail")
-      ]);
+
       setTimeout(() => {
         setNewChallenge(false)
         setStage(true)
-      }, 1500); 
-      // const compressed = await compressImage(thumbNailURL)
-      const [videoUpload, thumbnailUpload] = await Promise.all([
-        uploadVideoToBackblaze(videoRes, optimizedVideo),
-        uploadImageToBlackBlaze(thumbRes, thumbNailURL),
-      ]);
+        hideLoading()
+        }, 2500); 
 
-      hideLoading()
-      let body = {
-        publicUrl : user.profileImage.publicUrl,
-        user_id : user._id,
-        name : user.name,
-        // video_url : urls[0],
-        email : user.email,
-        city: user.city,
-        country : user.country,
-        // thumbNail:urls[1],
-        room_id:talentRoom._id,  
-        type:participation,
-        videoFileName :videoRes.fileName,
-        videoFileId: videoUpload.fileId,
-        thumbnailFileName : thumbRes.fileName,
-        thumbnailFileId : thumbnailUpload.fileId,
-        // thumbnailSignedUrl : `https://f000.backblazeb2.com/file/challengify-images/${thumbRes.fileName}`,
-        videoToDelete : participation == "update" ? talentRoom.contestants.find(c => c.user_id == user._id).video :
-                        participation == "qupdate" ? talentRoom.queue.find(c => c.user_id == user._id).video :
-                        participation == "eupdate" ?  talentRoom.eliminations.find(c => c.user_id == user._id).video : null ,
-        thumbnailToDelete : participation == "update" ? talentRoom.contestants.find(c => c.user_id == user._id).thumbnail :
-                        participation == "qupdate" ? talentRoom.queue.find(c => c.user_id == user._id).thumbnail :
-                        participation == "eupdate" ?  talentRoom.eliminations.find(c => c.user_id == user._id).thumbnail: null    
-          }
+      Promise.all([
+        getUploadVideoUrl(user._id , user.email , "talent" ),
+        getUploadImageUrl(user._id , user.email , "thumbnail")
+      ]).then(([videoRes, thumbRes] ) =>
+         {
+       
+            Promise.all([
+              uploadVideoToBackblaze(videoRes, videoUri ),
+              uploadImageToBlackBlaze(thumbRes, thumbNailURL),
+            ])
+              .then(async([videoUpload, thumbnailUpload]) => {
+              
+                let body = {
+                  publicUrl : user.profileImage.publicUrl,
+                  user_id : user._id,
+                  name : user.name,
+                  // video_url : urls[0],
+                  email : user.email,
+                  city: user.city,
+                  country : user.country,
+                  // thumbNail:urls[1],
+                  room_id:talentRoom._id,  
+                  type:participation,
+                  videoFileName : videoUpload.fileName,
+                  videoFileId: videoUpload.fileId,
+                  thumbnailFileName : thumbnailUpload.fileName,
+                  thumbnailFileId : thumbnailUpload.fileId,
+                  // thumbnailSignedUrl : `https://f000.backblazeb2.com/file/challengify-images/${thumbRes.fileName}`,
+                  videoToDelete : participation == "update" ? talentRoom.contestants.find(c => c.user_id == user._id).video :
+                                  participation == "qupdate" ? talentRoom.queue.find(c => c.user_id == user._id).video :
+                                  participation == "eupdate" ?  talentRoom.eliminations.find(c => c.user_id == user._id).video : null ,
+                  thumbnailToDelete : participation == "update" ? talentRoom.contestants.find(c => c.user_id == user._id).thumbnail :
+                                  participation == "qupdate" ? talentRoom.queue.find(c => c.user_id == user._id).thumbnail :
+                                  participation == "eupdate" ?  talentRoom.eliminations.find(c => c.user_id == user._id).thumbnail: null    
+                }
 
-      if(participation == "new" || participation == "queue"){
-        try {
-          const res = await api.post(`/talents/uploads/${talentRoom._id}`, body);
-          if (res.data === "challenge expired") {
-            return setIsExpired(true);
-          }
-          setTalentRoom(res.data);
-          setTimeout(() => {
-            if (participation === "new") {
-              setGlobalRefresh(true);
-              setStage(true);
-              setSelectedContestant({
-                ...res.data.contestants.find(c => c.user_id == user._id),
-                rank: res.data.contestants.length
-              });
-            }
-            if (participation === "queue") {
-              setGlobalRefresh(true);
-              setStage(false);
-              setSelectedContestant(null);
-            }
-          }, 500);
-        } catch (err) {
-          console.error("Failed to save video metadata:", err.response?.data || err.message);
-        }
-      
-       }
-     
-
-       if(participation == "update" || participation == "qupdate" || participation == "eupdate" ){
-       await  api.patch(`/talents/update/${talentRoom._id}`,body)
-        .then(   
-          res =>  {
-              if(res.data === "challenge expired") return setIsExpired(true)      
-                setTalentRoom(res.data)
-                setTimeout(() => {
-                      if(participation == "update"){
-                          setGlobalRefresh(true)
-                          setStage(true)
-                          const rank = res.data.contestants.findIndex( c => c.user_id == user._id)
-                          setSelectedContestant({...res.data.contestants.find( c => c.user_id == user._id),rank:rank +1 })
+                if(participation == "new" || participation == "queue"){
+                  try {
+                    const res = await api.post(`/talents/uploads/${talentRoom._id}`, body);
+                    if (res.data === "challenge expired") {
+                      return setIsExpired(true);
+                    }
+                    setTalentRoom(res.data);
+                    setTimeout(() => {
+                      if (participation === "new") {
+                        setGlobalRefresh(true);
+                        setStage(true);
+                        setSelectedContestant({
+                          ...res.data.contestants.find(c => c.user_id == user._id),
+                          rank: res.data.contestants.length
+                        });
                       }
-                      if(participation == "qupdate" || participation == "eupdate"){
-                          setGlobalRefresh(true)
-                          setStage(false)
-                          setSelectedContestant(null)
+                      if (participation === "queue") {
+                        setGlobalRefresh(true);
+                        setStage(false);
+                        setSelectedContestant(null);
                       }
-                } , 500); 
-                
+                    }, 500);
+                  } catch (err) {
+                    console.error("Failed to save video metadata:", err.response?.data || err.message);
+                }}
 
-            
-          }
-          
-            )
-       }
-    }
+                if(participation == "update" || participation == "qupdate" || participation == "eupdate" ){
+                  await  api.patch(`/talents/update/${talentRoom._id}`,body)
+                   .then(   
+                     res =>  {
+                         if(res.data === "challenge expired") return setIsExpired(true)      
+                           setTalentRoom(res.data)
+                           setTimeout(() => {
+                                 if(participation == "update"){
+                                     setGlobalRefresh(true)
+                                     setStage(true)
+                                     const rank = res.data.contestants.findIndex( c => c.user_id == user._id)
+                                     setSelectedContestant({...res.data.contestants.find( c => c.user_id == user._id),rank:rank +1 })
+                                 }
+                                 if(participation == "qupdate" || participation == "eupdate"){
+                                     setGlobalRefresh(true)
+                                     setStage(false)
+                                     setSelectedContestant(null)
+                                 }
+                           } , 500); 
+                           
+           
+                       
+                     } )
+                  }
+
+            })
+      })
+     }
   }
 
 
@@ -338,7 +287,7 @@ const toggleVideoPlaying = () =>{
   {videoUri && !loading  ? (
         <>
              <VideoView 
-                     style={{ minWidth:'100%' ,minHeight:'100%',opacity:100}}
+                     style={{ minWidth:'100%' ,minHeight:'100%',opacity: isPlaying ? 1 : 0.4}}
                      player={player}
                      contentFit='cover'
                      nativeControls ={false}
@@ -359,41 +308,119 @@ const toggleVideoPlaying = () =>{
                              source={!isPlaying && icons.play}/>
              </TouchableOpacity>
              {!isPlaying && (
-             <View className="absolute bottom-[25vh] px-4 flex-row min-w-full -auto  justify-between  items-center  opacity-85  h-[5vh]">
-                     <View className="flex-row w-[30%] mt-auto  bg-wh mb- justify-center  items-center   h- [99%]">   
-                         <TouchableOpacity
-                         className=" flex-row py-2 justify-center bg-[#920412] gap-2 items-center h- [95%] w-[95%] rounded-xl "
-                         // onPress={goBack}  
-                         onPress={()=>setIsRecording(false)}   
-                         onPressOut={()=> {setVideoUri(null)}}
-                             >
-                         <Text
-                         style={{fontSize:9}}
-                         className="text-white text-xs font-black">Cancel</Text>
-                         <Image      
-                         className="w-5 h-5"
-                         source={icons.back}
-                         resizeMode='contain'
-                         />  
-                         </TouchableOpacity>
-                     </View>
-                     <View className="flex-row w-[30%]  bg-whi  mb- justify-center  items-center   h- first-letter: [99%]">
-                         <TouchableOpacity
-                         className="flex-row justify-center py-2 bg-[#04198e] gap-2 items-center h- [95%] w-[95%] rounded-xl"
-                          //  onPress={handleSumitChallenge}
-                           onPress={upload}
-                             >
-                         <Image      
-                         className="w-5 h-5 "
-                         source={isRecording ? icons.submit : icons.submit}
-                         resizeMode='contain'
-                         />  
-                         <Text 
-                         style={{fontSize:10}}
-                         className="text-white text-xs font-black">{isRecording? "Submit":"Submit"}</Text>
-                         </TouchableOpacity>
-                     </View>  
-             </View>
+           <View
+           style={{
+             bottom: bottom + 10,
+           }}
+           className="absolute px-5 flex-row w-full justify-between items-center opacity-95"
+         >
+         
+           {/* ❌ CANCEL */}
+           <View className="w-[32%] items-center">
+         
+             <TouchableOpacity
+               onPress={() => setIsRecording(false)}
+               onPressOut={() => {
+                 setVideoUri(null);
+               }}
+               activeOpacity={0.85}
+               className="
+                 w-full
+                 flex-row
+                 items-center
+                 justify-center
+                 gap-2
+         
+                 py-3
+         
+                 rounded-2xl
+                 bor der
+                 bord er-[#ff6b81]
+                 bg-[#7a0814]
+               "
+               style={{
+                 shadowColor: '#ff4d6d',
+                 shadowOpacity: 0.25,
+                 shadowRadius: 12,
+                 shadowOffset: {
+                   width: 0,
+                   height: 4,
+                 },
+                 elevation: 10,
+               }}
+             >
+         
+               <Image
+                 className="w-5 h-5"
+                 source={icons.back}
+                 resizeMode="contain"
+               />
+         
+               <Text
+                 style={{
+                   fontSize: width /40,
+                   letterSpacing: 1,
+                 }}
+                 className="text-white font-black"
+               >
+                 CANCEL
+               </Text>
+         
+             </TouchableOpacity>
+         
+           </View>
+         
+           {/* ✅ SUBMIT */}
+           <View className="w-[32%] items-center">
+         
+             <TouchableOpacity
+               onPress={upload}
+               activeOpacity={0.85}
+               className="
+                 w-full
+                 flex-row
+                 items-center
+                 justify-center
+                 gap-2
+                 py-3
+                 rounded-2xl
+                 bo rder
+                 bor der-[#ffe58f]
+                 bg-[#916906]
+               "
+               style={{
+                 shadowColor: '#ffd700',
+                 shadowOpacity: 0.3,
+                 shadowRadius: 14,
+                 shadowOffset: {
+                   width: 0,
+                   height: 4,
+                 },
+                 elevation: 12,
+               }}
+             >
+         
+               <Image
+                 className="w-5 h-5"
+                 source={icons.submit}
+                 resizeMode="contain"
+               />
+         
+               <Text
+                 style={{
+                   fontSize: width /40,
+                   letterSpacing: 1,
+                 }}
+                 className="text-white font-black"
+               >
+                 SUBMIT
+               </Text>
+         
+             </TouchableOpacity>
+         
+           </View>
+         
+         </View>
               )}
         </>
          ):
@@ -463,43 +490,10 @@ const toggleVideoPlaying = () =>{
              <View 
                      style={{backgroundColor: !isRecording ?"#523c2":"transparent"}}
                      className="absolute bottom-10 w-[100%] flex-col justify-start items-center  bg- opacity-100 ">
-                           {/* {isRecording && (   
-                             <View
-                               className="flex-row justify-center   items-end h-[100%] w-[33%] ">   
-                               <Text 
-                                 style={{fontSize:10}}
-                                 className="text-white text-xl">Recording</Text>
-                           </View>
-                           )}
-                           {isRecording && (   
-                             <TouchableOpacity
-                               className="flex-row justify-center gap-2 items-center h-[100%] w-[33%] "
-                               onPress={ stopRecording }
-                                 >
-                               <Image    
-                               className="w-10 h-10 "
-                               source={ icons.camera_recording }
-                               resizeMode='contain'
-                               />
-                             </TouchableOpacity>
-                           )}  
-                     
-                           {isRecording && ( 
-                           <View
-                               className="flex-row justify-center   items-end h-[100%] w-[33%] ">   
-                               <Text 
-                                   style={{fontSize:10}}
-                                   className="text-white text-xl">{formatTime(timer)}</Text>
-                           </View>
-                           )} */}
+                       
                            <RecordingButton  onPress = {stopRecording } loading={loading} />
                            <RecordingTimer timer={timer} />
-                           {/* <View
-                               className="flex-row justify-center   items-center end h- [100%] w-[33%] ">   
-                               <Text 
-                                   style={{fontSize:10}}
-                                   className="text-white text-xl">{formatTime(timer)}</Text>
-                           </View> */}
+                         
               </View>
               
              )}

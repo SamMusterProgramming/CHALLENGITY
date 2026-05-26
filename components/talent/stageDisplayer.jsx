@@ -218,7 +218,7 @@
 //   );
 // }
 
-import { View, Text, Image, useWindowDimensions, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text,  useWindowDimensions, TouchableOpacity, Pressable, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -226,9 +226,10 @@ import { getIcon, getStageLogo } from '../../helper';
 import StageHeader from './custom/StageHeader';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import PostTalentHeader from '../activityHeader/PostTalentHeader';
-import { icons } from '../../constants';
+import { icons, images } from '../../constants';
 import { LinearGradient } from 'expo-linear-gradient';
-import { stageIcons } from '../../utilities/TypeData';
+import { stageCenterImages, stageCoverImages, stageIcons } from '../../utilities/TypeData';
+
 
 export default function StageDisplayer({ userTalent, user, width , height }) {
   const { screenWidth } = useWindowDimensions();
@@ -241,7 +242,6 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
   useEffect(() => {
     const edition = userTalent.editions?.find(e => e.status === "open") || null;
     if (!edition) return;
-
     const roundMapping = {
       1: "Elimination Round 1",
       2: "Elimination Round 2",
@@ -273,123 +273,177 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
   return (
     <View
       style={{
-        height: height ,
-        width: width,
+        height,
+        width,
+        position: "relative",
+        overflow: "hidden",
+        // borderRadius: 20,
       }}
-      className="justify-start items-center"
+      className="border-2 border-white/30 primary rounded-[5px] p- 1"
     >
-      {/* 🎬 Cinematic Container */}
-      <View className="flex-1 w-full items-center bor der bord er-gold/10 rounded-lg bg-[#18181b] /15  [#0a0a0a] bor der bo rder-yellow-500/20">
-
-        {/* ✨ Gold Glow Edges */}
-        {/* <LinearGradient
-          colors={["rgba(255,215,0,0.25)", "transparent"]}
-          style={{ position: "absolute", top: 0, width: "100%", height: 40 }}
+      {/* 🎬 Main Stage Area */}
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "TalentContestRoom",
+            params: {
+              region: userTalent.region,
+              selectedTalent: userTalent.name,
+              selectedIcon: getIcon(userTalent.name),
+              regionIcon: getIcon(userTalent.region),
+              startIntroduction: "true",
+              showGo: "true",
+              location: "contest",
+              contestant_id: selectedContestant?.user_id ?? null,
+            },
+          })
+        }
+        style={{
+          flex: 1,
+          // position: "relative",
+        }}
+        className="round ed-2xl"
+      >
+        {/* 🖼 Thumbnail Background */}
+        {selectedContestant ? (
+          <Image
+            source={{
+              uri: selectedContestant?.performances?.[0]?.thumbnail?.publicUrl,
+            }}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: "100%",
+              height: "100%",
+              opacity:0.3
+            }}
+            resizeMethod="cover"
+            className ="rounded-[5px] "
+            // cachePolicy="disk"
+          />
+        ) : (
+          <Image
+          source={
+            stageCenterImages[userTalent.name]
+          }
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: "100%",
+            height: "100%",
+            opacity:0.3
+          }}
+          resizeMethod="cover"
+          className ="rounded-[5px] "
+          // cachePolicy="disk"
         />
-        <LinearGradient
-          colors={["transparent", "rgba(255,215,0,0.2)"]}
-          style={{ position: "absolute", bottom: 0, width: "100%", height: 40 }}
+        )}
+  
+        {/* 🎭 Stage Cover Overlay */}
+        <Image
+          source={stageCoverImages[userTalent.name]}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: "100%",
+            height: "100%",
+            opacity: 0.8,
+          }}
+          resizeMethod="cover"
+          className ="rounded-[5px]  "
+          // cachePolicy="disk"
+        />
+  
+        {/* 🌑 Dark Overlay for readability */}
+        {/* <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.35)",
+          }}
         /> */}
-
-        {/* 🎭 Stage Header */}
-        <StageHeader
-          stageLogo={getStageLogo(userTalent.name)}
-          stageTitle={userTalent.name}
-          region={userTalent.region}
-          contestants={userTalent.contestants.length}
-          round={roundTitle}
-          continentLogo={getStageLogo(userTalent.region)}
-          continentName={userTalent.region}
-          width={width}
-        />
-
-        {/* 🎬 Main Spotlight (Contestant / Stage Preview) */}
-        {selectedContestant && (
-          <Pressable
-            onPress={() =>
-              router.push({
-                pathname: 'TalentContestRoom',
-                params: {
-                  region: userTalent.region,
-                  selectedTalent: userTalent.name,
-                  selectedIcon: getIcon(userTalent.name),
-                  regionIcon: getIcon(userTalent.region),
-                  startIntroduction: "true",
-                  showGo: "true",
-                  location: "contest",
-                  contestant_id: selectedContestant.user_id,
-                },
-              })
-            }
-            className="w-[95%] p-4 flex-1 bg-black -100 flex-row justify-center items-center overf low-hidden"
-          >
-            {/* 🎥 Background Image */}
-            <Image
-              className="w-[100%] h-[100%] rounded-lg opacity-70"
-              source={{ uri: selectedContestant?.performances[0].thumbnail?.publicUrl }}
-              resizeMethod="cover"
-            />
-
-            {/* 🎬 Cinematic Overlay */}
-            {/* <LinearGradient
-              colors={["transparent", "rgba(0,0,90,0.9)"]}
-              style={{
-                position: "absolute",
-                bottom: 4,
-                width: "100%",
-                height: "20%",
-                borderRadius: 8,
-              }}
-            /> */}
-
-            {/* ▶️ Play Button */}
-            <View className="absolute justify-center items-center">
-              <View className="bg-black/60 p-3 rounded-full border border-yellow-500/40">
-                <Image
-                  className="w-6 h-6"
-                  source={icons.play}
-                  resizeMethod="contain"
-                />
-              </View>
+  
+        {/* 🎤 Stage Header */}
+        <View
+          style={{
+            position: "absolute",
+            top: 30,
+            // left: 0,
+            // right: 0,
+            zIndex: 20,
+            // paddingTop: 30,
+            paddingHorizontal: 10,
+  
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.5,
+            shadowRadius: 8,
+            elevation: 10,
+          }}
+          className = "justify-center w-full items-center"
+        >
+          <StageHeader
+            stageLogo={getStageLogo(userTalent.name)}
+            stageTitle={userTalent.name}
+            region={userTalent.region}
+            contestants={userTalent.contestants.length}
+            round={roundTitle}
+            continentLogo={getStageLogo(userTalent.region)}
+            continentName={userTalent.region}
+            width={width}
+            height ={height}
+          />
+        </View>
+  
+        {/* ▶️ Play Button */}
+        {/* {selectedContestant && ( */}
+          <View className="absolute inset-0 justify-center items-center z-10">
+            <View className="bg-black/60 p-2 rounded-full border border-yellow-500/40">
+              <Image
+                style={{
+                  width: height / 16,
+                  height: height / 16,
+                }}
+                source={icons.play}
+                contentFit="contain"
+              />
             </View>
-          </Pressable>
-        )}
-
-        {/* 🎭 Empty State */}
-        {userTalent.contestants.length === 0 && (
-          <Pressable
-            onPress={() =>
-              router.push({
-                pathname: 'TalentContestRoom',
-                params: {
-                  region: userTalent.region,
-                  selectedTalent: userTalent.name,
-                  selectedIcon: getIcon(userTalent.name),
-                  regionIcon: getIcon(userTalent.region),
-                  startIntroduction: "true",
-                  showGo: "true",
-                  location: "contest",
-                  contestant_id: null,
-                },
-              })
-            }
-            className="w-[95%]  flex-1 p-4 justify-center items-center bg-black bor der bo rder-yellow-500/20"
-          >
-            <Text
-              style={{ fontSize: width / 7 }}
-              className="text-yellow-400/80 font-extrabold tracking-widest"
-            >
-              {stageIcons[userTalent.name]}
-            </Text>
-
-            <Text className="text-gray-400 text-xs mt-2 tracking-widest">
-              BE THE FIRST TO PERFORM
-            </Text>
-          </Pressable>
-        )}
-
-        <PostTalentHeader data={userTalent} width={width} user={user} />
-      </View>
+          </View>
+        {/* )} */}
+  
+        {/* 👤 Bottom User Header */}
+        <View
+          style={{
+            position: "absolute",
+            bottom: 5,
+            left: 3,
+            right: 3,
+            zIndex: 20,
+            // paddingBottom: 8,
+            
+          }}
+          className="bg-black/60 justify-center rounded-2xl items-center"
+        >
+          <PostTalentHeader
+            data={userTalent}
+            width={width}
+            user={user}
+            height={height}
+          />
+        </View>
+      </Pressable>
     </View>
   );
 }

@@ -127,7 +127,6 @@ export default function HomePage() {
               paddingBottom: 40,
             }}
             keyboardShouldPersistTaps="handled"
-            
           />
     </View>
   );

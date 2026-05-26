@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Vibration,
+  ActivityIndicator,
 } from "react-native";
 
 import Modal from "react-native-modal";
@@ -20,6 +21,8 @@ import { MotiView } from "moti";
 
 export default function CreateAccountModal({
   setIsVisible,
+  isEmailExist,
+  setIsEmailExist,
   form,
   setForm,
   name,
@@ -41,17 +44,17 @@ export default function CreateAccountModal({
   const [isEmailInvalid, setIsEmailInvalid] = useState(false); 
   const [isFirstnameValid, setIsFirstnameValid] = useState(false); 
   const [isLastnameValid, setIsLastnameValid] = useState(false); 
+  const [isLoading , setIsLoading] = useState(false)
 
 
   const handleValidation = () => {
-
     if (!validateFirstName(name.firstname)) {
         Vibration.vibrate();
         setIsFirstnameValid(true)
         return;
       }
 
-      if (!validateLastName(name.lastname)) {
+    if (!validateLastName(name.lastname)) {
         Vibration.vibrate();
         setIsLastnameValid(true)
         return;
@@ -69,11 +72,17 @@ export default function CreateAccountModal({
       return;
     }
 
-    if (!validatePassword(form.password)) {
+    if (!validateMatchPassword(form.password ,form.confirmPassword)) {
       Vibration.vibrate();
-      setIsPasswordInvalid(true)
+      setIsPasswordUnmatch(true)
       return;
     }
+    setIsLoading(true)
+    onPress()
+    setTimeout(() => {
+      setIsVisible(false)
+      setIsLoading(false)
+    }, 1000);
   }
   
   function validateFirstName(firstname) {
@@ -119,17 +128,17 @@ export default function CreateAccountModal({
         setTimeout(() => setIsEmailInvalid(false), 2000);
     }
 
-    if (isEmailWrong) {
-        setTimeout(() => {
-        setMessage("")
-        setIsEmailWrong(false)
-        }, 2000);
-    }
+    // if (isEmailWrong) {
+    //     setTimeout(() => {
+    //     setMessage("")
+    //     setIsEmailWrong(false)
+    //     }, 2000);
+    // }
 
     if (isPasswordInvalid) {
         setTimeout(() => {
         setMessage("Invalid Password, must contain special character,...")
-        setIsPasswordInvalid(false)
+        setTimeout(() => setIsPasswordInvalid(false), 2000); 
         }, 2000);
     }
 
@@ -140,7 +149,20 @@ export default function CreateAccountModal({
         }, 2000);
     }
 
-  }, [isEmailInvalid, isEmailWrong, isPasswordInvalid, isPasswordWrong , isFirstnameValid , isLastnameValid])
+    if (isPasswordUnmatch) {
+      setMessage("confirm Password does not match ")
+      setTimeout(() => setIsPasswordUnmatch(false), 2000);
+  }
+
+  if (isEmailExist) {
+    setMessage("Email already exists , try to login  ")
+    setTimeout(() => { 
+      setIsEmailExist(false)
+      // setMessage("")  
+    }  , 10000);
+    }
+
+  }, [isEmailInvalid, isEmailWrong, isPasswordInvalid, isPasswordWrong , isFirstnameValid , isLastnameValid , isPasswordUnmatch , isEmailExist])
 
   useEffect(() => {
     if (message == "user not found") {
@@ -361,7 +383,7 @@ return (
                 borderRadius: 5,
                 backgroundColor: "#050505",
                 borderWidth: 1,
-                borderColor: "rgba(255,255,255,0.46)",
+                borderColor: !isEmailInvalid && !isEmailExist ? "rgba(255,255,255,0.46)" : "rgba(255,85,5,0.46)",
                 paddingHorizontal: 16,
                 justifyContent: "center",
                 marginBottom : 12
@@ -405,7 +427,7 @@ return (
                 borderRadius: 5,
                 backgroundColor: "#050505",
                 borderWidth: 1,
-                borderColor: "rgba(255,255,255,0.46)",
+                borderColor: !isPasswordInvalid  ? "rgba(255,255,255,0.46)" : "rgba(255,55,5,0.46)",
                 paddingHorizontal: 16,
                 flexDirection: "row",
                 alignItems: "center",
@@ -467,7 +489,7 @@ return (
                 borderRadius: 5,
                 backgroundColor: "#050505",
                 borderWidth: 1,
-                borderColor: "rgba(255,255,255,0.46)",
+                borderColor:  !isPasswordUnmatch ? "rgba(255,255,255,0.46)" : "rgba(255,55,5,0.46)",
                 paddingHorizontal: 16,
                 flexDirection: "row",
                 alignItems: "center",
@@ -541,7 +563,7 @@ return (
               isPasswordInvalid ||
               isPasswordWrong ||
               isFirstnameValid ||
-             isLastnameValid) && (
+             isLastnameValid || isPasswordUnmatch || isEmailExist) && (
               <Text
                 style={{
                   color: "#9CA3AF",
@@ -565,31 +587,38 @@ return (
             }}
           >
             <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={handleValidation}
-              style={{
-                height: 50,
-                borderRadius: 10,
-                backgroundColor: "#D4AF37",
-                justifyContent: "center",
-                alignItems: "center",
-                shadowColor: "#D4AF37",
-                shadowOpacity: 0.18,
-                shadowRadius: 14,
-                elevation: 8,
-              }}
-            >
-              <Text
+                activeOpacity={0.9}
+                onPress={handleValidation}
                 style={{
-                  fontSize: width / 33,
-                  color: "#111",
-                  fontWeight: "800",
-                  letterSpacing: 1,
+                  height: height/19,
+                  borderRadius: 10,
+                  backgroundColor: "#D4AF37",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  shadowColor: "#D4AF37",
+                  shadowOpacity: 0.18,
+                  shadowRadius: 14,
+                  elevation: 8,
                 }}
               >
-                SIGN UP
-              </Text>
-            </TouchableOpacity>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="#111"
+                  />
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: width / 33,
+                      color: "#111",
+                      fontWeight: "800",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    SIGN UP
+                  </Text>
+                )}
+              </TouchableOpacity>
           </View>
   
         </MotiView>

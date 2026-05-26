@@ -534,6 +534,7 @@ const panGesture = Gesture.Pan()
                     pagingEnabled
                     data={pagedData}
                     keyExtractor={(_, i) => i.toString()}
+                    // keyExtractor={(item) => item._id} 
                     showsHorizontalScrollIndicator={false}
                     nestedScrollEnabled
                     decelerationRate="fast"
@@ -552,7 +553,7 @@ const panGesture = Gesture.Pan()
                       >
                         {item.map((friend, index) => (
                           <Friend
-                            key={friend.user_id}
+                            key={friend._id}
                             friend={friend}
                             index={index}
                             w={width}

@@ -72,6 +72,9 @@ export default function Login() {
   const [emailHint, setEmailHint] = useState(null);
   const { showLoading, hideLoading } = useLoading();
 
+  const [isEmailExist, setIsEmailExist] = useState(false);
+
+
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
     Montserrat_400Regular,
@@ -252,8 +255,8 @@ export default function Login() {
     } catch (error) {
       hideLoading()
       setError(getFirebaseErrorMessage(error));
+      setMessageColor("lightgray")
       setVerification(false)
-
     } finally {
        
     }
@@ -281,6 +284,8 @@ export default function Login() {
       setError(data.message)
       setMessageColor(data.color)
     } catch (e) {
+      if(getFirebaseErrorMessage(e) === "Email is already in use") setIsEmailExist(true)
+      else setIsEmailExist(false)
       setError(getFirebaseErrorMessage(e));
       setMessageColor("pink")
       setVerification(false)
@@ -300,7 +305,7 @@ export default function Login() {
       }
       await resendVerification(user);
       setError("Verification email sent!");
-      setMessageColor("green");
+      setMessageColor("lightgray");  
       setVerification(false)
     } catch (e) {
       console.log("RESEND ERROR:", e);
@@ -657,7 +662,7 @@ return (
       <View
         style={{
           marginTop: 0,
-          flexDirection: "row",
+          flexDirection: "col",
           justifyContent: "center",
           alignItems: "center",
           paddingHorizontal: 4,
@@ -694,7 +699,7 @@ return (
         </Pressable>
 
         {/* GUEST */}
-        {/* <Pressable
+        <Pressable
           onPress={handleAnonymousLogin}
           android_ripple={{
             color: "rgba(212,175,55,0.08)",
@@ -719,7 +724,7 @@ return (
           >
             Continue as Guest
           </Text>
-        </Pressable> */}
+        </Pressable>
 
       </View>
 
@@ -743,7 +748,6 @@ return (
           width={width}
         />
         
-
         {verification && (
           <TouchableOpacity onPress={sendVerification}>
             <Text
@@ -761,6 +765,8 @@ return (
       {openCreateAcctModal && (
       <CreateAccountModal 
       setIsVisible = {setOpenCreateAcctModal}
+      setIsEmailExist={setIsEmailExist}
+      isEmailExist ={isEmailExist}
       form={form}
       setForm={setForm}
       name={name}

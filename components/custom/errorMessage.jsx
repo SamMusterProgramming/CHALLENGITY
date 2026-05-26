@@ -12,7 +12,7 @@ const ErrorMessage = ({ message , color ,width}) => {
       className=" w-[100%]  mb- 8 text-center items-center justify-center px -3 py -2 border bor der-red-500/30 bg -red-500/10 rounded-md"
     >
       <Text 
-      style= {{ color : color , textAlign:"center" , fontSize : width /35}}
+      style= {{ color : color , textAlign:"center" , fontSize : width /32}}
       className="text-red-400 text-md">
         • {message}
       </Text>

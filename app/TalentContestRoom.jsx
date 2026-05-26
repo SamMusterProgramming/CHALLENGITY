@@ -32,6 +32,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import ContestantsDisplayer from '../components/talent/contestantsDisplayer';
 import StageMenu from '../components/talent/stageMenu';
 import SidePostData from '../components/talent/sidePostData';
+import StageCoverIntroduction from '../components/talent/stageCoverIntroduction';
 
 
 
@@ -92,7 +93,7 @@ const [selectedPerformance , setSelectedPerformance] = useState(null)
 const [videoCount , setVideoCount] = useState(0)
 const [openUserModal,setOpenUserModal] = useState(false)
 const { showLoading, hideLoading } = useLoading();
-const [openCommentModal , setOpenCommentModal] = useState(false)
+const [showIntroduction , setShowIntroduction] = useState(true)
 
 
 const SCREEN_HEIGHT = height - insets.top
@@ -294,6 +295,7 @@ useEffect(() => {
     showLoading("Stage is Loading...")
     setSelectedContestant(null)
     createTalentRoom({region:region , name:stageName}, setTalentRoom , user._id ,setUserContestantStatus , setUserParticipation, setEdition, setIsLoading)
+    setShowIntroduction(true)
 }, [stageName])
 
 useEffect(() => {
@@ -307,7 +309,7 @@ useEffect(() => {
 }, [isExpired])
 
 
-useEffect(() => {
+useEffect(() => { 
    if (talentRoom) {
      showLoading("Stage is Loading...")
     //  setIsPlaying(false)
@@ -684,6 +686,10 @@ if (isLoading ) {
   return  <AuthLoadingScreen />
 }
 
+if(showIntroduction) {
+  return    <StageCoverIntroduction stageData={talentRoom} onFinish={() => {setShowIntroduction(false)}} visible={showIntroduction} />
+}
+
 return (
   <View
   style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top  }}
@@ -806,6 +812,8 @@ return (
                                                                    show={!isPlaying && !isRefreshing} contestants={data} 
                                                                    setSelectedContestant={setSelectedContestant} 
                                                                    selectedContestant={selectedContestant} />
+
+                                              <StageCoverIntroduction stageData={talentRoom} onFinish={() => {setShowIntroduction(false)}} visible={showIntroduction} />
                                               
                                           </View>
                                       
@@ -868,6 +876,7 @@ return (
                           stage={stage} setStage = {setStage} handleRefresh ={handleRefresh} talentRoom ={talentRoom}
                           globalRefresh ={globalRefresh} edition ={edition}  isRefreshing ={isRefreshing} setNewChallenge={setNewChallenge}
                           stageName={stageName} setStageName={setStageName} setTalentRoom={setTalentRoom}
+                          setShowIntroduction ={setShowIntroduction}
                           />    
               )}
 

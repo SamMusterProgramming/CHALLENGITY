@@ -1,3 +1,5 @@
+import { images } from "../constants";
+
 export const challengeType =[
 
    {id: 0, value:"Adventure" },
@@ -58,6 +60,29 @@ export const stageOrderMap = {
   Tech: 11,
   Comedy: 12,
 };
+
+export const stageCoverImages = {
+  Singing: images.singing,
+  Dancing: images.dancing,
+  Fitness: images.fitness,
+  Magic: images.magic,
+  Sport: images.sport,
+  Melody: images.melody,
+  Art: images.art,
+  Comedy: images.comedy,
+};
+
+export const stageCenterImages = {
+  Singing: images.micheal,
+  Dancing: images.salsa,
+  Fitness: images.arnold,
+  Magic: images.shin,
+  Sport: images.christiano,
+  Melody: images.guitarist,
+  Art: images.artist,
+  Comedy: images.bean,
+};
+
 
 export const stageIcons = {
   Singing: "🎤",

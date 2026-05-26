@@ -96,7 +96,6 @@ export default function CentralContestantPlayer({
               }}
               resizeMode="cover"
             />
-
             {/* dark cinematic overlay */}
             <View
               style={{
@@ -106,7 +105,6 @@ export default function CentralContestantPlayer({
                 backgroundColor: "rgba(0,0,0,0.4)",
               }}
             />
-
             {/* play icon */}
             <Image
               source={icons.play}
@@ -210,7 +208,7 @@ export default function CentralContestantPlayer({
             }
             rank = {selectedContestant.rank}
             votes = {selectedContestant.votes + 1}
-            size={width/38}
+            size={width/34}
           />
           <Text
             style={{ fontSize: width/55 }}

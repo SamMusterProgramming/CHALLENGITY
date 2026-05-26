@@ -6,7 +6,7 @@ import { useGlobalContext } from '../../context/GlobalProvider';
 import { getInition } from '../../helper';
 import { stageIcons } from '../../utilities/TypeData';
 
-export default function PostTalentHeader({ data , width }) {
+export default function PostTalentHeader({ data , width , height }) {
   const { user, userFriendData } = useGlobalContext();
   const { screenWidth } = useWindowDimensions();
   const [contestantFriends, setContestantFriends] = useState([]);
@@ -14,11 +14,15 @@ export default function PostTalentHeader({ data , width }) {
 
   useEffect(() => {
     if (!data) return;
-
-    const friends = data.contestants.filter(c =>
-      userFriendData.friends.some(f => f.user_id === c.user_id)
+    // const friends = data.contestants.filter(c =>
+    //   userFriendData.friends.some(f => f.user_id === c.user_id)
+    // );
+    const contestantIds = new Set(
+      data.contestants.map(c => c.user_id)
     );
-
+    const friends = userFriendData.friends.filter(friend =>
+      contestantIds.has(friend._id)
+    );
     setContestantFriends(friends);
     const joined =
       data.contestants.some(c => c.user_id === user._id) ? "On Stage" :
@@ -72,29 +76,29 @@ export default function PostTalentHeader({ data , width }) {
             You
           </Text>
         </View>
-        <Text
-        className = " p-1 mr-2 border-b-4 border-[#9f7a0b] text-orange-400 "
-          style={{
-            fontSize: width / 35 ,
-            color: joinedStatus == "On Stage" ? 'lightgreen' :
-                   joinedStatus == "In Queue" ? 'lightblue'  :
-                   joinedStatus == "Eliminated" ? 'red' : "white", 
-            fontWeight: '700',
-          }}
-        >
-           {stageIcons[data.name]}
+            {/* <Text
+            className = " p-1 mr-2 border-b-4 border-[#9f7a0b] text-orange-400 "
+              style={{
+                fontSize: width / 35 ,
+                color: joinedStatus == "On Stage" ? 'lightgreen' :
+                      joinedStatus == "In Queue" ? 'lightblue'  :
+                      joinedStatus == "Eliminated" ? 'red' : "white", 
+                fontWeight: '700',
+              }}
+            > */}
+           {/* {stageIcons[data.name]} */}
            <Text
             className = " p-1 mr-2 border-b-4 border-[#a7850b] text-orange-400 "
               style={{
                 fontSize: width / 45 ,
                 color: joinedStatus == "On Stage" ? 'lightgreen' :
-                      joinedStatus == "In Queue" ? 'lightblue'  :
-                      joinedStatus == "Eliminated" ? 'red' : "white", 
+                       joinedStatus == "In Queue" ? 'lightblue'  :
+                       joinedStatus == "Eliminated" ? 'red' : "white", 
                 fontWeight: '700',
               }} >
               {joinedStatus}
            </Text>
-        </Text>
+        {/* </Text> */}
        </View>
       );
     }
@@ -103,19 +107,20 @@ export default function PostTalentHeader({ data , width }) {
     firstThree.forEach(friend => {
       avatars.push(
         <View
-          key={friend.user_id}
+          key={friend._id}
           style={{
             width: width * 0.08,
             height: width * 0.08,
             borderRadius: width * 0.04,
             backgroundColor: '#444', // Dark circle
             justifyContent: 'center',
-            alignItems: 'center',
+            alignItems: 'center',  
             marginRight: 6,
+            backgroundColor : "black"
           }}
         >
           <Image
-            source={{ uri: friend.profile_img }}
+            source={{ uri: friend.profileImage.publicUrl }}
             style={{
               width: width * 0.07,
               height: width * 0.07,
@@ -157,15 +162,19 @@ export default function PostTalentHeader({ data , width }) {
     >
       {/* Avatars + Status Row */}
       <View 
-        className = " justify-start w-[100%] "
-        style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+        className = " justify-start items-center w-[100%] "
+        style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 ,height:width * 0.08}}>
         {renderAvatars()}
+
         {contestantFriends.length > 0 && (
+        <View
+          className = "items-center justify-center ">
           <Text
-          className = "mt- auto p-1 border-b-8 border-[#aa7a11]"
-           style={{ fontSize: width / 45, color: 'white', fontWeight: '700' }}>
-          {contestantFriends.length > 3 ? `+  ${contestantFriends.length - 3} friends` : "" } Joined
+          className = " p-1 h-[100%] text-center border-b-4 border-[#aa7a11]"
+           style={{ fontSize: width / 45 , color: 'white', fontWeight: '700' }}>
+          {contestantFriends.length > 3 ? `+  ${contestantFriends.length - 3}  Friends` : "" } has Joined
           </Text>
+        </View>
         )}
       </View>
 

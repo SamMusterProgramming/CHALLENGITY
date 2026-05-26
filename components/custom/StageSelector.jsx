@@ -451,7 +451,7 @@ export default function StageSelector({ user ,onReady }) {
       await getRegionTalentStages(globalSelectedRegion, setRegionStages)
       setTimeout(() => {
         setLoadingStages(false)
-      }, 1000);
+      }, 20);
     }
     getStages()
   }, [globalSelectedRegion , globalRefresh]);
@@ -592,9 +592,9 @@ export default function StageSelector({ user ,onReady }) {
          
   return (
     <View
-     className ="flex- 1 items-center mb-6 px-2 ">
+     className ="flex- 1 items-center mt-2 mb- 2 px-2 ">
       
-      <View className="px- 2 w-full pt-6 pb- 2 bg-dark Bg">
+      <View className="px- 2 w-full pt-2 item s-center pb- 2 bg-dark Bg">
             <Text className="font-bebas text-xl text-white tracking-widest mb- 1">
               EXPLORE STAGES
             </Text>
@@ -604,9 +604,9 @@ export default function StageSelector({ user ,onReady }) {
                 lineHeight: width / 24,
                 letterSpacing: 0.3,
               }}
-              className="text-gray-200 fo nt-medium  leading-relaxed px- 2" >
+              className="text-gray-200  tex t-center leading-relaxed px- 2" >
               Discover extraordinary talent from across the globe.
-             Explore performances from different cultures, rising stars, and unique creative worlds.
+              Explore performances from different cultures, rising stars, and unique creative worlds.
             </Text>
       </View>
       
@@ -614,260 +614,200 @@ export default function StageSelector({ user ,onReady }) {
       <View
       className="flex-1 justify-start items-center"
       >
-        <RegionalStages regionStages={regionStages} region = {globalSelectedRegion} width={width} height={1 * height} user={user} />
-        
-        <View
-        className="absolute top-3 right-0 px-2 gap-2 flex-row items-center justify-center " >
-              <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() =>
-                    setGlobalSelectedRegion(userCountryCode)
-                  }
+        <RegionalStages regionStages={regionStages} region = {globalSelectedRegion} 
+                        width={width} height={1 * height} user={user} loadingStages={loadingStages } />
+      <View
+        className="absolute top-4 right-0 px-0 gap-3 flex-row items-center justify-center"  >
+
+        {/* 🔥 LOCAL STAGE */}
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() =>
+            setGlobalSelectedRegion(userCountryCode)
+          }
+          style={{
+            backgroundColor:
+              globalSelectedRegion === userCountryCode
+                ? 'rgba(212,175,55,0.22)'
+                : '#201f1f',
+
+            shadowColor:
+              globalSelectedRegion === userCountryCode
+                ? '#D4AF37'
+                : 'transparent',
+
+            shadowOpacity:
+              globalSelectedRegion === userCountryCode
+                ? 0.35
+                : 0,
+
+            shadowRadius: 12,
+
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+          }}
+          className="
+            w- [70px]
+            h- [58px]
+            py-3 px-4
+            rounded-[4px]
+            items-center
+            justify-center
+            overflow-hidden
+          "
+        >
+
+          {/* ✨ TOP SHINE */}
+         
+          {/* 🔥 ACTIVE INDICATOR */}
+            <View
+              className="
+                absolute
+                top -[2px]
+                left-[0px]
+                rounded-full
+                b g-[#34b02d] opacity-20 "
+              style={{
+
+              }}>
+                 <Text
                   style={{
-                    backgroundColor:
+                    fontSize: width / 10,
+                    letterSpacing :4,
+                    color:
                       globalSelectedRegion === userCountryCode
-                        ? "rgba(212,175,55,0.25)"
-                        : "rgba(212,175,55,0.11)",
-
-
-                    shadowColor:
-                      globalSelectedRegion === userCountryCode
-                        ? "#D4AF37"
-                        : "transparent",
-
-                    shadowOpacity:
-                      globalSelectedRegion === userCountryCode
-                        ? 0.22
-                        : 0,
-
-                    shadowRadius: 10,
-
-                    shadowOffset: {
-                      width: 0,
-                      height: 3,
-                    },
-
-                    // elevation:
-                    //   globalSelectedRegion === userCountryCode
-                    //     ? 4
-                    //     : 0,
+                        ? '#F5D77A'
+                        : '#B0B0B0',
                   }}
-                  className="
-                    w- [52px]
-                    h- [52px]
-                    rounded-[10px]
-                    bor der
-                    items-center
-                    justify-center
-                    overflow-hidden
-                    p-2
-                  "
-                >
+                  className =" "  >
+                                    {countries.find(c=> c.code === userCountryCode ).flag}
+                 </Text>
+            </View>
 
-                  {/* TOP LIGHT LINE */}
-                 
+          {/* LABEL */}
+          <Text
+            style={{
+              fontSize: width / 50,
+              letterSpacing: 1,
 
-                  {/* ACTIVE DOT */}
-                  {globalSelectedRegion === userCountryCode && (
-                    <View
-                      className="
-                        absolute
-                        top-[3px]
-                        right-[3px]
-                        w-[6px]
-                        h-[6px]
-                        rounded-full
-                        bg-[#F5D77A]
-                      "
-                    />
-                  )}
+              color:
+                globalSelectedRegion === userCountryCode
+                  ? '#FFF4C7'
+                  : '#A1A1AA',
+            }}
+            className="font-black mt- 1 "
+          >
+            LOCAL
+          </Text>
 
-                  {/* ICON */}
-                  <Text
-                    style={{
-                      fontSize: width / 20,
-                      color:
-                        globalSelectedRegion === userCountryCode
-                          ? "#F5D77A"
-                          : "#A1A1AA",
-                    }}
-                  >
-                    📍
-                  </Text>
+        </TouchableOpacity>
 
-              </TouchableOpacity>
+        {/* 🌐 GLOBAL STAGE */}
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => setOpen(true)}
+          style={{
+            backgroundColor:
+              globalSelectedRegion !== userCountryCode
+                ? 'rgba(212,175,55,0.22)'
+                : '#201f1f',
 
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => setOpen(true)}
-                style={{
-                  backgroundColor:
-                    globalSelectedRegion !== userCountryCode
-                      ? "rgba(212,175,55,0.20)"
-                      : "rgba(212,175,55,0.11)",
+            borderColor:
+              globalSelectedRegion !== userCountryCode
+                ? 'rgba(245,215,122,0.45)'
+                : 'rgba(255,255,255,0.08)',
 
-                  borderColor:
-                    globalSelectedRegion !== userCountryCode
-                      ? "rgba(245,215,122,0.28)"
-                      : "rgba(255,255,255,0.05)",
+            shadowColor:
+              globalSelectedRegion !== userCountryCode
+                ? '#D4AF37'
+                : 'transparent',
 
-                  shadowColor:
-                    globalSelectedRegion !== userCountryCode
-                      ? "#D4AF37"
-                      : "transparent",
+            shadowOpacity:
+              globalSelectedRegion !== userCountryCode
+                ? 0.35
+                : 0,
 
-                  shadowOpacity:
-                    globalSelectedRegion !== userCountryCode
-                      ? 0.22
-                      : 0,
+            shadowRadius: 12,
 
-                  shadowRadius: 10,
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+          }}
+          className="
+            w- [70px]
+            h- [58px]
+            rounded-[4px]
+            py-3 px-4
+            items-center
+            justify-center
+            overflow-hidden
+          "
+        >
 
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-
-                  // elevation:
-                  //   globalSelectedRegion !== userCountryCode
-                  //     ? 4
-                  //     : 0,
-                }}
-                className="
-                  w- [52px]
-                  h- [52px]
-                  rounded-[10px]
-                  bor der
-                  items-center
-                  justify-center
-                  overflow-hidden
-                  p-2
-                "
-              >
-
-               
-
-                {/* ACTIVE DOT */}
-                {globalSelectedRegion !== userCountryCode && (
-                  <View
-                    className="
-                      absolute
-                      top-[3px]
-                      right-[3px]
-                      w-[6px]
-                      h-[6px]
-                      rounded-full
-                      bg-[#F5D77A]
-                    "
-                  />
-                )}
-
-                {/* ICON */}
-                <Text
+          {/* 🔥 ACTIVE INDICATOR */}
+          <View
+              className="
+                absolute
+                top -[2px]
+                left-[0px]
+                round ed-full
+                b g-[#34b02d] opacity-20 "
+              style={{
+                // shadowColor: '#F5D77A',
+                // shadowOpacity: 0.9,
+                // shadowRadius: 6,
+              }}>
+                 <Text
                   style={{
-                    fontSize: width / 20,
+                    fontSize: width / 10,
+                    letterSpacing :4,
                     color:
                       globalSelectedRegion !== userCountryCode
-                        ? "#F5D77A"
-                        : "#A0A1AA",
+                        ? '#F5D77A'
+                        : '#B0B0B0',
                   }}
-                >
-                  🌐
-                </Text>
-
-              </TouchableOpacity>
+                  className =" "  >
+                   {  globalSelectedRegion !== userCountryCode ? countries.find(c=> c.code === globalSelectedRegion ).flag :
+                                                                    "🌐"   }
+                 </Text>
           </View>
+
+          {/* 🌐 ICON */}
+          
+
+          {/* LABEL */}
+          <Text
+            style={{
+              fontSize: width/50,
+              letterSpacing: 1,
+              color:
+                globalSelectedRegion !== userCountryCode
+                  ? '#FFF4C7'
+                  : '#A1A1AA',
+            }}
+            className="font-black mt- 1"
+          >
+            GLOBAL
+          </Text>
+
+        </TouchableOpacity>
+
       </View>
-      {/* <View
-        style={{
-          height: 0.49 * height,
-          width,
-        }}
-        className="flex-1 w-full flex-row justify-center items-center bg-[#392a0e]/30" >
-        {loadingStages ? (
-          <View 
-          style={{
-            height: 0.49 * height,
-            width,
+      </View>
+    
+  
+      <View className=" w-[99%] h-[1] bg-white/40 mt-2 mb-4" /> 
+
+        <CountrySelectorModal
+          visible={open}
+          onClose={() => setOpen(false)}
+          onSelect={(code) => {
+            setGlobalSelectedRegion(code) 
           }}
-          className="flex-1 justify-center items-center">
-            <ActivityIndicator
-              size="small"
-              color="#D4AF37"
-            />
-            <Text
-              className="text-white mt-3 font-semibold"
-              style={{
-                fontSize: width / 38,
-              }}
-            >
-              Loading stages...
-            </Text>
-          </View>
-        ) : showCarousel && regionStages?.length > 0  ? (
-            <Animated.FlatList
-              // key={`${globalSelectedRegion}-${initialStageIndex}`}
-              horizontal
-              data={regionStages || []}
-              initialScrollIndex={initialStageIndex}
-              renderItem={renderMainItem}
-              keyExtractor={(item) => item._id}
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={MAIN_SNAP_INTERVAL}
-              extraData={loadingStages}
-              // snapToAlignment="start"
-              // disableIntervalMomentum={true}
-              decelerationRate="fast"
-              bounces={false}
-              // overScrollMode="never"
-              contentContainerStyle={{
-                paddingHorizontal:
-                  SIDE_SPACING - MAIN_ITEM_MARGIN,
-              }}
-              onScroll={Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        x: mainScrollX,
-                      },
-                    },
-                  },
-                ],
-                {
-                  useNativeDriver: true,
-                }
-              )}
-              scrollEventThrottle={16}
-              onMomentumScrollEnd={handleScrollEnd}
-              getItemLayout={getItemLayout}
-              removeClippedSubviews={true}
-              initialNumToRender={2}
-              maxToRenderPerBatch={2}
-              windowSize={3}
-            />
-        
-
-        ) : null}
-      </View>       */}
-      {/* <View className=" w-[95%] justify-start ">
-              <StageHero title={globalSelectedStageName} 
-                  image={stageImages[globalSelectedStageName]}
-                  region={countries.find( c => c.code == globalSelectedRegion).name}
-                  flag = {countries.find( c => c.code == globalSelectedRegion).flag}
-                  description={stageDescriptions[globalSelectedStageName]}/>
-      </View>
-
-
-      <View className=" w-[95%] h-[1] bg-white/40 mt-4 mb-4" /> */}
-
-      <CountrySelectorModal
-        visible={open}
-        onClose={() => setOpen(false)}
-        onSelect={(code) => {
-          setGlobalSelectedRegion(code) 
-        }}
-      />
-    </View>
+        />
+     </View>
   );
 }

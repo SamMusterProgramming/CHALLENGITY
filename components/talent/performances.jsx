@@ -162,7 +162,7 @@ export default function Performances({ user }) {
           userProfile={user}
           activity={true}
           width={MAIN_ITEM_WIDTH}
-          height={height * 0.5}
+          height={height * 0.3}
         />
       </Animated.View>
     );

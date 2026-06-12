@@ -55,6 +55,7 @@ export default function StageMenu({
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [openStagesMenu, setOpenStagesMenu] = useState(false);
+  const [selected, setSelected] = useState("stage");
 
   const region = countries.find(
     c => c.code === talentRoom.region
@@ -66,7 +67,7 @@ export default function StageMenu({
   const TOGGLE_HEIGHT = height * 0.25
   const TITLE_SIZE = height * 0.11
   const SUB_SIZE = height * 0.075
-  const LABEL_SIZE = height * 0.07
+  const LABEL_SIZE = height * 0.09
   const EMOJI_SIZE = height * 0.17
 
   return (
@@ -110,15 +111,55 @@ export default function StageMenu({
 
         {/* ================= TOP ROW ================= */}
 
-      <View className="flex-row w-full items-center justify-between">
+      <View 
+      style = {{
+        width : width
+      }}
+      className="flex-row w-full  items-center justify-between">
        
-       
+       {/* <View
+          style={{
+            width: width * 0.25,
+            height: TOGGLE_HEIGHT,
+              }}
+          className="w-[25%] justify-center items-start pl- 2">
+            <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      setMenuOpen(false)
+
+                      !globalRefresh &&
+                        router.back()
+                    }}
+                    style={{
+                      width: "96%",
+                      height: "100%",
+                      borderRadius: 8,
+                      backgroundColor: stage
+                        ? "rgba(212,175,55,0.28)"
+                        : "rgba(212,175,55,0.12)",
+                    }}
+                    className = " flex-row items-center justify-center px- 4 py- 2  b g-red-500/30 "
+                  >
+
+                 
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        marginLeft: 8,
+                        fontWeight: "600",
+                      }}
+                      className ="font-bebas tracking-wider" >
+                      Results
+                    </Text>
+            </TouchableOpacity>
+       </View> */}
         <View
             style={{
-              width: width * 0.5,
+              width: width * 0.8,
               height: TOGGLE_HEIGHT,
             }}
-            className="flex-row items-center justify-between"
+            className="flex-row items-center ga p -2 justify-between"
           >
           
             {/* STAGE SELECT MENU */}
@@ -190,22 +231,20 @@ export default function StageMenu({
                 </View>
               )}
 
-           
-
-         
-
+          
             {/* STAGE */}
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => {
+                setSelected("stage")
                 !stage && setStage(true)
                 setOpenStagesMenu(false)
               }}
               style={{
-                width: "48%",
+                width: "32%",
                 height: "100%",
                 borderRadius: 8,
-                backgroundColor: stage
+                backgroundColor: selected == "stage" 
                   ? "rgba(212,175,55,0.28)"
                   : "rgba(212,175,55,0.12)",
               }}
@@ -223,7 +262,7 @@ export default function StageMenu({
               <Text
                 style={{
                   fontSize: LABEL_SIZE,
-                  color: stage
+                  color: selected == "stage" 
                     ? "#F5D77A"
                     : "#9ca3af",
                   letterSpacing: 1,
@@ -238,14 +277,15 @@ export default function StageMenu({
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => {
+                setSelected("performance")
                 stage && setStage(false)
                 setOpenStagesMenu(false)
               }}
               style={{
-                width: "48%",
+                width: "32%",
                 height: "100%",
                 borderRadius: 8,
-                backgroundColor: !stage
+                backgroundColor: selected == "performance" 
                   ? "rgba(212,175,55,0.28)"
                   : "rgba(212,175,55,0.12)",
                 // borderWidth: 1,
@@ -268,7 +308,7 @@ export default function StageMenu({
               <Text
                 style={{
                   fontSize: LABEL_SIZE,
-                  color: !stage
+                  color: selected == "performance"
                     ? "#F5D77A"
                     : "#9ca3af",
                   letterSpacing: 1,
@@ -278,13 +318,39 @@ export default function StageMenu({
                 Performance
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      setSelected("result")
+                    }}
+                    style={{
+                      width: "32%",
+                      height: "100%",
+                      borderRadius: 8,
+                      backgroundColor: selected == "result"
+                        ? "rgba(212,175,55,0.28)"
+                        : "rgba(212,175,55,0.12)",
+                    }}
+                    className="items-center justify-center overflow-hidden"
+                    >
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        // marginLeft: 8,
+                        fontWeight: "600",
+                      }}
+                      className ="font-bebas tracking-wider" >
+                      Results
+                    </Text>
+            </TouchableOpacity>
               
           </View>
 
 
 
           {/* BURGER MENU */}
-          <View className="relative">
+          <View className="rela tive w-[20%] pr-2 items-end">
 
             {/* BURGER BUTTON */}
             <TouchableOpacity
@@ -295,28 +361,52 @@ export default function StageMenu({
               }
               }
               style={{
-                width: ICON_BOX,
+                width: width/6,
                 height: ICON_BOX,
-                borderRadius: 999,
+                borderRadius: 8,
                 backgroundColor:
-                  "rgba(255,255,255,0.07)",
+                !menuOpen?  "rgba(212,175,55,0.12)" : "rgba(212,175,55,0.22)",
               }}
               className="
                 items-center
                 justify-center
                 border
-                border-white/10
-              "
+                bor der-white/10
+                border-gold/40     "
             >
-              <Feather
-                name={
-                  menuOpen
-                    ? "x"
-                    : "menu"
-                }
-                size={ICON_SIZE}
-                color="#e4e4e7"
-              />
+              
+               <View
+                  style={{
+                    width: width/8,
+                    height: 1.5,
+                    // backgroundColor: "#FFF",
+                    marginVertical: 3,
+                    borderRadius: 999,
+                  }}
+                  className="bg-gold"
+                />
+
+                <View
+                  style={{
+                    width: width/8,
+                    height: 1.5,
+                    // backgroundColor: "#FFF",
+                    marginVertical: 3,
+                    borderRadius: 999,
+                  }}
+                  className="bg-gold"
+                />
+
+                <View
+                  style={{
+                    width: width/8,
+                    height: 1.5,
+                    // backgroundColor: "#FFF",
+                    marginVertical: 3,
+                    borderRadius: 999,
+                  }}
+                  className="bg-gold"
+                />
             </TouchableOpacity>
 
             {/* DROPDOWN */}
@@ -352,10 +442,10 @@ export default function StageMenu({
                     zIndex: 999,
                   }}
                   className="
-                    rounded-3xl
+                    rounded-xl
                     overflow-hidden
-                    border
-                    border-white/10
+                    bor  der
+                    bor der-gold/20
                     bg-[#111114]
                   "
                 >
@@ -374,6 +464,7 @@ export default function StageMenu({
                       py-4
                       border-b
                       border-white/5
+                      
                     "
                   >
 
@@ -400,7 +491,7 @@ export default function StageMenu({
                         font-semibold
                       "
                     >
-                      Refresh
+                      Refresh Stage
                     </Text>
 
                   </TouchableOpacity>
@@ -497,7 +588,7 @@ export default function StageMenu({
                   </TouchableOpacity>
 
                   {/* CLOSE */}
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => {
                       setMenuOpen(false)
@@ -532,7 +623,7 @@ export default function StageMenu({
                       Close
                     </Text>
 
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                 </MotiView>
 
@@ -569,8 +660,8 @@ export default function StageMenu({
                       height: height * 0.5,
                       // borderRadius: 5,
                       backgroundColor: openStagesMenu
-                        ? "rgba(255,255,255,0.14)"
-                        : "rgba(255,255,255,0.08)",
+                        ? "rgba(212,175,55,0.26)"
+                        : "rgba(212,175,55,0.12)",
                       borderWidth: 1,
                 
                     }}

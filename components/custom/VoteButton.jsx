@@ -21,20 +21,15 @@ export default function VoteButton({setIsModalVisible,width , height,
     ]).start();
   };
 
-
-  
-
   return (
-
     <Pressable
-    onPress={
+      onPress={
         ()=> {
            handleVote()
            setTimeout(() => {
             setIsModalVisible(true);  
            }, 1000);
-           
-           if(voteTimeLaps < 0 || !talentRoom.contestants.find(c =>c._id == postData.post_id)){
+           if(voteTimeLaps < 24 || !talentRoom.contestants.find(c =>c._id == postData.post_id)){
               setAction("OK")
               setText(!talentRoom.contestants.find(c =>c._id == postData.post_id)?"this post is still in queue , can't vote , just yet !!!":
                          "you've just casted your vote , you can't edit your vote at this time wait 24h")
@@ -50,16 +45,16 @@ export default function VoteButton({setIsModalVisible,width , height,
             );
            }
         }
-        
-     }
-      className ="flex-row flex- 1 gap-2"
+      }
+      className ="flex-row flex- 1 gap-1 2"
       style={{
         alignItems: "center",
         justifyContent: "center", 
-        paddingVertical: 10,
-        paddingHorizontal: 10,
+        // paddingVertical: 10,
+        // paddingHorizontal: 10,
         borderRadius: 5,
         height: height,
+        width :height + 18 ,
         backgroundColor:postData.votes.find(vote => vote.voter_id == user._id)?"rgba(255,215,0,0.15)":"rgba(255,255,255,0.15)" // "rgba(255,215,0,0.15)",
       }}
     >
@@ -73,7 +68,7 @@ export default function VoteButton({setIsModalVisible,width , height,
         >
         <MaterialCommunityIcons
           name="trophy"
-          size = { postData.votes.find(vote => vote.voter_id == user._id)? width/18 : width/22}
+          size = { postData.votes.find(vote => vote.voter_id == user._id)? width/15 : width/18}
           color={postData.votes.find(vote => vote.voter_id == user._id)? "gold":"white"}
         />
         {/* <Text
@@ -105,12 +100,12 @@ export default function VoteButton({setIsModalVisible,width , height,
           <Text
             style={{
               color:postData.votes.find(vote => vote.voter_id == user._id)? "#FFD700":"white",
-              fontSize: width/49,
+              fontSize: width/40,
               marginTop: 5,
               fontWeight: "700",
              }}
             >
-            {postData.votes.find(vote => vote.voter_id == user._id)?`votes` : `Vote`}
+            {postData.votes.find(vote => vote.voter_id == user._id)?`voted` : `Vote`}
             {/* {postData.votes.find(vote => vote.voter_id == user._id)?`You've Voted for ${selectedContestant.name}'s performance` : `Vote for ${selectedContestant.name}'s performance`} */}
           </Text>
       </View>

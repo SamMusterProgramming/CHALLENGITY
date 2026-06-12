@@ -29,7 +29,7 @@ export default function LoadingModal({
       presentationStyle="overFullScreen"
     >
       <View
-        className="flex-1 items-center justify-center"
+        className="flex-1 items-center justify-center bg-black"
         style={{ backgroundColor: `rgba(0, 0, 0, ${opacity})` }}
       >
         {[0, 1, 2].map((i) => (

@@ -80,9 +80,10 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
        {
         owner_id : selectedContestant.user_id,
         voter_id : user._id,
-        room_id : talentRoom._id
+        room_id : talentRoom._id ,
+        voter_name : user.name
        }
-    voteTalentPost(selectedContestant._id,body , setPostData , setVoted,  setIsExpired)
+    voteTalentPost(selectedContestant._id , body , setPostData , setVoted,  setIsExpired)
    
    //  handleRefresh()
   }
@@ -156,14 +157,14 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
                                  className = "rounded-full "
                                  source={{ uri: selectedContestant.profileImage.publicUrl }}
                                  style={{
-                                    width: height /18 ,
-                                    height: height /18,
+                                    width: height /15 ,
+                                    height: height /15,
                                     borderWidth:  1,
                                     borderColor:  "#374151",
                                  }}
                               />
                         </TouchableOpacity>
-                        <View
+                        {/* <View
                            className="flex-1 px-4  justify-evenly items-center"
                            style={{
                               minHeight: height / 18,
@@ -204,42 +205,15 @@ export default function ContestantPostDetails({user,show , setOpenUserModal, wid
                                              isoCode={selectedContestant.country || "US"}
                                              size={width/43}/>
                            </View>
-                           {/* <Text
-                              numberOfLines={2}
-                              style={{
-                                 color: postData.votes.find(
-                                 vote => vote.voter_id == user._id
-                                 )
-                                 ? "#FFD700"
-                                 : "rgba(255,255,255,0.92)",
-
-                                 fontSize: width / 52,
-
-                                 lineHeight: width / 24,
-
-                                 fontWeight: "600",
-
-                                 letterSpacing: 0.4,
-
-                                 textAlign: "center",
-
-                                 width: "100%",
-                              }}
-                           >
-                              {postData.votes.find(
-                                 vote => vote.voter_id == user._id
-                              )
-                                 ? `Your vote supports ${selectedContestant.name}'s performances`
-                                 : `Watch ${selectedContestant.name}'s performances and cast your vote to support their journey`}
-                           </Text> */}
-                           </View>
+                         
+                           </View> */}
                         <View
                           style ={{
                            // backgroundColor :"rgba(173, 216, 230,0.25)"
                         }}
                         className =" flex-row ml-auto flex- 1 rounded-xl justify-center items-center">
                              <VoteButton 
-                                    setIsModalVisible={setIsModalVisible} width={width} height = {height/18}
+                                    setIsModalVisible={setIsModalVisible} width={width} height = {height/15}
                                     voteTimeLaps={voteTimeLaps} talentRoom={talentRoom} handleRefresh={handleRefresh}
                                     postData ={postData} setAction={setAction} setText={setText} user={user}
                                     voterEntry={voterEntry} selectedContestant={selectedContestant} />

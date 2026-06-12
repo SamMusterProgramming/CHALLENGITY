@@ -9,6 +9,7 @@ import { useFocusEffect } from "expo-router";
 import { getStageByNameAndRegion } from "../../apiCalls";
 import CarouselIndicator from "../custom/carouselIndicator";
 import StageHero from "../custom/stageHero";
+import StageIndicator from "../custom/stageIndicator";
 
 const { width ,height } = Dimensions.get("window");
 
@@ -59,6 +60,8 @@ export default function HotStage({ user }) {
   const [stageData, setStageData] = useState(hotStages[0]);
   const mainScrollX = useRef(new Animated.Value(0)).current;
   const mainFlatListRef = useRef(null);
+  const [currentStage, setCurrentStage] = useState(0);
+
 
 //   useEffect(() => {
 //     mainFlatListRef.current?.scrollToOffset({ offset: hotStageScrolledIndex, animated: false });
@@ -121,7 +124,9 @@ export default function HotStage({ user }) {
   const handleScrollEnd = (event) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / MAIN_SNAP_INTERVAL);
+  
     const safeIndex = Math.max(0, Math.min(index, (hotStages?.length || 1) - 1));
+    setCurrentStage(safeIndex)
     setStageData(hotStages[safeIndex]);
     setHotStageScrolledIndex(index)
   };
@@ -150,23 +155,31 @@ export default function HotStage({ user }) {
 
   return (
     <View
-    className ="flex- 1 items-center   ">
+    className ="flex- 1 mt- 4 items-center   ">
         
-        <View className="px-3 w-full text-center pb-4 b g-darkBg">
+        <View className="px- 3 w-full text-center pb-4 b g-darkBg">
             <Text
-                style ={{}}
-                className="font-bebas te xt-center text-xl text-white tracking-widest mb- 1" >
-                HOT STAGES
+                 style={{
+                  fontSize: width / 30,
+                  lineHeight: width / 20,
+                  letterSpacing: 0.3,
+                  fontWeight:700,
+                }}
+                className="fon t-bold te xt-center te xt-xl text-white tracking-widest mb- 1" >
+                HOT STAGES {' '}
+               
             </Text>
             <Text 
-                style={{
+                 style={{
                   fontSize: width / 32,
                   lineHeight: width / 24,
                   letterSpacing: 0.3,
+                  // fontWeight:700,
                 }}
-                className="text-gray-200 tex t-center mt- 2 leading-relaxed">
-                Competition is heating up. Watch, vote, and join when a spot opens.
+                  className="text-gray-200 mt-1 font-semiMontserrat tex t-center mt- ">
+                Competition is live. Vote now or join when a spot opens.
             </Text>
+           
         </View>
 
         <View
@@ -174,7 +187,7 @@ export default function HotStage({ user }) {
             height: 0.3 * height,
             width,
           }}
-          className="flex- 1 w-full items-start justify-center  bg-[#392a0e]/30">
+          className="flex- 1 h-[100%] w-full items-start justify-center mb-4  bg-[#392a0e]/30">
                 <LoadingActivity visible = {isLoading} />
                 <Animated.FlatList
                     ref={mainFlatListRef}
@@ -185,7 +198,7 @@ export default function HotStage({ user }) {
                     keyExtractor={(item) => item._id}
                     showsHorizontalScrollIndicator={false}
                     snapToInterval={MAIN_SNAP_INTERVAL}
-                    decelerationRate="fast"
+                    decelerationRate="fast"  
                     removeClippedSubviews= {true}
                     bounces={false}
                     contentContainerStyle={{
@@ -201,7 +214,7 @@ export default function HotStage({ user }) {
                     maxToRenderPerBatch={5}
                     windowSize={5}
                     onMomentumScrollEnd={handleScrollEnd} 
-                    getItemLayout={getItemLayout} 
+                    getItemLayout={getItemLayout}   
                     // ListHeaderComponent={()=>{
                     //    return(
                     //     <View 
@@ -214,30 +227,33 @@ export default function HotStage({ user }) {
                     //    )
                     // }}
                     />
-            
             </View>
 
-            <View className="w-full px-3 text-center items-end py-2 ">
-                        <StageHero title={stageData.name} 
-                            image={null}
-                            region={countries.find( c => c.code == stageData.region).name}
-                            flag = {countries.find( c => c.code == stageData.region).flag}
-                            description={stageDescriptions[stageData.region.name]}/>
-                        {/* <CarouselIndicator
-                                title="Stages"
-                                count={8}
-                                scrollX={mainScrollX}
-                                width={width}
-                                absolute = {false}
-                                // position={{
-                                //   bottom: 0,
-                                //   right: 6,
-                                // }}
-                                size={width/34}
-                              />  */}
-            </View>
-      
-            <View className=" w-[95%] h-[1] bg-white/40 mt- 4 mb- 4" />
+            <StageIndicator
+                title="Stages"
+                count={hotStages.length}
+                scrollX={mainScrollX}
+                currentStage={currentStage}
+                width={width}
+                absolute = {false}
+                position={{
+                  top: 0,
+                  right: 15,
+                }}
+                size={width/44}
+            /> 
+
+         
+            <View
+            style={{
+                alignSelf: "start",
+                width: width * 0.4,
+                height: 1,
+                backgroundColor: "rgba(212,175,55,0.52)",
+                // marginVertical: 20,
+            }}
+            className="  [95%] px-2 h-[2] bg-gold/40 mb-6 mt-6"
+            />
 
     </View>
 

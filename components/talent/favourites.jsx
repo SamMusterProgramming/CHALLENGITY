@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Animated, Pressable, Dimensions } from "react-native";
 import StageDisplayer from "../talent/stageDisplayer";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import StageIndicator from "../custom/stageIndicator";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 
 const { width , height } = Dimensions.get("window");
@@ -34,6 +36,8 @@ export default function Favourites({ user }) {
   const [selection, setSelection] = useState(null)
   const mainScrollX = useRef(new Animated.Value(0)).current;
   const mainFlatListRef = useRef(null);
+  const [currentStage, setCurrentStage] = useState(0);
+
 
  
 
@@ -68,40 +72,100 @@ export default function Favourites({ user }) {
           userProfile={user}
           activity={true}
           width={MAIN_ITEM_WIDTH}
-          height={height * 0.5}
+          height={height * 0.3}
         />
       </Animated.View>
     );
   };
-
+  const handleScrollEnd = (event) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / MAIN_SNAP_INTERVAL);
+    const safeIndex = Math.max(0, Math.min(index, (hotStages?.length || 1) - 1));
+    setCurrentStage(safeIndex)
+  };
 
   
 
   return (
-    <>
-        
-        <View className="px-5  pt-12 pb-2 bg-darkBg">
+    <View
+      style ={{
+        paddingBottom : height * 0.059 ,
+      }}
+      className="flex-1 3 mt- 4  bg-darkBg">
+      <View
+       className="px- 3 mt- 4  bg-darkBg">
         <Text
-            style ={{}}
-            className="font-bebas text-lg text-pink-400 tracking-widest mb-1" >
+            style={{
+              fontSize: width / 30,
+              lineHeight: width / 20,
+              letterSpacing: 0.3,
+              fontWeight:700,
+            }}
+            className="fon t-bold uppercase tex t-center te xt-xl text-white tracking-widest mb- 1" >
             Favorite Stages
         </Text>
         <Text
-        style={{fontSize:width/40}}
-            className="
-            font-montserrat
-            text-sm
-            text-gray-200
-            leading-1
-            max-w-[90%]
-            " >
+        style={{
+          fontSize: width / 32,
+          lineHeight: width / 24,
+          letterSpacing: 0.3,
+          // fontWeight:700,
+        }}
+          className="text-gray-200 mt-1 font-semiMontserrat tex t-center mt- ">
             Revisit the stages you've marked as favorites.
         </Text>
-        </View>
+      </View>
 
         <View
-          style={{  minHeight: width /2  + width / 4.5 + width * 0.1   }}
-          className="flex-1  items-start justify-center">
+             style={{
+              height: 0.34 * height,
+              width,
+              }}
+             className="flex-1  items-start justify-center">
+              {favouriteStages?.length === 0 ? (
+                <View
+                    style={{
+                      flex: 1,
+                      justifyContent:
+                        "center",
+                      alignItems: "center",
+                      paddingHorizontal:
+                        width / 10,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="star-outline"
+                      size={width / 6}
+                      color="rgba(234,179,8,0.35)"
+                    />
+
+                    <Text
+                      style={{
+                        color: "#FFF",
+                        fontSize: width / 20,
+                        fontWeight: "700",
+                        marginTop:
+                          height / 40,
+                      }}
+                    >
+                      No favourites yet
+                    </Text>
+
+                    <Text
+                      style={{
+                        color:
+                          "rgba(255,255,255,0.45)",
+                        fontSize: width / 30,
+                        textAlign: "center",
+                        marginTop:
+                          height / 80,
+                      }}
+                    >
+                      Save stages to access
+                      them quickly later.
+                    </Text>
+                  </View>
+                ) : (
                 <Animated.FlatList
                     ref={mainFlatListRef}
                     horizontal
@@ -114,7 +178,7 @@ export default function Favourites({ user }) {
                     decelerationRate="fast"
                     bounces={false}
                     contentContainerStyle={{
-                    paddingHorizontal: SIDE_SPACING- MAIN_ITEM_MARGIN,
+                    // paddingHorizontal: SIDE_SPACING- MAIN_ITEM_MARGIN,
                     marginVertical: 20,
                     }}
                     onScroll={Animated.event(
@@ -125,12 +189,30 @@ export default function Favourites({ user }) {
                     initialNumToRender={2}
                     maxToRenderPerBatch={5}
                     windowSize={5}
+                    onMomentumScrollEnd={handleScrollEnd} 
                 />
-            
-            </View>
+               )}
+        </View>
+        {favouriteStages?.length > 0 && (
+        <StageIndicator
+                title="Stages"
+                count={favouriteStages.length}
+                scrollX={mainScrollX}
+                width={width}
+                currentStage={currentStage}
+                absolute = {false}
+                position={{
+                  top: 0,
+                  right: 15,
+                }}
+                size={width/44}
+            /> 
+        )}
+        {/* <View className=" px-2 w-full h-[3] bg-gold/40 mt- 4 mt-4" /> */}
+
    
 
-    </>
+    </View>
 
   );
 }

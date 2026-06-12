@@ -1,5 +1,5 @@
 
-import { View,  useWindowDimensions} from 'react-native'
+import { View} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
 import "../global.css";
@@ -7,7 +7,7 @@ import "../global.css";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGlobalContext } from '../context/GlobalProvider';
 
-import {  BASE_URL, generateChallengeTalentGuinessData, getFavouriteStageList, getFavouriteStages, getFollowData,  getNotificationByUser, getRegionTalentStages, getToken, getUserFriendsData, getUserTalent } from '../apiCalls';
+import {  BASE_URL, getToken } from '../apiCalls';
 import { useFonts } from 'expo-font';
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
 import {
@@ -15,31 +15,27 @@ import {
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
 import { useLoading } from '../context/loadingContext';
-import { getUserCountry } from '../utilities/userGeoLocation';
+import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync } from '../utilities/registerForPushNotifications';
+import * as NavigationBar from "expo-navigation-bar";
+
 
 Notifications.setNotificationHandler({
-  handleNotification : async () => ({
-    shouldShowAlert: true,
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
 });
 // import { configureGoogle } from '../config/google';
 
-;
 // import { configureGoogle } from '../services/googleLogin';
 
-
-
 export default function App() {
-  const videoRef = useRef()
   const { showLoading, hideLoading } = useLoading();
-  const [isFetching, setIsFetching] = useState(false);
-  const {user,setUser , setFavouriteList,setUserTalents,setTopTalents , setRegionStages, allStages, setAllStages ,hotStages , setHotStages,favouriteStages, setFavouriteStages
-    ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg ,
-    gpsLocation , setGpsLocation  , setGlobalSelectedRegion , setUserCountryCode } = useGlobalContext()  
+  const {setUser  } = useGlobalContext()  
 
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
@@ -47,20 +43,15 @@ export default function App() {
     Montserrat_400Regular,
     Montserrat_600SemiBold,
   });
-  const [isAppReady, setIsAppReady] = useState(false);
   
-
   useEffect(() => {
     //  configureGoogle();
   }, []); 
 
-
-
-
-
-useEffect(() => {
-    registerForPushNotificationsAsync();
-}, []);
+  useEffect(() => {
+    NavigationBar.setPositionAsync("absolute");
+    NavigationBar.setVisibilityAsync("hidden");
+  }, []);
 
 useEffect(() => {
   const autoLogin = async () => {
@@ -82,6 +73,8 @@ useEffect(() => {
         return;
       }
       setUser(data.user);
+      registerForPushNotificationsAsync(data.user._id);
+      router.replace("/Home");
 
       // IMPORTANT: success path
       hideLoading();
@@ -92,46 +85,9 @@ useEffect(() => {
       hideLoading();
     }
   };
-
   autoLogin();
 }, []);
 
-  useEffect(() => {
-    if (!user) return;
-    const fetchUserData = async () => {
-      try {
-        await Promise.all([
-          getUserTalent(user._id, setUserTalents),
-          getNotificationByUser(user._id, setNotifications),
-          // getFollowings(user._id, setFollowings),
-          getUserFriendsData(user._id, setUserFriendData),
-          getFollowData(user._id, setFollow),
-          getFavouriteStageList(user._id, setFavouriteList),
-          getFavouriteStages(user._id, setFavouriteStages),
-          // getTopTalents(user._id, setTopTalents),
-          // getAllTalentStages(setAllStages),
-          // getRegionTalentStages("US" , setRegionStages),
-          generateChallengeTalentGuinessData(user._id, setHotStages),
-          // getUserCountryFromGPS(setGpsLocation),
-        ]);
-        await getUserCountry().then( async(res) =>{
-                           setGlobalSelectedRegion(res)
-                           setUserCountryCode(res)
-                           console.log(res)
-                           await getRegionTalentStages(res, setRegionStages)
-                       })
-        setUserProfileImg(user.profileImage?.publicUrl);
-        router.replace("/Home");
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        hideLoading();
-      }
-    };
-    fetchUserData();
-  }, [user]);
-
- 
 
   return (
     <View
@@ -141,8 +97,7 @@ useEffect(() => {
         paddingBottom: insets.bottom,
         backgroundColor: "black",
       }}
-    >
-    </View>
-
+    />
+ 
   )
 }

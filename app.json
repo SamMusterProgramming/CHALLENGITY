@@ -1,19 +1,16 @@
 
 {
   "expo": {
-    "name": "Challengify",
+    "name": "itri",
     "slug": "Challengify",
     "version": "1.0.0",
     "runtimeVersion": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/challenge-logo.png",
-    "scheme": "challengify",
+    "icon": "./assets/images/ithri-logo.png",
+    "scheme": "itri",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#000000",
     "newArchEnabled": true,
-    "androidNavigationBar": {
-      "visible": "sticky-immersive"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Challengify",
@@ -23,18 +20,18 @@
       }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"
       ],
       "package": "com.challengify.app",
-      "softwareKeyboardLayoutMode": "resize",
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/challenge-logo.png",
-        "backgroundColor": "#000000"
-      }
+          "foregroundImage": "./assets/images/ithri-logo.png",
+          "backgroundColor": "#000000"
+        }
     },
-
     "web": {
       "output": "static"
     },
@@ -74,7 +71,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/challenge-logo.png",
+          "image": "./assets/images/app-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#000000"
@@ -104,6 +101,15 @@
           "locationAlwaysAndWhenInUsePermission": "Allow YourApp to access your location in the background.",
           "isAndroidBackgroundLocationEnabled": false
         }
+      ],
+      [
+        "expo-navigation-bar",
+        {
+          "position": "absolute",
+          "visibility": "hidden",
+          "behavior": "overlay-swipe",
+          "backgroundColor": "#00000080"
+        }
       ]
     ],
 
@@ -127,3 +133,4 @@
     }
   }
 }
+

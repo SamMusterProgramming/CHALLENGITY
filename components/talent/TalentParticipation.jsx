@@ -102,7 +102,7 @@ const toggleVideoPlaying = () =>{
 
   const requestMediaPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
+    if (status == 'granted') {
       alert('Permission to access media library is required!');
       return false;
     }

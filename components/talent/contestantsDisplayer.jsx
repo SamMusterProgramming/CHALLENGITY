@@ -11,7 +11,7 @@ import { getInition } from "../../helper";
 
 const { width ,height} = Dimensions.get("window");
 
-const ITEM_SIZE = Math.round(height / 10);
+const ITEM_SIZE = Math.round(width / 3);
 const SPACING = 20;
 const SNAP = Math.round(ITEM_SIZE + SPACING);
 
@@ -135,7 +135,7 @@ export default function ContestantsDisplayer({
     // cinematic transforms
     const scale = scrollX.interpolate({
       inputRange,
-      outputRange: [0.82, 1.0, 0.82],
+      outputRange: [0.62, 1.0, 0.62],
       extrapolate: "clamp",
     });
   
@@ -157,7 +157,7 @@ export default function ContestantsDisplayer({
         className="items-center justify-center"
         style={{
           width: ITEM_SIZE ,
-          height: ITEM_SIZE ,
+          height: ITEM_SIZE -10 ,
           marginHorizontal: SPACING / 2,
           transform: [
             { scale },
@@ -171,23 +171,23 @@ export default function ContestantsDisplayer({
         <Animated.View
           className="absolute items-center  justify-center"
           style={{
-            width: ITEM_SIZE ,
-            height: ITEM_SIZE ,
-            borderRadius: 999,
+            width: ITEM_SIZE  ,
+            height: ITEM_SIZE -10 ,
+            borderRadius: 15,
             // backgroundColor:
             //   item.rank === 1
             //     ? "rgba(255,215,0,0.18)"
-            //     : "rgba(255,255,255,0.08)",
+            //     : "rgba(0,0,0,0.18)",
             opacity: scale,
           }}
         />
   
         {/* AVATAR WRAPPER */}
         <View
-          className="items-center p-4 justify-center"
+          className="items-center p- 4 justify-center"
           style={{
-            width: ITEM_SIZE  ,
-            height: ITEM_SIZE,
+            width: ITEM_SIZE - 65 ,
+            height: ITEM_SIZE - 65,
           }}
         >
             {/* PROFILE IMAGE */}
@@ -206,22 +206,22 @@ export default function ContestantsDisplayer({
                     ? "#FFD700"
                     : "rgba(255,255,255,0.22)",
               }}
-              className ="flex-1 w-[100%] h-[100%]"
+              className ="flex- 1 w-[100%] h-[100%]"
             />
         </View>
 
           <View
             className="
               absolute
-              bottom-[-15]
+              bottom-0 [-15]
               left -[0]
-              px-1
-              py-[3px]
-              w-[100%]
+              px-2
+              py-2
+              w-[80%]
               rounded-[5px]
               bo rder
               border-white/10
-              bg-[white]/10
+              bg- [black]/40
               items-center
             "
           >
@@ -229,10 +229,11 @@ export default function ContestantsDisplayer({
             numberOfLines={1}
               className="
                 text-white
-                font-bebas
-                tracking-[1px]
+                font-black
+                tracking-[0.4px]
                 w-[100%]
                 text-center
+                uppercase
               "
               style={{
                 fontSize: width / 47,
@@ -243,12 +244,12 @@ export default function ContestantsDisplayer({
           </View>
   
           {/* TOP RIGHT — RANK */}
-          <View
+          {/* <View
             className="
               absolute
               flex-row
               gap -3
-              top-[-15]
+              top-0 [-15]
               rig ht-[-6]
               min -w -[42px]
               px-2
@@ -273,34 +274,74 @@ export default function ContestantsDisplayer({
   
             <Text
               className="
-                font-bebas
-                tracking-[1px]
-                text-[white]/70
+                font-black
+                trac king-[1px]
+                text-[white]
               "
               style={{
-                fontSize: width / 49,
+                fontSize: width / 60,
                
               }}
             >
-             Ranked #{item.rank}  .{'  '}
+              {item.rank < 2 ? "TOP " + item.rank :"RANK " + item.rank}  .{'  '}
             </Text>
 
             <Text
               className="
-                text-[white]/70
-                font-bebas
-                tracking-[1px]
+               font-black
+                trac king-[1px]
+                text-[white]
               "
               style={{
-                fontSize: width / 49,
+                fontSize: width / 60,
               }}
             >
                VOTES {item?.votes || 0}
             </Text>
   
-          </View>
-  
-         
+          </View> */}
+      
+          <Text
+              className="
+                font-black
+                trac king-[1px]
+                text-[white]
+                absolute top-2 left-6
+              "
+              style={{
+                fontSize: width / 40,
+               
+              }}
+            >
+            {item.rank } {''}
+              {/* {item.rank < 2 ? "👑 " :"👑 " }   */}
+                <Text
+                  className="
+                    font-black
+                    text-[white]
+                    
+                  "
+                  style={{
+                    fontSize: width / 40,
+                  
+                  }}
+                >
+                  {item.rank < 2 ? "👑 " :"👑 " }  
+              </Text>
+          </Text>
+          <Text
+              className="
+               font-black
+                trac king-[1px]
+                text-[white]
+                absolute top-2 right-6
+              "
+              style={{
+                fontSize: width / 40,
+              }}
+            >
+               ⭐  {item?.votes || 0}
+          </Text>
   
   
           {/* GOLD DOT FOR #1 */}
@@ -308,8 +349,8 @@ export default function ContestantsDisplayer({
             <View
               className="
                 absolute
-                bottom-[12]
-                right-[8]
+                bottom-[50%]
+                right-2
                 w-[6px]
                 h-[6px]
                 rounded-full
@@ -358,7 +399,7 @@ export default function ContestantsDisplayer({
                  top : 0,
                  alignSelf: "center",
                  width: width,
-                 height:  height/3,
+                 height:  height/2,
                  borderRadius: 0,
                }}
       />   
@@ -366,7 +407,7 @@ export default function ContestantsDisplayer({
       <View
        style={{
         // width: "100%",
-        height:height/7
+        height:width /3
       }}
       className = "flex-1 w-full  justify-start items-center">
             <Animated.FlatList

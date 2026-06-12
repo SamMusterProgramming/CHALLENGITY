@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged, sendEmailVerification, signInAnonymously, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../firebase/client";
-import { removeToken } from "../apiCalls";
+import { deletePushToken, removeToken } from "../apiCalls";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import app from "../firebase/client";
 
@@ -19,10 +19,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
     return userCredential.user;
   };
   
-  export const logoutUser = async (setUser, router) => {
+  export const logoutUser = async (setUser, router , user) => {
     try {
       // 1. Firebase logout
       await signOut(auth);
+      await deletePushToken(user._id);
       await removeToken();
       // 3. Clear global state
       setUser(null);

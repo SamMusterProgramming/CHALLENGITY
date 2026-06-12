@@ -619,7 +619,7 @@ const panGesture = Gesture.Pan()
           onPress={ async () => 
             { 
               // await googleLogout()
-              await logoutUser(setUser, router)
+              await logoutUser(setUser, router , user)
             }
           }
           className="py-3 bg-primary/80 rounded-xl items-center"

@@ -7,9 +7,7 @@ import { authRegister } from '../../apiCalls';
 import { icons } from '../../constants';
 
 export default function Register({setAuthType}) {
-    const {user,setUser,userPublicChallenges, setUserPublicChallenges,setUserPrivateChallenges,setPublicParticipateChallenges,setFavouriteChallenge
-        ,setPrivateParticipateChallenges,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges
-      } = useGlobalContext()
+    const {user,setUse } = useGlobalContext()
     const { width, height } = useWindowDimensions();
     const [form, setForm] = useState({
         firstname:"",
@@ -21,354 +19,504 @@ export default function Register({setAuthType}) {
         profile_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2Favatar.jpg?alt=media&token=25ae4701-e132-4f15-a522-5b9332d2c0b2",
         cover_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"
       })
-    const [message,setMessage] = useState("")
-    const [isPasswordWrong, setIsPasswordWrong] = useState(false); 
-    const [isPasswordInvalid, setIsPasswordInvalid] = useState(false); 
-    const [isEmailWrong, setIsEmailWrong] = useState(false); 
-    const [isEmailInvalid, setIsEmailInvalid] = useState(false); 
-    const [isFirstnameInvalid, setIsFirstnameInvalid] = useState(false); 
-    const [isLastnameInvalid, setIsLastnameInvalid] = useState(false); 
-    const [isFetching, setIsFetching] = useState(false);
+  const [name , SetName] = useState ({
+    firstname:"",
+    lastname:""
+  })
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword,  setShowConfirmPassword ] = useState(false);
+  const [message, setMessage] = useState("")
+  const [isPasswordWrong, setIsPasswordWrong] = useState(false); 
+  const [isPasswordInvalid, setIsPasswordInvalid] = useState(false); 
+  const [isPasswordUnmatch, setIsPasswordUnmatch] = useState(false); 
+  const [isEmailWrong, setIsEmailWrong] = useState(false); 
+  const [isEmailInvalid, setIsEmailInvalid] = useState(false); 
+  const [isFirstnameValid, setIsFirstnameValid] = useState(false); 
+  const [isLastnameValid, setIsLastnameValid] = useState(false); 
+  const [isLoading , setIsLoading] = useState(false)
 
 
-    /************************************************************************ register here ************************/
-  const handleRegistration = ()=> {
-    if(!validateFirstname(form.firstname)) {
-      Vibration.vibrate();
-      setIsFirstnameInvalid(true)
-      return true
-     }
-     if(!validateLastname(form.lastname)) {
-      Vibration.vibrate();
-      setIsLastnameInvalid(true)
-      return true
-     }
-     if(!validateEmail(form.email)) {
+  const handleValidation = () => {
+    if (!validateFirstName(name.firstname)) {
+        Vibration.vibrate();
+        setIsFirstnameValid(true)
+        return;
+      }
+
+    if (!validateLastName(name.lastname)) {
+        Vibration.vibrate();
+        setIsLastnameValid(true)
+        return;
+      }
+
+    if (!validateEmail(form.email)) {
       Vibration.vibrate();
       setIsEmailInvalid(true)
-      return true
-     }
-     if(!validatePassword(form.password)) {
+      return;
+    }
+
+    if (!validatePassword(form.password)) {
       Vibration.vibrate();
       setIsPasswordInvalid(true)
-      return true
-     }
-     if(form.password !== form.confirm) {
+      return;
+    }
+
+    if (!validateMatchPassword(form.password ,form.confirmPassword)) {
       Vibration.vibrate();
-      setIsPasswordWrong(true)
-      return true;
-     }
-    //  setIsFetching(true)
-     authRegister(form,setUser,setMessage,setIsFetching)
+      setIsPasswordUnmatch(true)
+      return;
+    }
+    setIsLoading(true)
+    onPress()
+    setTimeout(() => {
+      setIsVisible(false)
+      setIsLoading(false)
+    }, 1000);
   }
-
-  //**********************************************************************form validation ********************** */
-
-function validateFirstname(firstname) {
-    const re = /^[a-zA-Z\s'-]+$/i;
+  
+  function validateFirstName(firstname) {
+    const re = /^[a-zA-Z\s'-]+$/;
+    if (firstname === "" ) return false
     return re.test(firstname);
   }
-  function validateLastname(lastname) {
-    const re = /^[a-zA-Z\s'-]+$/i;
-    return re.test(lastname);
+
+  function validateLastName(lastname) {
+    const re = /^[a-zA-Z\s'-]+$/;
+    if (lastname === "") return false
+    return  re.test(lastname);
   }
+
   function validateEmail(email) {
     const re = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
     return re.test(email);
   }
-  function validatePassword(passwordRegex) {
+
+  function validatePassword(password) {
     const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-    return re.test(passwordRegex)
+    return re.test(password)
   }
-  
-  
+
+  function validateMatchPassword(password , confirmPassword) {
+    return  (confirmPassword === password)
+  }
+
+  // ---------- EFFECTS ----------
   useEffect(() => {
-    if(isFirstnameInvalid) {
-      setMessage("Invalid firstname must end with one or more letters  ")
-      setTimeout(() => {
-        setIsFirstnameInvalid(false)
-      }, 2000);
-    } 
-    if(isLastnameInvalid) {
-      setMessage("Invalid Lastname must end with one or more letters  ")
-      setTimeout(() => {
-        setIsLastnameInvalid(false)
-      }, 2000);
-    } 
-    if(isEmailInvalid) {
-      setMessage("Invalid Email, must contain @ , com ... ")
-      setTimeout(() => {
-        setIsEmailInvalid(false)
-      }, 2000);
-    } 
-    if(isEmailWrong) {
-      setTimeout(() => {
-        setMessage("")
-        setIsEmailWrong(false)
-      }, 2000);
-    } 
-    if(isPasswordInvalid) {
-      setTimeout(() => {
+    if (isFirstnameValid) {
+        setMessage("Invalid Name m ... ")
+        setTimeout(() => setIsFirstnameValid(false), 2000);
+    }
+    
+    if (isLastnameValid) {
+        setMessage("Invalid Name m ... ")
+        setTimeout(() => setIsLastnameValid(false), 2000);
+    }
+
+    if (isEmailInvalid) {
+        setMessage("Invalid Email, must contain @ , com ... ")
+        setTimeout(() => setIsEmailInvalid(false), 2000);
+    }
+
+    // if (isEmailWrong) {
+    //     setTimeout(() => {
+    //     setMessage("")
+    //     setIsEmailWrong(false)
+    //     }, 2000);
+    // }
+
+    if (isPasswordInvalid) {
+        setTimeout(() => {
         setMessage("Invalid Password, must contain special character,...")
-        setIsPasswordInvalid(false)
-      }, 2000);
+        setTimeout(() => setIsPasswordInvalid(false), 2000); 
+        }, 2000);
     }
-    if(isPasswordWrong) {
-      setMessage("password and confirm password don't match")
-      setTimeout(() => {
+
+    if (isPasswordWrong) {
+        setTimeout(() => {
+        setMessage("")
         setIsPasswordWrong(false)
-      }, 2000);
+        }, 2000);
     }
-  }, [isEmailInvalid, isEmailWrong , isPasswordInvalid , isPasswordWrong, isFirstnameInvalid,isLastnameInvalid])
-  
+
+    if (isPasswordUnmatch) {
+      setMessage("confirm Password does not match ")
+      setTimeout(() => setIsPasswordUnmatch(false), 2000);
+  }
+
+  if (isEmailExist) {
+    setMessage("Email already exists , try to login  ")
+    setTimeout(() => { 
+      setIsEmailExist(false)
+      // setMessage("")  
+    }  , 10000);
+    }
+
+  }, [isEmailInvalid, isEmailWrong, isPasswordInvalid, isPasswordWrong , isFirstnameValid , isLastnameValid , isPasswordUnmatch , isEmailExist])
+
   useEffect(() => {
-    if(message == "email exist already") {
-     Vibration.vibrate();
-     setIsEmailWrong(true)
+    if (message == "user not found") {
+        Vibration.vibrate();
+        setIsEmailWrong(true)
+    }
+    if (message === "invalid password") {
+        Vibration.vibrate();
+        setIsPasswordWrong(true)
     }
   }, [message])
 
-//   useEffect(() => {
-//     if(user) {
-//       setIsFetching(true)
-//       getUserPublicChallenges(user._id,setUserPublicChallenges)
-//       getUserPrivateChallenges(user._id,setUserPrivateChallenges)
-//       getUserPublicParticipateChallenges(user._id ,setPublicParticipateChallenges)
-//       getUserPrivateParticipateChallenges(user._id ,setPrivateParticipateChallenges)
-//       getNotificationByUser(user._id , setNotifications)
-//       getFollowings(user._id,setFollowings)  
-//       getUserFriendsData(user._id,setUserFriendData)
-//       getFollowData(user._id,setFollow)
-//       getFavouriteChallenges(user._id,setFavouriteChallenge)
-//       getTopChallenges(user._id,setTrendingChallenges)
-//       setTimeout(() => {
-//         router.replace('/timeline')
-//         setIsFetching(false)
-//       }, 1000);
-//       setTimeout(() => {
-//         console.log(user.isNewUser)
-//         user.isNewUser && router.push('/SetUpProfile')
-//       }, 1500);
-      
-//     }
-//   }, [user])
-  
-
-  return (
-    <ImageBackground
-    source={icons.stage_bg}
-    resizeMode="cover"
-    className="flex-1 w-[100%] h-[100%] justify-center items-center"
-    >
-       
-      
-       <Image
-              className ="absolute top-[-20] w-[100%]  "
-              source={icons.challengify_logo}
-              style={{ width: '90%', height: "35%" }} // adjust ratio
+return (
+  <View
+    style={{ flex: 1, backgroundColor: "#050505" }}
+    // behavior={Platform.OS === "ios" ? "padding" : undefined}
+     >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        bounces={false}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+          }}
+        >
+          {/* HEADER SPACE */}
+          <View
+            style={{
+              flex: 1,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={images.applogo}
               resizeMode="contain"
+              style={{
+                width: width * 0.92,
+                height: height / 7,
+              }}
             />
 
-       <View className=" absolute top-0 w-[90%] h- [5vh] flex-col  justify-center items-centert ">
-                          {(isEmailWrong || isEmailInvalid || isPasswordInvalid 
-                            || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 text-sm text-center ">{message}</Text>}
-       </View>
+            <Text
+              style={{
+                color: "rgba(255,255,255,0.65)",
+                fontSize: width / 28,
+                textAlign: "center",
+                width: "82%",
+                lineHeight: width / 16,
+                // marginTop: height / 120,
+              }}
+            >
+              Your Journey From Local Talent to Global Recognition
+            </Text>
+          </View>
 
-        
-{/* 
-         <View className="w-[100%] mt-auto justify-start  py- 2  gap-3 flex-col items-center">  
-                <View className="  w-[90%] h-[5vh] flex-col  justify-center items-centert ">
-                          {(isEmailWrong || isEmailInvalid || isPasswordInvalid 
-                            || isPasswordWrong || isFirstnameInvalid || isLastnameInvalid)&& <Text className="text-gray-400 text-sm text-center ">{message}</Text>}
-                </View>
-                  <View className="justify-center items-center w-[98%] mt-auto flex-row gap- 4">
-                     <Text className="text-sm text-gray-100 font-semibold">
-                       Already have an account ? {' '}
-                     </Text>
-                     <TouchableOpacity 
-                        onPress={()=>{
-                          setAuthType('login')
+          {/* CENTER LOGIN SECTION */}
+          <View
+            style={{
+              width: "100%",
+              paddingHorizontal: width / 24,
+              justifyContent: "center",
+            }}
+          >
+            {/* TITLE */}
+            <View
+              style={{
+                marginBottom: height / 30,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: width / 20,
+                  fontWeight: "900",
+                  textAlign: "center",
+                }}
+              >
+                Welcome back
+              </Text>
+
+              <Text
+                style={{
+                  marginTop: height / 140,
+                  color: "rgba(255,255,255,0.45)",
+                  fontSize: width / 28,
+                  textAlign: "center",
+                }}
+              >
+                Sign in to start your journey
+              </Text>
+            </View>
+             {/* FIRST NAME */}
+             <View
+              style={{
+                height: height/16,
+                borderRadius: 5,
+                backgroundColor: "#050505",
+                borderWidth: 1,
+                borderColor: !isFirstnameValid ? "rgba(255,255,255,0.46)" : "rgba(255,55,5,0.46)",
+                paddingHorizontal: 16,
+                justifyContent: "center",
+                marginBottom :12,
+              }}
+            >
+              <Text
+                    style={{
+                    color: "#fff",
+                    fontSize: width / 40,
+                    // fontWeight: "900",
+                    textAlign: "center",
+                    backgroundColor: "#17181B",
+                    }}
+                    className="absolute top-[-10] pl-2 pr-4 bg-[#050505] tracking-wide font-montserrat  left-0" >
+                    First Name
+              </Text>
+              <TextInput
+                value={name.firstname}
+                onChangeText={(e) =>
+                  SetName({
+                    ...name,
+                    firstname:e,
+                  })
+                }
+                placeholder="First Name"
+                placeholderTextColor="#6B7280"
+                style={{
+                  color: "white",
+                  fontSize: width / 30,
+                //   fontWeight: "500",
+                }}
+                className=""
+              />
+            </View>
+
+            {/* EMAIL */}
+            <View
+              style={{
+                height: height / 16,
+                borderRadius: width / 80,
+                justifyContent: "center",
+                paddingHorizontal: width / 26,
+                borderWidth: 1,
+                borderColor: colorTheme,
+                marginBottom: height / 45,
+              }}
+            >
+              <Text
+                style={{
+                  color: colorTheme,
+                  fontSize: width / 34,
+                }}
+                className="absolute top-[-12] pl-2 pr-4 bg-[#050505] tracking-wider font-semibold left-0"
+              >
+                Email
+              </Text>
+
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="rgba(255,255,255,0.5)"
+                value={form.email}
+                onChangeText={(e) => setForm({ ...form, email: e })}
+                style={{
+                  color: "#fff",
+                  fontSize: width / 28,
+                }}
+              />
+            </View>
+
+            {/* PASSWORD */}
+            <View
+              style={{
+                height: height / 16,
+                borderRadius: width / 80,
+                justifyContent: "center",
+                paddingHorizontal: width / 26,
+                borderWidth: 1,
+                borderColor: colorTheme,
+                backgroundColor: "#050505",
+                marginBottom: height / 45,
+              }}
+            >
+              <Text
+                style={{
+                  color: colorTheme,
+                  fontSize: width / 34,
+                }}
+                className="absolute top-[-12] pl-2 pr-4 bg-[#050505] tracking-wider font-semibold left-0"
+              >
+                Password
+              </Text>
+
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="rgba(255,255,255,0.35)"
+                secureTextEntry
+                value={form.password}
+                onChangeText={(e) => setForm({ ...form, password: e })}
+                style={{
+                  color: "#fff",
+                  fontSize: width / 28,
+                }}
+              />
+            </View>
+
+            {/* LOGIN */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={handleLogin}
+              style={{
+                height: height / 16,
+                borderRadius: width / 60,
+                backgroundColor: colorTheme,
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: height / 45,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#0A0A0A",
+                  fontSize: width / 28,
+                  fontWeight: "800",
+                  letterSpacing: 0.6,
+                }}
+              >
+                LOGIN
+              </Text>
+            </TouchableOpacity>
+
+            <GoogleButton onPress={handleGoogleLogin} />
+          </View>
+
+          {/* FOOTER SPACE */}
+          <View
+            style={{
+              flex: 1,
+              width: "100%",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              paddingBottom: height / 40,
+            }}
+          >
+              <View
+              className = "flex-1 justify-center gap-4 items-center" >
+                  <ErrorMessage
+                  message={error}
+                  color={messageColor}
+                  width={width} />
+            
+                  {verification && (
+                    <TouchableOpacity onPress={sendVerification}>
+                      <Text
+                        style={{
+                          // marginTop: 10,
+                          color: "#D4AF37",
+                          fontWeight: "600",
                         }}
-                        className=" text-center"
-                           >
-                          <Text className=" text-md text-blue-300 font-semibold">
-                              Login
-                          </Text>
-                        </TouchableOpacity>
-                 </View>
-                <View
-                 className="w-[98%] flex-row justify-between   items-center">
-                        <FormField 
-                        width="49%"
-                        height= {height * 0.045}
-                        invalid = {isFirstnameInvalid }
-                        title="firstname" 
-                        value={form.firstname}
-                        placeholder="Firstname"
-                        handleChangeText={(e)=> setForm({...form,firstname:e})}
-                        keyboardType="email-address"
-                        />
-                         <FormField 
-                        width="49%"
-                        height= {height * 0.045}
-                        invalid = {isLastnameInvalid}
-                        title="lastname" 
-                        value={form.lastname}
-                        placeholder="Lastname"
-                        handleChangeText={(e)=> setForm({...form,lastname:e})}
-                        keyboardType="email-address"
-                        />
-                </View>
-                 <FormField 
-                 width="98%"
-                 height= {height * 0.045}
-                 invalid = {isEmailInvalid || isEmailWrong}
-                 title="Email" 
-                 value={form.email}
-                 placeholder="email"
-                 handleChangeText={(e)=> setForm({...form,email:e,username:e.toLowerCase()})}
-                 keyboardType="email-address"
-                 />
-                 <FormField 
-                 width="98%"
-                 height= {height * 0.045}
-                 invalid = {isPasswordInvalid || isPasswordWrong}
-                 title="Password" 
-                 value={form.password}
-                 placeholder="Password"
-                 handleChangeText={(e)=> setForm({...form,password:e})}
-                 />
-                  <FormField 
-                 width="98%"
-                 height= {height * 0.045}
-                 invalid = {isPasswordWrong}
-                 title="Confirm" 
-                 value={form.confirm}
-                 placeholder="Confirm"
-                 handleChangeText={(e)=> setForm({...form,confirm:e})}
-               />
-                <TouchableOpacity onPress={handleRegistration}
-                   style={{height : height * 0.045}}
-                   className="bg-blue-800 mt-0 rounded-xl w-[98%] h-[47px] mb-4 justify-center items-center">
-
-                        {isFetching ? (
-                               <View >
-                                 <ActivityIndicator size="large" color="#030202" />
-                               </View>
-                        ):(
-                               <Text className="text-white font-semibold text-lg">Register</Text>
-                        )}
-                 </TouchableOpacity>
-
-
-                
-
-                
-
-           
-           </View> */}
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                className="flex- 1 w-[100%] mt-auto mb-20 flex-col items-center justify-center px-2"
-                >
-
-                  <View
-                            className="mb-12 w-[100%] flex-row  justify-center item-center">
-                                              <Text 
-                                                  style={{fontSize:width/20,
-                                                          //  color:'white'
-                                                          }}
-                                                  className="  font-bold text-sm  text-[#dcdeed]">
-                                                        Register             
-                                              </Text>  
-                  </View>
-                 <View
-                 className="w-[80%] flex-row justify-between   items-center">
-                        <FormField 
-                        width="49%"
-                        height= {height * 0.045}
-                        invalid = {isFirstnameInvalid }
-                        title="firstname" 
-                        value={form.firstname}
-                        placeholder="Firstname"
-                        handleChangeText={(e)=> setForm({...form,firstname:e})}
-                        keyboardType="email-address"
-                        />
-                         <FormField 
-                        width="49%"
-                        height= {height * 0.045}
-                        invalid = {isLastnameInvalid}
-                        title="lastname" 
-                        value={form.lastname}
-                        placeholder="Lastname"
-                        handleChangeText={(e)=> setForm({...form,lastname:e})}
-                        keyboardType="email-address"
-                        />
-                </View>
-             
-                 <FormField 
-                 width="80%"
-                 height= {height * 0.045}
-                 invalid = {isEmailInvalid || isEmailWrong}
-                 title="Email" 
-                 value={form.email}
-                 placeholder="email"
-                 handleChangeText={(e)=> setForm({...form,email:e,username:e.toLowerCase()})}
-                 keyboardType="email-address"
-                 />
-                 <FormField 
-                 width="80%"
-                 height= {height * 0.045}
-                 invalid = {isPasswordInvalid || isPasswordWrong}
-                 title="Password" 
-                 value={form.password}
-                 placeholder="Password"
-                 handleChangeText={(e)=> setForm({...form,password:e})}
-                 />
-                  <FormField 
-                 width="80%"
-                 height= {height * 0.045}
-                 invalid = {isPasswordWrong}
-                 title="Confirm" 
-                 value={form.confirm}
-                 placeholder="Confirm"
-                 handleChangeText={(e)=> setForm({...form,confirm:e})}
-               />
-                <TouchableOpacity onPress={handleRegistration}
-                  //  style={{height : height * 0.045}}
-                   className="bg-[#0e1c2d] p-4 w-[80%] items-center rounded-xl mt-3">
-
-                        {isFetching ? (
-                               <View >
-                                 <ActivityIndicator size="large" color="#030202" />
-                               </View>
-                        ):(
-                               <Text 
-                                style={{ fontSize :width/30}}
-                                className="text-[#c9b37a] text-center font-bold text -md">
-                                       Register
-                               </Text>
-                        )}
-                 </TouchableOpacity>
-                 <View className="flex-row justify-center mt-8">
-                      <Text className="text-gray-100">
-                          New to Challengify ? {' '}
+                      >
+                        Resend verification email
                       </Text>
-                      <TouchableOpacity
-                        onPress={()=>{
-                          setAuthType("login")
-                      }}  >
-                        <Text className="text-indigo-400 ml-2 font-semibold">
-                            Create Account
-                        </Text>
-                      </TouchableOpacity>
-                 </View>
-              
+                    </TouchableOpacity>
+                  )}
+              </View>
+              <View
+                  style={{
+                    flexDirection: "col",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingHorizontal: 4,
+                  }}
+                  className ="mt-auto"
+                >
+                  <Pressable
+                      onPress= {() => {setOpenCreateAcctModal(true)}} // {handleSignUp}
+                      android_ripple={{
+                      color: "rgba(255,255,255,0.08)",
+                      borderless: false,
+                    }}
+                    style={{
+                      paddingVertical: 10,
+                      // paddingHorizontal: 14,
+                      borderRadius: 14,
+                      backgroundColor: "rgba(255,255,255,0.03)",
+                      borderWidth: 1,
+                      borderColor: "rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: width / 32,
+                        // color: "#E5E7EB",
+                        fontWeight: "600",
+                        letterSpacing: 0.4,
+                      }}
+                      className = "text-white"
+                    >
+                    don't have an account ? {' '}
+                      <Text
+                        style={{
+                          fontSize: width / 32,
+                          color: colorTheme,
+                          fontWeight: "600",
+                          letterSpacing: 0.4,
+                        }}
+                        // className = "text-[#7ea1e8]"
+                      >
+                        Sign up 
+                      </Text>
+                    </Text>
+                    
+                  </Pressable>
+                  <Pressable
+                    onPress={handleAnonymousLogin}
+                    android_ripple={{
+                      color: "rgba(212,175,55,0.08)",
+                      borderless: false,
+                    }}
+                    style={{
+                      paddingVertical: 10,
+                      paddingHorizontal: 14,
+                      borderRadius: 14,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: width / 36,
+                        color: "#D4AF37",
+                        fontWeight: "700",
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      Continue as Guest
+                    </Text>
+                  </Pressable>
 
+              </View>
+            </View>
 
-
-            </KeyboardAvoidingView>
- 
-    </ImageBackground>
-  )
+          {openCreateAcctModal && (
+            <CreateAccountModal
+              setIsVisible={setOpenCreateAcctModal}
+              setIsEmailExist={setIsEmailExist}
+              isEmailExist={isEmailExist}
+              form={form}
+              setForm={setForm}
+              name={name}
+              SetName={SetName}
+              onPress={handleSignUp}
+              width={width}
+              height={height}
+            />
+          )}
+        </View>
+      </ScrollView>
+    </TouchableWithoutFeedback>
+  </View>
+);
 }

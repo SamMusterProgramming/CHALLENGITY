@@ -2,14 +2,7 @@
 
 
 import logo from "../assets/images/app-logo.png";
-// import logoSmall from "../assets/images/logo-small.png";
-import guiness from "../assets/images/guiness.png";
-import challenge_logo  from "../assets/images/challenge-logo.png";
-import challenge  from "../assets/images/challenge.png";
-// import sky_bg from "../assets/images/sky-bg.webp";
-import night_bg from "../assets/images/dark.jpeg";
 import empty from "../assets/images/empty.png";
-import sky_bg from "../assets/icons/bg.jpg";
 import art from  "../assets/images/art.webp";
 import singing from  "../assets/images/singing.webp";
 import magic from  "../assets/images/magic.webp";
@@ -26,11 +19,19 @@ import christiano from  "../assets/images/christiano.jpg";
 import bean from  "../assets/images/bean.jpg";
 import artist from  "../assets/images/artist.webp";
 import guitarist from  "../assets/images/guitarist.jpg";
+import applogo from  "../assets/images/itri.webp";
 
 
-export default {    logo, sky_bg,
-     guiness,challenge,challenge_logo,night_bg,
-     empty,
-     art, singing, magic,dancing,fitness,comedy , melody , sport, micheal , arnold, salsa ,shin , christiano , bean ,artist,guitarist
-    
+export default {    
+     logo, 
+     empty , applogo,
+     art, singing, 
+     magic,dancing,
+     fitness,comedy , 
+     melody , sport, 
+     micheal , arnold, 
+     salsa ,shin , 
+     christiano , 
+     bean ,artist,
+     guitarist
  };

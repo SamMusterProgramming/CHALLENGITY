@@ -38,6 +38,8 @@ export const GlobalProvider =({children}) => {
 
    const [allStages, setAllStages] = useState([]);
    const [hotStages, setHotStages] = useState([]);
+   const [trendingStages, setTrendingStages] = useState([]);
+
    const [favouriteStages, setFavouriteStages] = useState([]);
    const [gpsLocation , setGpsLocation] = useState(null)
    const [regionStages , setRegionStages] = useState(null)
@@ -47,7 +49,17 @@ export const GlobalProvider =({children}) => {
    const [userCountryCode , setUserCountryCode] = useState("")
    const [hotStageScrolledIndex , setHotStageScrolledIndex] = useState(0)
    const [activeIndex, setActiveIndex] = useState(0);
-
+   const [form, setForm] = useState({
+    name : "",
+    email : "",
+    username : "",
+    password : "",
+    confirm : "",
+    profile_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2Favatar.jpg?alt=media&token=25ae4701-e132-4f15-a522-5b9332d2c0b2",
+    cover_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"
+  })
+   
+   const colorTheme = "#eab308"
 
 
     return (
@@ -91,7 +103,9 @@ export const GlobalProvider =({children}) => {
             globalSelectedRegion , setGlobalSelectedRegion ,
             userCountryCode , setUserCountryCode,
             hotStageScrolledIndex , setHotStageScrolledIndex,
-            activeIndex, setActiveIndex 
+            activeIndex, setActiveIndex ,
+            colorTheme ,form, setForm ,
+            trendingStages, setTrendingStages
             }
             } >
             {children}

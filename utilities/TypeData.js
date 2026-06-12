@@ -95,6 +95,17 @@ export const stageIcons = {
   Comedy: "🎭",
 };
 
+export const STAGES = [
+  "⚽ Sport",
+  "🏋️ Fitness",
+  "🎨 Art",
+  "🎤 Singing",
+  "🕺 Dance",
+  "🎸 Music",
+  "🎭 Comedy",
+  "🪄 Magic"
+];
+
 export const continentIcons = {
     Africa: "🌍",      // Globe showing Africa/Europe
     America: "🌎",    // Globe showing Americas
@@ -347,3 +358,188 @@ export const stageImages = {
     { name: "Zambia", code: "ZM", flag: "🇿🇲" },
     { name: "Zimbabwe", code: "ZW", flag: "🇿🇼" },
   ];
+
+//   export const COUNTRY_CONTINENTS = {
+//     africa: [
+//       "DZ","AO","BJ","BW","BF","BI","CM","CV",
+//       "CF","TD","KM","CG","CD","DJ","EG","GQ",
+//       "ER","SZ","ET","GA","GM","GH","GN","GW",
+//       "CI","KE","LS","LR","LY","MG","MW","ML",
+//       "MR","MU","MA","MZ","NA","NE","NG","RW",
+//       "SN","SC","SL","SO","ZA","SS","SD","TZ",
+//       "TG","TN","UG","ZM","ZW"
+//     ],
+//     america: [
+//       "AG","AR","BS","BB","BZ","BO","BR","CA",
+//       "CL","CO","CR","CU","DM","DO","EC","SV",
+//       "GD","GT","GY","HT","HN","JM","MX","NI",
+//       "PA","PY","PE","KN","LC","VC","SR","TT",
+//       "US","UY","VE"
+//     ],
+//     asia: [
+//       "AF","AM","AZ","BH","BD","BT","BN","KH",
+//       "CN","GE","IN","ID","IR","IQ","IL","JP",
+//       "JO","KZ","KW","KG","LA","LB","MY","MV",
+//       "MN","MM","NP","KP","OM","PK","PH","QA",
+//       "SA","SG","KR","LK","SY","TW","TJ","TH",
+//       "TL","TR","TM","AE","UZ","VN","YE"
+//     ],
+//     europe: [
+//       "AL","AD","AT","BY","BE","BA","BG","HR",
+//       "CY","CZ","DK","EE","FI","FR","DE","GR",
+//       "HU","IS","IE","IT","LV","LI","LT","LU",
+//       "MT","MD","MC","ME","NL","MK","NO","PL",
+//       "PT","RO","RU","SM","RS","SK","SI","ES",
+//       "SE","CH","UA","GB","VA"
+//     ],
+//     oceania: [
+//       "AU","FJ","KI","MH","FM","NR","NZ","PW",
+//       "PG","WS","SB","TO","TV","VU"
+//     ]
+// }
+
+export const COUNTRY_CONTINENTS= {
+  // AFRICA
+  northAfrica: [
+    "DZ","EG","LY","MA","SD","TN"
+  ],
+
+  westAfrica: [
+    "BJ","BF","CV","CI","GM","GH","GN","GW",
+    "LR","ML","MR","NE","NG","SN","SL","TG"
+  ],
+
+  centralAfrica: [
+    "AO","CM","CF","TD","CG","CD","GQ","GA"
+  ],
+
+  eastAfrica: [
+    "BI","DJ","ER","ET","KE","RW","SO",
+    "SS","TZ","UG"
+  ],
+
+  southernAfrica: [
+    "BW","LS","MG","MW","MU","MZ","NA",
+    "SC","SZ","ZA","ZM","ZW","KM"
+  ],
+
+  // NORTH AMERICA
+  northAmerica: [
+    "CA",
+    "US"
+  ],
+
+  centralAmerica: [
+    "BZ","CR","SV","GT",
+    "HN","MX","NI","PA"
+  ],
+
+  caribbean: [
+    "AG","BS","BB","CU","DM","DO",
+    "GD","HT","JM","KN","LC",
+    "VC","TT"
+  ],
+
+  southAmerica: [
+    "AR","BO","BR","CL","CO",
+    "EC","GY","PY","PE",
+    "SR","UY","VE"
+  ],
+
+  // EUROPE
+  westernEurope: [
+    "AT","BE","FR","DE","IE",
+    "LI","LU","MC","NL",
+    "CH","GB"
+  ],
+
+  northernEurope: [
+    "DK","EE","FI","IS",
+    "LV","LT","NO","SE"
+  ],
+
+  southernEurope: [
+    "AL","AD","BA","HR","CY",
+    "GR","IT","MT","ME",
+    "MK","PT","SM","RS",
+    "SI","ES","VA"
+  ],
+
+  easternEurope: [
+    "BY","BG","CZ","HU",
+    "MD","PL","RO","RU",
+    "SK","UA"
+  ],
+
+  // MIDDLE EAST
+  middleEast: [
+    "BH","IR","IQ","IL","JO",
+    "KW","LB","OM","QA",
+    "SA","SY","AE","YE","TR"
+  ],
+
+  // SOUTH ASIA
+  southAsia: [
+    "AF","BD","BT","IN",
+    "MV","NP","PK","LK"
+  ],
+
+  // EAST ASIA
+  eastAsia: [
+    "CN","JP","KP",
+    "KR","MN","TW"
+  ],
+
+  // SOUTHEAST ASIA
+  southeastAsia: [
+    "BN","KH","ID","LA",
+    "MY","MM","PH","SG",
+    "TH","TL","VN"
+  ],
+
+  // CENTRAL ASIA
+  centralAsia: [
+    "AM","AZ","GE","KZ",
+    "KG","TJ","TM","UZ"
+  ],
+
+  // OCEANIA
+  australiaNewZealand: [
+    "AU","NZ"
+  ],
+
+  pacificIslands: [
+    "FJ","KI","MH","FM",
+    "NR","PW","PG","WS",
+    "SB","TO","TV","VU"
+  ]
+};
+
+
+export const REGION_TITLES = {
+  northAfrica: "North Africa",
+  westAfrica: "West Africa",
+  centralAfrica: "Central Africa",
+  eastAfrica: "East Africa",
+  southernAfrica: "Southern Africa",
+
+  northAmerica: "North America",
+  centralAmerica: "Central America",
+  caribbean: "Caribbean",
+  southAmerica: "South America",
+
+  westernEurope: "Western Europe",
+  easternEurope: "Eastern Europe",
+  northernEurope: "Northern Europe",
+  southernEurope: "Southern Europe",
+
+  middleEast: "Middle East",
+
+  southAsia: "South Asia",
+  eastAsia: "East Asia",
+  southeastAsia: "Southeast Asia",
+  centralAsia: "Central Asia",
+
+  australiaNewZealand: "Australia & New Zealand",
+  pacificIslands: "Pacific Islands",
+};

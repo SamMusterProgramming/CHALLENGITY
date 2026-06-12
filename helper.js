@@ -1,4 +1,5 @@
 import { icons } from "./constants";
+import { countries, COUNTRY_CONTINENTS } from "./utilities/TypeData";
 
 
 export const findTopChallengers = (participants) => {
@@ -344,3 +345,23 @@ export function selectIconColor(name){
             break;
   }
 }
+
+
+
+
+export const getCountriesByRegion = (regionId) => {
+  const codes = COUNTRY_CONTINENTS[regionId];
+  return countries.filter(country =>
+    codes.includes(country.code)
+  );
+};
+
+export const getRegionName = (countryCode) => {
+        for (const [region, countries] of Object.entries(COUNTRY_CONTINENTS)) {
+          if (countries.includes(countryCode)) {
+            return region;
+          }
+        }
+      
+        return null;
+};

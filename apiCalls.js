@@ -158,7 +158,6 @@ export const getUserById = async(user_id,setUserProfile) =>{
     } catch (error) {
         console.log(error)
     }
-
 }
 
 export const updateUserInfo = async(user_id,rawBody,setUser)=> {
@@ -172,9 +171,7 @@ export const updateUserInfo = async(user_id,rawBody,setUser)=> {
   }
 }
 
-
 export const searchUsers = async(user_id,searchQuery,setData , setIsFetching)=>{
-
   try {
     await axios.get(BASE_URL +`/users/find/search?name=${searchQuery}`)
     .then(res => { 
@@ -193,7 +190,13 @@ export const searchUsers = async(user_id,searchQuery,setData , setIsFetching)=>{
   }
 }
 
-
+export const deletePushToken = async(user_id)=> {
+  try {
+     await api.patch(`/users/pushexpotoken/delete/${user_id}`)
+  } catch (error) {
+     console.error(error)
+  }
+}
 
 // *********************************** getChallenge by id *************************
 
@@ -728,6 +731,17 @@ export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired
       console.log(error)
     }
    }
+
+   export const markNotificationRead = async(_id) =>{
+    try {
+      await api.patch( `/users/notifications/${_id}` )
+      .then(res =>  { 
+        return res.data
+        } )
+    } catch (error) {
+      console.log(error)
+    }
+   }
  
 
    export const deleteUserNotification = async(_id,setNot) =>{
@@ -1173,7 +1187,7 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
 
     // *********************************** general challenge , talent  *************************
   
-  export const generateChallengeTalentGuinessData = async(user_id , setData ) =>{
+  export const getHotStages = async(user_id , setData ) =>{
       try { 
         // setIsFetching(true)
       await 
@@ -1185,8 +1199,8 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
                data.push({...element  })
             });
         } 
-        data.sort((a, b) => 
-          new Date(b.updatedAt) - new Date(a.updatedAt) )
+        // data.sort((a, b) => 
+        //   new Date(b.updatedAt) - new Date(a.updatedAt) )
         setData(data)
 
         } ).finally(() =>{
@@ -1196,6 +1210,31 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       console.log(error)
     }
     }
+
+    export const getTrendingStages = async(userCountryCode , setData ) =>{
+      try { 
+        // setIsFetching(true)
+      await 
+      api.get(`/talents/trendingStages/${userCountryCode}`)
+      .then(res =>  {
+        const data = []
+        if(res.data.length > 0) {
+            res.data.forEach(element => {
+               data.push({...element  })
+            });
+        } 
+        // data.sort((a, b) => 
+        //   new Date(b.updatedAt) - new Date(a.updatedAt) )
+        setData(data)
+
+        } ).finally(() =>{
+          // setIsFetching(false)
+        })
+    } catch (error) {
+      console.log(error)
+    }
+    }
+     
      
     export const getFavouriteStageList = async( user_id ,  setFavourites) =>{
       try { 

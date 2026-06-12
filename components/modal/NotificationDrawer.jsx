@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
 View,
 Text,
@@ -7,7 +7,6 @@ TouchableOpacity,
 FlatList,
 useWindowDimensions
 } from "react-native";
-
 import Animated, {
 useSharedValue,
 useAnimatedStyle,
@@ -15,67 +14,52 @@ withSpring,
 withTiming,
 runOnJS
 } from "react-native-reanimated";
-
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { useGlobalContext } from "../../context/GlobalProvider";
 import DisplayTalentNotification from "../notification/DisplayTalentNotifications";
 
 export default function NotificationDrawer({ visible, onClose }) {
-
 const { width } = useWindowDimensions();
 const insets = useSafeAreaInsets();
-
 const drawerWidth = width ;
-
 const translateX = useSharedValue(drawerWidth);
-
 const flatListRef = useRef(null);
-
 const { notifications, setNotifications, user } = useGlobalContext();
-
 const nativeGesture = Gesture.Native();
-
 const [scrollEnabled, setScrollEnabled] = useState(true);
+const [activeTab, setActiveTab] = useState("competition");
+const indicator = useSharedValue(0);
+
+const competitionNotifications = notifications.filter((n) => n.category === "competition");
+const friendNotifications = notifications.filter((n) => n.category === "friends");
+const competitionBadgeNumber = competitionNotifications.length;
+const friendBadgeNumber = friendNotifications.length;
+
+const TABS = [
+  { key: "competition", label: "Competition" , badge : competitionBadgeNumber},
+  { key: "challenge", label: "Challenge" ,badge : friendBadgeNumber},
+  { key: "friends", label: "Friends" , badge : 0 },
+  { key: "followers", label: "Followers" , badge : 0 },
+];
+
 
 
 useEffect(() => {
-
-if (visible) {
-translateX.value = withSpring(0, {
-damping: 18,
-stiffness: 160,
-overshootClamping: true
-});
-} else {
-translateX.value = withTiming(drawerWidth);
-}
-
+  if (visible) {
+    translateX.value = withSpring(0, {
+    damping: 18,
+    stiffness: 160,
+    overshootClamping: true
+    });
+  } else {
+    translateX.value = withTiming(drawerWidth);
+  }
 }, [visible]);
 
 const closeDrawer = () => {
 onClose();
 };
-
-// const panGesture = Gesture.Pan()
-//   .activeOffsetX([20, 999])
-//   .failOffsetY([-15, 15])
-//   .simultaneousWithExternalGesture(nativeGesture)
-//   .onUpdate((event) => {
-//     if (event.translationX > 0) {
-//       translateX.value = event.translationX;
-//     }
-//   })
-//   .onEnd(() => {
-//     if (translateX.value > drawerWidth * 0.35) {
-//       translateX.value = withTiming(drawerWidth, {}, () => {
-//         runOnJS(onClose)();
-//       });
-//     } else {
-//       translateX.value = withSpring(0);
-//     }
-//   });
 
 const panGesture = Gesture.Pan()
 .activeOffsetX([-10, 10])   // only triggers for horizontal swipe
@@ -92,25 +76,89 @@ const panGesture = Gesture.Pan()
   }
 });
 
+const filteredNotifications = useMemo(() => {
+  switch (activeTab) {
+    case "competition":
+        return  competitionNotifications ; 
+    case "friends":
+      return  friendNotifications ; 
+    default:
+      break;
+  }
+  return notifications.filter((n) => n.category === activeTab);
+}, [notifications, activeTab]);
+
 const animatedStyle = useAnimatedStyle(() => ({
 transform: [{ translateX: translateX.value }]
 }));
 
 const renderNotification = ({ item }) => {
-
-if (item.type === "talent") {
-return (
-<DisplayTalentNotification
-notification={item}
-setNotifications={setNotifications}
-user={user}
-/>
-);
+if (item.category === "competition") {
+  return (
+  <DisplayTalentNotification
+    notification={item}
+    setNotifications={setNotifications}
+    user={user}
+  />
+  );
 }
-
+if (item.category === "friends") {
+  return (
+  <DisplayTalentNotification
+    notification={item}
+    setNotifications={setNotifications}
+    user={user}
+  />
+  );
+}
+if (item.category === "following") {
+  return (
+  <DisplayTalentNotification
+    notification={item}
+    setNotifications={setNotifications}
+    user={user}
+  />
+  );
+}
 return null;
-
 };
+
+const TabButton = ({ item, index }) => {
+  const isActive = activeTab === item.key;
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        setActiveTab(item.key);
+        indicator.value = withSpring(index);
+      }}
+      style={{
+        // paddingVertical: 10,
+        alignItems: "center",
+        width : "25%",
+        // backgroundColor : isActive ? "transparent" : "#8A8A8A",
+      }}
+      className = "p-2 px-2  " >
+      <Text
+        style={{
+          color: isActive ? "gold" : "#8A8A8A",
+          // fontWeight: "700",
+          fontSize: width /39,
+        }}
+        className = "font-bebas tracking-widest"
+      >   
+        {item.label}
+      </Text>
+
+      <View className="absolute top-[-2]  right-[4] bg-red-800 w-4 h-4 rounded-full items-center justify-center">
+        <Text className="text-white text-[7px] font-bold track ing-wide">
+          {item.badge}
+        </Text>
+      </View>
+    
+    </TouchableOpacity>
+  );
+};
+
 
 if (!visible) return null;
 
@@ -119,74 +167,74 @@ return (
 <View className="absolute inset-0 z-50">
 
 {/* BACKDROP */}
-
-<TouchableOpacity
-className="absolute inset-0 bg-black/60"
+{/* <TouchableOpacity
+className="absolute inset-0 bg-gold"
 onPress={onClose}
-/>
+/> */}
 
 {/* DRAWER */}
-
 <GestureDetector gesture={panGesture}>
 
 <Animated.View
-style={[
-animatedStyle,
-{
-width: drawerWidth,
-top: insets.top,
-bottom: 0
-}
-]}
-className="absolute right-0 bg-zinc-900"
->
+  style={[
+  animatedStyle,
+  {
+  width: drawerWidth,
+  top: insets.top,
+  bottom: 0
+  }
+  ]}
+  className="absolute right-0 bg-zinc-900">
+  
+  
+    <View className="flex-1 bg-[#000000] /40 p- 2">
+    {/* HEADER */}
+      <View className="flex-row justify-between items-center px-5 py-2 mt-2 bg-zinc-900">
+        <Text className="text-white text-xl font-bold">
+            Notifications
+        </Text>
+        <TouchableOpacity onPress={onClose}>
+          <Text className="text-gray-400 text-3xl">X</Text>
+        </TouchableOpacity>
+          {/* SEGMENTED CONTROL */}
+      </View>
+      <View className="w-full flex-row bg-[#30240f] mt-2 roun ded-lg py-2 justify-between items-center ">
+                {TABS.map((item, index) => (
+                  <TabButton key={item.key} item={item} index={index} />
+                ))}
+      </View>
 
-<View className="flex-1">
+      {/* LIST */}
+      <GestureDetector gesture={nativeGesture}>
+          <FlatList
+          ref={flatListRef}
+          data={filteredNotifications}
+          renderItem={renderNotification}
+          keyExtractor={(item) => item._id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+          // paddingBottom: 40,
+          // paddingHorizontal: 16,
+          paddingTop: 10
+          }}
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled
+          initialNumToRender={10}        
+          maxToRenderPerBatch={10}       
+          windowSize={10}                
+          removeClippedSubviews={true}   
+          scrollEnabled={scrollEnabled}
+          onScrollBeginDrag={() => setScrollEnabled(true)}
+          />
+      </GestureDetector>
+      <View className="flex-row justify-between items-center h-[5%]  b g-zinc-800" />
 
-{/* HEADER */}
-
-<View className="flex-row justify-between items-center px-5 py-4 border-b border-zinc-800">
-
-<Text className="text-white text-xl font-bold">
-Notifications
-</Text>
-
-<TouchableOpacity onPress={onClose}>
-<Text className="text-gray-400 text-lg">✕</Text>
-</TouchableOpacity>
-
-</View>
-
-{/* LIST */}
-<GestureDetector gesture={nativeGesture}>
-    <FlatList
-    ref={flatListRef}
-    data={notifications}
-    renderItem={renderNotification}
-    keyExtractor={(item) => item._id}
-    showsVerticalScrollIndicator={false}
-    contentContainerStyle={{
-    paddingBottom: 40,
-    paddingHorizontal: 16,
-    paddingTop: 10
-    }}
-    keyboardShouldPersistTaps="handled"
-    nestedScrollEnabled
-    initialNumToRender={10}        
-    maxToRenderPerBatch={10}       
-    windowSize={10}                
-    removeClippedSubviews={true}   
-    scrollEnabled={scrollEnabled}
-    onScrollBeginDrag={() => setScrollEnabled(true)}
-    />
-</GestureDetector>
-
-</View>
+    </View>
 
 </Animated.View>
 
 </GestureDetector>
-
+        
 </View>
 
 );

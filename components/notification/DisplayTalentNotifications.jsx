@@ -1,293 +1,11 @@
-// import { View, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native'
-// import React, { useEffect, useState } from 'react'
-// import { getIcon, getInition, getStageLogo } from '../../helper'
-// import { acceptFriendRequest, deleteUserNotification, getNotificationByUser, removeFriendRequest, updateNotificationByUser } from '../../apiCalls';
-// import { router } from 'expo-router';
-// import { icons } from '../../constants';
-// import { useGlobalContext } from '../../context/GlobalProvider';
-// import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-// import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-
-// export default function DisplayTalentNotification({notification,setNotifications,user,setDisplayNotificationsModal }) {
-
-//   const {userFriendData,setUserFriendData } = useGlobalContext()
-//   const isRead = notification.isRead;
-//   let friendRequestNotif = false;
-//   let friendRequestAcceptNotif = false;
-//   let challengeNotif = false;
-//   let talentNotif = false;
-//   notification.type == "friend request" ? friendRequestNotif = true : 
-//   notification.type == "friends"? friendRequestAcceptNotif = true :
-//   notification.type == "followers"? challengeNotif =true : challengeNotif =false
-//   notification.type == "talent"? talentNotif =true : talentNotif =false
-
-//   const [not,setNot] = useState(notification)
-
-//   const [type,setType] = useState(notification.type)
-//   const { width, height } = useWindowDimensions();
-
-//   const [name , setName] = useState(null)
-
-
-//   useEffect(() => {
-//       const splitName = notification.content.name.split(" ")
-//       setName({
-//       part1 : splitName[0],
-//       part2: splitName[1]
-//        })
-//   }, [])
-
- 
-//   const deleteNotification =()=>{
-//     deleteUserNotification(notification._id,setNot)
-//   }
-
-//   const handleViewChallenge = ()=> {   
-//     console.log(notification.content.challenge_id)
-//     updateNotificationByUser(notification._id,setNot)
-//     router.push({ pathname:'FSinstantChallengeDisplayer', params:{challenge_id:notification.content.challenge_id} })
-//    }
-
-//    const handleViewTalent = ()=> {   
-//     updateNotificationByUser(notification._id,setNot)
-//     router.push({ pathname:'TalentContestRoom', params:{
-//       region:notification.content.region,
-//       selectedTalent:notification.content.talentName,
-//       selectedIcon: icons.dance,
-//       regionIcon : icons.africa,
-//       startIntroduction :"true",
-//       showGo:"true",
-//       location : "contest",
-//       contestant_id : notification.content.sender_id
-//     } })
-//    }
-
-//   const acceptFRequest =()=>{
-//     const rawBody ={
-//       _id:user._id,
-//       name:user.name,
-//       email:user.email,
-//       profile_img:user.profile_img
-//     }
-//     acceptFriendRequest(notification.content.sender_id,rawBody,setUserFriendData)
-//   }
-
-//   const denyFriendRequest =()=>{
-//     const rawBody ={
-//       _id:notification.content.sender_id,
-//       name:notification.content.name,
-//       email:notification.content.email,
-//       profile_img:notification.content.profile_img
-//     }
-//     removeFriendRequest(user._id,rawBody,setUserFriendData)
-//   }
-
-//   useEffect(() => {
-//     getNotificationByUser(user._id,setNotifications)
-//   }, [not,userFriendData])
-
-
-//   const handleAction = ()=> {
-//      switch (notification.type) {
-//       case "talent":
-//         handleViewTalent();
-//         break;
-//       case "followers":
-//         handleViewChallenge();
-//         break;
-//       case "friends":
-//           router.navigate({ pathname: '/ViewProfile', params: {user_id:notification.content.sender_id} })
-//         break;
-//       default:
-//         break;
-//      }
-//   }
-
-  
-//   return (
-//     <ReanimatedSwipeable
-//     // renderRightActions={renderRightActions}
-//     onSwipeableOpen={() => deleteNotification}   >
-
-//         <TouchableOpacity  
-//            onPress={handleAction}
-//            className={isRead ? " bg-zinc-800/80 border border-yellow-400/20 rounded-xl px-2 mb-3 gap-2 elevation-lg flex-row items-end  "
-//                         :" bg-zinc-600 border border-yellow-400/20 rounded-xl px-2 mb-3 gap-2  elevation-lg flex-row items-end "}>
-        
-//          <View
-//                  className="flex-row gap-2 items -end ">
-//                     <Image
-//                         resizeMethod='cover'
-//                         style= {{width :width/10 , height:height/18}}
-//                         source={getStageLogo(notification.content.talentName)}
-//                           />
-//          </View>
-         
-//          <View
-//          className={isRead ? " flex-1 px-1 flex-col   justify-center p-2 items-start  b g-[#ffffff]  "
-//           :"flex-1 px- 1 flex-col   justify-center items-start  b g-[#cfe3f2] "} >
-//                   <Text 
-//                   style={{fontSize:width/38, }} 
-//                   className="text-white mb- 2 font-semibold ">
-                    
-//                          {notification.content.talentName} {''}Stage
-//                   </Text>
-//                   <Text className=" text-yellow-100  pt-2 font-bold"
-//                                   style={{fontSize:width/48, }} >
-//                                   {notification.content.name}
-//                   </Text> 
-//                   <Text className=" text-yellow-100   font-bold"
-//                                   style={{fontSize:10,color: isRead ? "white":"white"}} >
-//                                   {notification.message}
-//                   </Text> 
-           
-                        
-//         </View>
-
-
-       
-//          </TouchableOpacity>
-//       </ReanimatedSwipeable>
-     
-//   )
-
-// }
-
-// import React, { useEffect, useState } from "react";
-// import { View, Text, Image, TouchableOpacity, useWindowDimensions } from "react-native";
-// import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring, interpolate } from "react-native-reanimated";
-// import { Gesture, GestureDetector } from "react-native-gesture-handler";
-// import { getStageLogo } from "../../helper";
-// import { router } from "expo-router";
-// import { icons } from "../../constants";
-// import { deleteUserNotification, getNotificationByUser, updateNotificationByUser } from "../../apiCalls";
-
-// export default function DisplayTalentNotification({ notification, setNotifications, user }) {
-//   const { width, height } = useWindowDimensions();
-//   const isRead = notification.isRead;
-//   const [not,setNot] = useState(notification)
-//   const translateX = useSharedValue(0);
-//   const BUTTON_WIDTH = 80; 
-
-//   const gesture = Gesture.Pan()
-//     .onUpdate((e) => {
-//       if (e.translationX < 0) translateX.value = e.translationX; 
-//     })
-//     .onEnd(() => {
-//       if (translateX.value < -BUTTON_WIDTH / 2) {
-//         translateX.value = withTiming(-BUTTON_WIDTH);
-//       } else {
-//         translateX.value = withSpring(0);
-//       }
-//     });
-
-//   const animatedStyle = useAnimatedStyle(() => ({
-//     transform: [{ translateX: translateX.value }],
-//   }));
-
-//   const deleteButtonStyle = useAnimatedStyle(() => {
-//     const opacity = interpolate(translateX.value, [-BUTTON_WIDTH, 0], [1, 0]);
-//     return { opacity };
-//   });
-
-//   const handleDelete = () => {
-//     deleteUserNotification(notification._id, setNotifications);
-//     translateX.value = withTiming(0); 
-//   };
-
-//   const handleAction = () => {
-
-//     switch (notification.type) {
-//       case "talent":
-//         updateNotificationByUser(notification._id,setNot)
-       
-//         router.push({
-//           pathname: "TalentContestRoom",
-//           params: {
-//             region: notification.content.region,
-//             selectedTalent: notification.content.talentName,
-//             selectedIcon: icons.dance,
-//             regionIcon: icons.africa,
-//             startIntroduction: "true",
-//             showGo: "true",
-//             location: "contest",
-//             contestant_id: notification.content.sender_id,
-//           },
-//         });
-//         break;
-//       case "followers":
-//         router.push({
-//           pathname: "FSinstantChallengeDisplayer",
-//           params: { challenge_id: notification.content.challenge_id },
-//         });
-//         break;
-//       default:
-//         break;
-//     }
-//   };
-//    useEffect(() => {
-//     getNotificationByUser(user._id,setNotifications)
-//   }, [not])
-
-//   return (
-//     <View className="mb-3" style={{ height: height / 10 }}>
-  
-//       <Animated.View
-//         style={[
-//           {
-//             position: "absolute",
-//             right: 0,
-//             top: 0,
-//             bottom: 0,
-//             width: BUTTON_WIDTH,
-//             backgroundColor: "red",
-//             justifyContent: "center",
-//             alignItems: "center",
-//             borderRadius: 12,
-//           },
-//           deleteButtonStyle,
-//         ]}
-//       >
-//         <TouchableOpacity onPress={handleDelete} className="w-full h-full justify-center items-center">
-//           <Text className="text-white font-bold">DELETE</Text>
-//         </TouchableOpacity>
-//       </Animated.View>
-
-
-//       <GestureDetector gesture={gesture}>
-//         <Animated.View
-//           style={[animatedStyle]}
-//           className={`flex-row items-center px-4 py-3 rounded-xl ${
-//             isRead ? "bg-zinc-800/80" : "bg-zinc-600"
-//           } shadow-md`}
-//         >
-//           <Image
-//             resizeMethod="cover"
-//             source={getStageLogo(notification.content.talentName)}
-//             style={{ width: width / 10, height: height / 18, borderRadius: 8 }}
-//           />
-
-//           <TouchableOpacity onPress={handleAction} activeOpacity={0.8} className="flex-1 px-3">
-//             <Text className="text-white font-semibold text-base">{notification.content.talentName} Stage</Text>
-//             <Text className="text-yellow-100 font-bold text-sm">{notification.content.name}</Text>
-//             <Text className="text-gray-300 text-sm">{notification.message}</Text>
-//           </TouchableOpacity>
-//         </Animated.View>
-//       </GestureDetector>
-//     </View>
-//   );
-// }
-
-
 import React, { useEffect, useState } from 'react';
 import { 
   View, Text, Image, TouchableOpacity, useWindowDimensions, LayoutAnimation, Platform, UIManager 
 } from 'react-native';
 import { router } from 'expo-router';
-import { icons } from '../../constants';
-import { getStageLogo } from '../../helper';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { deleteUserNotification, updateNotificationByUser } from '../../apiCalls';
+import { deleteUserNotification, getNotificationByUser, updateNotificationByUser } from '../../apiCalls';
+import { countries, stageIcons } from '../../utilities/TypeData';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -296,11 +14,10 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 export default function DisplayTalentNotification({ notification, setNotifications, user }) {
 
   const { width, height } = useWindowDimensions();
-  const { userFriendData, setUserFriendData } = useGlobalContext();
-
-  const [isRead, setIsRead] = useState(notification.isRead);
+  const { userFriendData, setUserFriendData  } = useGlobalContext();
+  const [isRead, setIsRead] = useState(notification.is_read);
   const [showDelete, setShowDelete] = useState(false);
-  const [not, setNot] = useState(notification);
+  const [not, setNot] = useState(null);
 
   // Animate layout changes
   const toggleDelete = () => {
@@ -315,24 +32,96 @@ export default function DisplayTalentNotification({ notification, setNotificatio
     }
   };
 
+  useEffect(() => {
+     if(not){
+      getNotificationByUser(user._id, setNotifications);
+      setNot(null)
+     }
+  }, [not])
+  
   const handleAction = () => {
     markAsRead();
     switch (notification.type) {
-      case 'talent':
+      case 'contest_joined':
         router.push({
-          pathname: 'TalentContestRoom',
+          pathname: '/TalentContestRoom',
           params: {
-            region: notification.content.region,
-            selectedTalent: notification.content.talentName,
-            selectedIcon: icons.dance,
-            regionIcon: icons.africa,
+            region: notification.metadata.stageRegion,
+            selectedTalent: notification.metadata.stageName,
+            // selectedIcon: icons.dance,
+            // regionIcon: icons.africa,
             startIntroduction: 'true',
             showGo: 'true',
             location: 'contest',
-            contestant_id: notification.content.sender_id
+            contestant_id: notification.metadata.contestant_id ,
+            startPlayer : "true"
           }
         });
-        break;
+      break;
+      case 'performance_posted':
+        router.push({
+          pathname: '/TalentContestRoom',
+          params: {
+            region: notification.metadata.stageRegion,
+            selectedTalent: notification.metadata.stageName,
+            // selectedIcon: icons.dance,
+            // regionIcon: icons.africa,
+            startIntroduction: 'true',
+            showGo: 'true',
+            location: 'contest',
+            contestant_id: notification.metadata.contestant_id ,
+            startPlayer : "true"
+          }
+        });
+      break;
+      case 'contest_queued':
+        router.push({
+          pathname: '/TalentContestRoom',
+          params: {
+            region: notification.metadata.stageRegion,
+            selectedTalent: notification.metadata.stageName,
+            // selectedIcon: icons.dance,
+            // regionIcon: icons.africa,
+            startIntroduction: 'true',
+            showGo: 'true',
+            location: 'contest',
+            contestant_id: notification.metadata.contestant_id ,
+            startPlayer : "true"
+          }
+        });
+      break;
+      case 'eliminated':
+        router.push({
+          pathname: '/TalentContestRoom',
+          params: {
+            region: notification.metadata.stageRegion,
+            selectedTalent: notification.metadata.stageName,
+            // selectedIcon: icons.dance,
+            // regionIcon: icons.africa,
+            startIntroduction: 'true',
+            showGo: 'true',
+            location: 'contest',
+            contestant_id: null ,
+            startPlayer : "true"
+          }
+        });
+      break;
+      case 'vote_received':
+        router.push({
+          pathname: '/TalentContestRoom',
+          params: {
+            region: notification.metadata.stageRegion,
+            selectedTalent: notification.metadata.stageName,
+            // selectedIcon: icons.dance,
+            // regionIcon: icons.africa,
+            startIntroduction: 'true',
+            showGo: 'true',
+            location: 'contest',
+            contestant_id: notification.metadata.contestant_id || null,
+            startPlayer : "true"
+          }
+        });
+      break;
       case 'followers':
         router.push({
           pathname: 'FSinstantChallengeDisplayer',
@@ -341,7 +130,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
         break;
       case 'friends':
         router.navigate({ pathname: '/ViewProfile', params: { user_id: notification.content.sender_id } });
-        break;
+      break;
       default:
         break;
     }
@@ -361,87 +150,312 @@ export default function DisplayTalentNotification({ notification, setNotificatio
   }, [showDelete]);
 
   return (
-    <View className="mb-3">
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        
-        {/* Notification Box */}
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={handleAction}
+    <View style={{
+      marginBottom: 10,
+      zIndex: showDelete ? 9999 : 1,
+      elevation: showDelete ? 9999 : 1,
+    }}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={handleAction}
+        style={{
+          backgroundColor: isRead
+            ? "#111111"
+            : "#171203",
+          // borderWidth: 1.2,
+          // borderColor: isRead
+          //   ? "#242424"
+          //   : "#d4a017",
+          borderRadius: 8,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+  
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 8,
+          elevation: 5,
+        }}
+        className = "bg-[#171203]"
+      >
+        <View
           style={{
-            flex: 1,
-            backgroundColor: isRead ? '#2a2a2a' : '#3c3c3c',
-            borderRadius: 14,
-            padding: 12,
-            paddingRight: showDelete ? 0 : 12,
-            flexDirection: 'row',
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 3
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
-          {/* Stage Logo */}
-          <Image
-            resizeMode="cover"
-            style={{ width: width / 10, height: height / 18, borderRadius: 8 }}
-            source={getStageLogo(notification.content.talentName)}
-          />
-
-          {/* Texts */}
-          <View style={{ flex: 1, marginLeft: 10 }}>
-            <Text style={{ color: 'white', fontSize: width / 38, fontWeight: '600', marginBottom: 2 }}>
-              {notification.content.talentName} Stage
-            </Text>
-            <Text style={{ color: '#FFD700', fontWeight: '700', fontSize: width / 48 }}>
-              {notification.content.name}
-            </Text>
-            <Text style={{ color: 'white', fontSize: 12 }}>
-              {notification.message}
-            </Text>
-          </View>
-        </TouchableOpacity>
-
-        {/* Delete Button */}
-        {showDelete && (
-        <TouchableOpacity
-          onPress={deleteNotification}
-          style={{
-            // backgroundColor: '#FF3B30',
-            paddingHorizontal: 16,
-            width: 70,              // fixed width
-            height: 70,             // fixed height
-            marginLeft: 6,
-            borderRadius: 12,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-          className ="h- [100%] bg-[#6b0808]"
-        >
-          <Text style={{ color: 'white', fontWeight: '700', fontSize: 11 }}>Delete</Text>
-        </TouchableOpacity>
-      )}
-
-        {/* Toggle Delete Button */}
-        {!showDelete && (
-          <TouchableOpacity
-            onPress={toggleDelete}
+          {/* Avatar */}
+          <View
             style={{
-              marginLeft: 6,
-              paddingHorizontal: 8,
-              paddingVertical: 18,
-              backgroundColor: '#FFD70033',
-              borderRadius: 10,
-              justifyContent: 'center',
-              alignItems: 'center'
+              width: height / 20,
+              height: height / 20,
+              borderRadius: 999,
+              overflow: "hidden",
+              borderWidth: 0.5,
+              borderColor: isRead
+                ? "#3a3a3a"
+                : "#facc15",
+               }} 
+               className ="mt-auto" >
+            <Image
+              resizeMode="cover"
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              source={{
+                uri:
+                  notification.presentation.image ||
+                  user.profileImage.publicUrl,
+              }}
+            />
+          </View>
+  
+          {/* Content */}
+          <View
+            style={{
+              flex: 1,
+              marginLeft: 10,
             }}
           >
-            <Text style={{ color: '#FFD700', fontWeight: '700' }}>🗑️</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+            {/* Header */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "flex-start",
+                justifyContent:
+                  "space-between",
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    color: "#fff",
+                    fontSize: width / 42,
+                    fontWeight: "800",
+                  }}
+                >
+                  {
+                    notification.metadata
+                      .stageName
+                  }{" "}
+                  Stage{" "}
+                  {
+                    stageIcons[
+                      notification.metadata
+                        .stageName
+                    ]
+                  }
+                </Text>
+  
+                <Text
+                  style={{
+                    color: isRead
+                      ? "#9ca3af"
+                      : "#facc15",
+                    fontSize:
+                      width / 49,
+                    fontWeight: "700",
+                    marginTop: 2,
+                  }}
+                >
+                  {
+                    countries.find(
+                      c =>
+                        c.code ===
+                        notification
+                          .metadata
+                          .stageRegion
+                    )?.flag
+                  }{" "}
+                  {
+                    countries.find(
+                      c =>
+                        c.code ===
+                        notification
+                          .metadata
+                          .stageRegion
+                    )?.name
+                  }
+                </Text>
+              </View>
+  
+              {/* Right Side */}
+              <View
+                style={{
+                  position: "relative",
+                }}
+              >
+                {!isRead && (
+                  <View
+                    style={{
+                      width: 5,
+                      height: 5,
+                      borderRadius: 999,
+                      backgroundColor:
+                        "#facc15",
+                      position: "absolute",
+                      top: 10,
+                      left: -24,
+                    }}
+                  />
+                )}
+  
+                <TouchableOpacity
+                  onPress={toggleDelete}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 999,
+                    justifyContent:
+                      "center",
+                    alignItems:
+                      "center",
+                    backgroundColor:
+                      "#1d1d1d",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#9ca3af",
+                      fontSize: 18,
+                      fontWeight: "700",
+                    }}
+                  >
+                    ⋮
+                  </Text>
+                </TouchableOpacity>
+  
+                {/* FLOATING MENU */}
+                {showDelete && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 38,
+                      right: 0,
+                      width: 170,
+                      backgroundColor:
+                        "#161616",
+                      borderRadius: 14,
+                      borderWidth: 1,
+                      borderColor:
+                        "#2d2d2d",
+                      overflow: "hidden",
+                      zIndex: 1,
+                      shadowColor: "#000",
+                      shadowOffset: {
+                        width: 0,
+                        height: 6,
+                      },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 10,
+                      elevation: 12,
+                    }}
+                  >
+                    {/* MARK READ */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        markAsRead();
+                        setShowDelete(false);
+                      }}
+                      style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: 14,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#fff",
+                          fontWeight: "600",
+                          fontSize:width/44
+                        }}
+                      >
+                        ✓ Mark as Read
+                      </Text>
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        height: 1,
+                        backgroundColor:
+                          "#2d2d2d",
+                      }}
+                    />
+                    {/* VIEW */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        setShowDelete(false);
+                        handleAction();
+                      }}
+                      style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: 14,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#fff",
+                          fontWeight: "600",
+                          fontSize:width/44
+                        }}
+                      >
+                        👁 View Notification
+                      </Text>
+                    </TouchableOpacity>
+  
+                    <View
+                      style={{
+                        height: 1,
+                        backgroundColor:
+                          "#2d2d2d",
+                      }}
+                    />
+  
+                    {/* DELETE */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        setShowDelete(false);
+                        deleteNotification();
+                      }}
+                      style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: 14,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#f87171",
+                          fontWeight: "700",
+                          fontSize:width/44
+                        }}
+                      >
+                        🗑 Delete
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
+  
+            {/* Body */}
+            <Text
+              numberOfLines={2}
+              style={{
+                color: "#d1d5db",
+                fontSize: width / 40,
+                marginTop: 2,
+                lineHeight: 18,
+              }}
+              className ="font-semibold"
+            >
+              { notification.presentation.text }
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }

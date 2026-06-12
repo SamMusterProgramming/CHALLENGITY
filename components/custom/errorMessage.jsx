@@ -9,10 +9,11 @@ const ErrorMessage = ({ message , color ,width}) => {
       from={{ opacity: 0, translateY: 10 }}
       animate={{ opacity: 1, translateY: 0 }}
       exit={{ opacity: 0 }}
-      className=" w-[100%]  mb- 8 text-center items-center justify-center px -3 py -2 border bor der-red-500/30 bg -red-500/10 rounded-md"
+      className=" w-[50%]  mb- 8 text-center items-center justify-center px -3 py -2 border bor der-red-500/30 bg -red-500/10 rounded-md"
     >
       <Text 
-      style= {{ color : color , textAlign:"center" , fontSize : width /32}}
+      style= {{ color : color , textAlign:"center" , fontSize : width /32 ,lineHeight : 25}}
+      numberOfLines={2}
       className="text-red-400 text-md">
         • {message}
       </Text>

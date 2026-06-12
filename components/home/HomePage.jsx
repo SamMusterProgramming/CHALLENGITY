@@ -3,31 +3,30 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Dimensions,
- 
-  FlatList
+  FlatList,
+  useWindowDimensions
 } from "react-native";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { generateChallengeTalentGuinessData, getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
 import StageSelector from "../custom/StageSelector";
 import HotStage from "../talent/hotStages";
 import { useFocusEffect } from "expo-router";
-
+import TrendingStages from "../talent/trendingStages";
+import Favourites from "../talent/favourites";
 export const homeState = {
   scrollY: 0,
 };
-
-export default function HomePage() {
-
+export default function HomePage({onScroll}) {
   const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading ,regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh} = useGlobalContext();
   const sections = [
-    { id: "stageSelector" },
-    { id: "hotStage" }
-    
+    { id: "trendingStage" },
+    { id: "hotStage" },
+    { id: "favourite" }
   ];
   const flatListRef = useRef(null);
   const [isHotStageReady, setIsHotStageReady] = useState(false);
   const scrollY = useRef(homeState.scrollY || 0);
-
+  const{width , height} = useWindowDimensions()
   useEffect(() => {
     if (!globalRefresh) return;
     const fetchData = async () => {
@@ -55,7 +54,6 @@ export default function HomePage() {
     fetchData();
   }, [globalRefresh])
 
-
   useEffect(() => {
           if(!globalRefresh) return ; 
           if(regionStages?.length < 1) return ;
@@ -71,9 +69,7 @@ export default function HomePage() {
           });
   }, [regionStages])
 
-  
   const [isFocused, setIsFocused] = useState(true);
-
   useFocusEffect(
     useCallback(() => {
       setIsFocused(true);
@@ -98,14 +94,16 @@ export default function HomePage() {
 
   if (!isFocused) { return null; }
 
-
   return (
     
     <View
-    className="flex-1 w-[100%] bg-black">
+    style ={{
+      // paddingBottom : height * 0.059 ,
+    }}
+    className="flex-1 w-[100%] mb- 4 px-2 bg-black">
       <FlatList
             ref={flatListRef}
-            onScroll={handleScroll}
+            onScroll={onScroll}
             scrollEventThrottle={16}
           
             // 🔥 helps stability when restoring
@@ -114,19 +112,28 @@ export default function HomePage() {
             data={sections}
             extraData={globalRefresh} 
             renderItem={({ item }) =>
-              item.id === "hotStage" ? (
-                <HotStage user={user} onReady={() => setIsHotStageReady(true)}  />
-              ) :  (
-                <StageSelector user={user} />
-              ) 
+              item.id === "trendingStage" ? (
+                <TrendingStages user={user} onReady={() => setIsHotStageReady(true)}  />
+              ) : item.id === "hotStage" ? (
+                <HotStage user={user} />
+                // <StageSelector user={user} />
+              ) :(
+                <Favourites user={user} />
+              )
             }
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}  
             contentContainerStyle={{
               backgroundColor: "black",  
-              paddingBottom: 40,
+              // paddingBottom: 40,
             }}
             keyboardShouldPersistTaps="handled"
+            // ListFooterComponent={()=>{
+            //   return(
+            //     <View
+            //     className="min-h-[10%] w-full bg-black "/>
+            //   )
+            // }}
           />
     </View>
   );

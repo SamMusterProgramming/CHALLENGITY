@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, Animated, Pressable, Dimensions, Image } from "react-native";
+import { View, Text, Animated, Pressable, Dimensions, Image, FlatList } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { generateChallengeTalentGuinessData, getAllTalentStages } from "../../apiCalls";
@@ -13,6 +13,7 @@ import { countries, stageDescriptions, stageImages } from "../../utilities/TypeD
 import StageHero from "../custom/stageHero";
 import CarouselIndicator from "../custom/carouselIndicator";
 import { icons, images } from "../../constants";
+import StageDiscoveryFooter from "../footers/stageDiscoveryFooter";
 
 const { width ,height } = Dimensions.get("window");
 
@@ -81,32 +82,49 @@ const continentIcons = {
 /* ---------------- COMPONENT ---------------- */
 
 function PerformanceDescription({stageData , user}) {
-       return (
-        <>
-        {stageData.contestants?.find(c => c.user_id === user._id) && (
-            <Text className="text-white text-sm leading-relaxed">
-                You are on stage and currently{" "}
-                {stageData.contestants.find(c => c.user_id === user._id).rank <= 4 ? `Top ${stageData.contestants.find(c => c.user_id === user._id).rank}` : 
-                `Ranked #${stageData.contestants.find(c => c.user_id === user._id).rank}`}.{" "}
-                You've earned {stageData.contestants.find(c => c.user_id === user._id).votes} votes .{" "}
-                 shine and inspire more votes by adding performances.
-            </Text>
-        ) }
-        {stageData.queue?.find(c => c.user_id === user._id) && (
-            <Text className="text-gray-300 text-sm leading-relaxed">
-                Your performance is in queue. You will be notified when you reach the stage.{" "}
-                Enter the stage to track progress.
-            </Text>
-        ) }
-         {stageData.eliminations?.find(c => c.user_id === user._id) && (
-            <Text className="text-gray-300 text-sm leading-relaxed">
-                You have been eliminated from the contest. Don’t give up — you can return
-                by updating your performances to rejoining the queue.
-            </Text>
-        ) }
-      
-       </>
-      )
+  const contestant = stageData.contestants?.find(
+    c => c.user_id === user._id
+  );
+  
+  return (
+    <>
+      {contestant && (
+        <Text className="text-zinc-300 text-start text-sm leading-6">
+          You're currently{" "}
+          <Text className="text-[#eab308] font-bold">
+            {contestant.rank <= 4
+              ? `Top ${contestant.rank}`
+              : `Ranked #${contestant.rank}`}
+          </Text>
+          {" "}on this stage with{" "}
+          <Text className="text-[#eab308] font-bold">
+            {contestant.votes} votes .{"\n"}
+          </Text>
+            Perform. Earn votes. Rise higher. ✨
+          </Text>
+      )}
+  
+      {stageData.queue?.find(
+        c => c.user_id === user._id
+      ) && (
+        <Text className="text-zinc-300 text-sm leading-6">
+          Your performance is currently in the{" "}
+          <Text className="text-[#eab308] font-semibold">
+            queue
+          </Text>
+          . You'll be notified as soon as you secure a place on stage.
+        </Text>
+      )}
+  
+      {stageData.eliminations?.find(
+        c => c.user_id === user._id
+      ) && (
+        <Text className="text-zinc-300 text-sm leading-6">
+          You've been eliminated from this stage . Your journey isn't over. Rejoin with a stronger performance
+        </Text>
+      )}
+    </>
+  );
 }
 
 export default function Performances({ user }) {
@@ -129,31 +147,13 @@ export default function Performances({ user }) {
 
   /* ------------ MAIN STAGE CARD ------------ */
 
-  const renderMainItem = ({ item, index }) => {
-
-    const inputRange = [
-      (index - 1) * MAIN_SNAP_INTERVAL,
-      index * MAIN_SNAP_INTERVAL,
-      (index + 1) * MAIN_SNAP_INTERVAL,
-    ];
-
-    const scale = mainScrollX.interpolate({
-      inputRange,
-      outputRange: [1, 1, 1],
-      extrapolate: "clamp",
-    });
-    const translateY = mainScrollX.interpolate({
-        inputRange,
-        outputRange: [0, 0, 0],
-        extrapolate: "clamp",
-      });
-
+  const renderMainItem = ({ item }) => {
     return (
-      <Animated.View
+      <View
         style={{
-          width: MAIN_ITEM_WIDTH,
-          marginHorizontal: MAIN_ITEM_MARGIN,
-          transform: [{ scale } , {translateY}],
+          width: width * 0.96,
+          alignSelf: "center",
+          marginBottom: 16,
         }}
       >
         <StageDisplayer
@@ -161,13 +161,25 @@ export default function Performances({ user }) {
           user={user}
           userProfile={user}
           activity={true}
-          width={MAIN_ITEM_WIDTH}
+          width={width * 0.96}
           height={height * 0.3}
         />
-      </Animated.View>
+       <View className="w- full px- 3 bg-[#010101]  items-ce nter py-2 mt-2 ">
+               <PerformanceDescription stageData={item} user={user} />
+       </View>
+       <View
+            style={{
+                alignSelf: "start",
+                width: width * 0.4,
+                height: 1,
+                backgroundColor: "rgba(212,175,55,0.52)",
+                // marginVertical: 20,
+            }}
+            className="  [95%] px-2 h-[2] bg-gold/40 mb-6 mt-6"
+        />
+      </View>
     );
   };
-
  
   const handleScrollEnd = (event) => {
     const offsetX = event.nativeEvent.contentOffset.x;
@@ -187,48 +199,64 @@ export default function Performances({ user }) {
     <View
     className ="flex-1 items-center  ">
         
-        <View className="px-3 w-full pt-6 pb- 2 bg-dark Bg">
+        <View className="px- 3 w-full mt-4 mb-4 bg-dark Bg">
           <Text
-              style ={{}}
-              className="font-bebas text-xl text-white tracking-widest mb- 1" >
+               style={{
+                fontSize: width / 30,
+                lineHeight: width / 20,
+                letterSpacing: 0.3,
+                fontWeight:700,
+              }}
+              className="fon t-bold uppercase te xt-center te xt-xl text-white tracking-widest mb- 1" >
                Performances
           </Text>
           
-          <Text className="text-gray-200 text-sm mt- 2 leading-relaxed">
-          Relive your performances, stay active in the contest, and keep inspiring more votes with every new upload.
+          <Text  style={{
+                  fontSize: width / 30,
+                  lineHeight: width / 24,
+                  letterSpacing: 0.3,
+                  // fontWeight:700,
+                }}
+                  className="text-gray-200 mt-1 font-semiMontserrat tex t-center mt- ">
+                    Keep competing, share new performances, and inspire more votes.         
           </Text>
-          </View>
+       </View>
+       
+
+       <View
+            style={{
+                alignSelf: "start",
+                width: width * 0.4,
+                height: 1,
+                backgroundColor: "rgba(212,175,55,0.52)",
+                // marginVertical: 20,
+            }}
+            className="  [95%] px-2 h-[2] bg-gold/40 mb-10 mt-4"
+        />
+
         <View
-      
         //   style={{  minHeight: width /2  + width / 4.5 + width * 0.1   }}
           className="flex-1 bg-[#392a0e]/30 w-full  items-center justify-center">
-
               {userTalents.length > 0 ? (
-                 <Animated.FlatList
-                 ref={mainFlatListRef}
-                 horizontal
-                 data={userTalents}
-                 extraData={globalRefresh}
-                 renderItem={renderMainItem}
-                 keyExtractor={(item) => item._id}
-                 showsHorizontalScrollIndicator={false}
-                 snapToInterval={MAIN_SNAP_INTERVAL}
-                 decelerationRate="fast"
-                 bounces={false}
-                 contentContainerStyle={{
-                 paddingHorizontal: SIDE_SPACING- MAIN_ITEM_MARGIN,
-                 marginVertical: 20,
-                 }}
-                 onScroll={Animated.event(
-                 [{ nativeEvent: { contentOffset: { x: mainScrollX } } }],
-                 { useNativeDriver: true }
-                 )}
-                 scrollEventThrottle={16}
-                 initialNumToRender={2}
-                 maxToRenderPerBatch={5}
-                 windowSize={5}
-                 onMomentumScrollEnd={handleScrollEnd} 
-                 getItemLayout={getItemLayout} 
+                <FlatList
+                ref={mainFlatListRef}
+                data={userTalents}
+                extraData={globalRefresh}
+                renderItem={renderMainItem}
+                keyExtractor={(item) => item._id}
+                showsVerticalScrollIndicator={false}
+                bounces={false}
+                removeClippedSubviews={true}
+                initialNumToRender={2}
+                maxToRenderPerBatch={2}
+                updateCellsBatchingPeriod={50}
+                windowSize={5}
+                scrollEventThrottle={16}
+                contentContainerStyle={{
+                  paddingVertical: 16,
+                  paddingBottom: 120,
+                }}
+                onEndReachedThreshold={0.3}
               />
               ) : (
                 <View 
@@ -257,47 +285,9 @@ export default function Performances({ user }) {
                     </Pressable>
                 </View>
               )}
-                
             
             </View>
-            {userTalents.length > 0 && ( 
-            <View className="w-full px-3 items-end py- 2 ">
-               <Text
-                 style={{
-                  fontSize: width / 36,
-                  lineHeight: width / 24,
-                  letterSpacing: 0.3,
-                }}           
-                 className="text-white mr-auto mb-1 font-extrabold leading-tight">
-                {stageData.name} Stage {'  -  '}
-                    <Text 
-                      style={{fontSize:width/42}}
-                      className="text-gray-300 tex t-sm uppercase tracki ng-widest ">
-                      {countries.find(c => c.code === stageData.region)?.name} {' '}
-                          <Text
-                          style={{fontSize:width/39}}
-                          className="text-gray-300   uppercase tracking-widest ">
-                          {countries.find(c => c.code === stageData.region)?.flag}
-                          </Text>
-                      </Text>
-                    </Text>
-            
-                    <PerformanceDescription stageData={stageData} user={user} />
-                    <CarouselIndicator
-                            title="Stages"
-                            count={userTalents.length}
-                            scrollX={mainScrollX}
-                            width={width}
-                            // absolute = {false}
-                            position={{
-                              top: 0,
-                              right: 15,
-                            }}
-                            size={width/34}
-                          /> 
-            </View>
-            )}
-            
+  
 
     </View>
 

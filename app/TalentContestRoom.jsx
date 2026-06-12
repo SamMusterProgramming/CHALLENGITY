@@ -45,7 +45,16 @@ import StageCoverIntroduction from '../components/talent/stageCoverIntroduction'
 export default function TalentContestRoom() {
 const {user , setUserTalents ,globalRefresh,setGlobalRefresh , favouriteStages , favouriteList , setFavouriteList, setFavouriteStages, setUserTalentPerformance} = useGlobalContext()
 
-const {region, regionIcon, selectedTalent , selectedIcon ,startIntroduction ,contestant_id , showGo , location} =  useLocalSearchParams(); 
+const {region,
+      regionIcon, 
+      selectedTalent , 
+      selectedIcon ,
+      startIntroduction ,
+      contestant_id ,
+      showGo ,
+      location ,
+      startPlayer 
+      } =  useLocalSearchParams(); 
 const [talentRoom , setTalentRoom] = useState(null)
 const [stageName, setStageName] = useState(selectedTalent)
 const [isLoading ,setIsLoading] = useState(true)
@@ -281,7 +290,6 @@ useEffect(() => {
 
   const togglePlayPause = () => {
     if (!playerRef.current) return;
-  
     if (isPlaying) {
       playerRef.current.pause();
       setIsPlaying(false);
@@ -310,6 +318,7 @@ useEffect(() => {
 
 
 useEffect(() => { 
+   if(!talentRoom ) return ;
    if (talentRoom) {
      showLoading("Stage is Loading...")
     //  setIsPlaying(false)
@@ -324,10 +333,16 @@ useEffect(() => {
       }
       if(!usedLocalParams) {
         if(talentRoom.contestants.length > 0 && contestant_id) {     
-           setSelectedContestant(location == "contest" ? talentRoom.contestants.find((contestant)=> contestant.user_id === contestant_id) 
-                                                       : talentRoom.contestants[0])
+          const contestant = talentRoom.contestants.find((contestant)=> contestant.user_id === contestant_id) 
+                             || talentRoom.contestants[0] || null
+           setSelectedContestant( contestant )
            setStage(showGo =="true"? true : false)
            setStart(true)
+           setTimeout(() => {
+             startPlayer === "true" && contestant  &&  playerRef.current?.play();
+             setIsPlaying(startPlayer === "true"? true : false)
+             setShowIntroduction(startPlayer === "true"? false : true)
+           }, 1000);
          } else {
           setSelectedContestant(null)
          }
@@ -370,8 +385,7 @@ useEffect(() => {
      setContestantsPerformanceIndex(contestantsIndex)
      hideLoading()
    }
-  
-}, [talentRoom])
+}, [talentRoom ])
 
 
 useEffect(() => {
@@ -396,14 +410,14 @@ const handleDeleteContestantStage = async() => {
                            {
                             user_id:user._id, 
                             post_id:post_id
-                           },
+                           },  
                            setTalentRoom ,
                            setUserParticipation, 
                            setIsLoading
-                          )
+                          )    
       setGlobalRefresh(true)
 }
-
+   
 const handleDeleteContestantQueue = async() => {
   setIsModalVisible(false)
   setParticipationType("")
@@ -517,6 +531,7 @@ const addFavourite  = async() => {
   await addTalentRoomToFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
   setGlobalRefresh(true)
 }
+
 const removeFromFavourite = async()=> {
   setIsModalVisible(false)
   await removeTalentRoomFromFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
@@ -614,8 +629,6 @@ useEffect(() => {
 }
 }, [participationType])
 
-
-
 const getPerformanceIndex = (_id)=> {
       return contestantsPerformanceIndex.find (c => c._id == _id).performanceIndex
 }
@@ -678,10 +691,6 @@ const handleRefresh = ()=> {
   }, 400);  
 }
 
-
-
-
-
 if (isLoading ) {
   return  <AuthLoadingScreen />
 }
@@ -714,7 +723,6 @@ return (
                                                  onResponderGrant={handleTouchStart}
                                                  onResponderRelease={handleTouchEnd}
                                                  className = {!isPlaying ? "opacity-40 w-[100%] " : "w-[100vw]  opacity-100"}>
-                                                     
                                                             <VideoView 
                                                                      style={{ width:'100%' ,height:'100%'}}
                                                                      player={playerRef.current}
@@ -727,9 +735,7 @@ return (
                                                              player={nextPlayerRef.current}
                                                            /> */}
                           
-                                              </Animated.View>
-                                          
-                                                 
+                                              </Animated.View>                                             
                                               ):(
                                                 <View
                                                 className={ "flex-1  flex-col justify-center items-center "}
@@ -803,7 +809,7 @@ return (
                                                   setOpenUserModal={setOpenUserModal} 
                                                   isPlaying={isPlaying}
                                                   />       
-                                                {isPlaying && (<ProgresssBarVideo  player={playerRef.current} visible={isPlaying} bottom={MENU_HEIGHT/1.3} />)}
+                                                {isPlaying && (<ProgresssBarVideo  player={playerRef.current} visible={isPlaying} bottom={MENU_HEIGHT/4} />)}
                                                 {isPlaying &&  (
                                               <VolumeControl volume = {volume} setVolume={setVolume} bottom = {95} left ={12} />
                                               )}
@@ -813,31 +819,30 @@ return (
                                                                    setSelectedContestant={setSelectedContestant} 
                                                                    selectedContestant={selectedContestant} />
 
-                                              <StageCoverIntroduction stageData={talentRoom} onFinish={() => {setShowIntroduction(false)}} visible={showIntroduction} />
+                                              {/* <StageCoverIntroduction stageData={talentRoom} onFinish={() => {setShowIntroduction(false)}} visible={showIntroduction} /> */}
                                               
                                           </View>
                                       
                                     )}
                                       
                                 </>
-                              ) : (
-                              <View
-                              className={ "w-[100vw] h-[100%]  flex-col justify-center items-center "}
-                                  > 
-                                 
-                                 {!newChallenge ? (
-                                  <>
-                                  {isPlaying && (
-                                       <View
-                                       className = {!isPlaying ? "opacity-20 w-[100%] " : "w-[100vw]  opacity-100"}>
-                                           
+                                ) : (
+                                <View
+                                className={ "w-[100vw] h-[100%]  flex-col justify-center items-center "}
+                                    > 
+                                  
+                                  {!newChallenge ? (
+                                    <>
+                                    {isPlaying && (
+                                      <View
+                                      className = {!isPlaying ? "opacity-20 w-[100%] " : "w-[100vw]  opacity-100"}>
                                                   <VideoView 
-                                                           style={{ width:'100%' ,height:'100%'}}
-                                                           player={playerRef.current}
-                                                           contentFit='cover'
-                                                           nativeControls ={false}
-                                                           pointerEvents='box-only'
-                                                 />
+                                                          style={{ width:'100%' ,height:'100%'}}
+                                                          player={playerRef.current}
+                                                          contentFit='cover'
+                                                          nativeControls ={false}
+                                                          pointerEvents='box-only'
+                                                  />
                                                   <TouchableOpacity 
                                                     hitSlop={Platform.OS === "android" &&{ top: 400, bottom: 400, left: 400, right: 400 }}
                                                   
@@ -846,30 +851,28 @@ return (
                                                             "w-full h-full  flex-col absolute top-  justify-center items-center"
                                                     }>
                                                 </TouchableOpacity>
-                                           
-                                       </View>
-                                      
-                                  )}
-                                  
-                                    <ContestantRoom regionIcon = {regionIcon} selectedIcon = {selectedIcon} user={user}  show ={!isRefreshing} 
-                                    setPerformanceToDelete = {setPerformanceToDelete} updatePerformanceIndex={updatePerformanceIndex}
-                                    setIsPlaying={setIsPlaying} isPlaying={isPlaying} player={playerRef.current} top={0}
-                                    h ={height - insets.top}
-                                    w = {width} bottom = {MENU_HEIGHT + 5} setStage ={setStage} setParticipationType={setParticipationType}
-                                    setSelectedContestant={setSelectedContestant} userParticipation ={userParticipation}
-                                    userContestantStatus ={userContestantStatus} setStart={setStart}
-                                    numberOfContestants={numberOfContestants}  talentRoom={talentRoom} edition={edition}   
-                                    />
+                                      </View>
+                                    )}
                                     
-                                 </>
-                                ):(
-                                  <TalentParticipation talentRoom= {talentRoom} setReplayRecording={setReplayRecording} setNewChallenge={setNewChallenge} 
-                                  participation = {participationType} userParticipation ={userParticipation} bottom = {MENU_HEIGHT + 5} 
-                                  user={user} setSelectedContestant={setSelectedContestant} setStage={setStage} setTalentRoom={setTalentRoom} setIsExpired={setIsExpired}
-                                   />
-                                  )}
-                               </View>
-                            )}
+                                      <ContestantRoom regionIcon = {regionIcon} selectedIcon = {selectedIcon} user={user}  show ={!isRefreshing} 
+                                      setPerformanceToDelete = {setPerformanceToDelete} updatePerformanceIndex={updatePerformanceIndex}
+                                      setIsPlaying={setIsPlaying} isPlaying={isPlaying} player={playerRef.current} top={0}
+                                      h ={height - insets.top}
+                                      w = {width} bottom = {MENU_HEIGHT + 5} setStage ={setStage} setParticipationType={setParticipationType}
+                                      setSelectedContestant={setSelectedContestant} userParticipation ={userParticipation}
+                                      userContestantStatus ={userContestantStatus} setStart={setStart}
+                                      numberOfContestants={numberOfContestants}  talentRoom={talentRoom} edition={edition}   
+                                      />
+                                      
+                                  </>
+                                  ):(
+                                    <TalentParticipation talentRoom= {talentRoom} setReplayRecording={setReplayRecording} setNewChallenge={setNewChallenge} 
+                                    participation = {participationType} userParticipation ={userParticipation} bottom = {MENU_HEIGHT + 5} 
+                                    user={user} setSelectedContestant={setSelectedContestant} setStage={setStage} setTalentRoom={setTalentRoom} setIsExpired={setIsExpired}
+                                    />
+                                    )}
+                                </View>
+                              )}
                           
               {!isPlaying  && !replayRecording &&  (
               <StageMenu  height={MENU_HEIGHT} width ={width} setParticipationType={setParticipationType} isFavourite={isFavourite}

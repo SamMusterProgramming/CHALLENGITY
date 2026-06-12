@@ -16,14 +16,14 @@ export default function StageHero({
 
   return (
     // <>
-        <View className="w-full te xt-center py-2">
+        <View className="w-full text-center py-2">
           <Text 
             style={{
                 fontSize: width / 40,
                 lineHeight: width / 36,
                 letterSpacing: 0.3,
               }}
-            className="text-white te xt-center uppercase font-bold py-1  leading-tight">
+            className="text-white text-center uppercase font-bold py-1  leading-tight">
                {title}{' Stage   '} 
                 <Text
                   style={{fontSize:width/39}}
@@ -37,7 +37,7 @@ export default function StageHero({
                   lineHeight: width / 24,
                   letterSpacing: 0.3,
                 }}
-                className="text-gray-200 te xt-center lowercase font-normal leading-relaxed">
+                className="text-gray-200 text-center lowercase font-normal leading-relaxed">
                     {description && description}
           </Text>
         </View>

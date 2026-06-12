@@ -12,6 +12,8 @@ import { icons } from "../../constants";
 import CarouselIndicator from "../custom/carouselIndicator";
 import { LinearGradient } from "expo-linear-gradient";
 import { getTimeLapse } from "../../helper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 export default function CentralContestantPlayer({
   data,
@@ -29,6 +31,7 @@ export default function CentralContestantPlayer({
   const flatList = useRef(null);
   const scrollX = useRef(new Animated.Value(0)).current;
   const [index, setIndex] = useState(1)
+  const {colorTheme} = useGlobalContext()
 
   const handlePress = () => {
     if (isPlaying) {
@@ -96,7 +99,6 @@ export default function CentralContestantPlayer({
               }}
               resizeMode="cover"
             />
-            {/* dark cinematic overlay */}
             <View
               style={{
                 position: "absolute",
@@ -105,8 +107,7 @@ export default function CentralContestantPlayer({
                 backgroundColor: "rgba(0,0,0,0.4)",
               }}
             />
-            {/* play icon */}
-            <Image
+            {/* <Image
               source={icons.play}
               style={{
                 position: "absolute",
@@ -116,7 +117,25 @@ export default function CentralContestantPlayer({
                 top: "45%",
                 opacity: 0.6,
               }}
-            />
+            /> */}
+                <View
+                  style={{
+                    position: "absolute",
+                    width: 44,
+                    height: 44,
+                    borderRadius: 24,
+                    top: "45%",
+                    backgroundColor: "rgba(0,0,0,0.55)",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    alignSelf: "center",
+                  }} >
+                  <MaterialCommunityIcons
+                    name="play"
+                    size={24}
+                    color = {colorTheme}
+                  />
+                </View>
           </Pressable>
         </Animated.View>
       </View>
@@ -191,10 +210,11 @@ export default function CentralContestantPlayer({
       />   
       <View
       style={{
-        bottom : height/6 + height/11 ,  
-        left : 15 
+        bottom : height /6 + 3, 
+        left :  height /10 ,
+        height:height/12
        }}
-      className="absolute w- [60%] gap-8 flex-row items-center justify-start">
+      className = "absolute w-[60%] gap-2 flex-row items-center justify-center">
           <CarouselIndicator
             count = {data.length}
             scrollX = {scrollX}
@@ -208,28 +228,32 @@ export default function CentralContestantPlayer({
             }
             rank = {selectedContestant.rank}
             votes = {selectedContestant.votes + 1}
-            size={width/34}
+            size={width/44}
           />
-          <Text
-            style={{ fontSize: width/55 }}
-            className="text-white font-semibold ml-auto">
-              {index == 1 ?"Recent": "Prev"}  .  {getTimeLapse(data[index-1].date)} ago
-          </Text>
+          {/* <View>
+            <Text
+              style={{ fontSize: width/49 }}
+              className="text-white  font-semibold ml-auto">
+                {index == 1 ?"Recent": "Prev"}  .  {getTimeLapse(data[index-1].date)} ago
+            </Text>
+          </View> */}
+          
       </View>
-      {/* <CarouselIndicator
-          count = {data.length}
-          scrollX = {scrollX}
-          width = {width }
-          position = {
-                {
-                  bottom : height/6 + height/11 ,  
-                  left : 15 
-                }
-          }
-          rank = {selectedContestant.rank}
-          votes = {selectedContestant.votes + 1}
-          size={width/38}
-        /> */}
+      <View 
+       style={{
+        bottom : height /6 + width / 7, 
+        left :  10 ,
+        height:height/12
+       }}
+       className = "absolute w- [60%] gap-2 flex-row items-center justify-center">
+
+            <Text
+              style={{ fontSize: width/49 }}
+              className="text-white  font-semibold ml-auto">
+                {index == 1 ?"Recent": "Prev"}  .  {getTimeLapse(data[index-1].date)} ago
+            </Text>
+      </View>
+    
     </View>
   );
 }

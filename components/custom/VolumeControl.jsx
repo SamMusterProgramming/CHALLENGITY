@@ -1,8 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
-import { icons } from '../../constants';
 import Slider from '@react-native-community/slider';
-import v from '../../assets/icons/volume.png'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 

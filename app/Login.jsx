@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateChallengeTalentGuinessData, getAllTalentStages, getFavouriteList, getFavouriteStageList, getFavouriteStages, getFollowData, getFollowings, getNotificationByUser, getRegionTalentStages, getTopTalents,  getUserFriendsData, 
-  getUserTalent, 
-  saveToken} from '../apiCalls';
+import { saveToken } from '../apiCalls';
 import {
   View,
   Text,
@@ -12,9 +10,13 @@ import {
   Vibration,
   useWindowDimensions,
   Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  ScrollView,
 } from 'react-native';
 import { useGlobalContext } from '../context/GlobalProvider';
-import { icons } from '../constants';
+import {  images } from '../constants';
 import {  authLogin, BASE_URL } from '../apiCalls';
 import { router } from 'expo-router';
 import {  loadLoginHint, login,  loginAnonymouslyUser,  resendVerification, saveLoginHint, signUp,  waitForUser } from '../services/userServices';
@@ -37,14 +39,15 @@ import {
 } from "@expo-google-fonts/montserrat";
 import { getUserCountry } from '../utilities/userGeoLocation';
 import CreateAccountModal from '../components/modal/createAccountModal';
+import { registerForPushNotificationsAsync } from '../utilities/registerForPushNotifications';
+import { Keyboard } from 'react-native';
+import * as NavigationBar from "expo-navigation-bar";
 
 
 
 export default function Login() {
   // const { user, setUser } = useGlobalContext();
-  const {user,setUser ,  allStages, setAllStages ,setFavouriteList,setUserTalents,setRegionStages, setTopTalents ,favouriteStages, setFavouriteStages
-    ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData,trendingChallenges,setTrendingChallenges,isLoggingOut, setIsLoggingOut
-    ,userProfileImg,setUserProfileImg ,hotStages, setHotStages , gpsLocation , setGpsLocation , setGlobalSelectedRegion ,  setUserCountryCode  } = useGlobalContext()  
+  const {user,setUser ,colorTheme ,form, setForm } = useGlobalContext()  
   const [message, setMessage] = useState("")
   const [isPasswordWrong, setIsPasswordWrong] = useState(false); 
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false); 
@@ -53,14 +56,11 @@ export default function Login() {
   const [isFetching, setIsFetching] = useState(false);
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    email: "samcoeur2013@gmail.com",
-    password: 'Samir@2024',
-  });
-  const [name , SetName] = useState ({
-     firstname:"",
-     lastname:""
-  })
+  // const [form, setForm] = useState({
+  //   email: "samcoeur2013@gmail.com",
+  //   password: 'Samir@2024',
+  // });
+
   const [openCreateAcctModal , setOpenCreateAcctModal] = useState(false)
   const [error, setError] = useState("");
   const [messageColor, setMessageColor] = useState("pink");
@@ -71,7 +71,6 @@ export default function Login() {
   const [googleHint, setGoogleHint] = useState(null);
   const [emailHint, setEmailHint] = useState(null);
   const { showLoading, hideLoading } = useLoading();
-
   const [isEmailExist, setIsEmailExist] = useState(false);
 
 
@@ -80,11 +79,16 @@ export default function Login() {
     Montserrat_400Regular,
     Montserrat_600SemiBold,
   });
+
+  // useEffect(() => {
+  //   NavigationBar.setVisibilityAsync("visible");
+  // }, []);
   
   useEffect(() => {
+    if(form.email !== "") return
      const loadHint = async() =>{
       const hint =  await loadLoginHint()
-      hint.email && setForm({ email:hint.email , password:hint.email.slice(0,7)})  
+      hint.email && setForm({...form, email:hint.email , password:hint.email.slice(0,7)})  
       if(hint.provider == "google"){
          setGoogleHint(hint.email)  
       }
@@ -251,46 +255,15 @@ export default function Login() {
       await saveLoginHint("email", data.user.email)
       // await saveToken(data.token);
       setUser(data.user);
-
+      registerForPushNotificationsAsync(data.user._id);
+      router.replace("/Home");
     } catch (error) {
       hideLoading()
       setError(getFirebaseErrorMessage(error));
-      setMessageColor("lightgray")
-      setVerification(false)
-    } finally {
-       
-    }
-  };
-
-
-
-  const handleSignUp = async () => {
-    try {
-      // 1. Create user in Firebase
-      const user = await signUp(form.email, form.password);
-      // 2. Get Firebase ID token
-      const token = await user.getIdToken();
-      showLoading("signing up , please wait ...")
-      setError("")
-      // 3. Call your backend
-      const res = await fetch(`${BASE_URL}/users/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      });
-      const data = await res.json();
-      setError(data.message)
-      setMessageColor(data.color)
-    } catch (e) {
-      if(getFirebaseErrorMessage(e) === "Email is already in use") setIsEmailExist(true)
-      else setIsEmailExist(false)
-      setError(getFirebaseErrorMessage(e));
       setMessageColor("pink")
       setVerification(false)
     } finally {
-       hideLoading()
+       
     }
   };
 
@@ -332,13 +305,13 @@ export default function Login() {
                              }),
       });
       const data = await res.json();
-      console.log(data)
       // 4. Save JWT
       await saveToken(data.token);
       // 5. Optional: save hint
       await saveLoginHint("guest");
       // 6. Set global user
       setUser(data.user);
+      router.replace("/Home");
     } catch (e) {
       console.log("ANONYMOUS LOGIN ERROR:", e);
       setError("Guest login failed");
@@ -346,436 +319,315 @@ export default function Login() {
       hideLoading();
     }
   };
-
-
-
-useEffect(() => {
-  if (!user) return;
-  const fetchUserData = async () => {
-    try {
-      await Promise.all([
-        getUserTalent(user._id, setUserTalents),
-        getNotificationByUser(user._id, setNotifications),
-        // getFollowings(user._id, setFollowings),
-        getUserFriendsData(user._id, setUserFriendData),
-        getFollowData(user._id, setFollow),
-        getFavouriteStageList(user._id, setFavouriteList),
-        getFavouriteStages(user._id, setFavouriteStages),
-        // getTopTalents(user._id, setTopTalents),
-        // getAllTalentStages(setAllStages),
-        
-        // getRegionTalentStages("US" , setRegionStages),
-        generateChallengeTalentGuinessData(user._id, setHotStages),
-      ]);
-      await getUserCountry().then( async(res) => {
-                    setGlobalSelectedRegion(res)
-                    setUserCountryCode(res)
-                    await getRegionTalentStages(res, setRegionStages)
-                        })
-      setUserProfileImg(user.profileImage?.publicUrl);
-      router.replace("/Home");
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    } finally {
-      hideLoading();
-    }
-  };
-  fetchUserData();
-}, [user]);
  
 return (
   <View
-    style={{
-      flex: 1,
-      backgroundColor: "#050505",
-      paddingTop: insets.top,
-      paddingBottom: insets.bottom,
-      alignItems: "center",
-      justifyContent: "between",
-    }}
-  >
-
-    {/* subtle glow background */}
-    {/* <View
-      style={{
-        position: "absolute",
-        top: -200,
-        width: width * 1.4,
-        height: width * 1.4,
-        borderRadius: 999,
-        backgroundColor: "rgba(212,175,55,0.06)",
-      }}
-    /> */}
-
-    <View
-      style={{
-        flex: 1,
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        // paddingHorizontal: 11,
-      }}
-    >
-
-      {/* ===== HEADER ===== */}
-      <View
-        className ="justify-center h-[20%]"
-        style={{
-          alignItems: "center",
-          // marginBottom: 30,
-          // height: height * 0.25,
-        }}
-      >
-        <Image
-          source={icons.talentify_logo}
-          resizeMode="contain"
+    style={{ flex: 1, backgroundColor: "#050505" }}
+    // behavior={Platform.OS === "ios" ? "padding" : undefined}
+     >
+    
+        <View
           style={{
-            width: width * 0.95,
-            height: height * 0.15,
-          }}
-        />
-
-        <Text
-          style={{
-            // marginTop: 10,
-            color: "rgba(255,255,255,0.65)",
-            fontSize: height / 64,
-            textAlign: "center",
-            width: "80%",
-            lineHeight: 20,
+            flex: 1,
+            alignItems: "center",
           }}
         >
-          Compete. Perform. Get discovered worldwide.
-        </Text>
-      </View>
-
-      {/* ===== LOGIN CARD (PREMIUM GLASS) ===== */}
-      <View
-      className ="justify-center bg- [#464343] px-8 py-4 h-[60%] "
-        style={{
-          // flex:1,
-          width: "100%",
-          // height : height * 0.6 ,
-          // maxWidth: 420,
-          // borderRadius: 12,
-          // padding: 15,
-          // backgroundColor: "rgba(255,255,255,0.04)",
-          // borderWidth: 1,
-          // borderColor: "rgba(255,255,255,0.10)",
-          shadowColor: "#000",
-          shadowOpacity: 0.4,
-          shadowRadius: 30,
-          elevation: 10,
-        }}
-      >
-
-        {/* TITLE */}
-        <View
-        style={{
-          marginBottom: 48
-        }}
-         className="">
-            <Text
+          {/* HEADER SPACE */}
+          <View
+            style={{
+              flex: 1,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={images.applogo}
+              resizeMode="contain"
               style={{
-                color: "#fff",
-                fontSize: width / 20,
-                fontWeight: "900",
-                textAlign: "center",
+                width: width * 0.92,
+                height: height / 8,
               }}
-            >
-              Welcome back
-            </Text>
+            />
 
             <Text
               style={{
-                marginTop: 6,
-                // marginBottom: 28,
-                color: "rgba(255,255,255,0.45)",
-                fontSize: width / 36,
+                color: "rgba(255,255,255,0.65)",
+                fontSize: width / 28,
                 textAlign: "center",
+                width: "82%",
+                lineHeight: width / 16,
+                // marginTop: height / 120,
               }}
             >
-              Sign in to continue your journey
+              Compete. Shine. Get Discovered.
             </Text>
-        </View>
-       
-
-        {/* ===== INPUTS ===== */}
-
-        <View 
-        style ={{
-          marginBottom: 48
-        }}
-        className="flex- 1">
-              {/* EMAIL */}
-              <View
-                style={{
-                  height: height/18,
-                  borderRadius: 5,
-                  justifyContent: "center",
-                  paddingHorizontal: 14,
-                  // backgroundColor: "rgba(255,255,255,0.04)",
-                  borderWidth: 1,
-                  borderColor: "rgba(255,255,255,0.42)",
-                  marginBottom: 24,
-                }} >
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontSize: width / 40,
-                    // fontWeight: "900",
-                    textAlign: "center",
-                    
-                    // backgroundColor: "rgba(255,255,255,0.04)",
-                  }}
-                  className="absolute top-[-10] pl-2 pr-4 bg-[#050505] tracking-wider font-montserrat  left-0"
-                >
-                  Email
-                </Text>
-                <TextInput
-                  placeholder="Email"
-                  placeholderTextColor="rgba(255,255,255,0.5)"
-                  value={form.email}
-                  onChangeText={(e) => setForm({ ...form, email: e })}
-                  style={{
-                    color: "#fff",
-                    fontSize: 15,
-                  }}
-                />
-              </View>
-
-              {/* PASSWORD */}
-              <View
-                style={{
-                  height: height/18,
-                  borderRadius: 5,
-                  justifyContent: "center",
-                  paddingHorizontal: 14,
-                  backgroundColor: "#050505",
-                  borderWidth: 1,
-                  borderColor: "rgba(255,255,255,0.42)",
-                  marginBottom: 24,
-                }}
-              >
-                 <Text
-                  style={{
-                    color: "#fff",
-                    fontSize: width / 40,
-                    // fontWeight: "900",
-                    textAlign: "center",
-                    // backgroundColor: "rgba(255,255,255,0.04)",
-                  }}
-                  className="absolute top-[-10] pl-2 pr-4 bg-[#050505] tracking-wider font-montserrat  left-0"
-                >
-                  Password
-                </Text>
-                <TextInput
-                  placeholder="Password"
-                  placeholderTextColor="rgba(255,255,255,0.35)"
-                  secureTextEntry
-                  value={form.password}
-                  onChangeText={(e) => setForm({ ...form, password: e })}
-                  style={{
-                    color: "#fff",
-                    fontSize: 15,
-                  }}
-                />
-              </View>
-
-              {/* ===== BUTTONS ===== */}
-
-              {/* PRIMARY LOGIN */}
-              <TouchableOpacity       
-                activeOpacity={0.9}
-                onPress={handleLogin}
-                style={{
-                  // marginTop: 12,
-                  height: height/18,
-                  borderRadius: 8,
-                  backgroundColor: "#D4AF37",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: 12,
-                }} >
-                <Text
-                  style={{
-                    color: "#0A0A0A",
-                    fontSize: width /36 ,// 14,
-                    fontWeight: "800",
-                    letterSpacing: 0.6,
-                  }}
-                >
-                  LOGIN
-                </Text>
-              </TouchableOpacity>
-
-              {/* GOOGLE */}
-              <GoogleButton onPress={handleGoogleLogin} />
           </View>
 
-          {/* <View>
-            <TouchableOpacity
-              // className = "mt-auto"
-              onPress= {() => {setOpenCreateAcctModal(true)}} // {handleSignUp}
-              activeOpacity={0.8}
+          {/* CENTER LOGIN SECTION */}
+          <View
+            style={{
+              width: "100%",
+              paddingHorizontal: width / 24,
+              justifyContent: "center",
+            }}
+          >
+            {/* TITLE */}
+            <View
               style={{
-                // marginTop: 10,
-                height: height/18,
-                borderRadius: 8,
-                // borderWidth: 1,
-                // borderColor: "rgba(255,255,255,0.14)",
-                backgroundColor: "rgba(255,255,255,0.04)",
+                marginBottom: height / 30,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: width / 20,
+                  fontWeight: "900",
+                  textAlign: "center",
+                }}
+              >
+                Welcome back
+              </Text>
+
+              <Text
+                style={{
+                  marginTop: height / 140,
+                  color: "rgba(255,255,255,0.45)",
+                  fontSize: width / 28,
+                  textAlign: "center",
+                }}
+              >
+                Sign in to continue your journey
+              </Text>
+            </View>
+
+            {/* EMAIL */}
+            <View
+              style={{
+                height: height / 16,
+                borderRadius: width / 80,
+                justifyContent: "center",
+                paddingHorizontal: 8,
+                borderWidth: 1,
+                borderColor: colorTheme,
+                marginBottom: height / 45,
+              }}
+            >
+              <Text
+                style={{
+                  color: colorTheme,
+                  fontSize: width / 34,
+                }}
+                className="absolute top-[-12] pl-2 pr-4 bg-[#050505] tracking-wider font-semibold left-0"
+              >
+                Email
+              </Text>
+
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="rgba(255,255,255,0.5)"
+                value={form.email}
+                onChangeText={(e) => setForm({ ...form, email: e })}
+                style={{
+                  color: "#fff",
+                  fontSize: width / 28,
+                }}
+              />
+            </View>
+
+            {/* PASSWORD */}
+            <View
+              style={{
+                height: height / 16,
+                borderRadius: width / 80,
+                justifyContent: "center",
+                paddingHorizontal: 8,
+                borderWidth: 1,
+                borderColor: colorTheme,
+                backgroundColor: "#050505",
+                marginBottom: height / 45,
+              }}
+            >
+              <Text
+                style={{
+                  color: colorTheme,
+                  fontSize: width / 34,
+                }}
+                className="absolute top-[-12] pl-2 pr-4 bg-[#050505] tracking-wider font-semibold left-0"
+              >
+                Password
+              </Text>
+
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="rgba(255,255,255,0.35)"
+                secureTextEntry
+                value={form.password}
+                onChangeText={(e) => setForm({ ...form, password: e })}
+                style={{
+                  color: "#fff",
+                  fontSize: width / 28,
+                }}
+              />
+            </View>
+
+            {/* LOGIN */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={handleLogin}
+              style={{
+                height: height / 16,
+                borderRadius: width / 60,
+                backgroundColor: colorTheme,
                 justifyContent: "center",
                 alignItems: "center",
+                marginBottom: height / 45,
               }}
             >
               <Text
                 style={{
-                  color: "rgba(255,255,255,0.85)",
-                  fontSize: 13,
-                  fontWeight: "600",
+                  color: "#0A0A0A",
+                  fontSize: width / 28,
+                  fontWeight: "700",
+                  letterSpacing: 0.6,
                 }}
               >
-                CREATE ACCOUNT
+                LOGIN
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={handleAnonymousLogin}
-              style={{
-                marginTop: 12,
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: "rgba(255,255,255,0.35)",
-                  fontSize: 12,
-                  letterSpacing: 0.8,
-                }}
-              >
-                Continue as Guest
-              </Text>
-            </TouchableOpacity>
-          </View> */}
+            <GoogleButton onPress={handleGoogleLogin} />
+          </View>
 
-      <View
-        style={{
-          marginTop: 0,
-          flexDirection: "col",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingHorizontal: 4,
-        }}
-      >
-
-        {/* CREATE ACCOUNT */}
-        <Pressable
-            onPress= {() => {setOpenCreateAcctModal(true)}} // {handleSignUp}
-            android_ripple={{
-            color: "rgba(255,255,255,0.08)",
-            borderless: false,
-          }}
-          style={{
-            paddingVertical: 10,
-            // paddingHorizontal: 14,
-            borderRadius: 14,
-            backgroundColor: "rgba(255,255,255,0.03)",
-            borderWidth: 1,
-            borderColor: "rgba(255,255,255,0.06)",
-          }}
-        >
-          <Text
+          {/* FOOTER SPACE */}
+          <View
             style={{
-              fontSize: width / 32,
-              // color: "#E5E7EB",
-              fontWeight: "600",
-              letterSpacing: 0.4,
+              flex: 1,
+              width: "100%",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              paddingBottom: height / 20,
             }}
-            className = "text-[#7ea1e8]"
+            className ="bg-gold/10"
           >
-           don't have an account ?  Sign up 
-          </Text>
-        </Pressable>
+                <View
+                  style={{
+                    flexDirection: "col",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingHorizontal: 8,
+                    // marginTop : height /30
+                  }}
+                  className =" bg-black py-4 w-full"
+                >
+                  <Pressable
+                      onPress= {() => {
+                        router.push('/signup')
+                        // setOpenCreateAcctModal(true)
+                      }}
+                      android_ripple={{
+                      color: "rgba(255,255,255,0.08)",
+                      borderless: false,
+                    }}
+                    style={{
+                      paddingVertical: 10,
+                      // paddingHorizontal: 14,
+                      borderRadius: 14,
+                      backgroundColor: "rgba(255,255,255,0.03)",
+                      borderWidth: 1,
+                      borderColor: "rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: width / 29,
+                        // color: "#E5E7EB",
+                        fontWeight: "600",
+                        letterSpacing: 0.4,
+                      }}
+                      className = "text-white"
+                    >
+                    Don't have an account ? {' '}
+                      <Text
+                        style={{
+                          fontSize: width / 25,
+                          color: colorTheme,
+                          fontWeight: "600",
+                          letterSpacing: 0.4,
+                        }}
+                        // className = "text-[#7ea1e8]"
+                      >
+                        Sign up 
+                      </Text>
+                    </Text>
+                    
+                  </Pressable>
+                  <Pressable
+                    onPress={handleAnonymousLogin}
+                    android_ripple={{
+                      color: "rgba(212,175,55,0.08)",
+                      borderless: false,
+                    }}
+                    style={{
+                      paddingVertical: 10,
+                      paddingHorizontal: 14,
+                      borderRadius: 14,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: width / 36,
+                        color: "#D4AF37",
+                        fontWeight: "700",
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      Continue as Guest
+                    </Text>
+                  </Pressable>
+              </View>
 
-        {/* GUEST */}
-        <Pressable
-          onPress={handleAnonymousLogin}
-          android_ripple={{
-            color: "rgba(212,175,55,0.08)",
-            borderless: false,
-          }}
-          style={{
-            paddingVertical: 10,
-            paddingHorizontal: 14,
-            borderRadius: 14,
-            backgroundColor: "rgba(212,175,55,0.08)",
-            borderWidth: 1,
-            borderColor: "rgba(212,175,55,0.18)",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: width / 36,
-              color: "#D4AF37",
-              fontWeight: "700",
-              letterSpacing: 0.5,
-            }}
-          >
-            Continue as Guest
-          </Text>
-        </Pressable>
+              <View
+              className = "flex-1 w-[90%] mb-6 justify-center rounded-b-full gap-4 bg-black border-l-4 border-r-4 border-b-4 border-goldSoft/20 items-center" >
+                 
+                 
+                  <ErrorMessage
+                  message={error}
+                  color={messageColor}
+                  width={width} />
+            
+                  {verification && (
+                    <TouchableOpacity onPress={sendVerification}>
+                      <Text
+                        style={{
+                          // marginTop: 10,
+                          color: "#D4AF37",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Resend verification email
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+              </View>
+            
+            </View>
 
-      </View>
-
-
-
-      </View> 
-     
-      {/* ===== FOOTER ===== */}
-      <View
-      className ="fle x-1 justify-center items-center gap-4 b g-white min-h-[20%]"
-        style={{
-          // height:height * 0.15,
-          // marginBottom: 8,
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
-        <ErrorMessage
-          message={error}
-          color={messageColor}
-          width={width}
-        />
-        
-        {verification && (
-          <TouchableOpacity onPress={sendVerification}>
-            <Text
-              style={{
-                // marginTop: 10,
-                color: "#D4AF37",
-                fontWeight: "600",
-              }}
-            >
-              Resend verification email
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      {openCreateAcctModal && (
-      <CreateAccountModal 
-      setIsVisible = {setOpenCreateAcctModal}
-      setIsEmailExist={setIsEmailExist}
-      isEmailExist ={isEmailExist}
-      form={form}
-      setForm={setForm}
-      name={name}
-      SetName={SetName}
-      onPress={handleSignUp}
-      width={width}
-      height={height} />
-      )}
-    </View>
+          {openCreateAcctModal && (
+            <CreateAccountModal
+              setIsVisible={setOpenCreateAcctModal}
+              setIsEmailExist={setIsEmailExist}
+              isEmailExist={isEmailExist}
+              form={form}
+              setForm={setForm}
+              name={name}
+              SetName={SetName}
+              onPress={handleSignUp}
+              width={width}
+              height={height}
+            />
+          )}
+        </View>
   </View>
 );
 }

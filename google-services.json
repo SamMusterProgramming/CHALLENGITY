@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_number": "373653845536",
+    "project_id": "challengify-wgt",
+    "storage_bucket": "challengify-wgt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373653845536:android:af18f56fbb2a53b492ee45",
+        "android_client_info": {
+          "package_name": "com.challengify.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "373653845536-80d4i4m40hcil3b6fkmer7pd72c2u31h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.challengify.app",
+            "certificate_hash": "f5ce956abcfbb30ea8cb25f4df208845f7243d92"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYpR1nxkK4nE2MxRcC6RbfQr7lBfoVPMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "373653845536-a8q9efdodnddlsrkmug83j7k597c8huj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

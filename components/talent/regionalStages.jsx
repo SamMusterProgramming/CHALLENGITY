@@ -34,10 +34,11 @@ import { useGlobalContext } from '../../context/GlobalProvider';
           <View
             className="
               w-full
-              mb-2 3
-              mt-2
+              mb-4 3
+              mt-3
               b g-[#111114]
               roun ded-lg
+              items-center
             " >
       
             {/* TOP TITLE */}
@@ -45,47 +46,53 @@ import { useGlobalContext } from '../../context/GlobalProvider';
               className="
                 flex-row
                 items-center
-                justify-between
+                justify-center
                 mb- 3
               "  >
       
               <View className="flex-1">
       
-                <View className="flex-row items-center">
+                <View className="flex-row flex-1 justify-center items-center">
       
-                  <Text
-                    style={{
-                      fontSize: width * 0.09,
-                    }}
-                  >
-                    {reg?.flag}
-                  </Text>
+                 
       
-                  <View className="ml-2">
+                  <View className="ml -2 flex-1 flex-row text-center justify-center items-center">
       
                     <Text
                       className="
-                        text-[#F5D77A]
-                        font-bebas
-                        tracking-[1px]
-                      "
+                        text-white [#F5D77A]
+                        font-bold
+                        tracking-[0.6px]
+                        mb -2 "
                       style={{
-                        fontSize: width * 0.028,
+                        fontSize: width /39,
                       }}
                     >
-                      {reg?.name?.toUpperCase()} STAGES
+                      {reg?.name?.toUpperCase()} {' '}
+                      {/* <Text
+                          style={{
+                            fontSize: width /36,
+                          }}  >
+                          STAGES {'  '}
+                      </Text>  */}
+                      <Text
+                          style={{
+                            fontSize: width /30,
+                          }}  >
+                          {reg?.flag}
+                      </Text> 
                     </Text>
       
                     <Text
                       className="
-                        text-white
+                        text-gray-400
                         font-black
+                        absolute right-0
                       "
                       style={{
-                        fontSize: width * 0.027,
-                      }}
-                    >
-                      Discover {region === userCountryCode ? "Local Talent " : "Global Talent "} 
+                        fontSize: width * 0.017,
+                      }}   >
+                      {/* Discover {region === userCountryCode ? "Local Talent " : "Global Talent "}  */}
                     </Text>
                   </View>
                 </View>
@@ -100,7 +107,7 @@ import { useGlobalContext } from '../../context/GlobalProvider';
       <StageCard
         stage = {item}
         width={width}
-        height={width/3.8}
+        height={width/3.03}
         region = {region}
         user = {user}
       />
@@ -110,7 +117,7 @@ import { useGlobalContext } from '../../context/GlobalProvider';
         return(
           <View
           className="
-            mt-2 3
+            mt- 2 3
             b g-[#222226]
             bor der
             b order-[#F5D77A]/10
@@ -120,32 +127,18 @@ import { useGlobalContext } from '../../context/GlobalProvider';
             overflow-hidden
           "
         >
-          <Text
+            <Text
             className="
-              te xt-center
-              text-[#e2ddd0]
-              font-black
-              trackin g-[1px] "
-            style={{
-              fontSize: width /28,
-            }}
-          >
-            One Stage. One Spotlight. Your Moment.
-          </Text>
-
-          <Text
-            className="
-              te xt-center
-              text-[#bfbfc3]
-              mt-2
+              text-center
+              text-gray-200
+              font- semibold
               leading-5
             "
             style={{
-              fontSize: width / 32,
-            }}
-          >
-             Enjoy the competition vote live support rising talent and showcase your own talent to the world like never before
-          </Text>
+              fontSize: width / 34,
+            }}     >
+                 Experience live competitions, vote in real time, support rising talent, and showcase your own talent to the world like never before.      
+            </Text>
 
         </View>
         )
@@ -154,34 +147,34 @@ import { useGlobalContext } from '../../context/GlobalProvider';
     return (
   
       <View
-        className=" justify-start items-center w-full ">
+        className=" justify-start items-center w-full px -2 ">
               <FlatList
                 initialNumToRender={2}
                 data={regionStages}
                 extraData={loadingStages}
                 renderItem={!loadingStages ? renderItem : ()=>{
-                  return (
-                      <View 
-                      style={{
-                        height: width / 3.6,
-                        width,
-                      }}
-                      className="flex-1 justify-center items-center">
-                        <ActivityIndicator
-                          size="small"
-                          color="#D4AF37"
-                        />
-                        <Text
-                          className="text-white mt-3 font-semibold"
-                          style={{
-                            fontSize: width / 38,
-                          }}
-                        >
-                          Loading stages...
-                        </Text>
-                      </View>
-                  )
-              }}
+                return (
+                    <View 
+                    style={{
+                      height: width / 3.3,
+                      width :width * 0.49,
+                    }}
+                    className=" mb-4 flex-1 justify-center items-center">
+                      <ActivityIndicator
+                        size="small"
+                        color="#D4AF37"
+                      />
+                      <Text
+                        className="text-white mt-3 font-semibold"
+                        style={{
+                          fontSize: width / 38,
+                        }}
+                      >
+                        Loading stages...
+                      </Text>
+                    </View>
+                )
+                }}
                 keyExtractor={(item, index) =>
                   item._id || index.toString()
                 }
@@ -189,15 +182,15 @@ import { useGlobalContext } from '../../context/GlobalProvider';
                 showsVerticalScrollIndicator={false}
                 columnWrapperStyle={{
                   justifyContent: "space-between",
+                  gap: 8,
+                  
                 }}
                 contentContainerStyle={{
-                  paddingBottom: height * 0.04,
-                  // paddingHorizontal: width * 0.07,
+              
+                  gap: 8,
+        
                 }}
-                /* HEADER */
-                ListHeaderComponent={renderHeader}
-                /* FOOTER */
-                ListFooterComponent={renderFooter}
+             
               />
   
       </View>

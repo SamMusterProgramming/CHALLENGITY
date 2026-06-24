@@ -34,7 +34,6 @@ export const GlobalProvider =({children}) => {
    const [contestantBgColor,setContestantBgColor] = useState("#35383d")//("#1f1f21")
    const [userProfileImg,setUserProfileImg] = useState(null)
    const [userCoverImg,setUserCoverImg] = useState(null)
-   const [loading, setLoading] = useState(true);
 
    const [allStages, setAllStages] = useState([]);
    const [hotStages, setHotStages] = useState([]);
@@ -49,6 +48,9 @@ export const GlobalProvider =({children}) => {
    const [userCountryCode , setUserCountryCode] = useState("")
    const [hotStageScrolledIndex , setHotStageScrolledIndex] = useState(0)
    const [activeIndex, setActiveIndex] = useState(0);
+   const [selectedArena, setSelectedArena] = useState(null);
+   const [uploadPerformanceLoading , setUploadPerformanceLoading] = useState(null);
+   const [localArenas , setLocalArenas] = useState([])
    const [form, setForm] = useState({
     name : "",
     email : "",
@@ -58,8 +60,12 @@ export const GlobalProvider =({children}) => {
     profile_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2Favatar.jpg?alt=media&token=25ae4701-e132-4f15-a522-5b9332d2c0b2",
     cover_img:"https://firebasestorage.googleapis.com/v0/b/challengify-wgt.firebasestorage.app/o/avatar%2F67.jpg?alt=media&token=d32c765c-31bc-4f74-8925-de45b2640544"
   })
-   
-   const colorTheme = "#eab308"
+  const [userArenas, setUserArenas] = useState()
+  const[globalArenaRefresh, setGlobalArenaRefresh] = useState(false)
+  const [openArenaAlertModal, setOpenArenaAlertModal] = useState(false)
+  const [arenaActionModal, setArenaActionModal] = useState("")
+
+  const colorTheme = "#eab308"
 
 
     return (
@@ -105,7 +111,14 @@ export const GlobalProvider =({children}) => {
             hotStageScrolledIndex , setHotStageScrolledIndex,
             activeIndex, setActiveIndex ,
             colorTheme ,form, setForm ,
-            trendingStages, setTrendingStages
+            trendingStages, setTrendingStages ,
+            userArenas , setUserArenas,
+            selectedArena, setSelectedArena,
+            uploadPerformanceLoading , setUploadPerformanceLoading,
+            localArenas, setLocalArenas ,
+            globalArenaRefresh, setGlobalArenaRefresh ,
+            openArenaAlertModal, setOpenArenaAlertModal,
+            arenaActionModal, setArenaActionModal
             }
             } >
             {children}

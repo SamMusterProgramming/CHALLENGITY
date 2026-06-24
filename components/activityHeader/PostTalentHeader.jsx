@@ -7,7 +7,7 @@ import { getInition } from '../../helper';
 import { stageIcons } from '../../utilities/TypeData';
 
 export default function PostTalentHeader({ data , width , height }) {
-  const { user, userFriendData } = useGlobalContext();
+  const { user, userFriendData, colorTheme } = useGlobalContext();
   const { screenWidth } = useWindowDimensions();
   const [contestantFriends, setContestantFriends] = useState([]);
   const [joinedStatus, setJoinedStatus] = useState(null);
@@ -42,8 +42,8 @@ export default function PostTalentHeader({ data , width , height }) {
         <View
           className = "rounded-full  "
           style={{
-            width: width * 0.08,
-            height: width * 0.08,
+            // width: width * 0.09,
+            height: width * 0.09,
             borderRadius: 2,
             // backgroundColor: '#FFD700', // Gold circle for "You"
             justifyContent: 'center',
@@ -55,12 +55,12 @@ export default function PostTalentHeader({ data , width , height }) {
           className = "rounded-full"
             source={{ uri: user.profileImage?.publicUrl }}
             style={{
-              width: width * 0.07,
-              height: width * 0.07,
+              width: width * 0.09,
+              height: width * 0.09,
               // borderRadius: 2,
             }}
           />
-          <Text
+          {/* <Text
             style={{
               fontSize: width/55,
               color: '#fff', // Black text on gold
@@ -74,7 +74,7 @@ export default function PostTalentHeader({ data , width , height }) {
             }}
           >
             You
-          </Text>
+          </Text> */}
         </View>
             {/* <Text
             className = " p-1 mr-2 border-b-4 border-[#9f7a0b] text-orange-400 "
@@ -88,13 +88,13 @@ export default function PostTalentHeader({ data , width , height }) {
             > */}
            {/* {stageIcons[data.name]} */}
            <Text
-            className = " py-2 mr-4 border-b-4  border-[#f3c005] text-orange-400 "
+            className = " py-2 ml-2 border-b-4 mb-1 font-black uppercase border-[#f3c005] text-orange-400 "
               style={{
-                fontSize: width / 44 ,
-                color: joinedStatus == "On Stage" ? 'lightgreen' :
+                fontSize: height / 29 ,
+                color: joinedStatus == "On Stage" ? colorTheme :
                        joinedStatus == "In Queue" ? 'lightblue'  :
                        joinedStatus == "Eliminated" ? 'red' : "white", 
-                fontWeight: '700',
+                fontWeight: '800',
               }} >
               {joinedStatus}
            </Text>
@@ -103,36 +103,37 @@ export default function PostTalentHeader({ data , width , height }) {
       );
     }
 
-    const firstThree = contestantFriends.slice(0, 3);
+    const firstThree = contestantFriends.slice(0, 2);
     firstThree.forEach(friend => {
       avatars.push(
         <View
           key={friend._id}
           style={{
-            width: width * 0.07,
-            height: width * 0.07,
+            width: width * 0.09,
+            height: width * 0.09,
             borderRadius: width * 0.04,
             backgroundColor: '#444', // Dark circle
             justifyContent: 'center',
             alignItems: 'center',  
-            marginRight: 6,
+            marginRight: 10,
             backgroundColor : "black"
           }}
         >
           <Image
             source={{ uri: friend.profileImage.publicUrl }}
             style={{
-              width: width * 0.07,
-              height: width * 0.07,
-              borderRadius: width * 0.035,
+              width: width * 0.09,
+              height: width * 0.09,
+              // borderRadius: width * 0.035,
             }}
+            className="rounded-full"
           />
-          <Text
+          {/* <Text
             style={{
               fontSize: width / 49 ,
               color: 'white', // Gold initials
               position: 'absolute',
-              bottom: -5,
+              bottom: -2,
               left: -5,
               fontWeight : 700,
               backgroundColor: '#2a2a2a', // Dark overlay
@@ -141,7 +142,7 @@ export default function PostTalentHeader({ data , width , height }) {
             }}
           >
             {getInition(friend.name)}
-          </Text>
+          </Text> */}
         </View>
       );
     });
@@ -153,7 +154,7 @@ export default function PostTalentHeader({ data , width , height }) {
     <View
       style={{
         width: '98%',
-        paddingVertical: 2,
+        paddingVertical: 6,
         paddingHorizontal: 4,
         // backgroundColor: '#1C1C1E', 
         borderRadius: 12,
@@ -168,11 +169,11 @@ export default function PostTalentHeader({ data , width , height }) {
 
         {contestantFriends.length > 0 && (
         <View
-          className = "items-center justify-center ">
+          className = " items-center justify-center ">
           <Text
-          className = " py-2 h-[100%]  text-center border-b-4 border-[#aa7a11]"
-           style={{ fontSize: width / 44 , color: 'white', fontWeight: '700' }}>
-          {contestantFriends.length > 2 ? `+  ${contestantFriends.length - 2}  Friends` : ""  } 
+          className = " py-2 h-[100%]   te xt-center mb-1 border-b-4 border-[#f3c005]"
+           style={{ fontSize: height / 29 , color: 'white', fontWeight: '700' }}>
+          {contestantFriends.length > 2 ? `+  ${contestantFriends.length - 2}  Friends ` : ""  } 
           {contestantFriends.length >= 2 ? "have" : "has"} joined
           </Text>
         </View>

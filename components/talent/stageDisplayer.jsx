@@ -56,11 +56,10 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
       style={{
         height,
         width,
-        // position: "relative",
         overflow: "hidden",
-        // backgroundColor : colorTheme
+        paddingHorizontal:2
       }}
-      className="bord er-2 bo rder-[#35270c]  bg-[#b68b0b]/20 p- 2"
+      className=" bg- [#b68b0b]/20 p- 2"
     >
       <Pressable
         onPress={() =>
@@ -80,7 +79,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
           })
         }
         style={{ flex: 1 }}
-        className="round ed-2xl justify-center bg-black items-center" >
+        className="round ed-2xl justify-center bg -black items-center" >
         {selectedContestant ? (
           <Image
             source={{
@@ -89,10 +88,11 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
             style={{
               width: "100%",
               height: "100%",
-              opacity:0.7
+              opacity:0.9,
+              borderRadius : 18
             }}
             resizeMethod="cover"
-            className ="rou nded-[5px] "
+        
           />
         ) : (
           <Image
@@ -102,7 +102,8 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
           style={{
             width: "100%",
             height: "100%",
-            opacity:0.7
+            opacity:0.8,
+            borderRadius:18
           }}
           resizeMethod="cover"
           className ="roun ded-[5px] "
@@ -111,7 +112,11 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
 
 
          {/* STAGE */}
-         <View className="flex-row absolute top-1 left-1  items-center bg-black/65 rounded-lg  p-2 " >
+         <View
+          style ={{
+            borderRadius:18
+          }}
+          className="flex-row absolute top-2 left-2  items-center bg-black/65  p-2 px-4 " >
                 <Text
                   style={{
                     fontSize: width /32,
@@ -136,12 +141,15 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
          </View>
 
          <View
-                className="
-                  flex-row
-                  justify-end
-                  absolute top-1 right-1
-                  items-center bg-black/65 rounded-lg  p-2
-                " >
+            style ={{
+              borderRadius:18
+            }}
+            className="
+              flex-row
+              justify-end
+              absolute top-2 right-2
+              items-center bg-black/65   p-2 px-4
+            " >
                 <Text
                   numberOfLines={1}
                   style={{
@@ -218,19 +226,19 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
           <View
               style={{
                 position: "absolute",
-                width: 34,
-                height: 34,
+                width: width/11,
+                height: width/11,
                 borderRadius: 24,
-                backgroundColor: "rgba(0,0,0,0.55)",
+                backgroundColor:  "rgba(234,179,8,0.7)",
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              // className = "bg-goldSoft/40"
+
             >
               <MaterialCommunityIcons
                 name="play"
                 size={20}
-                color = "white"
+                color = "black"
               />
           </View>
       
@@ -242,8 +250,8 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
           style={{
             position: "absolute",
             bottom: 5,
-            left: 3,
-            right: 3,
+            left: 5,
+            right: 5,
             zIndex: 20,
             // paddingBottom: 8,
             

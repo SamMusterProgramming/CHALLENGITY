@@ -17,6 +17,7 @@ import CountryFlag from "react-native-country-flag";
 import { countryCodes } from "../../helper";
 import FollowButton from "../custom/FollowButton";
 import FriendButton from "../custom/FriendButton";
+import { router } from "expo-router";
 
 export default function UserModal({ user_id,
                                     visible = false,
@@ -43,86 +44,304 @@ export default function UserModal({ user_id,
       animationType="fade"
       transparent
     >
-      {/* 🎬 Cinematic Background */}
-      <Pressable
-        // onPress={onClose}
-        className="flex-1 w-full bg-black/80 justify-center items-center"
+      <View
+        className="flex-1 justify-center items-center"
+        style={{
+          backgroundColor: "rgba(0,0,0,0.75)",
+        }}
       >
-        {/* ✨ Modal Container */}
+        <View
+          style={{
+            width: width * 0.88,
+            backgroundColor: "#0B0B0C",
+            borderRadius: 9,
+            overflow: "hidden",
+            // borderWidth: 1,
+            // borderColor: "rgba(234,179,8,0.18)",
+            // padding:10
+          }}
+          className = "bg-[#010101]"
+        >
+          {/* COVER */}
+  
+          <View
+            style={{
+              width: "100%",
+              height: height * 0.20,
+            }}
+          >
+            <Image
+              source={{
+                uri:
+                  userProfile?.coverImage?.publicUrl,
+              }}
+              resizeMode="cover"
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            />
+  
+            <LinearGradient
+              colors={[
+                "transparent",
+                "rgba(11,11,12,0.95)",
+              ]}
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 80,
+              }}
+            />
+          </View>
+  
+          {/* CLOSE */}
+  
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              width: 34,
+              height: 34,
+              borderRadius: 17,
+              backgroundColor:
+                "rgba(0,0,0,0.65)",
+              justifyContent: "center",
+              alignItems: "center",
+              borderWidth: 1,
+              borderColor:
+                "rgba(234,179,8,0.15)",
+              zIndex: 100,
+            }}
+          >
+            <Ionicons
+              name="close"
+              size={18}
+              color="#eab308"
+            />
+          </TouchableOpacity>
+  
+          {/* PROFILE */}
+  
+          <View
+            style={{
+              alignItems: "center",
+              marginTop: -50,
+              paddingHorizontal: 20,
+              paddingBottom: 22,
+            }}
+          >
+            <Image
+              source={{
+                uri:
+                  userProfile?.profileImage
+                    ?.publicUrl,
+              }}
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius:50,
+                borderWidth: 3,
+                borderColor: "#eab308",
+                backgroundColor: "#111",
+              }}
+            />
+  
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: width / 25,
+                fontWeight: "700",
+                marginTop: 36,
+              }} >
+              {userProfile?.name}
+            </Text>
+  
+            {/* LOCATION */}
+  
+            <View
+              style={{
+                flexDirection: "col",
+                alignItems: "center",
+                marginTop: 12,
+              }}
+            >
+              <Text
+                style={{
+                  color:
+                    "rgba(255,255,255,0.85)",
+                  fontSize: width / 38,
+                  fontWeight : "700"
+                }} >
+              
+                {userProfile?.city},{" "}
+                {userProfile?.state} {'  '}
+                {/* <MaterialCommunityIcons
+                name="map-marker"
+                size={14}
+                color="#eab308"
+                /> {' '} */}
+              </Text>
+  
+              {/* <Text
+                style={{
+                  color:
+                    "rgba(255,255,255,0.65)",
+                  fontSize: width / 36,
+                  marginHorizontal: 5,
+                }}
+              >
+                •
+              </Text> */}
+  
+             
+              <Text
+                style={{
+                  color:
+                    "rgba(255,255,255,0.85)",
+                  marginTop : 8 ,
+                  fontSize: width / 38,
+                  // marginLeft: 4,
+                  fontWeight : "700"
+                }}
+              >
+                {countries.find(
+                  c =>
+                    c.code ===
+                    userProfile?.country
+                )?.name || "United States"} {'  '}
+                <CountryFlag
+                isoCode={userProfile.country}
+                size={10}
+                />
+              </Text>
+            </View>
+  
+            {/* BIO */}
+  
+            {!!userProfile?.biography && (
+              <Text
+                numberOfLines={3}
+                style={{
+                  color:
+                    "rgba(255,255,255,0.72)",
+                  textAlign: "center",
+                  marginTop: 14,
+                  lineHeight: 20,
+                  fontSize: width / 34,
+                }}
+              >
+                {userProfile.biography}
+              </Text>
+            )}
+  
+              {/* VIEW PROFILE */}
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: "/ViewProfile",
+                  params: {
+                    userProfile: JSON.stringify(
+                      userProfile
+                    ),
+                  },
+                });
 
+                setTimeout(() => {
+                  onClose();
+                }, 100);
+              }}
+              activeOpacity={0.85}
+              style={{
+                width: width * 2/3,
+                // height: 46,
+                marginTop: 36,
+                borderRadius: 12,
+                backgroundColor: "rgba(0,0,0,1)",
+                borderWidth: 1,
+                borderColor: "rgba(234,179,8,0.18)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              className ="py-4"
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="account-circle-outline"
+                  size={20}
+                  color="#eab308"
+                />
 
-                <View
-                className="w-[85%] max-h-[65%] p-4 items-center  rounded-2xl  border border-yellow-500/20">
-                    
-                        <Image
-                        source={{ uri: userProfile?.coverImage?.publicUrl }}
-                        resizeMode="cover"
-                        style={{ height: height /5 ,width:"100%" }}
-                        className="w-full rounded-lg"
-                        />
-                 
-                        <View
-                         className="w-[100%] h- [100%] flex-row gap-2 justify-center items-end ">
-                           
-                            <View className="items-center -mt-12">
-                                <View className="">
-                                    <Image
-                                        source={{ uri: userProfile.profileImage?.publicUrl }}
-                                        className="w-[75px] h-[75px] rounded-full border-2 border-[#0A0B0D]"
-                                    />
-                                </View>
-                                <Text
-                                    style={{ fontSize: width / 39 }}
-                                    className="text-white mt-3   font-semibold tracking-wide"
-                                    >
-                                    {userProfile.name}
-                                </Text>
-                    
-                                <View className="flex-row items-center mt-2 opacity-80">
-                                    <MaterialCommunityIcons name="map-marker" size={16} color="#E6C068" />
-                                    <Text
-                                        style={{ fontSize: width / 40 }}
-                                        className="text-gray-300 font-bebas tracking-wider ml- 1"
-                                    >
-                                        {userProfile.city}, {userProfile.state}
-                                    </Text>
-                                    <View className="flex-row items-center ml-2">
-                                        <Text
-                                        style={{ fontSize: width / 38 }}
-                                        className="text-white font-bebas tracking-wider"
-                                        >
-                                          {countries.find(c => c.code == userProfile?.country)?.name || "US"} {'  '}
-                                        </Text>
-                                        <CountryFlag isoCode={userProfile.country} size={width/40} />
-                                    </View>
-                                </View>
+                <Text
+                  style={{
+                    marginLeft: 7,
+                    color: "#eab308",
+                    fontWeight: "700",
+                    fontSize: width / 30,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  View Profile
+                </Text>
 
-                            </View>
-                        </View>
-
-                        <View
-                            className="w-[100%] flex-row mt-6 justify-center gap-2 items-center">
-                            {/* <FollowButton userProfile = {userProfile} /> */}
-                            <View
-                            className = "w-[40%] justify-center items-center" >
-                                   <FollowButton userProfile={userProfile} />
-                            </View>
-                            <View
-                            className = "w-[40%] justify-center items-center" >
-                                   <FriendButton userProfile={userProfile} />
-                            </View>
-                         </View>  
-                </View>
-               
-
-
-        <TouchableOpacity
-                onPress={() => onClose()}
-                className="absolute bg-slate-100 rounded-full  bottom-[30] p-1">
-                    <Ionicons name="close"  size={30}  color={"while"} />
-        </TouchableOpacity>   
-      </Pressable>
-    
+                <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={16}
+                  color="#eab308"
+                  style={{
+                    marginLeft: 4,
+                  }}
+                />
+              </View>
+            </TouchableOpacity>
+  
+            {/* FOLLOW + FRIEND */}
+  
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                marginTop: 36,
+                marginBottom : 10,
+                justifyContent: "center",
+              }}
+            >
+              <View
+                style={{
+                  // flex: 1,
+                  // marginRight: 6,
+                  width:width/3,
+                  alignItems: "center",
+                }}
+              >
+                <FollowButton
+                  userProfile={userProfile}
+                />
+              </View>
+  
+              <View
+                style={{
+                  width:width/3,
+                  alignItems: "center",
+                }}
+              >
+                <FriendButton
+                  userProfile={userProfile}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
     </Modal>
   );
 }

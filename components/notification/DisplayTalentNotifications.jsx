@@ -160,15 +160,15 @@ export default function DisplayTalentNotification({ notification, setNotificatio
         onPress={handleAction}
         style={{
           backgroundColor: isRead
-            ? "#111111"
-            : "#171203",
+            ? "#201f1e"
+            : "#2f2e2b",
           // borderWidth: 1.2,
           // borderColor: isRead
           //   ? "#242424"
           //   : "#d4a017",
           borderRadius: 8,
-          paddingHorizontal: 12,
-          paddingVertical: 10,
+          paddingHorizontal: 8,
+          paddingVertical: 8,
   
           shadowColor: "#000",
           shadowOffset: {
@@ -179,7 +179,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
           shadowRadius: 8,
           elevation: 5,
         }}
-        className = "bg-[#171203]"
+        className = "bg-[#201f1e]"
       >
         <View
           style={{
@@ -190,27 +190,30 @@ export default function DisplayTalentNotification({ notification, setNotificatio
           {/* Avatar */}
           <View
             style={{
-              width: height / 20,
-              height: height / 20,
+              width: height / 15,
+              // height: height / 20,
               borderRadius: 999,
               overflow: "hidden",
               borderWidth: 0.5,
-              borderColor: isRead
-                ? "#3a3a3a"
-                : "#facc15",
+              // borderColor: isRead
+              //   ? "#3a3a3a"
+              //   : "#facc15",
                }} 
-               className ="mt-auto" >
+               className ="mt -auto items-center justify-center" >
             <Image
               resizeMode="cover"
               style={{
                 width: "100%",
                 height: "100%",
+                width: height / 18,
+                height: height / 18,
               }}
               source={{
                 uri:
                   notification.presentation.image ||
                   user.profileImage.publicUrl,
               }}
+              className ="rounded-full"
             />
           </View>
   
@@ -235,7 +238,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                   numberOfLines={1}
                   style={{
                     color: "#fff",
-                    fontSize: width / 42,
+                    fontSize: width / 38,
                     fontWeight: "800",
                   }}
                 >
@@ -258,7 +261,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                       ? "#9ca3af"
                       : "#facc15",
                     fontSize:
-                      width / 49,
+                      width / 40,
                     fontWeight: "700",
                     marginTop: 2,
                   }}
@@ -308,21 +311,22 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                 <TouchableOpacity
                   onPress={toggleDelete}
                   style={{
-                    width: 30,
-                    height: 30,
+                    width: width/18,
+                    height: width/18,
                     borderRadius: 999,
                     justifyContent:
                       "center",
                     alignItems:
                       "center",
-                    backgroundColor:
-                      "#1d1d1d",
+                    // backgroundColor:
+                    //   "#1d1d1d",
                   }}
+                  className ="bg-[white]/20"
                 >
                   <Text
                     style={{
-                      color: "#9ca3af",
-                      fontSize: 18,
+                      color: "#fff",
+                      fontSize: width/25,
                       fontWeight: "700",
                     }}
                   >
@@ -446,7 +450,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
               style={{
                 color: "#d1d5db",
                 fontSize: width / 40,
-                marginTop: 2,
+                // marginTop: 2,
                 lineHeight: 18,
               }}
               className ="font-semibold"

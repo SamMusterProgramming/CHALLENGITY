@@ -10,18 +10,21 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 import { generateChallengeTalentGuinessData, getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
 import StageSelector from "../custom/StageSelector";
 import HotStage from "../talent/hotStages";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import TrendingStages from "../talent/trendingStages";
 import Favourites from "../talent/favourites";
+import LocalArenaCarousel from "../viewArenas/localArenas/localArenaCarousel";
 export const homeState = {
   scrollY: 0,
 };
 export default function HomePage({onScroll}) {
-  const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading ,regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh} = useGlobalContext();
+  const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading , userArenas,localArenas , 
+    regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh} = useGlobalContext();
   const sections = [
     { id: "trendingStage" },
     { id: "hotStage" },
-    { id: "favourite" }
+    { id: "favourite" },
+    {id: "LocalArenas"}
   ];
   const flatListRef = useRef(null);
   const [isHotStageReady, setIsHotStageReady] = useState(false);
@@ -111,21 +114,41 @@ export default function HomePage({onScroll}) {
             windowSize={10}
             data={sections}
             extraData={globalRefresh} 
-            renderItem={({ item }) =>
-              item.id === "trendingStage" ? (
-                <TrendingStages user={user} onReady={() => setIsHotStageReady(true)}  />
-              ) : item.id === "hotStage" ? (
-                <HotStage user={user} />
-                // <StageSelector user={user} />
-              ) :(
-                <Favourites user={user} />
-              )
+            renderItem={({ item }) => 
+              {switch (item.id) {
+                case "trendingStage":
+                    return (
+                      <TrendingStages user={user} onReady={() => setIsHotStageReady(true)}  />
+                    )
+                  break;
+                case "hotStage":
+                  return (
+                     <HotStage user={user} />
+                  )
+                break;
+                case "favourite":
+                  return (
+                     <Favourites user={user} />
+                  )
+                break;
+                case "LocalArenas" : 
+                  return (
+                    <LocalArenaCarousel
+                      arenas={localArenas}
+                      height={height * 0.31}
+                      
+                    />
+                  )
+                default:
+                  break;
+              }}
+           
             }
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}  
             contentContainerStyle={{
               backgroundColor: "black",  
-              // paddingBottom: 40,
+              paddingBottom: 40,
             }}
             keyboardShouldPersistTaps="handled"
             // ListFooterComponent={()=>{

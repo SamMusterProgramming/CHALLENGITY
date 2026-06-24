@@ -1,537 +1,709 @@
-import { View, Text,  ScrollView, Image, FlatList, TouchableOpacity, Alert, Platform, useWindowDimensions, ActivityIndicator } from 'react-native'
-import React, { memo,  useEffect,  useState } from 'react'
-import { useGlobalContext } from '../context/GlobalProvider'
-import { getFollowData, getUserActivities, getUserById,  getUserFriendsData, getUserParticipateChallenges } from '../apiCalls'
-
-import { icons } from '../constants'
-import { router, useLocalSearchParams} from 'expo-router'
-
-import {  countryCodes } from '../helper'
-import {  useSafeAreaInsets } from 'react-native-safe-area-context'
-import FollowButton from '../components/custom/FollowButton'
-import FriendButton from '../components/custom/FriendButton'
-import CountryFlag from 'react-native-country-flag'
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import Friend from '../components/profile/Friend'
-import Post from '../components/post/Post'
-import UserTalentEntry from '../components/talent/UserTalentEntry'
 
 
-const ProfileInfoHeader = memo(({userProfile ,profileFriendData ,showFriends ,height , width,setShowFriends}) => {
-  return (
-    <>
-           <View className="w-[100%] flex-col bg-[#ffffff] justify-center  rounde d-t-lg items-center ">
-               <Image 
-                resizeMode='stretch'
-                className="w-[100%] h-[200] "
-                source={{uri:userProfile.cover_img}} 
-                />
-                <View 
-                  className="bg-  absolute z-10 bottom-[-40] left-8 bg-black flex-col rounded-full justify-center items-center ">
-                      <Image 
-                      style={{height:height/10 , width:height/10}}
-                      className="w-[120px] h-[120px] rounded-full"
-                      resizeMode='cover'
-                      source={{uri: userProfile && userProfile.profile_img}} 
-                      />
-                </View>
-                <View
-                           className="absolute bottom-2 right-2 flex-col  justify-center items-center ">
-                                    < CountryFlag
-                                      isoCode={userProfile.country}
-                                      size={45}
-                                          />
-                </View>
-          </View> 
 
-          <View className=" w-[100%] bg-[#000000] pb-2  flex-row justify-start px-2 pt- 6 items-start h- [80]">
-                          <View
-                           className="h- [100%] w-[100%] mt-8 flex-col justify-start gap-2 pt-8 items-start d pb-1 pl- 2 ">
-                                      <View
-                                      className="w- [30%] h- [100%] flex-row gap-1 justify-start items-end "
-                                      >
-                                              <MaterialCommunityIcons name="map-marker" size={22} color="lightblue" />
-                                             
-                                              <Text
-                                                  className="font-bold"
-                                                  style={{
-                                                  fontSize:13,
-                                                  color: "white"
-                                                  }}
-                                              >
-                                                  {''}{userProfile.city}
-                                              </Text>
-                                              <Text
-                                                      className="font-bold"
-                                                      style={{
-                                                      fontSize:13,
-                                                      color: "white",
-                                                      }}
-                                                  >
-                                                      {', '}{ userProfile.state}
-                                              </Text>
+// import React, { useEffect, useState } from "react";
+// import {
+// View,
+// Text,
+// Image,
+// TouchableOpacity,
+// FlatList,
+// ScrollView,
+// useWindowDimensions,
+// } from "react-native";
+// import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+// import { router, useLocalSearchParams } from "expo-router";
+// import { getArenaByUser, getPostsArena } from "../apiCalls";
 
-                                      </View>
-                                  
-                                      <View
-                                      className="w-[100%] h- [100%]  flex-row gap-4 ml-2 mt-2 justify-start items-end">
-                                               < CountryFlag
-                                                  isoCode={userProfile.country}
-                                                  size={18}
-                                               />
-                                              <Text style={ {
-                                                          fontWeight:"800",
-                                                          color: "white",
-                                                          fontSize: 13,
-                                                      }}>{countryCodes[userProfile.country] || "US"}
-                                              </Text>
-                                              
-                                      </View>
-                                      <View
-                                                  className="w-[100%] flex-row mt-2 justify-center gap-2 items-center ">
-                                                    <FollowButton userProfile = {userProfile} />
-                                                    <FriendButton userProfile={userProfile} />
-                                       </View>  
-                           </View>
+// import { useGlobalContext } from "../context/GlobalProvider";
+// import ArenaPost from "../components/arena/arenaPost";
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
+// import ViewArenaPost from "../components/viewArenas/viewArenaPost";
+// import { ViewArenaHeader } from "../components/viewArenas/viewArenaHeader";
 
-                           <View
-                              className = "absolute w-[40%] top-3 left-[25%] b g-white flex-row justify-end items-center ">
-                                      <Text   
-                                      style ={{fontSize:13}}
-                                      className="font-bold text-bold ">
-                                              {userProfile.name}  
-                                      </Text>
-                           </View>
+// export default function ViewProfile() {
+// const { userProfile } = useLocalSearchParams();
+// const { user } = useGlobalContext();
+// const {width ,height} = useWindowDimensions()
+// const insets = useSafeAreaInsets();
 
-                            <TouchableOpacity 
-                              onPress={()=>{
-                                router.back()}}
-                                className = "absolute w- [40%] top-2 right-2 b g-white flex-row justify-end items-center ">                                
-                                <Ionicons name="close" size={34} color="white" />     
-                            </TouchableOpacity>
+// const profile = userProfile
+// ? JSON.parse(userProfile)
+// : null;
 
-                  
+// const [arenas, SetArenas] = useState([]);
+// const [selectedArena, setSelectedArena] =
+// useState(null);
 
-          </View>
+// const [arenaPosts, setArenaPosts] =
+// useState([]);
 
-          <View className="flex-row w-full bg-[#000000] px-2 py-0 mt-1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
-                 
-                 <TouchableOpacity
-                  className="flex-row w- [30%] px- 4 -[100%] justify-center gap-2 py-1 px-  rounde d-t-xl items-center">
-                     <Text
-                     style={{fontSize:14,
-                      // color:"white",
-                     }}
-                     className="text-white font-bold text-base">
-                         Friends
-                     </Text>  
-                     <Text
-                     style={{fontSize:12,
-                      color:"white",
-                     }}
-                     className="text-white font-bold text-base">
-                         {profileFriendData.friends.length}
-                     </Text> 
-                 </TouchableOpacity>
-                 <TouchableOpacity
-                  onPress={() => {
-                      setShowFriends(!showFriends)
-                  }}
-                  className="flex-row w- [30%] px- 4 -[100%] justify-center gap-2 py- 1 px-  rounde d-t-xl items-center">
-                     <Image
-                     className ="w-8 h-8"
-                     source={ showFriends ? icons.eyeHide : icons.eye} />
-                 </TouchableOpacity>
-          </View>
+// useEffect(() => {
+// if (!profile?._id) return;
 
-          {showFriends && (
-              <View 
-                  className=" w-[100%] bg-[#000000]  h- [200px] flex-col py-2 px- 2 justify-center items-center g-white ">
-                  <ScrollView 
-                  showsVerticalScrollIndicator ={false}
-                  style={{ maxHeight : width /2.1 }}
-                  className=" w-[100%] max-h- [200px] ">
-                      <View 
-                      className=" w- [100%] h- [100%] flex-row flex-wrap py-2 gap-3 px-1 2 rounde d-2xl  justify-center  items-center b g-[#1c1c1d] ">
-                          {profileFriendData && profileFriendData.friends.map((item ,index)=> {
-                              return(   
-                                  <Friend key={index} index={index} friend={item} w={width} h={height} />
-                              )
-                          })}
-                      </View>
-                  </ScrollView>
-              </View>
-          )}
-           <View className="flex-row w-full bg-[#000000] px-2 py-0    mt-[-1] justify-start items-center h-[50px]">
-                     <Text
-                     style={{fontSize:13,
-                      // color:"black",
-                     }}
-                     className="text-blue-300 font-bold text-base">
-                         Show more
-                     </Text> 
-          </View>
-          <View className="flex-row w-full bg-[#000000] px-2 mb- 4 gap-1 py-4 bor der-white bor der-b-4 justify-start items-end  h-[70px]">
-                    <Text
-                     style={{fontSize:14,
-                     }}
-                     className="text-white font-bold mr-2">
-                         TimeLine
-                    </Text>  
-                    <MaterialCommunityIcons name="star" size={28} color= "#edc153"  />
 
-                    <Text
-                     style={{fontSize:10,
-                     }}
-                     className="text-yellow-400 -rotate-25 mr-2 mb-4 font-black ">
-                         Talent
-                    </Text>  
+// getArenaByUser(
+//   profile._id,
+//   setSelectedArena,
+//   SetArenas
+// );
 
-                    <MaterialCommunityIcons name="sword-cross" size={25} color= "#F97316"  />
-                     <Text
-                     style={{fontSize:10,
-                     }}
-                     className="text-yellow-400 -rotate-25 ml- mb-4 font-black ">
-                         Challenge
-                    </Text>  
 
-                    {/* <Image
-                     className ="w-12 ml-6 h-12"
-                     source={ icons.trophy} />
-                      <Text
-                     style={{fontSize:10,
-                     }}
-                     className="text-yellow-700 -rotate-25 ml- mb-8 font-black ">
-                         Trophy
-                    </Text>   */}
+// }, []);
 
-          </View>
+// useEffect(() => {
+// if (!selectedArena) return;
 
-    </>
-    )
-})
+// getPostsArena(
+//   selectedArena._id,
+//   setArenaPosts
+// );
+
+
+// }, [selectedArena]);
+
+// return (
+//   <View
+//   style={{
+//     flex:1,
+//     width:"100%",
+//     backgroundColor:"#000",
+//     paddingTop:insets.top,
+//     }}>
+//        <TouchableOpacity
+//           onPress={() => router.back()}
+//           activeOpacity={0.85}
+//           style={{
+//             position: "absolute",
+//             top: 55,
+//             left: 18,
+//             zIndex: 999,
+//             width: 42,
+//             height: 42,
+//             borderRadius: 21,
+//             backgroundColor: "rgba(0,0,0,0.75)",
+//             borderWidth: 1,
+//             borderColor: "rgba(234,179,8,0.25)",
+//             justifyContent: "center",
+//             alignItems: "center",
+//           }}  >
+//           <MaterialCommunityIcons
+//             name="close"
+//             size={20}
+//             color="#eab308"
+//           />
+//       </TouchableOpacity>
+//     <FlatList
+//     data={arenaPosts.length && arenaPosts}
+//     keyExtractor={(item) => item._id}
+//     showsVerticalScrollIndicator={false}
+//     // renderItem={({ item }) => ( 
+//     //       <ViewArenaPost
+//     //       item={item}
+//     //       arena={selectedArena}
+//     //       onPress={(post) => {
+//     //         router.push({
+//     //             pathname:
+//     //               "/arenaPerformancePlayer",
+//     //             params: {
+//     //               selectedPostId: post._id,
+//     //               arenaPosts: JSON.stringify(arenaPosts),
+//     //             },
+//     //           });
+//     //       }}
+//     //       profile ={profile}
+//     //       />
+//     // )}
+//     ListHeaderComponent={() => {
+//       console.log("HEADER FUNCTION");
+//     return (
+//     <>
+//               <View
+//                 style={{
+//                   height: 220,
+//                   width: "100%",
+//                 }}
+//                 className ="w-full"
+//               >
+//                 <Image
+//                   source={{
+//                     uri:
+//                       profile?.coverImage
+//                         ?.publicUrl,
+//                   }}
+//                   style={{
+//                     width: "100%",
+//                     height: "100%",
+//                   }}
+//                 />
+              
+//               </View>
+
+//               {/* PROFILE */}
+
+//               <View
+//                 className="items-center"
+//                 style={{
+//                   marginTop: -50,
+//                 }}
+//               >
+//                 <Image
+//                   source={{
+//                     uri:
+//                       profile?.profileImage
+//                         ?.publicUrl,
+//                   }}
+//                   style={{
+//                     width: 100,
+//                     height: 100,
+//                     borderRadius: 50,
+//                     borderWidth: 3,
+//                     borderColor: "#eab308",
+//                     backgroundColor: "#111",
+//                   }}
+//                 />
+
+//                 <Text
+//                   style={{
+//                     color: "#fff",
+//                     fontSize: 15,
+//                     fontWeight: "700",
+//                     marginTop: 14,
+//                   }}
+//                 >
+//                   {profile?.name}
+            
+//                 </Text>
+
+//                 {!!profile?.biography && (
+//                   <Text
+//                     style={{
+//                       color:
+//                         "rgba(255,255,255,0.65)",
+//                       textAlign: "center",
+//                       marginTop: 8,
+//                       paddingHorizontal: 24,
+//                     }}
+//                   >
+//                     {profile.biography}
+//                   </Text>
+//                 )}
+
+//                 {profile?._id !== user?._id && (
+//                   <TouchableOpacity
+//                     style={{
+//                       marginTop: 20,
+//                       backgroundColor:
+//                         "#eab308",
+//                       paddingHorizontal: 25,
+//                       height: 42,
+//                       borderRadius: 12,
+//                       justifyContent:
+//                         "center",
+//                       alignItems: "center",
+//                     }}
+//                   >
+//                     <Text
+//                       style={{
+//                         color: "#000",
+//                         fontWeight: "700",
+//                       }}
+//                     >
+//                       Add Friend
+//                     </Text>
+//                   </TouchableOpacity>
+//                 )}
+//               </View>
+
+//               {/* ARENAS */}
+
+//               <ViewArenaHeader
+//                 arenas={arenas}
+//                 selectedArena={selectedArena}
+//                 // arenaIndex={arenaIndex}
+//                 setSelectedArena={setSelectedArena}
+//                 width ={width}
+//               />
+
+//               {/* POSTS TITLE */}
+
+//               <Text
+//                 style={{
+//                   color: "#fff",
+//                   fontSize: width/29,
+//                   fontWeight: "700",
+//                   // letterSpacing: 2,
+//                   marginTop: 30,
+//                   marginBottom: 12,
+//                   marginLeft: 18,
+//                 }}
+//               >
+//                 PERFORMANCES
+//               </Text>
+
+//               {selectedArena &&
+//                 arenaPosts.length === 0 && (
+//                   <View
+//                     style={{
+//                       marginHorizontal:
+//                         16,
+//                       backgroundColor:
+//                         "#111",
+//                       borderRadius: 18,
+//                       padding: 24,
+//                       borderWidth: 1,
+//                       borderColor:
+//                         "rgba(234,179,8,0.12)",
+//                     }}
+//                   >
+//                     <Text
+//                       style={{
+//                         color:
+//                           "rgba(255,255,255,0.7)",
+//                         textAlign: "center",
+//                       }}
+//                     >
+//                       No performances have
+//                       been published in this
+//                       arena yet.
+//                     </Text>
+//                   </View>
+//                 )}
+//             </>
+//           );
+//         }}
+//         ListFooterComponent={() => (
+//           <View
+//             style={{
+//               height: 40,
+//             }}
+//           />
+//         )}
+//       />
+//   </View>
+
+// );
+// }
+
+
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { getArenaByProfile, getArenaByUser, getPostsArena, toggleFollowerArena, toggleStarArena } from "../apiCalls";
+import { useGlobalContext } from "../context/GlobalProvider";
+
+import ViewArenaPost from "../components/viewArenas/viewArenaPost";
+import { ViewArenaHeader } from "../components/viewArenas/viewArenaHeader";
+import FriendButton from "../components/custom/FriendButton";
+import FollowButton from "../components/custom/FollowButton";
+import { useLoading } from "../context/loadingContext";
+import AuthLoadingScreen from "../components/auth/authLoadingScreen";
 
 export default function ViewProfile() {
-  const {
-    user , setUserFriendData} = useGlobalContext()
+  const { userProfile , userId , arena_id} = useLocalSearchParams();
+  const { user } = useGlobalContext();
+  const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const {isViewed ,setIsViewed} = useGlobalContext()
-  const [follow , setFollow ] = useState(null)
-  const [friends, setFriends ] = useState(null)
-  const [viewableItems, setViewableItems] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [challengeData, setChallengeData] = useState([]);
-  const {user_id} = useLocalSearchParams();
-  const [userProfile,setUserProfile] = useState(null)
-  const [allChallenges,setAllChallenges] = useState([])
-  const { width, height } = useWindowDimensions();
-  const [profileFriendData ,setProfileFriendData] = useState(null)
-  const [profileFollow , setProfileFollow] = useState(null)
-  const [addFriendRequest , setAddFriendRequest] = useState(null)
-  const [participantFriendData,setParticipantFriendData] = useState(null)
-  // const [userFriendData,setUserFriendData] = useState(null)
-  const[isFriend,setIsFriend]= useState(false)
-  const[isPending,setIsPending]= useState(false)
-  const[isAccept,setIsAccept]= useState(false)
-  const [name , setName] = useState(null)
-  const [showFriends , setShowFriends] = useState(true)
-  const [showFollowers , setShowFollowers] = useState(true)
-  const [showFollowings , setShowFollowings] = useState(true)
-  const [data , setData] = useState(null)
-  const [displayData, setDisplayData] = useState([]);
-  const [index, setIndex] = useState(4);
-
-
-  
-
-
+  const { showLoading, hideLoading } = useLoading();
+  const profile = userProfile
+    ? JSON.parse(userProfile)
+    : null;
+  const [arenas, SetArenas] = useState([]);
+  const [selectedArena, setSelectedArena] = useState(null);
+  const [arenaPosts, setArenaPosts] = useState([]);
 
   useEffect(() => {
-    if(userProfile) {
-    getFollowData(userProfile._id , setProfileFollow)
-    getUserFriendsData(userProfile._id,setProfileFriendData)
-
-    const splitName = userProfile.name.split(" ")
-    setName({
-    part1 : splitName[0],
-    part2: splitName[1]
-     })
-    }
-  }, [userProfile])
- 
-
-
-  useEffect ( () => {     
-    getUserById(user_id, setUserProfile)
-    getFollowData(user._id,setFollow)
-    getUserFriendsData(user._id,setUserFriendData)
-    getUserActivities(user_id , setData)
-  } , [])  
-
+    if (!profile?._id) return;
+    getArenaByProfile( profile._id,  setSelectedArena, SetArenas , arena_id);
+  }, []);
 
   useEffect(() => {
-    if(data){
-        setDisplayData(data.slice(0,index))
-     }
-  }, [data])
+    if (!selectedArena) return;
+    // getPostsArena( selectedArena._id, setArenaPosts);
+    setArenaPosts(selectedArena.posts)
+  }, [selectedArena]);
 
-  const loadMoreData = () => {
-    const newData = data.slice(index, index + 4);
-    setDisplayData([ ...displayData,...newData]);
-    setIndex(index + 4);
+  const listData = [
+    {
+      type: "profileArena",
+    },
+    ...(selectedArena &&
+    arenaPosts.length === 0
+      ? [
+          {
+            type: "emptyPosts",
+          },
+        ]
+      : arenaPosts.map((post) => ({
+          type: "arenaPost",
+          data: post,
+        }))),
+  ];
+
+  const toggleStar = async () => {
+    const updatedArena =
+      await toggleStarArena(
+        selectedArena._id,
+        { userId: user._id }
+      );
+    const newArena = selectedArena;
+    newArena.stars = updatedArena.stars
+    setSelectedArena(newArena);
+    SetArenas(prev =>
+      prev.map(arena =>
+        arena._id === updatedArena._id
+          ? newArena
+          : arena
+      )
+    );
   };
 
-  // const renderHeader = memo(() => {
-  //   return (
-  //     <>
-  //            <View className="w-[100%] flex-col bg-[#F7F7F7] justify-center  rounde d-t-lg items-center ">
-  //                <Image 
-  //                 resizeMode='stretch'
-  //                 className="w-[100%] h-[200] "
-  //                 source={{uri:userProfile.cover_img}} 
-  //                 />
-  //                 <View 
-  //                   className="bg-  absolute z-10 bottom-[-40] left-8 bg-black flex-col rounded-full justify-center items-center ">
-  //                       <Image 
-  //                       style={{height:height/10 , width:height/10}}
-  //                       className="w-[120px] h-[120px] rounded-full"
-  //                       resizeMode='cover'
-  //                       source={{uri: userProfile && userProfile.profile_img}} 
-  //                       />
-  //                 </View>
-  //                 <View
-  //                            className="absolute bottom-2 right-2 flex-col  justify-center items-center ">
-  //                                     < CountryFlag
-  //                                       isoCode={userProfile.country}
-  //                                       size={45}
-  //                                           />
-  //                 </View>
-  //           </View> 
+  const toggleFollower = async () => {
+    const updatedArena =
+      await toggleFollowerArena(
+        selectedArena._id,
+        { userId: user._id }
+      );
+    const newArena = selectedArena;
+    newArena.followers = updatedArena.followers
+    setSelectedArena(newArena);
+    SetArenas(prev =>
+      prev.map(arena =>
+        arena._id === updatedArena._id
+          ? newArena
+          : arena
+      )
+    );
+  };
 
-  //           <View className=" w-[100%] bg-[#F7F7F7] pb-2  flex-row justify-start px-2 pt- 6 items-start h- [80]">
-  //                           <View
-  //                            className="h- [100%] w-[100%] mt-8 flex-col justify-start gap-2 pt-8 items-start d pb-1 pl- 2 ">
-                            
-                                            
-  //                                       <View
-  //                                       className="w- [30%] h- [100%] flex-row gap-1 justify-start items-end "
-  //                                       >
-  //                                               <MaterialCommunityIcons name="map-marker" size={22} color="blue" />
-                                               
-  //                                               <Text
-  //                                                   className="font-bold"
-  //                                                   style={{
-  //                                                   fontSize:13,
-  //                                                   color: "black"
-  //                                                   }}
-  //                                               >
-  //                                                   {''}{user.city}
-  //                                               </Text>
-  //                                               <Text
-  //                                                       className="font-bold"
-  //                                                       style={{
-  //                                                       fontSize:13,
-  //                                                       color: "black",
-  //                                                       }}
-  //                                                   >
-  //                                                       {', '}{ user.state}
-  //                                               </Text>
+  const renderItem = ({ item }) => {
+    switch (item.type) {
+      case "profileArena":
+        return (
+          <>
+            {/* COVER */}
+            <View
+              style={{
+                height: 220,
+                width: "100%",
+              }}
+            >
+              <Image
+                source={{
+                  uri:
+                    profile?.coverImage
+                      ?.publicUrl,
+                }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+            </View>
 
-  //                                       </View>
-                                    
-  //                                       <View
-  //                                       className="w-[100%] h- [100%]  flex-row gap-4 ml-2 mt-2 justify-start items-end">
-  //                                                < CountryFlag
-  //                                                   isoCode={userProfile.country}
-  //                                                   size={18}
-  //                                                />
-  //                                               <Text style={ {
-  //                                                           fontWeight:"400",
-  //                                                           color: "black",
-  //                                                           fontSize: 13,
-  //                                                       }}>{countryCodes[userProfile.country] || "US"}
-  //                                               </Text>
-                                                
-  //                                       </View>
-  //                                       <View
-  //                                                   className="w-[100%] flex-row mt-2 justify-start gap-8 items-center ">
-  //                                                     <FollowButton userProfile = {userProfile} />
-  //                                                     <FriendButton userProfile={userProfile} />
-  //                                        </View>  
-  //                            </View>
+            {/* PROFILE */}
 
-  //                            <View
-  //                               className = "absolute w-[40%] top-3 left-[25%] b g-white flex-row justify-end items-center ">
-  //                                       <Text   
-  //                                       style ={{fontSize:13}}
-  //                                       className="font-bold text-bold ">
-  //                                               {userProfile.name}  
-  //                                       </Text>
-  //                            </View>
-  //           </View>
+            <View
+              style={{
+                alignItems: "center",
+                marginTop: -50,
+              }}
+            >
+              <Image
+                source={{
+                  uri:
+                    profile?.profileImage
+                      ?.publicUrl,
+                }}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                  borderWidth: 3,
+                  borderColor: "#eab308",
+                  backgroundColor: "#111",
+                }}
+              />
 
-  //           <View className="flex-row w-full bg-[#F7F7F7] px-2 py-0 mt-1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
-                   
-  //                  <TouchableOpacity
-  //                   className="flex-row w- [30%] px- 4 -[100%] justify-center gap-2 py-1 px-  rounde d-t-xl items-center">
-  //                      <Text
-  //                      style={{fontSize:14,
-  //                      }}
-  //                      className="text-black font-bold text-base">
-  //                          Friends
-  //                      </Text>  
-  //                      <Text
-  //                      style={{fontSize:12,
-  //                       color:"black",
-  //                      }}
-  //                      className="text-white font-bold text-base">
-  //                          {profileFriendData.friends.length}
-  //                      </Text> 
-  //                  </TouchableOpacity>
-  //                  <TouchableOpacity
-  //                   onPress={() => {
-  //                       setShowFriends(!showFriends)
-  //                   }}
-  //                   className="flex-row w- [30%] px- 4 -[100%] justify-center gap-2 py- 1 px-  rounde d-t-xl items-center">
-  //                      <Image
-  //                      className ="w-8 h-8"
-  //                      source={ showFriends ? icons.eyeHide : icons.eye} />
-  //                  </TouchableOpacity>
-  //           </View>
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: 16,
+                  fontWeight: "700",
+                  marginTop: 14,
+                }}
+              >
+                {profile?.name}
+              </Text>
 
-  //           {showFriends && (
-  //               <View 
-  //                   className=" w-[100%] bg-[#F7F7F7]  h- [200px] flex-col py-2 px- 2 justify-center items-center g-white ">
-  //                   <ScrollView 
-  //                   showsVerticalScrollIndicator ={false}
-  //                   style={{ maxHeight : width /2.1 }}
-  //                   className=" w-[100%] max-h- [200px] ">
-  //                       <View 
-  //                       className=" w- [100%] h- [100%] flex-row flex-wrap py-2 gap-2 px-1 2 rounde d-2xl  justify-evenly  items-center b g-[#1c1c1d] ">
-  //                           {profileFriendData && profileFriendData.friends.map((item ,index)=> {
-  //                               return(   
-  //                                   <Friend key={index} index={index} friend={item} w={width} h={height} />
-  //                               )
-  //                           })}
-  //                       </View>
-  //                   </ScrollView>
-  //               </View>
-  //           )}
-  //            <View className="flex-row w-full bg-[#F7F7F7] px-2 py-0    mt-[-1] justify-start items-center h-[50px]">
-  //                      <Text
-  //                      style={{fontSize:13,
-                  
-  //                      }}
-  //                      className="text-blue-500 font-bold text-base">
-  //                          Show more
-  //                      </Text> 
-  //           </View>
+              {!!profile?.biography && (
+                <Text
+                  style={{
+                    color:
+                      "rgba(255,255,255,0.65)",
+                    textAlign: "center",
+                    marginTop: 8,
+                    paddingHorizontal: 24,
+                  }}
+                >
+                  {profile.biography}
+                </Text>
+              )}
+
+              {profile?._id !== user?._id && (
+                <View 
+                className ="flex-row w-full">
+                  <View
+                    style={{
+                      marginTop: 20,
+                      // paddingHorizontal: 5,
+                      // height: 42,
+                      // borderRadius: 12,
+                      justifyContent:
+                        "center",
+                      alignItems:
+                        "center",
+                        width : width /3
+                    }}
+                    className = "flex-row" >
+                        <FriendButton userProfile={profile} />
+                  </View>
+                  <View
+                    style={{
+                      marginTop: 20,
+                      // paddingHorizontal: 5,
+                      // height: 42,
+                      // borderRadius: 12,
+                      justifyContent:
+                        "center",
+                      alignItems:
+                        "center",
+                        width : width /3
+                    }}
+                    className = "flex-row" >
+                        <FollowButton userProfile={profile} />
+                  </View>
+                  <View
+                    style={{
+                      marginTop: 20,
+                      // paddingHorizontal: 5,
+                      // height: 42,
+                      // borderRadius: 12,
+                      justifyContent:
+                        "center",
+                      alignItems:
+                        "center",
+                        width : width /3
+                    }}
+                    className = "flex-row" >
+                        <FollowButton userProfile={profile} />
+                  </View>
+               </View>
+              )}
+            </View>
+
+            {/* EMPTY ARENAS */}
+
+            {arenas.length === 0 ? (
+              <View
+                style={{
+                  marginHorizontal: 16,
+                  marginTop: 25,
+                  backgroundColor: "#111",
+                  borderRadius: 18,
+                  padding: 24,
+                  borderWidth: 1,
+                  borderColor:
+                    "rgba(234,179,8,0.12)",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                    textAlign: "center",
+                    fontWeight: "700",
+                    marginBottom: 8,
+                  }}
+                >
+                  No Arenas Yet
+                </Text>
+
+                <Text
+                  style={{
+                    color:
+                      "rgba(255,255,255,0.65)",
+                    textAlign: "center",
+                  }}
+                >
+                  This user has not
+                  created any arenas yet.
+                </Text>
+              </View>
+            ) : (
+              <>
+               <ViewArenaHeader
+                arenas = {arenas}
+                selectedArena = {selectedArena}
+                setSelectedArena = {setSelectedArena}
+                width = {width}
+                toggleStar = {toggleStar}
+                toggleFollower={toggleFollower}
+               />
+               <Text
+                  style={{
+                    color: "#fff",
+                    fontSize: width / 29,
+                    fontWeight: "700",
+                    marginTop: 30,
+                    marginBottom: 12,
+                    marginLeft: 18,
+                  }} >
+                PERFORMANCES
+               </Text>
+              </>
+            )}
+            </>
+        );
+      case "arenaPost":
+        return (
+          <ViewArenaPost
+            item={item.data}
+            arena={selectedArena}
+            profile={profile}
+            onPress={(post) => {
+              router.push({
+                pathname:
+                  "/arenaPerformancePlayer",
+                params: {
+                  selectedPostId:
+                    post._id,
+                  arenaPosts:
+                    JSON.stringify(
+                      arenaPosts
+                    ),
+                  arena : JSON.stringify(
+                    selectedArena
+                  )
+                },
+              });
+            }}
+          />
+        );
+      case "emptyPosts":
+        return (
+          <View
+            style={{
+              marginHorizontal: 16,
+              backgroundColor: "#111",
+              borderRadius: 18,
+              padding: 24,
+              borderWidth: 1,
+              borderColor:
+                "rgba(234,179,8,0.12)",
+            }}
+          >
+            <Text
+              style={{
+                color:
+                  "rgba(255,255,255,0.7)",
+                textAlign: "center",
+              }}
+            >
+              No performances have
+              been published in this
+              arena yet.
+            </Text>
+          </View>
+        );
+
+      default:
+        return null;
+    }
+  };
 
 
-
-  //           <View className="flex-row w-full bg-[#F7F7F7] px-2 py-0 mt-1 gap-6  bor der-white bor der-b-4 justify-between items-end  h-[50px]">
-  //                     <Text
-  //                      style={{fontSize:14,
-  //                      }}
-  //                      className="text-black font-bold text-base">
-  //                          Recent Activities
-  //                     </Text>  
-  //           </View>
-
-  //     </>
-  //     )
-  // })
-  
+  if(!selectedArena){
+    return  <AuthLoadingScreen />
+  } 
 
   return (
     <View
-    style={{ paddingTop:Platform.OS == "ios" ? insets.top : insets.top}}
-     className="bg-primary h-full w-full ">
-      {  userProfile && profileFriendData &&
-      (
-        <View
-        showsVerticalScrollIndicator ={false}
-        className="w-[100%] h-[100%] bg-primary" >
-           
-            <View 
-                  className=" w-[100%] bg-[#020202]  h- [200px] flex-col py- 2 px- 1 justify-center items-center g-white ">
-                      {displayData && data && (
-                                <FlatList
-                                data={displayData && displayData}
-                                keyExtractor={(item) => item._id}
-                                renderItem={({item ,index}) => {
-                                 return (
-                                  <>
-                                  {item.dataType === "talent" && ( 
-                                    <UserTalentEntry key={index} userTalent = {item}  user={user} userProfile={userProfile}
-                                                     activity = {true} />
-                                  )}
-                                  </>
-                                )
-                                }}
-                                onEndReached = { index < data.length && loadMoreData} 
-                                ListHeaderComponent={<ProfileInfoHeader userProfile={userProfile} profileFriendData={profileFriendData}
-                                             setShowFriends={setShowFriends} showFriends ={showFriends} height={height} width={width} />}
-                                removeClippedSubviews={true} 
-                                scrollEventThrottle={16} 
-                                showsHorizontalScrollIndicator={false}
-                                showsVerticalScrollIndicator={false}
-                                // scrollEnabled={false}
-                                ListFooterComponent = {()=>{
-                                  return(
-                                    <View
-                                    className="w-[100%] py-2 px-1 2 bg-[#000000] flex-col mb-1 mt-1 h-[100px] justify-start items-center">
-                                          { index + 4  > data.length && (
-                                            <TouchableOpacity
-                                              onPressIn={()=>{
-                                                setIndex(4)
-                                                setDisplayData(null)
-                                                setTimeout(() => {
-                                                  setDisplayData(data.slice(0,4))
-                                                }, 10);
-                                              }}
-                                              onPress={
-                                                loadMoreData }
-                                              className="w-[100%] flex-row  justify-center  py-2 px-1  bg-gray-700 rounded-lg items-center">
-                                                    <Text
-                                                        style={{fontSize:12,
-                                                        }}
-                                                        className="text-gray-100 font-bold text-base">
-                                                            go back top
-                                                    </Text>
-                                            </TouchableOpacity>
-                                          )}
-                                    </View>
-                                  )
-                                }
-                                }
-                            />
-                      )}
-            </View>
-           
-            <View
-                className="w-[100%] h-[50px] absolute bottom-0 gap-4 py-2 px-2 shadow-black bg-[#000000] flex-row mb- 1   justify-center items-center">
-                   <Text
-                      style={{fontSize:11,}}
-                      className="text-gray-100 font-bold text-base">
-                           {(name.part1) } 
-                   </Text>
-                   <Image 
-                      // style={{height:height/10 , width:height/10}}
-                      className="w-8 h-8 rounded-full"
-                      resizeMode='cover'
-                      source={{uri: userProfile && userProfile.profile_img}} 
-                      />     
-                   <Text
-                      style={{fontSize:11,}}
-                      className="text-gray-100 font-bold text-base">
-                           Profile
-                   </Text>              
-            </View>
-  
-     </View>
-      )}   
+      style={{
+        flex: 1,
+        width: "100%",
+        backgroundColor: "#000",
+        paddingTop: insets.top,
+      }}
+    >
+      <TouchableOpacity
+        onPress={() =>
+          router.back()
+        }
+        activeOpacity={0.85}
+        style={{
+          position: "absolute",
+          top: insets.top,
+          left: 0,
+          zIndex: 999,
+          width: 42,
+          height: 42,
+          borderRadius: 21,
+          backgroundColor:
+            "rgba(0,0,0,0.75)",
+          borderWidth: 1,
+          borderColor:
+            "rgba(234,179,8,0.25)",
+          justifyContent:
+            "center",
+          alignItems: "center",
+          }} >
+        <MaterialCommunityIcons
+          name="close"
+          size={20}
+          color="#eab308"
+        />
+      </TouchableOpacity>
+
+      <FlatList
+        data={listData}
+        extraData={selectedArena}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={
+          false
+        }
+        keyExtractor={(
+          item,
+          index
+        ) => {
+          switch (item.type) {
+            case "profileArena":
+              return "profileArena";
+            case "emptyPosts":
+              return "emptyPosts";
+            case "arenaPost":
+              return item.data._id;
+            default:
+              return String(index);
+          }
+        }}
+        ListFooterComponent={() => (
+          <View
+            style={{
+              height: 40,
+            }}
+          />
+        )}
+      />
     </View>
-   
-  )
+  );
 }

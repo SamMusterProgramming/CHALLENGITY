@@ -7,8 +7,7 @@ import { stageOrderMap } from './utilities/TypeData'
 const baseURL_DEVOLOPMENT = "http://localhost:8000"
 const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-export const BASE_URL =  baseURL_PRODUCTION
-
+export const BASE_URL =  baseURL_DEVOLOPMENT
 export const api = axios.create({
   baseURL: BASE_URL,
 });
@@ -1059,7 +1058,7 @@ export const getCommentsByPost = async(post_id,setComments) =>{
   }
  }
 
- export const addTalentRoomToFavourite = async(user_id ,body, setData,setIsExpired)=>{
+ export const toggleFavouriteStage = async(user_id ,body, setData,setIsExpired)=>{
  
   try {
       await api.post( BASE_URL + `/talents/favourite/${user_id}`,body)
@@ -1073,18 +1072,18 @@ export const getCommentsByPost = async(post_id,setComments) =>{
   }
 } 
 
-export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
+// export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
  
-  try {
-      await api.patch( BASE_URL + `/talents/favourite/${user_id}`,body)
-      .then(res => {
-          if(res.data === "talent expired") return setIsExpired(true)
-          setData(res.data) 
-      } )
-  } catch (error) {
-      console.log(error)
-  }
-}  
+//   try {
+//       await api.patch( BASE_URL + `/talents/favourite/${user_id}`,body)
+//       .then(res => {
+//           if(res.data === "talent expired") return setIsExpired(true)
+//           setData(res.data) 
+//       } )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
 
 // ***********************************like Talent posts *************************
 
@@ -1236,19 +1235,19 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
     }
      
      
-    export const getFavouriteStageList = async( user_id ,  setFavourites) =>{
-      try { 
-      await api.get( BASE_URL + `/talents/favourites/${user_id}`)
-      .then(res =>  {
-           setFavourites(res.data)
-        } )
-        .finally(()=>{
-          // setIsLoading(false)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-    }
+    // export const getFavouriteStageList = async( user_id ,  setFavourites) =>{
+    //   try { 
+    //   await api.get( BASE_URL + `/talents/favourites/${user_id}`)
+    //   .then(res =>  {
+    //        setFavourites(res.data)
+    //     } )
+    //     .finally(()=>{
+    //       // setIsLoading(false)
+    //     })
+    // } catch (error) {
+    //   console.log(error)
+    // }
+    // }
 
     export const getFavouriteStages = async( user_id ,  setFavourites) =>{
       try { 
@@ -1346,3 +1345,159 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
         throw error;
       }
     };
+
+    //****************** Arena creation , posts *************/
+    
+    export const createArenaByUser = async (user_id , data ) => {
+      try {
+           const response = await api.post(
+          `/arenas/create/${user_id}`,  data);
+        return response.data;
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const updateArenaByUser = async (arena_id , data ) => {
+      try {
+           const response = await api.post(
+          `/arenas/update/${arena_id}`, data);
+        return response.data;
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const deleteArenaByUser = async (arena_id , data ) => {
+      try {
+           const response = await api.post(
+          `/arenas/delete/${arena_id}`,  data);
+        return response.data;
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const getArenaByUser = async (user_id ,setSelectedArena , setArenas, arena_id  ) => {
+      try {
+       
+           const response = await api.get(
+          `/arenas/user/${user_id}`);
+           if(response.data.length) setSelectedArena( !arena_id ? response.data[0] : response.data.find(a => a._id === arena_id))
+            setArenas(response.data);
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const getArenaByProfile = async (profile_id ,setSelectedArena , setArenas, arena_id  ) => {
+      try {
+           const response = await api.get(
+          `/arenas/profile/${profile_id}`);
+           if(response.data.length) setSelectedArena( !arena_id ? response.data[0] : response.data.find(a => a._id === arena_id))
+            setArenas(response.data);
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const getLocalArenas = async (arena_id , body , setArenas ) => {
+      try {
+           const response = await api.get(
+          `/arenas/local/${arena_id}`,body);
+          //  if(response.data.length) setSelectedArena(response.data[0])
+           setArenas(response.data);
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const addPerformanceToArena = async (arena_id , body) => {
+      try {
+           return  await api.post(`/arenas/addPost/${arena_id}`, body);
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const getPostsArena = async (arena_id , setPosts ) => {
+      try {
+           const response = await api.get(`/arenas/posts/${arena_id}`);
+          setPosts([...response.data]);
+      } catch (error) {
+        console.error("getting posts error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const  deleteArenaPost = async (post_id ,  setArena , setUserArenas) => {
+      try {
+           const response = await api.delete(`/arenas/post/${post_id}`);
+          setArena(response.data.selectedArena);
+          setUserArenas(response.data.arenas)
+      } catch (error) {
+        console.error("getting posts error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const toggleStarArena = async (
+      arena_id,
+      body
+    ) => {
+      try {
+        const response = await api.patch(
+          `/arenas/star/${arena_id}`,
+          body
+        );
+    
+        return response.data;
+    
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+
+    export const toggleFollowerArena = async (
+      arena_id,
+      body
+    ) => {
+      try {
+        const response = await api.patch(
+          `/arenas/follower/${arena_id}`,
+          body
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+
+    export const toggleArenaPostSpotlight = async(post_id)=>{
+      try {
+        const response = await api.patch(`/arenas/post/spotlight/${post_id}`);
+      //  setArena(response.data);
+   } catch (error) {
+     console.error("getting posts error:", error.response?.data);
+     throw error;
+   }
+    }
+  
+    export const toggleArenaPostFire = async(post_id , body )=>{
+      try {
+        const response = await api.patch(`/arenas/post/fire/${post_id}`,body);
+      //  setArena(response.data);
+   } catch (error) {
+     console.error("getting posts error:", error.response?.data);
+     throw error;
+   }
+    }

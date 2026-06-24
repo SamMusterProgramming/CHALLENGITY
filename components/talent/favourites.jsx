@@ -31,12 +31,13 @@ export default function Favourites({ user }) {
   
   const { isLoading , setIsLoading , hotStages , setHotStages ,favouriteStages, setFavouriteStages,
           userTalents, setUserTalents, userTalentPerformances ,globalRefresh ,setGlobalRefresh, setUserTalentPerformances , notifications, topTalents
-          ,setTopTalents } = useGlobalContext()
+          ,colorTheme,setTopTalents } = useGlobalContext()
 
   const [selection, setSelection] = useState(null)
   const mainScrollX = useRef(new Animated.Value(0)).current;
   const mainFlatListRef = useRef(null);
   const [currentStage, setCurrentStage] = useState(0);
+  
 
 
  
@@ -84,34 +85,35 @@ export default function Favourites({ user }) {
     setCurrentStage(safeIndex)
   };
 
-  
+
 
   return (
     <View
       style ={{
-        paddingBottom : height * 0.059 ,
+        // paddingBottom : height * 0.059 ,
       }}
       className="flex-1 3 mt- 4  bg-darkBg">
       <View
        className="px- 3 mt- 4  bg-darkBg">
         <Text
             style={{
-              fontSize: width / 30,
-              lineHeight: width / 20,
-              letterSpacing: 0.3,
-              fontWeight:700,
+              color: colorTheme,
+              fontSize: width / 20,
+              fontWeight: "800",
+              letterSpacing: 0.6,
+              // textAlign: "center",
             }}
-            className="fon t-bold uppercase tex t-center te xt-xl text-white tracking-widest mb- 1" >
+            className="fon t-bold uppercase mb-1 text-white tracking-widest mb- 1" >
             Favorite Stages
         </Text>
         <Text
         style={{
-          fontSize: width / 32,
+          fontSize: width / 30,
           lineHeight: width / 24,
           letterSpacing: 0.3,
-          // fontWeight:700,
+          fontWeight:700,
         }}
-          className="text-gray-200 mt-1 font-semiMontserrat tex t-center mt- ">
+          className="text-gray-100 mt-1 mb-2 font-semiMontserrat tex t-center mt- ">
             Revisit the stages you've marked as favorites.
         </Text>
       </View>
@@ -208,7 +210,16 @@ export default function Favourites({ user }) {
                 size={width/44}
             /> 
         )}
-        {/* <View className=" px-2 w-full h-[3] bg-gold/40 mt- 4 mt-4" /> */}
+         <View
+            style={{
+                alignSelf: "start",
+                width: width ,
+                height: 8,
+                backgroundColor: "rgba(212,175,55,0.52)",
+                // marginVertical: 20,
+            }}
+            className="  [95%] px-2 h-[8] bg-gold/90 mb-6 mt-6"
+            />
 
    
 

@@ -50,7 +50,8 @@ export default function StageMenu({
   setNewChallenge,
   stageName,
   setStageName,
-  setShowIntroduction 
+  setShowIntroduction ,
+  showResult , setShowResult
 }) {
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -168,7 +169,7 @@ export default function StageMenu({
                   style={{
                     bottom: TOGGLE_HEIGHT - height * 0.25,
                     left: 0,
-                    width: width * 0.48,
+                    width: width * 0.98,
                   }}
                   className="
                     absolute
@@ -238,6 +239,7 @@ export default function StageMenu({
               onPress={() => {
                 setSelected("stage")
                 !stage && setStage(true)
+                setShowResult(false)
                 setOpenStagesMenu(false)
               }}
               style={{
@@ -279,6 +281,7 @@ export default function StageMenu({
               onPress={() => {
                 setSelected("performance")
                 stage && setStage(false)
+                showResult && setShowResult(false)
                 setOpenStagesMenu(false)
               }}
               style={{
@@ -296,7 +299,7 @@ export default function StageMenu({
               className="items-center justify-center overflow-hidden"
             >
               {/* GOLD DOT */}
-              {!stage && (
+              {selected === "performance" && (
                 <View
                   className="absolute top-2 right-2 rounded-full bg-[#F5D77A]"
                   style={{
@@ -313,7 +316,7 @@ export default function StageMenu({
                     : "#9ca3af",
                   letterSpacing: 1,
                 }}
-                className="font-bebas tracking-[1px]"
+                className="font-bebas track ing-[1px]"
               >
                 Performance
               </Text>
@@ -323,6 +326,8 @@ export default function StageMenu({
                     activeOpacity={0.9}
                     onPress={() => {
                       setSelected("result")
+                      stage && setStage(false)
+                      setShowResult(true)
                     }}
                     style={{
                       width: "32%",
@@ -334,14 +339,26 @@ export default function StageMenu({
                     }}
                     className="items-center justify-center overflow-hidden"
                     >
+                    {selected === "result" && (
+                      <View
+                        className="absolute top-2 right-2 rounded-full bg-[#F5D77A]"
+                        style={{
+                          width: width * 0.012,
+                          height: width * 0.012,
+                        }}
+                      />
+                    )}
                     <Text
                       style={{
-                        color: "#FFFFFF",
+                        color: selected == "result"
+                        ? "#F5D77A"
+                        : "#9ca3af",
                         // marginLeft: 8,
                         fontWeight: "600",
+                        letterSpacing: 1,
                       }}
                       className ="font-bebas tracking-wider" >
-                      Results
+                      Result
                     </Text>
             </TouchableOpacity>
               
@@ -465,8 +482,7 @@ export default function StageMenu({
                       border-b
                       border-white/5
                       
-                    "
-                  >
+                    " >
 
                     {isRefreshing ? (
                       <ActivityIndicator
@@ -501,7 +517,6 @@ export default function StageMenu({
                     activeOpacity={0.9}
                     onPress={() => {
                       setMenuOpen(false)
-
                       !isFavourite
                         ? setParticipationType("addFavourite")
                         : setParticipationType("removeFavourite")
@@ -588,7 +603,7 @@ export default function StageMenu({
                   </TouchableOpacity>
 
                   {/* CLOSE */}
-                  {/* <TouchableOpacity
+                  <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => {
                       setMenuOpen(false)
@@ -623,7 +638,7 @@ export default function StageMenu({
                       Close
                     </Text>
 
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
 
                 </MotiView>
 

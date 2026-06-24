@@ -100,10 +100,20 @@ export const STAGES = [
   "🏋️ Fitness",
   "🎨 Art",
   "🎤 Singing",
-  "🕺 Dance",
-  "🎸 Music",
+  "🕺 Dancing",
+  "🎸 Melody",
   "🎭 Comedy",
   "🪄 Magic"
+];
+export const TALENTS = [
+  "Sport",
+  "Fitness",
+  "Art",
+  "Singing",
+  "Dancing",
+  "Music",
+  "Comedy",
+  "Magic"
 ];
 
 export const continentIcons = {

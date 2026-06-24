@@ -25,20 +25,7 @@ export default function StageDiscoveryFooter({width, height}) {
       }}
       className="justify-center items-center overflow-hidden bg-[#000000]"
     >
-      {/* Gradient Overlay */}
-      {/* <LinearGradient
-        colors={[
-          "rgba(247,215,116,0.08)",
-          "transparent",
-        ]}
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-        }}
-      /> */}
-
-      {/* Main Glow */}
+      
 
       <View
         style={{
@@ -129,22 +116,7 @@ export default function StageDiscoveryFooter({width, height}) {
           </View>
         </View>
       </TouchableOpacity>
-
-      {/* Description */}
-
-      {/* <Text
-        style={{
-          color: "rgba(255,255,255,0.85)",
-          textAlign: "center",
-          width: width * 0.75,
-          marginTop: 24,
-          fontSize: width / 34,
-          lineHeight: 22,
-        }}
-      >
-        Discover competitions, performances and
-        opportunities waiting for your talent.
-      </Text> */}
+      
     </View>
   );
 }

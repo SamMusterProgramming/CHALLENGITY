@@ -89,7 +89,12 @@ function PerformanceDescription({stageData , user}) {
   return (
     <>
       {contestant && (
-        <Text className="text-zinc-300 text-start text-sm leading-6">
+        <Text 
+        style={{
+          fontSize :width /30,
+          color:"#fff"
+        }}
+        className="text-zinc-300 text-start text-sm leading-6">
           You're currently{" "}
           <Text className="text-[#eab308] font-bold">
             {contestant.rank <= 4
@@ -137,6 +142,7 @@ export default function Performances({ user }) {
 
   const mainScrollX = useRef(new Animated.Value(0)).current;
   const mainFlatListRef = useRef(null);
+  const {colorTheme} = useGlobalContext()
 
 //   useEffect(() => {
 //     if(!stageData) return ;
@@ -164,18 +170,18 @@ export default function Performances({ user }) {
           width={width * 0.96}
           height={height * 0.3}
         />
-       <View className="w- full px- 3 bg-[#010101]  items-ce nter py-2 mt-2 ">
+       <View className="w- full px- 3 bg-[#000000]  items-ce nter py-2 mt-2 ">
                <PerformanceDescription stageData={item} user={user} />
        </View>
        <View
             style={{
                 alignSelf: "start",
-                width: width * 0.4,
-                height: 1,
-                backgroundColor: "rgba(212,175,55,0.52)",
+                width: width ,
+                height: 8,
+                // backgroundColor: "rgba(212,175,55,0.52)",
                 // marginVertical: 20,
             }}
-            className="  [95%] px-2 h-[2] bg-gold/40 mb-6 mt-6"
+            className="  [95%] px-2 h-[2] bg-gold/80 mb-6 mt-6"
         />
       </View>
     );
@@ -201,12 +207,13 @@ export default function Performances({ user }) {
         
         <View className="px- 3 w-full mt-4 mb-4 bg-dark Bg">
           <Text
-               style={{
-                fontSize: width / 30,
-                lineHeight: width / 20,
-                letterSpacing: 0.3,
-                fontWeight:700,
-              }}
+                style={{
+                  color: colorTheme,
+                  fontSize: width / 20,
+                  fontWeight: "800",
+                  letterSpacing: 0.6,
+                  // textAlign: "center",
+                }}
               className="fon t-bold uppercase te xt-center te xt-xl text-white tracking-widest mb- 1" >
                Performances
           </Text>
@@ -215,9 +222,9 @@ export default function Performances({ user }) {
                   fontSize: width / 30,
                   lineHeight: width / 24,
                   letterSpacing: 0.3,
-                  // fontWeight:700,
+                  fontWeight:700,
                 }}
-                  className="text-gray-200 mt-1 font-semiMontserrat tex t-center mt- ">
+                  className="text-gray-100 mt-1 font-semiMontserrat tex t-center mt- ">
                     Keep competing, share new performances, and inspire more votes.         
           </Text>
        </View>
@@ -226,12 +233,12 @@ export default function Performances({ user }) {
        <View
             style={{
                 alignSelf: "start",
-                width: width * 0.4,
-                height: 1,
-                backgroundColor: "rgba(212,175,55,0.52)",
+                width: width ,
+                height: 8,
+                // backgroundColor: "rgba(212,175,55,0.92)",
                 // marginVertical: 20,
             }}
-            className="  [95%] px-2 h-[2] bg-gold/40 mb-10 mt-4"
+            className="  [95%] px-2 h-[2] bg-gold/80 mb-10 mt-4"
         />
 
         <View

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { icons } from '../../constants'
 import { addFollowing, friendRequest, removeFriendRequest, unFollowings } from '../../apiCalls'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 export default function FollowButton({ userProfile }) {
   const { user,  follow, setFollow, notifications } = useGlobalContext()
@@ -57,57 +58,120 @@ export default function FollowButton({ userProfile }) {
   return (
     <>
       {status && (
+        // <TouchableOpacity
+        //   onPress={handleRequest}
+        //   activeOpacity={0.85}
+        //   style={{
+        //     width: "100%",
+        //     height: 44,
+        //     borderRadius: 12,
+        //     justifyContent: "center",
+        //     alignItems: "center",
+        //     backgroundColor: "#131313",
+        //     borderWidth: 1,
+        //     borderColor:
+        //       status === "Follow"
+        //         ? "rgba(234,179,8,0.35)"
+        //         : "rgba(255,255,255,0.08)",
+        //   }}
+        // >
+        //   <View
+        //     style={{
+        //       flexDirection: "row",
+        //       alignItems: "center",
+        //     }}
+        //   >
+        //     {status === "Following" && (
+        //       <MaterialCommunityIcons
+        //         name="check"
+        //         size={15}
+        //         color="#9CA3AF"
+        //       />
+        //     )}
+  
+        //     {status === "Follow" && (
+        //       <MaterialCommunityIcons
+        //         name="account-plus-outline"
+        //         size={15}
+        //         color="#eab308"
+        //       />
+        //     )}
+  
+        //     <Text
+        //       style={{
+        //         marginLeft: 6,
+  
+        //         fontSize: width / 36,
+  
+        //         fontWeight: "700",
+  
+        //         letterSpacing: 0.3,
+  
+        //         color:
+        //           status === "Follow"
+        //             ? "#eab308"
+        //             : "#D1D5DB",
+        //       }}
+        //     >
+        //       {status}
+        //     </Text>
+        //   </View>
+        // </TouchableOpacity>
         <TouchableOpacity
           onPress={handleRequest}
-          activeOpacity={0.85}
-          className={`flex-row items-center rounded-xl gap-2 px-4 py-2`}
+          activeOpacity={0.7}
           style={{
-            // paddingVertical: 10,
-            // paddingHorizontal: 22,
-            // borderRadius: 14,
-            alignItems: "center",
-            justifyContent: "center",
+            // height: 36,
+            paddingHorizontal: 12,
             flexDirection: "row",
-            gap: 8,
+            // alignItems: "center",
+            justifyContent: "center",
+            // alignSelf: "center",
+            borderRadius: 999,
             backgroundColor:
-              status === "Following"
-                ? "rgba(5,5,155,0.06)"
-                : "#E6C068",
-
-            borderWidth: status === "Following" ? 1 : 0,
-            borderColor: "rgba(255,255,255,0.15)",
-          }}
+              "rgba(255,255,255,0.025)",
+             }}
+          className = "items-end"
         >
-          {/* ICON */}
-          {/* {status === "Following" && (
-            <Image
-              source={icons.check}
-              resizeMode="contain"
-              style={{
-                width: 14,
-                height: 14,
-                opacity: 0.9,
-              }}
-            />
-          )} */}
-
-          {/* TEXT */}
-          <Text
+          {/* <View
             style={{
-              fontSize: width/44,
-              fontWeight: "600",
-              letterSpacing: 1,
-
-              color:
-                status === "Following"
-                  ? "#E5E7EB"
-                  : "#0A0B0D",
+              flexDirection: "row",
+              alignItems: "center",
             }}
-          >
-            {status}
-          </Text>
+          > */}
+            <MaterialCommunityIcons
+              name={
+                status === "Following"
+                  ? "eye-check-outline"
+                  : "eye-plus-outline"
+              }
+              size={22}
+              color={
+                status !== "Follow"
+                  ? "#7dd3fc"
+                  : "#fff"
+              }
+            />
+            <Text
+              style={{
+                marginLeft: 6,
+                fontSize: width / 32,
+                fontWeight: "700",
+                letterSpacing: 0.3,
+                color:
+                  status !== "Follow"
+                    ? "#7dd3fc"
+                    : "#fff",
+              }}
+              // className = "font-bebas"
+            >
+              {status === "Follow"
+                ? "Follow"
+                : "Following"}
+            </Text>
+          {/* </View> */}
         </TouchableOpacity>
       )}
     </>
-  )
+  );
 }

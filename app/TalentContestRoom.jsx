@@ -1,7 +1,7 @@
 import { View, Text, Platform, TouchableOpacity, Image, useWindowDimensions, Dimensions, ActivityIndicator, TouchableWithoutFeedback, Animated } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router';
-import { addContestantToQue, addTalentRoomToFavourite,  backInQueue,  createTalentRoom,  deleteContestantElimination,  deleteContestantQueue,  deleteContestantStage, deletePerformanceQueue, deletePerformanceStage, eliminationTalentRoom, getUserTalent, getUserTalentPerformances, removeTalentRoomFromFavourite } from '../apiCalls';
+import { addContestantToQue,  backInQueue,  createTalentRoom,  deleteContestantElimination,  deleteContestantQueue,  deleteContestantStage, deletePerformanceQueue, deletePerformanceStage, eliminationTalentRoom, getUserTalent, getUserTalentPerformances,  toggleFavouriteStage } from '../apiCalls';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
@@ -43,7 +43,7 @@ import StageCoverIntroduction from '../components/talent/stageCoverIntroduction'
 
 
 export default function TalentContestRoom() {
-const {user , setUserTalents ,globalRefresh,setGlobalRefresh , favouriteStages , favouriteList , setFavouriteList, setFavouriteStages, setUserTalentPerformance} = useGlobalContext()
+const {user , setUserTalents ,globalRefresh,setGlobalRefresh , favouriteStages , setFavouriteStages , favouriteList , setFavouriteList,  setUserTalentPerformance} = useGlobalContext()
 
 const {region,
       regionIcon, 
@@ -103,6 +103,7 @@ const [videoCount , setVideoCount] = useState(0)
 const [openUserModal,setOpenUserModal] = useState(false)
 const { showLoading, hideLoading } = useLoading();
 const [showIntroduction , setShowIntroduction] = useState(true)
+const [showResult , setShowResult] = useState(false)
 
 
 const SCREEN_HEIGHT = height - insets.top
@@ -369,10 +370,7 @@ useEffect(() => {
             setSelectedContestant(contestant)
           }
       }
-     
-     if(favouriteList){
-       setIsFavourite(favouriteList.favourites.find(f=> f._id == talentRoom._id))
-     }else setIsFavourite(false)
+     setIsFavourite(favouriteStages.some(f => f._id.toString() === talentRoom._id.toString()) )
      const contestantsIndex = []
      talentRoom.contestants.forEach((c,index) =>{
          const obj = {
@@ -389,8 +387,10 @@ useEffect(() => {
 
 
 useEffect(() => {
-    favouriteList && talentRoom &&  setIsFavourite(favouriteList.favourites.some(f=> f._id == talentRoom._id))
-}, [favouriteList , talentRoom])
+    if(!talentRoom) return ;
+    const isFavourite = favouriteStages.some(f => f._id.toString() === talentRoom._id.toString())  
+    setIsFavourite(isFavourite)
+}, [favouriteStages])
 
 
 //******************************handle actions , participation , resign .....  */
@@ -526,17 +526,17 @@ const handleBackInQueue = async() => {
   setGlobalRefresh(true)
 }
 
-const addFavourite  = async() => {
+const toggleFavourite  = async() => {
   setIsModalVisible(false)
-  await addTalentRoomToFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
+  await toggleFavouriteStage(user._id,{talentRoom_id:talentRoom._id},setFavouriteStages,setIsExpired)
   setGlobalRefresh(true)
 }
 
-const removeFromFavourite = async()=> {
-  setIsModalVisible(false)
-  await removeTalentRoomFromFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
-  setGlobalRefresh(true)
-}
+// const removeFromFavourite = async()=> {
+//   setIsModalVisible(false)
+//   await removeTalentRoomFromFavourite(user._id,{talentRoom_id:talentRoom._id},setFavouriteList,setIsExpired)
+//   setGlobalRefresh(true)
+// }
 
 useEffect(() => {
   if(participationType == "") return ;
@@ -827,10 +827,10 @@ return (
                                       
                                 </>
                                 ) : (
+                                !showResult ? (  
                                 <View
                                 className={ "w-[100vw] h-[100%]  flex-col justify-center items-center "}
                                     > 
-                                  
                                   {!newChallenge ? (
                                     <>
                                     {isPlaying && (
@@ -872,6 +872,12 @@ return (
                                     />
                                     )}
                                 </View>
+                                ):(
+                                  <View
+                                  className = {!isPlaying ? "opacity-20 w-[100%] " : "w-[100vw]  opacity-100"}>
+                                    
+                                  </View>
+                                )
                               )}
                           
               {!isPlaying  && !replayRecording &&  (
@@ -879,7 +885,7 @@ return (
                           stage={stage} setStage = {setStage} handleRefresh ={handleRefresh} talentRoom ={talentRoom}
                           globalRefresh ={globalRefresh} edition ={edition}  isRefreshing ={isRefreshing} setNewChallenge={setNewChallenge}
                           stageName={stageName} setStageName={setStageName} setTalentRoom={setTalentRoom}
-                          setShowIntroduction ={setShowIntroduction}
+                          setShowIntroduction ={setShowIntroduction} showResult ={showResult} setShowResult ={setShowResult}
                           />    
               )}
 
@@ -988,7 +994,7 @@ return (
                      handleTalentParticipation  = {handleTalentParticipation}
                      handleDeleteContestantStage = {handleDeleteContestantStage} 
                      handleDeleteContestantQueue={handleDeleteContestantQueue}
-                     addFavourite={addFavourite} removeFromFavourite={removeFromFavourite}
+                     toggleFavourite={toggleFavourite}
                      handleQueue ={handleQueue} setParticipationType ={setParticipationType} 
                      handleDeletePerformanceStage={handleDeletePerformanceStage}
                      handleDeletePerformanceQueue={handleDeletePerformanceQueue}

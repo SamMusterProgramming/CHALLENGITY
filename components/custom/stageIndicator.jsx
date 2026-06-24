@@ -118,15 +118,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 export default function StageIndicator({
   title = "Performances",
   count = 0,
-  scrollX,
   width,
-  position,
-  absolute = true,
-  size = width / 45,
-  rank = null,
-  votes = null,
-  status = null,
-  left,
   currentStage
 }) {
   const { colorTheme } = useGlobalContext();
@@ -134,7 +126,7 @@ export default function StageIndicator({
  
 
   return (
-    <View className="w-full py- 2">
+    <View className="w-full px-2">
 
       <View className="flex-row items-center justify-between">
 
@@ -146,10 +138,11 @@ export default function StageIndicator({
             style={{
               fontSize: width / 32,
               letterSpacing: 1,
+            //   color: colorTheme
             }}
-            className="text-zinc-400 uppercase font-bold"
+            className="text-zinc-300 uppercase font-bold"
           >
-            STAGE
+            {title}
           </Text>
 
           <View className="flex-row items-center mt- 1">
@@ -164,7 +157,7 @@ export default function StageIndicator({
                 </Text>
 
                 <Text
-                className="text-zinc-500 ml-1"
+                className="text-white ml-1"
                 style={{
                     fontSize: width / 30,
                     fontWeight: "800",
@@ -178,40 +171,39 @@ export default function StageIndicator({
         {/* CENTER DOTS */}
         {count > 1 && (
           <View className="flex-row items-center gap-2">
-
             {Array.from({ length: count }).map(
               (_, index) => {
-                const inputRange = [
-                  (index - 1) * width,
-                  index * width,
-                  (index + 1) * width,
-                ];
 
-                const opacity =
-                  scrollX?.interpolate({
-                    inputRange,
-                    outputRange: [0.25, 1, 0.25],
-                    extrapolate: "clamp",
-                  }) || 0.25;
+                // const inputRange = [
+                //   (index - 1) * width,
+                //   index * width,
+                //   (index + 1) * width,
+                // ];
 
-                const scale =
-                  scrollX?.interpolate({
-                    inputRange,
-                    outputRange: [1, 1.1, 1],
-                    extrapolate: "clamp",
-                  }) || 1;
+                // const opacity =
+                //   scrollX?.interpolate({
+                //     inputRange,
+                //     outputRange: [0.25, 1, 0.25],
+                //     extrapolate: "clamp",
+                //   }) || 0.25;
+
+                // const scale =
+                //   scrollX?.interpolate({
+                //     inputRange,
+                //     outputRange: [1, 1.1, 1],
+                //     extrapolate: "clamp",
+                //   }) || 1;
 
                 return (
-                  <Animated.View
+                  <View
                     key={index}
                     style={{
-                      opacity,
-                      transform: [{ scale }],
+                      // opacity,
+                      // transform: [{ scale }],
                       width: width / 45,
                       height: width / 45,
                       borderRadius: 999,
-                      backgroundColor:
-                        colorTheme,
+                      backgroundColor: currentStage === index ? colorTheme : "rgba(255,255,255,0.25)" ,
                     }}
                   />
                 );

@@ -12,7 +12,7 @@ import Favourite from '../components/home/Favourite';
 import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
 import ProfileDrawer from '../components/modal/profileDrawer';
-import {  getFavouriteStageList, getFavouriteStages, getFollowData, getHotStages, getNotificationByUser, getRegionTalentStages, getTrendingStages, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
+import {  getArenaByUser,  getFavouriteStages, getFollowData, getHotStages, getLocalArenas, getNotificationByUser, getRegionTalentStages, getTrendingStages, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
 import { getUserCountry } from '../utilities/userGeoLocation';
 import { clearPendingNotification, getPendingNotification } from '../notifications/pendingNotification';
 import { routeNotification } from '../notifications/notificationRouter';
@@ -22,13 +22,14 @@ import * as NavigationBar from "expo-navigation-bar";
 import StageHomePage from '../components/home/stageHomePage';
 import FavouriteStageDrawer from '../components/modal/favouriteStageDrawer';
 import PerformanceHomePage from '../components/home/performanceHomePage';
+import Arena from '../components/home/arena';
 
 
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const {user,setUser ,activeIndex,setActiveIndex,isLoggingOut,setIsLoggingOut , setFavouriteList,setUserTalents,setTopTalents , setRegionStages, allStages, setAllStages ,trendingStages, setTrendingStages,hotStages , setHotStages,favouriteStages, setFavouriteStages
-    ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg ,
+  const {user,setUser ,activeIndex,setActiveIndex , isLoggingOut , setSelectedArena , setFavouriteList,setUserTalents,setTopTalents , setRegionStages, allStages, setAllStages ,trendingStages, setTrendingStages,hotStages , setHotStages,favouriteStages, setFavouriteStages
+    ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg , userArenas , setUserArenas , setLocalArenas,
     setGlobalSelectedRegion , setUserCountryCode } = useGlobalContext() 
   const { width, height } = useWindowDimensions();
   const [selectedPage , setSelectedPage] = useState(null)
@@ -147,19 +148,21 @@ export default function Home() {
           // getFollowings(user._id, setFollowings),
           getUserFriendsData(user._id, setUserFriendData),
           getFollowData(user._id, setFollow),
-          getFavouriteStageList(user._id, setFavouriteList),
           getFavouriteStages(user._id, setFavouriteStages),
           // getTopTalents(user._id, setTopTalents),
           // getAllTalentStages(setAllStages),
           // getRegionTalentStages("US" , setRegionStages),
           getHotStages(user._id, setHotStages),
-
+          getArenaByUser(user._id ,setSelectedArena, setUserArenas),
+          
           // getUserCountryFromGPS(setGpsLocation),
         ]);
         await getUserCountry().then( async(res) =>{
                            setGlobalSelectedRegion("DZ")
                            setUserCountryCode("DZ")
-                           await Promise.all ([getRegionTalentStages("DZ", setRegionStages),getTrendingStages("DZ", setTrendingStages)]
+                           await Promise.all ([getRegionTalentStages("DZ", setRegionStages),
+                                               getTrendingStages("DZ", setTrendingStages),
+                                               getLocalArenas("DZ",{userId:user._id}, setLocalArenas)]
                            )
                        })
         setUserProfileImg(user.profileImage?.publicUrl);
@@ -251,7 +254,7 @@ export default function Home() {
                           <PerformanceHomePage onScroll={handleScroll} setSelectedPage={setSelectedPage} />
                         )}
                         {activeIndex === 3 && ! isFetching && ! isLoggingOut && (
-                          <UserProfile user={user} />
+                          <Arena user={user}  onScroll={handleScroll}/>
                         )}
                         {selectedPage == "notification" && ! isFetching && (
                           <UserNotifications user={user} />

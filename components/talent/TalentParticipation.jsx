@@ -46,7 +46,6 @@ export default function TalentParticipation({talentRoom, setReplayRecording , us
   const [loading, setLoading] = useState(false)
   const timerRef = useRef(null);
 
-  
   const videolURL = participation == "update"? userParticipation.video_url :
         participation == "qupdate" ? talentRoom.queue.find(u => u.user_id == user._id).video_url:
         participation == "eupdate" ?talentRoom.eliminations.find(u => u.user_id == user._id).video_url:null

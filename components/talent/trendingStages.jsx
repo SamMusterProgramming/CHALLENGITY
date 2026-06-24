@@ -62,7 +62,7 @@ export default function TrendingStages({ user }) {
   const mainScrollX = useRef(new Animated.Value(0)).current;
   const mainFlatListRef = useRef(null);
   const [currentStage, setCurrentStage] = useState(0);
-
+  const {colorTheme} = useGlobalContext()
 
 //   useEffect(() => {
 //     mainFlatListRef.current?.scrollToOffset({ offset: hotStageScrolledIndex, animated: false });
@@ -159,13 +159,14 @@ export default function TrendingStages({ user }) {
         
         <View className="px- 2 w-full text-center mt-4 mb-4 b g-darkBg">
             <Text
-               style = {{
-                fontSize: width / 30,
-                lineHeight: width / 20,
-                letterSpacing: 0.3,
-                fontWeight:700,
-                }}
-                className="fon t-bold te xt-center te xt-xl text-white track ing-widest mb- 1" >
+                style={{
+                    color: colorTheme,
+                    fontSize: width / 20,
+                    fontWeight: "800",
+                    letterSpacing: 0.6,
+                    // textAlign: "center",
+                  }}
+                className="fon t-bold mb-1 text-white track ing-widest mb- 1" >
                 TRENDING STAGES
             </Text>
             <Text 
@@ -173,10 +174,10 @@ export default function TrendingStages({ user }) {
                 fontSize: width / 30,
                 lineHeight: width / 24,
                 letterSpacing: 0.3,
-                // fontWeight:700,
+                fontWeight:700,
               }}
-                className="text-gray-200 mt-1 font-semiMontserrat te xt-center mt- ">
-              {`Explore trending stages near you and across ${REGION_TITLES[getRegionName(userCountryCode)]}`}
+                className="text-gray-100 mt-1 mb-2 font-semiMontserrat te xt-center mt- ">
+              {`Explore  stages near you and across ${REGION_TITLES[getRegionName(userCountryCode)]}`}
             </Text>
            
         </View>
@@ -187,7 +188,7 @@ export default function TrendingStages({ user }) {
             height: 0.3 * height,
             width,
           }}
-          className="flex- 1 mb-4 h-[100%] w-full items-start justify-center  bg-[#392a0e]/30">
+          className="flex- 1 mb-6 h-[100%] w-full items-start justify-center  bg-[#392a0e]/30">
                 <LoadingActivity visible = {isLoading} />
                 <Animated.FlatList
                     ref={mainFlatListRef}
@@ -235,12 +236,12 @@ export default function TrendingStages({ user }) {
             <View
             style={{
                 alignSelf: "start",
-                width: width * 0.4,
-                height: 1,
+                width: width ,
+                height: 8,
                 backgroundColor: "rgba(212,175,55,0.52)",
                 // marginVertical: 20,
             }}
-            className="  [95%] px-2 h-[2] bg-gold/40 mb-6 mt-6"
+            className="  [95%] px-2 h-[2] bg-gold/90 mb-6 mt-6"
             />
 
     </View>

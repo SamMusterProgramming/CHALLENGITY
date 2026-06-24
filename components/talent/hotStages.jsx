@@ -61,7 +61,7 @@ export default function HotStage({ user }) {
   const mainScrollX = useRef(new Animated.Value(0)).current;
   const mainFlatListRef = useRef(null);
   const [currentStage, setCurrentStage] = useState(0);
-
+  const {colorTheme} = useGlobalContext()
 
 //   useEffect(() => {
 //     mainFlatListRef.current?.scrollToOffset({ offset: hotStageScrolledIndex, animated: false });
@@ -160,24 +160,25 @@ export default function HotStage({ user }) {
         <View className="px- 3 w-full text-center pb-4 b g-darkBg">
             <Text
                  style={{
-                  fontSize: width / 30,
-                  lineHeight: width / 20,
-                  letterSpacing: 0.3,
-                  fontWeight:700,
+                  color: colorTheme,
+                  fontSize: width / 20,
+                  fontWeight: "800",
+                  letterSpacing: 0.6,
+                  // textAlign: "center",
                 }}
-                className="fon t-bold te xt-center te xt-xl text-white tracking-widest mb- 1" >
+                className="fon t-bold mb-1 text-white tracking-widest mb- 1" >
                 HOT STAGES {' '}
                
             </Text>
             <Text 
                  style={{
-                  fontSize: width / 32,
+                  fontSize: width / 30,
                   lineHeight: width / 24,
                   letterSpacing: 0.3,
-                  // fontWeight:700,
+                  fontWeight:700,
                 }}
-                  className="text-gray-200 mt-1 font-semiMontserrat tex t-center mt- ">
-                Competition is live. Vote now or join when a spot opens.
+                  className="text-gray-100 mt-1 mb-2 font-semiMontserrat tex t-center mt- ">
+                Discover where talent is making waves right now
             </Text>
            
         </View>
@@ -186,8 +187,8 @@ export default function HotStage({ user }) {
           style={{
             height: 0.3 * height,
             width,
-          }}
-          className="flex- 1 h-[100%] w-full items-start justify-center mb-4  bg-[#392a0e]/30">
+            }}
+          className="flex- 1 h-[100%] w-full items-start justify-center mb-6 bg-[#392a0e]/30">
                 <LoadingActivity visible = {isLoading} />
                 <Animated.FlatList
                     ref={mainFlatListRef}
@@ -230,29 +231,22 @@ export default function HotStage({ user }) {
             </View>
 
             <StageIndicator
-                title="Stages"
+                title="Stage"
                 count={hotStages.length}
-                scrollX={mainScrollX}
                 currentStage={currentStage}
                 width={width}
-                absolute = {false}
-                position={{
-                  top: 0,
-                  right: 15,
-                }}
-                size={width/44}
             /> 
 
          
             <View
             style={{
                 alignSelf: "start",
-                width: width * 0.4,
-                height: 1,
+                width: width ,
+                height: 8,
                 backgroundColor: "rgba(212,175,55,0.52)",
                 // marginVertical: 20,
             }}
-            className="  [95%] px-2 h-[2] bg-gold/40 mb-6 mt-6"
+            className="  [95%] px-2 h-[8] bg-gold/90 mb-6 mt-6"
             />
 
     </View>

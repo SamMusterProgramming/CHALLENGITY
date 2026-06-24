@@ -186,7 +186,7 @@ export default function StageCard({
                 width: 24,
                 height: 24,
                 borderRadius: 24,
-                backgroundColor: "rgba(0,0,0,0.55)",
+                backgroundColor:  "rgba(234,179,8,0.7)",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -194,7 +194,7 @@ export default function StageCard({
               <MaterialCommunityIcons
                 name="play"
                 size={20}
-                color = "white"
+                color = "black"
               />
             </View>
 
@@ -230,11 +230,12 @@ export default function StageCard({
                   " >
                   <Text
                     style={{
-                      fontSize: width / 49,
+                      fontSize: width / 40,
+                      fontFamily:"900"
                     }}
                     className="
                       text-[#eab308]
-                      font-bold
+                      font-black
                       trackin g-[1px]
                     "
                   >

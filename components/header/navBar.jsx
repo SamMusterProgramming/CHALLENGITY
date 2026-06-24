@@ -245,7 +245,7 @@ const TABS = [
   { name: "Home", Icon: Home },
   { name: "Stage", Icon: Play },
   { name: "Entry", Icon: Trophy },
-  { name: "Profile", Icon: User },
+  { name: "Arena", Icon: User },
 ];
 
 export default function NavBar({
@@ -320,18 +320,18 @@ export default function NavBar({
                 /> */}
 
                 <Text
-                  className={` tracking-wide font-bold ${
+                  className={` tracking-wide font-black ${
                     isActive ? "text-[#eab308]" : "text-white/90"
                   }`}
-                  style={{ fontSize: width/38 }}  >
+                  style={{ fontSize: width/30 }}  >
                   {tab.name.toUpperCase()}
                 </Text>
 
               <Animated.View
-                  className = "justify-center absolute bottom-[6] items-center "
+                  className = "justify-center absolute bottom-[2] items-center "
                   style={{
                     // marginTop: 4,
-                    height: 1.5,
+                    height: 6,
                     width:  tab.name.length * 12,
                     borderRadius: 2,
                     backgroundColor: "#eab308" , //"rgb(240 ,197,55, 0.8)",

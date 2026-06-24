@@ -275,14 +275,45 @@ export async function clearLocalStorage() {
   }
 
 
- export  const generateThumbnail = async (url) => {
-    try {
-      return  await VideoThumbnails.getThumbnailAsync(
-        url,
-        { time: 10 }
-      );
+//  export  const generateThumbnail = async (url, duration = 3000) => {
+//     try {
+//       return  await VideoThumbnails.getThumbnailAsync(
+//         url,
+//         { time: 5000 }
+//       );
       
-    } catch (error) {
-      console.warn(error);
-    }
-  };
+//     } catch (error) {
+//       console.warn(error);
+//     }
+//   };
+
+export const generateThumbnail = async (
+  url
+) => {
+
+  const times = [
+    3000,
+    7000,
+    12000,
+  ];
+
+  for (const time of times) {
+
+    try {
+
+      const thumbnail =
+        await VideoThumbnails.getThumbnailAsync(
+          url,
+          { time }
+        );
+
+      if (thumbnail?.uri) {
+        return thumbnail;
+      }
+
+    } catch (e) {}
+
+  }
+
+  return null;
+};

@@ -41,7 +41,7 @@ export default function StageSelectorFooter() {
                  justify-center
                "
              >
-               <Text style={{ fontSize: width/14 }}>
+               <Text style={{ fontSize: width/12 }}>
                  {countries.find(c => c.code === globalSelectedRegion)?.flag || "🌍"}
                </Text>
              </View>
@@ -62,9 +62,10 @@ export default function StageSelectorFooter() {
                  className="
                    text-white
                    text-lg
-                   font-montserratSemi
+                   font-bold
+                   uppercase
                  "
-                 style={{ fontSize: width/34 }}
+                 style={{ fontSize: width/40 }}
                >
                  {countries.find( c => c.code === globalSelectedRegion)?.name || "Global"}
                </Text>
@@ -85,11 +86,11 @@ export default function StageSelectorFooter() {
              <Text
                className="
                  text-yellow-500
-                 font-montserratSemi
+                 font-black
                "
                style={{
-                 fontSize: width / 38,
-                 fontWeight:700,
+                 fontSize: width / 30,
+                 fontWeight:800,
                }}
              >
                SELECT

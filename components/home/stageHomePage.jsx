@@ -29,7 +29,7 @@ export default function StageHomePage({onScroll}) {
   const flatListRef = useRef(null);
   const [isHotStageReady, setIsHotStageReady] = useState(false);
   const [loadingStages, setLoadingStages] = useState(false);
-
+ const {colorTheme} = useGlobalContext()
   const { width, height } = Dimensions.get("window");
 
   const scrollY = useRef(homeState.scrollY || 0);
@@ -112,7 +112,7 @@ useEffect(() => {
     <StageCard
       stage = {item}
       width={width}
-      height={width/3.03}
+      height={width/3.05}
       region = {globalSelectedRegion}
       user = {user}
     />
@@ -137,12 +137,19 @@ useEffect(() => {
         <View className="px- 2 w-full mt-4 mb-4 item s-center pb- 2 bg-dark Bg">
             
             <Text 
+            // style={{
+            //   fontSize: width / 30,
+            //   lineHeight: width / 20,
+            //   letterSpacing: 0.3,
+            //   fontWeight:700,
+            // }}
             style={{
-              fontSize: width / 30,
-              lineHeight: width / 20,
-              letterSpacing: 0.3,
-              fontWeight:700,
-            }}
+                color: colorTheme,
+                fontSize: width / 20,
+                fontWeight: "800",
+                letterSpacing: 0.6,
+                // textAlign: "center",
+              }}
             className="fon t-bold tex t-lg tex t-center text-white tracki ng-wide mb- 1">
               EXPLORE STAGES {' '}
             </Text>
@@ -157,7 +164,7 @@ useEffect(() => {
             return (
                 <View 
                 style={{
-                    height: width / 3.3,
+                    height: width / 3.05,
                     width :width * 0.49,
                 }}
                 className=" mb- 4 flex-1 justify-center items-center">

@@ -25,12 +25,14 @@ const [showSelector, setShowSelector] = useState(true);
 const [refreshing, setRefreshing] = useState(false);
 const [action, setAction] = useState("");
 const [postToDeleteId, setPostToDeleteId] = useState(null);
+const [playerPosts, setPlayerPosts] = useState([]);
+const [selectedPost, setSelectedPost] = useState(null);
 const {width ,height} = useWindowDimensions()
 
 // const [textAlert, setTextAlert] = useState("");
 
-
 const lastOffset = useRef(0);
+
 const createArena = async(d) => {
   const data =   await createArenaByUser(user._id,d)
   if(data.message) return ; 
@@ -51,6 +53,50 @@ useEffect(() => {
     }
     getData()
 }, [selectedArena])
+
+
+useEffect(() => {
+    if (!selectedPost || !selectedArena) return;
+    const posts = selectedArena.posts
+    let refactoredPosts = []
+    posts.map((p) => {
+        let post = {...p, arenaName :selectedArena.arenaName ,
+        talentType : selectedArena.talentType ,
+        region : selectedArena.region ,
+        profileImage : selectedArena.profileImage
+      }      
+      refactoredPosts.push(post)
+    } )
+    
+    const updatedPosts = [
+        refactoredPosts.find(p => p._id.toString() === selectedPost._id.toString()),
+        ...refactoredPosts.filter(p => p._id.toString() !== selectedPost._id.toString()),
+      ];
+    setPlayerPosts(updatedPosts)
+  }, [selectedPost]);
+
+ 
+  useEffect(() => {
+      if (!selectedPost) return;
+      router.push({
+        pathname:
+          "/arenaPerformancePlayer",
+        params: {
+          selectedPostId:
+            selectedPost._id,
+          arenaPosts:
+            JSON.stringify(
+              playerPosts
+            ),
+          arena : JSON.stringify(
+            []
+          )
+        },
+      });
+  }, [playerPosts])
+
+
+
 
 const onRefresh = async () => {
     showLoading("Refreshing ...")
@@ -74,7 +120,6 @@ useEffect(() => {
 
 // handle actions below 
 const updateArena = async(body) => {
-    console.log(body)
     const data = await updateArenaByUser(selectedArena._id , {...body,userId:user._id})
     setSelectedArena(data.selectedArena)
     setUserArenas(data.arenas)
@@ -182,20 +227,21 @@ return (
                   item={item}
                   setPostToDeleteId={setPostToDeleteId}
                   arena={selectedArena}
+                  setSelectedPost = {setSelectedPost}
                   onRefresh={onRefresh}
-                  onPress={(post) => {
-                    router.push({
-                        pathname:
-                          "/arenaPerformancePlayer",
-                        params: {
-                          selectedPostId: post._id,
-                          arenaPosts: JSON.stringify(arenaPosts),
-                          arena : JSON.stringify(
-                            selectedArena
-                          )
-                        },
-                      });
-                  }}
+                //   onPress={(post) => {
+                //     router.push({
+                //         pathname:
+                //           "/arenaPerformancePlayer",
+                //         params: {
+                //           selectedPostId: post._id,
+                //           arenaPosts: JSON.stringify(arenaPosts),
+                //           arena : JSON.stringify(
+                //             selectedArena
+                //           )
+                //         },
+                //       });
+                //   }}
                   showMenuPostId={showMenuPostId}
                   setShowMenuPostId={setShowMenuPostId}
               

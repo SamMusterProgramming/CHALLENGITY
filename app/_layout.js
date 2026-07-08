@@ -11,6 +11,7 @@ import { useNotificationSetup } from '../notifications/useNotificationSetup';
 
 
 
+
 SystemUI.setBackgroundColorAsync('#000000');
 
 export default function rootLayout() {
@@ -43,7 +44,6 @@ export default function rootLayout() {
       </Stack>
          {/* 🚀 GLOBAL FOREGROUND BANNER */}
      <InAppNotification />
-
      </View>
      </LoadingProvider>
      </GlobalProvider>

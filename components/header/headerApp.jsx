@@ -25,7 +25,7 @@ export default function HeaderApp({
 
   return (
     <View
-      style= {{ height:headerHeight * 0.5}}
+      style= {{ height:headerHeight * 0.6}}
       className = "flex-row items-center gap-2 bor der-b  bo rder-[#7d5706] rounded-tl-[40] justify-start w-full b g-[#5b4c40]"
     >
      

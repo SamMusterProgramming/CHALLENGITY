@@ -113,7 +113,9 @@ import { useLoading } from "../../../context/loadingContext";
         }
       };
    
-    const hasChanges = coverImg !== null || profileImg !== null || arena.biography !== form.biography
+    const hasChanges = (coverImg !== null || profileImg !== null || 
+                      arena.biography.trim() !== form.biography.trim() || arena.description.trim() !== form.description.trim()) &&
+                      (form.biography.trim().length > 7) && (form.description.trim().length > 10)
 
     const handleSave = async() => {
        showLoading("updating ...")
@@ -592,26 +594,28 @@ import { useLoading } from "../../../context/loadingContext";
           >
             <TouchableOpacity
               activeOpacity={0.9}
-              disabled={isLoading}
+              disabled = {!hasChanges}
               onPress={
                 handleSave
               }
               style={{
                 height: height/17,
                 borderRadius: 8,
-                backgroundColor: hasChanges ? "#eab308" : "#35332f",
+                // borderWidth :0.5,
+                // borderColor : "#eab308",
+                backgroundColor: hasChanges ? "#eab308" : "#a5861e",
                 justifyContent:"center",
                 alignItems: "center",
               }}
             >
               <Text
                 style={{
-                  color: "#000",
+                  color: hasChanges ?"#000" : "black",
                   fontWeight: "800",
                   fontSize: 16,
                   letterSpacing: 1,
                 }}
-                // className = "bg-[#35332f]"
+                // className = "bg-[#a5861e]"
               >
                 {isLoading
                   ? "SAVING..."

@@ -44,6 +44,7 @@ const [description,setDescription] =useState("");
 const [spotlight, setSpotlight] =  useState(true);
 const [thumbNailURL,setThumbNailURL] = useState(null)
 const { showLoading, hideLoading } = useLoading();
+const [duration , setDuration] = useState(0)
 
 
 const player =
@@ -73,6 +74,7 @@ try {
     console.log(error);
 }
 };
+
 
 //upload video
 const uploadVideo = async () => {
@@ -150,7 +152,6 @@ const submitPerformance = async () => {
                 const data = {
                     owner_id:user._id,
                     description,
-                    spotlight,
                     video:{
                         fileName : videoRes.fileName,
                         fileId : videoUpload.fileId,

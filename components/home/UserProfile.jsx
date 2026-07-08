@@ -8,7 +8,7 @@ import CountryFlag from 'react-native-country-flag'
 import { countryCodes } from '../../helper'
 import { acceptFriendRequest, deleteUserNotification, getNotificationByUser, removeFriendRequest } from '../../apiCalls'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
-import Friend from '../profile/Friend'
+import Friend from '../profile/friends/Friend'
 import { logoutUser } from '../../services/userServices'
 
 export default function UserProfile({user}) {

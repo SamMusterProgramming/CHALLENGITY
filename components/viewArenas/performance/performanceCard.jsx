@@ -1,0 +1,114 @@
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import React from 'react'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+
+export default function PerformanceCard({item ,index , CARD_WIDTH , performanceCount ,playPerformance}) {
+  return (
+    <TouchableOpacity
+    style={{
+      height : 300,
+      width : index === performanceCount  -1 && index % 2 == 0 ? CARD_WIDTH * 2 : CARD_WIDTH ,
+      // aspectRatio: 1,
+      // margin: 12,
+      borderRadius: 8,
+      backgroundColor: "#111",
+      overflow: "hidden",
+    }}
+    onPress={
+       () => playPerformance(item)
+    }
+    className = "items-center"
+  >
+    <Image
+      source={{ uri: item?.media?.thumbnail?.cdnUrl }}
+      style={{ width: "100%", height: "100%" }}
+      resizeMethod = "cover"
+    />
+    <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor:
+              "rgba(0,0,0,0.18)",
+            justifyContent:
+              "center",
+            alignItems:
+              "center",
+          }}
+        >
+          <View
+            style={{
+              width: CARD_WIDTH/7,
+              height: CARD_WIDTH/7,
+              borderRadius: 999,
+              backgroundColor:  "rgba(234,179,8,0.6)",
+              justifyContent: "center",
+              alignItems:
+                "center",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="play"
+              size={20}
+              color="#000"
+            />
+          </View>
+    </View>
+
+    <View
+        style={{
+            position: "absolute",
+            bottom: 2,
+            // left: 2,
+            // right: 2,
+            width : "98%",
+            padding : 10
+        }}
+        className = " rounded-3xl flex-row justify-between items-center bg-[#000]/40"
+         > 
+            <View
+                style={{
+                }}
+                className ="flex-row gap-1 items-center" >
+                <MaterialCommunityIcons
+                    name="eye"
+                    size={CARD_WIDTH/15}
+                    color="#eab308"
+                />
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
+                     {item.viewCount || 0}
+                </Text>
+            </View>
+            
+            <View
+                style={{
+                }}  className ="flex-row gap-1 items-center"  >
+                <MaterialCommunityIcons
+                    name="star-four-points"
+                    size={CARD_WIDTH/13}
+                    color="#eab308"
+                />
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
+                    {item.fireCount || 0}
+                </Text>
+            </View>
+
+            <View
+                style={{
+                }}  className ="flex-row gap-1 items-center"  >
+                <MaterialCommunityIcons
+                    name="message"
+                    size={CARD_WIDTH/15}
+                    color="#eab308"
+                />
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
+                    {item.commentCount || 0}
+                </Text>
+            </View>
+    </View>
+  </TouchableOpacity>
+  )
+}

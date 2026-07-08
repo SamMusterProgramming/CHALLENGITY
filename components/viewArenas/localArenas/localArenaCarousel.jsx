@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,17 +9,92 @@ import {
 import ArenaCard from "../displayArena/arenaCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import StageIndicator from "../../custom/stageIndicator";
+import { router } from "expo-router";
+import { getUserById } from "../../../apiCalls";
 
 
 export default function LocalArenaCarousel({
   arenas = [],
   height,
 }) {
-
   const { width } = Dimensions.get("window");
   const { colorTheme } = useGlobalContext();
   const [currentIndex, setCurrentIndex] =useState(0);
+
+  const [profile , setProfile] = useState(null)
+  const [arenaPosts , setArenaPosts] = useState([])
+  const [selectedArena , setSelectedArena] = useState(null)
+  const [selectedPost , setSelectedPost] = useState(null)
+
   const CARD_WIDTH = width * 0.96;
+
+
+const loadUProfile = async()=>{
+   
+}
+
+useEffect(() => {
+    if(!selectedArena) return ; 
+    getUserById(selectedArena.owner_id ,setProfile)
+}, [selectedArena])
+
+useEffect(() => {
+    if(!selectedPost) return ; 
+    let posts = []
+    arenas.map((a) => {
+        // if(a.posts[0]._id !== selectedPost._id) {
+           let post = a.posts[0]
+           post = {...post, arena_id : a._id ,
+                            arenaName :a.arenaName ,
+                            talentType : a.talentType ,
+                            region : a.region ,
+                            profileImage : a . profileImage
+                  }
+           posts.push(post)
+        // }
+    })
+    const updatedPosts = [
+        posts.find(p => p._id.toString() === selectedPost._id.toString()),
+        ...posts.filter(p => p._id.toString() !== selectedPost._id.toString()),
+      ];
+    setArenaPosts(updatedPosts)
+}, [selectedPost])
+
+const playPerformance = async() => {
+  await getPostsArena(selectedArena._id , setArenaPosts)
+}
+
+useEffect(() => {
+  if(!profile) return ;
+  router.push({
+      pathname: "/ViewProfile",
+      params: {
+        userProfile: JSON.stringify(
+          profile
+        ),
+        arena_id : selectedArena._id
+      },
+  });
+}, [profile])
+
+useEffect(() => {
+  if(!arenaPosts.length) return ; 
+  router.push({
+    pathname:
+      "/arenaPerformancePlayer",
+    params: {
+      selectedPostId:
+      arenaPosts[0]._id,
+      arenaPosts:
+        JSON.stringify(
+          arenaPosts
+        ),
+      arena : JSON.stringify(
+        null
+      )
+    },
+  });
+}, [arenaPosts])
 
   return (
 
@@ -94,9 +169,13 @@ export default function LocalArenaCarousel({
                     }}
                 >
                     <ArenaCard
-                    arena={item}
+                    arena = {item}
                     width={CARD_WIDTH}
                     height={height}
+                    loadUProfile ={loadUProfile}
+                    playPerformance = {playPerformance}
+                    setSelectedArena ={setSelectedArena}
+                    setSelectedPost = {setSelectedPost}
                     />
                 </View>
                 )}

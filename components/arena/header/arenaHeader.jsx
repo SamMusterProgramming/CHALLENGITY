@@ -20,9 +20,9 @@ export default function ArenaHeader({ arena ,setSelectedArena ,setOpenEditArenaM
   ,setOpenArenaAlertModal} = useGlobalContext()
   const [showArenaMenu, setShowArenaMenu] = useState(false);
   if (!arena) return null;
-  const followersCount = arena?.followers?.length || 0;
-  const postsCount = arena?.posts?.length || 0;
-  const starsCount = arena?.stars.length || 0;
+  const followersCount = arena?.followerCount || 0;
+  const postsCount = arena?.postCount || 0;
+  const starsCount = arena?.starCount || 0;
 
   return (
     <View

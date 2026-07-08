@@ -63,6 +63,15 @@ export default function CreateArenaModal({
       );
       return;
     }
+    if (
+        form.description.trim().length < 5 ||
+        form.biography.trim().length < 5
+      ) {
+        setMessage(
+          "Biograpgy , Description must have at least 5 characters"
+        );
+        return;
+      }
 
     const arenaData = {
       arenaName: form.arenaName.trim(),

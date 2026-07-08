@@ -152,137 +152,154 @@ export default function FriendButton({ userProfile }) {
 
   if (!status) return null;
 
+  // return (
+  //   <TouchableOpacity
+  //     onPress={handleRequest}
+  //     activeOpacity={0.92}
+  //     className="items-end"
+  //     style={{
+  //       height: 42,
+  //       paddingHorizontal: 18,
+  //       borderRadius: 14,
+  
+  //       flexDirection: "row",
+  //       alignItems: "center",
+  //       justifyContent: "center",
+  
+  //       backgroundColor:
+  //         status === "Connect" || status === "Accept"
+  //           ? "#eab308"
+  //           : "rgba(255,255,255,0.04)",
+  
+  //       // borderWidth: 1,
+  //       // borderColor:
+  //       //   status === "Connect" || status === "Accept"
+  //       //     ? "#f4d44d"
+  //       //     : "rgba(234,179,8,0.25)",
+  
+  //       shadowColor:
+  //         status === "Connect" || status === "Accept"
+  //           ? "#eab308"
+  //           : "#000",
+  
+  //       shadowOpacity:
+  //         status === "Connect" || status === "Accept"
+  //           ? 0.28
+  //           : 0.15,
+  
+  //       shadowRadius: 12,
+  //       elevation:
+  //         status === "Connect" || status === "Accept"
+  //           ? 6
+  //           : 2,
+  //     }}
+  //   >
+  //     <MaterialCommunityIcons
+  //       name={
+  //         status === "Friend"
+  //           ? "account-check"
+  //           : status === "Pending"
+  //           ? "clock-outline"
+  //           : status === "Accept"
+  //           ? "account-check-outline"
+  //           : "account-plus-outline"
+  //       }
+  //       size={20}
+  //       color={
+  //         status === "Connect" || status === "Accept"
+  //           ? "#111214"
+  //           : "#eab308"
+  //       }
+  //     />
+  
+  //     <Text
+  //       style={{
+  //         marginLeft: 8,
+  //         fontSize: width / 32,
+  //         fontWeight: "700",
+  //         letterSpacing: 0.4,
+  //         color:
+  //           status === "Connect" || status === "Accept"
+  //             ? "#111214"
+  //             : "#eab308",
+  //       }}
+  //     >
+  //       {status === "Friend"
+  //         ? "Friends"
+  //         : status === "Pending"
+  //         ? "Requested"
+  //         : status === "Accept"
+  //         ? "Accept"
+  //         : "Add Friend"}
+  //     </Text>
+  //   </TouchableOpacity>
+  // );
+
   return (
-    // <TouchableOpacity
-    //   onPress={handleRequest}
-    //   activeOpacity={0.85}
-    //   style={{
-    //     width: "100%",
-    //     height: 44,
-    //     borderRadius: 12,
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //     backgroundColor: "rgba(255,255,255,0.03)",
-    //     borderWidth: 1,
-    //     borderColor:
-    //       status === "Add" ||
-    //       status === "Accept"
-    //         ? "rgba(234,179,8,0.35)"
-    //         : "rgba(255,255,255,0.08)",
-    //   }}
-    // >
-    //   <View
-    //     style={{
-    //       flexDirection: "row",
-    //       alignItems: "center",
-    //     }}
-    //   >
-    //     {status === "Friend" && (
-    //       <MaterialCommunityIcons
-    //         name="check-circle"
-    //         size={15}
-    //         color="#9CA3AF"
-    //       />
-    //     )}
-  
-    //     {status === "Pending" && (
-    //       <MaterialCommunityIcons
-    //         name="clock-outline"
-    //         size={15}
-    //         color="#9CA3AF"
-    //       />
-    //     )}
-  
-    //     {(status === "Accept" ||
-    //       status === "Add") && (
-    //       <MaterialCommunityIcons
-    //         name="account-plus-outline"
-    //         size={15}
-    //         color="#eab308"
-    //       />
-    //     )}
-  
-    //     <Text
-    //       style={{
-    //         marginLeft: 6,
-    //         fontSize: width / 36,
-    //         fontWeight: "700",
-    //         letterSpacing: 0.3,
-  
-    //         color:
-    //           status === "Add" ||
-    //           status === "Accept"
-    //             ? "#eab308"
-    //             : "#D1D5DB",
-    //       }}
-    //     >
-    //       {status === "Friend"
-    //         ? "Friends"
-    //         : status === "Pending"
-    //         ? "Requested"
-    //         : status === "Accept"
-    //         ? "Accept Request"
-    //         : "Add Friend"}
-    //     </Text>
-    //   </View>
-    // </TouchableOpacity>
     <TouchableOpacity
       onPress={handleRequest}
-      activeOpacity={0.7}
+      activeOpacity={0.9}
       style={{
-        // height: 36,
-        paddingHorizontal: 12,
+        height: 36,
+        paddingHorizontal: 14,
+  
         flexDirection: "row",
-        // alignItems: "center",
+        alignItems: "center",
         justifyContent: "center",
-        // alignSelf: "center",
-        borderRadius: 999,
+  
+        borderRadius: 12,
+  
         backgroundColor:
-          "rgba(255,255,255,0.025)",
-         }}
-        className = "items-end"  >
-        <MaterialCommunityIcons
-          name={
-            status === "Friend"
-              ? "check-circle"
-              : status === "Pending"
-              ? "clock-outline"
-              : status === "Accept"
-              ? "account-check-outline"
-              : "account-plus-outline"
-          }
-          size={22}
-          color={
-            status === "Friend"
-              ? "#eab308"
-              : status === "Pending"
-              ? "#fff"
-              :  "#fff"
-          }
-        />
-        <Text
-          style={{
-            marginLeft: 6,
-            fontSize: width / 32,
-            fontWeight: "700",
-            letterSpacing: 0.3,
-            color:
-              status === "Friend"
-                ? "#eab308" 
-                : status === "Pending"
-                ? "#fff"
-                : "#fff",
-          }}
-          className = ""
-        >
-          {status === "Friend"
-            ? "Friends"
+          status === "Connect" || status === "Accept"
+            ? "#eab308"
+            : "rgba(255,255,255,0.04)",
+  
+        borderWidth: 1,
+        borderColor:
+          status === "Connect" || status === "Accept"
+            ? "#eab308"
+            : "rgba(234,179,8,.18)",
+      }}
+    >
+      <MaterialCommunityIcons
+        name={
+          status === "Friend"
+            ? "account-check-outline"
             : status === "Pending"
-            ? "Requested"
+            ? "clock-time-three-outline"
             : status === "Accept"
-            ? "Accept"
-            : "Connect"}
-        </Text>
-  </TouchableOpacity>
+            ? "account-check-outline"
+            : "account-plus-outline"
+        }
+        size={17}
+        color={
+          status === "Connect" || status === "Accept"
+            ? "#111214"
+            : "#eab308"
+        }
+      />
+  
+      <Text
+        style={{
+          marginLeft: 6,
+          fontSize: width / 34,
+          fontWeight: "700",
+          letterSpacing: 0.3,
+          color:
+            status === "Connect" || status === "Accept"
+              ? "#111214"
+              : "#eab308",
+        }}
+      >
+        {status === "Friend"
+          ? "Friends"
+          : status === "Pending"
+          ? "Requested"
+          : status === "Accept"
+          ? "Accept"
+          : "Add Friend"}
+      </Text>
+    </TouchableOpacity>
   );
+  
 }

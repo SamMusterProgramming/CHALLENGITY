@@ -5,53 +5,76 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useLoading } from '../../context/loadingContext'
 import { toggleArenaPostFire } from '../../apiCalls'
 
-export default function ArenaPostData({item,width}) {
+export default function ArenaPostData({item,width , onPress , commentCount ,
+                        setOpenCommentDrawer , toggleFire , hasFired , fireCount}) {
     const {user , setGlobalArenaRefresh} = useGlobalContext()
   const { showLoading, hideLoading } = useLoading();
 
-  const fires = item?.fires?.length || 0;
-  let hasFired = item.fires.some(
-    fireId => fireId.toString() ===  user._id.toString()
-  );
+  const fires = fireCount || 0;
 
-  const toggleFire = async() => {
-    showLoading('Firing ...')
-    await toggleArenaPostFire(item._id, {userId: user._id })
-    if (hasFired) {
-        item.fires = item.fires.filter(
-          fireId => fireId.toString() !==  user._id.toString()
-        );
-      } else {
-        item.fires.push( user._id);
-      }
-      hasFired = !hasFired;  
-      hideLoading()
-      if(item.owner_id === user._id) setGlobalArenaRefresh(true)
-  }
+
+//   const toggleFire = async() => {
+//     showLoading('Firing ...')
+//     await toggleArenaPostFire({postId:item._id , userId: user._id })
+//     if (hasFired) {
+//         item.fires = item.fires.filter(
+//           fireId => fireId.toString() !==  user._id.toString()
+//         );
+//       } else {
+//         item.fires.push( user._id);
+//       }
+//       hasFired = !hasFired;  
+//       hideLoading()
+//       if(item.owner_id === user._id) setGlobalArenaRefresh(true)
+//   }
 
   return (
         <View
         style={{
             position: "absolute",
             right: 10,
-            bottom: 250,
+            bottom: 150,
             alignItems: "center",
             zIndex:50
         }}
         >
+        
+            {/* VIEWS */}
+        <View
+          style={{
+            alignItems:"center",
+            marginBottom: 32,
+            }}
+        >
+            <MaterialCommunityIcons
+            name="eye"
+            size={28}
+            color="#eab308"
+            />
+            <Text
+             style={{
+                color: "#FFF",
+                fontWeight: "600",
+                fontSize: width/35,
+                marginTop:4,
+                }}
+            >
+            {item.viewCount}
+            </Text>
+        </View>
 
         <TouchableOpacity
             activeOpacity={0.8}
             style={{
                 alignItems:"center",
-                marginBottom: 22,
+                marginBottom: 32,
                 }}
             onPress={toggleFire}
             >
                 <Text
                 style={{
                     fontSize: width/12,
-                    color: hasFired ? "#eab308" : "#fff",
+                    color: hasFired ? "#eab308" : "#eab308",
                     fontWeight: "900",
                     }} >
                     {hasFired ? "✦" : "✧"}
@@ -71,13 +94,14 @@ export default function ArenaPostData({item,width}) {
         <TouchableOpacity
             style={{
             alignItems: "center",
-            marginBottom:  22,
+            marginBottom:  32,
             }}
+            onPress={onPress}
         >
             <Ionicons
             name="chatbubble"
             size={22}
-            color="#fff"
+            color="#eab308"
             />
 
             <Text
@@ -88,7 +112,7 @@ export default function ArenaPostData({item,width}) {
                 fontWeight: "600",
             }}
             >
-            {item?.comments?.length || 0}
+            {commentCount || 0}
             </Text>
         </TouchableOpacity>
 
@@ -96,7 +120,7 @@ export default function ArenaPostData({item,width}) {
             <MaterialCommunityIcons
             name="share"
             size={28}
-            color="#fff"
+            color="#eab308"
             />
         </TouchableOpacity>
         </View>

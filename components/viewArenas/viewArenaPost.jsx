@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,10 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { deleteArenaPost, toggleArenaPostFire, toggleArenaPostSpotlight } from "../../apiCalls";
+import { deleteArenaPost, isUserFiredPost, toggleArenaPostFire, toggleArenaPostSpotlight } from "../../apiCalls";
 import { useLoading } from "../../context/loadingContext";
+import ViewArenaPostFooter from "./footer/ViewArenaPostFooter";
+import ViewArenaPostHeader from "./header/ViewArenaPostHeader";
 
 
 
@@ -17,31 +19,78 @@ export default function ViewArenaPost({
                                     item,
                                     arena,
                                     onPress,
-                                    profile
+                                    profile,
+                                    setSelectedArena,
+                                    setArenas , 
+                                    setSelectedPost
                                   }) {
   const { width , height } = useWindowDimensions();
-  const fires = item?.fires?.length || 0;
-  const comments = item?.comments?.length || 0;
-  const { selectedArena , setSelectedArena , user } = useGlobalContext()
+  const fires = item?.firesCount || 0;
+  const comments = item?.commentCount || 0;
+  const { user } = useGlobalContext()
   const { showLoading, hideLoading } = useLoading();
-
-  let hasFired = item.fires.some(
-    fireId => fireId.toString() ===  user._id.toString()
-  );
-
+  const [hasFired , setHasFired] = useState(false)
+  //   let hasFired = item.isFired
+  const [isLoaded , setIsLoaded] = useState(false)
+  
+  
+   
   const toggleFire = async() => {
-    showLoading('deleting the post ...')
-    await toggleArenaPostFire(item._id, {userId: user._id })
-    if (hasFired) {
-        item.fires = item.fires.filter(
-          fireId => fireId.toString() !==  user._id.toString()
-        );
-      } else {
-        item.fires.push( user._id);
-      }
-      hasFired = !hasFired;
-      hideLoading()
+    // showLoading('deleting the post ...')
+    const data = await toggleArenaPostFire({postId:item._id ,userId:user._id})
+    const fired = data.active
+    const updatedPost = data.post
+    setSelectedArena(prev => ({
+      ...prev,
+      posts: prev.posts.map(post =>
+        post._id.toString() === updatedPost._id.toString()
+          ? updatedPost
+          : post
+      ),
+    }));
+    const updatedArena = {...arena , posts: arena.posts.map(post =>
+         post._id.toString() === updatedPost._id.toString()
+        ? updatedPost
+        : post
+    ),}
+    setArenas(prev =>
+      prev.map(a =>
+        a._id.toString() === arena._id.toString()
+          ? updatedArena
+          : a
+      )
+    );
+   
+    setHasFired(fired)
+    // onRefresh()
   }
+  
+  useEffect(() => {
+    const checkFire = async() =>{
+        const fired = await  isUserFiredPost({postId:item._id , userId:user._id})
+        setHasFired(fired)
+        setIsLoaded(true)
+    }
+    checkFire()
+  }, [])
+  
+  if(!isLoaded) return null
+
+  // const toggleFire = async() => {
+  //   showLoading('deleting the post ...')
+  //   await toggleArenaPostFire(item._id, {userId: user._id })
+  //   if (hasFired) {
+  //       item.fires = item.fires.filter(
+  //         fireId => fireId.toString() !==  user._id.toString()
+  //       );
+  //       item.fireCount =  item.fireCount - 1
+  //     } else {
+  //       item.fires.push( user._id);
+  //       item.fireCount =  item.fireCount + 1
+  //     }
+  //     hasFired = !hasFired;
+  //     hideLoading()
+  // }
 
   return (
     <View
@@ -58,104 +107,18 @@ export default function ViewArenaPost({
       }}
       className ="bg-[#161617]"
     >
-      {/* TOP BAR */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent:
-            "space-between",
-          paddingHorizontal: 16,
-          paddingVertical: 16,
-        }}
-      >
-        <View>
-          <Text
-            style={{
-              color: "#eab308",
-              fontWeight: "800",
-              fontSize: width / 29,
-              
-            }}
-          >
-            {arena?.arenaName}
-          </Text>
-          <Text
-            style={{
-              color: "#FFFFFF",
-              marginTop: 4,
-              fontSize: width / 36,
-              fontWeight: "600",
-
-            }}
-          >
-            {arena?.talentType}
-            {" • "}
-            {arena?.region}
-          </Text>
-        </View>
-
-        <View
-            // style={{
-            //     alignSelf: "justify-start",
-            // }}
-            // className = "justify-start items-start"
-            >
-            <View
-                style={{
-                flexDirection: "row",
-                alignItems: "center",
-                }} >
-                <Text
-                style={{
-                    color: "#eab308",
-                    marginRight: 5,
-                    fontWeight: "800",
-                    fontSize: width / 29,
-                    // letterSpacing: 1,
-                }}
-                >
-                {item.spotlight
-                    ? "Spotlight"
-                    : "Arena only"}
-                </Text>
-                <MaterialCommunityIcons
-                name={
-                    item.spotlight
-                    ? "star"
-                    : "star-outline"
-                }
-                size={18}
-                color="#eab308"
-                style ={{
-                    marginBottom : 2
-                }}
-                />
-            </View>
-
-            <Text
-                style={{
-                color: "#fff",
-                fontSize: width/36,
-                marginTop: 4,
-                fontWeight: "600",
-                }}
-            >
-                {item.spotlight
-                ? "Global Reach"
-                : "Arena Reach"}
-            </Text>
-        </View>
-                    
-      
-      </View>
-
+       <ViewArenaPostHeader  
+        item ={item}
+        width = {width}
+        arena ={arena}
+         />
+     
       {/* THUMBNAIL */}
 
       <TouchableOpacity
-        onPress={() => onPress?.(item)}
+        onPress={() => setSelectedPost(item)}
         style={{
-          height: width * 0.75,
+          height: width * 0.85,
           position: "relative",
         }}
       >
@@ -209,7 +172,7 @@ export default function ViewArenaPost({
 
       {/* DESCRIPTION */}
 
-      {!!item.caption && (
+      {/* {!!item.caption && (
         <View
           style={{
             paddingHorizontal: 16,
@@ -227,22 +190,31 @@ export default function ViewArenaPost({
             {item.caption}
           </Text>
         </View>
-      )}
+      )} */}
 
       {/* FOOTER */}
 
-      <View
+      <ViewArenaPostFooter
+            width =  {width}
+            views =  {item.viewCount}
+            fires =  {item.fireCount}
+            comments =  {item.ccommentCount}
+            shares = {item.shareCount}
+            hasFired = {hasFired}
+            toggleFire ={toggleFire}
+            onComments = {() => {}}
+            onShare = {() => {}}
+            onReport = {() => {}}
+      />
+
+      {/* <View
         style={{
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
             paddingHorizontal: 16,
             paddingVertical: 16,
-        }}
-        >
-      
-            {/* FIRE */}
-
+        }}  >
             <TouchableOpacity
             activeOpacity={0.8}
             style={{
@@ -253,7 +225,6 @@ export default function ViewArenaPost({
             onPress={toggleFire}
             className = "px-4 gap-2 items-center"
             >
-            
                 <Text
                 style={{
                     fontSize: width/18,
@@ -273,8 +244,6 @@ export default function ViewArenaPost({
                     {fires}
                 </Text>
             </TouchableOpacity>
-
-            {/* COMMENTS */}
 
             <TouchableOpacity
             activeOpacity={0.8}
@@ -304,8 +273,6 @@ export default function ViewArenaPost({
             </Text>
             </TouchableOpacity>
 
-            {/* SHARE */}
-
             <TouchableOpacity
             activeOpacity={0.8}
             style={{
@@ -331,7 +298,7 @@ export default function ViewArenaPost({
                 10
             </Text>
             </TouchableOpacity>
-        {/* </View> */}
+
 
         <Text
             style={{
@@ -343,7 +310,7 @@ export default function ViewArenaPost({
             item.createdAt
             ).toLocaleDateString()}
         </Text>
-    </View>
+    </View> */}
      
 
     </View>

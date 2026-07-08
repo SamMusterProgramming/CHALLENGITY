@@ -7,7 +7,7 @@ import { stageOrderMap } from './utilities/TypeData'
 const baseURL_DEVOLOPMENT = "http://localhost:8000"
 const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-export const BASE_URL =  baseURL_DEVOLOPMENT
+export const BASE_URL =  baseURL_PRODUCTION
 export const api = axios.create({
   baseURL: BASE_URL,
 });
@@ -17,6 +17,16 @@ export const api = axios.create({
 //   config.headers.Authorization = `Bearer ${token}`;
 //   return config;
 // });
+
+// [
+//   "expo-navigation-bar",
+//   {
+//     "position": "absolute",
+//     "visibility": "hidden",
+//     "behavior": "overlay-swipe",
+//     "backgroundColor": "#00000080"
+//   }
+// ]
 
 export const setLoadingBarAxios = (loadingRef) => {
   axios.interceptors.request.use(async(config) => {
@@ -1394,10 +1404,10 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       }
     };
 
-    export const getArenaByProfile = async (profile_id ,setSelectedArena , setArenas, arena_id  ) => {
+    export const getArenaByProfile = async (profile_id ,body, setSelectedArena , setArenas, arena_id  ) => {
       try {
-           const response = await api.get(
-          `/arenas/profile/${profile_id}`);
+           const response = await api.post(
+          `/arenas/profile/${profile_id}`,body);
            if(response.data.length) setSelectedArena( !arena_id ? response.data[0] : response.data.find(a => a._id === arena_id))
             setArenas(response.data);
       } catch (error) {
@@ -1420,7 +1430,7 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
 
     export const addPerformanceToArena = async (arena_id , body) => {
       try {
-           return  await api.post(`/arenas/addPost/${arena_id}`, body);
+           return  await api.post(`/arenas/post/addPost/${arena_id}`, body);
       } catch (error) {
         console.error("creating arena error:", error.response?.data);
         throw error;
@@ -1449,17 +1459,29 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
     };
 
     export const toggleStarArena = async (
-      arena_id,
       body
     ) => {
       try {
         const response = await api.patch(
-          `/arenas/star/${arena_id}`,
+          `/arenas/arena/star/`,
           body
         );
-    
         return response.data;
-    
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+
+    export const isUserStarredArena = async (
+      body
+    ) => {
+      try {
+        const response = await api.get(
+          `/arenas/arena/isStarred/`,
+          body
+        );
+        return response.data;
       } catch (error) {
         console.error(error);
         throw error;
@@ -1467,12 +1489,11 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
     };
 
     export const toggleFollowerArena = async (
-      arena_id,
       body
     ) => {
       try {
         const response = await api.patch(
-          `/arenas/follower/${arena_id}`,
+          `/arenas/arena/follower/`,
           body
         );
         return response.data;
@@ -1482,22 +1503,93 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       }
     };
 
+    export const isUserFollowingArena = async (
+      body
+    ) => {
+      try {
+        const response = await api.get(
+          `/arenas/arena/isFollowing/`,
+          body
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+    
+
+
     export const toggleArenaPostSpotlight = async(post_id)=>{
       try {
         const response = await api.patch(`/arenas/post/spotlight/${post_id}`);
-      //  setArena(response.data);
-   } catch (error) {
-     console.error("getting posts error:", error.response?.data);
-     throw error;
-   }
+        //  setArena(response.data);
+      } catch (error) {
+        console.error("getting posts error:", error.response?.data);
+        throw error;
+     }
     }
-  
-    export const toggleArenaPostFire = async(post_id , body )=>{
+
+    export const isUserFiredPost = async (
+      body
+    ) => {
       try {
-        const response = await api.patch(`/arenas/post/fire/${post_id}`,body);
-      //  setArena(response.data);
-   } catch (error) {
-     console.error("getting posts error:", error.response?.data);
-     throw error;
-   }
+        const response = await api.patch(
+          `/arenas/post/isFired/`,
+          body
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+  
+    export const toggleArenaPostFire = async( body )=>{
+      try {
+        const response = await api.patch(`/arenas/post/fire/`,body);
+       return response.data
+      } catch (error) {
+        console.error("getting posts error:", error.response?.data);
+        throw error;
+      }
     }
+
+    export const registerView = async(post_id )=>{
+      try {
+        const response = await api.patch(`/arenas/post/view/${post_id}`);
+      } catch (error) {
+        console.error("getting posts error:", error.response?.data);
+        throw error;
+      }
+    }
+    
+    export const getArenaPostComments = async(postId) => {
+      try {
+           const response = await api.get(`/arenas/post/comment/${postId}`);
+           return response.data
+      } catch (error) {
+        console.error("getting posts error:", error.response?.data);
+        throw error;
+      }
+    };
+
+    export const addArenaPostComment = async (postId , body) => {
+    try {
+      const response =  await api.post(`/arenas/post/addComment/${postId}`, body);
+      return response.data
+    } catch (error) {
+      console.error("creating arena error:", error.response?.data);
+      throw error;
+    }
+    }
+
+    export const deleteArenaPostComment = async ( body) => {
+      try {
+        const response =  await api.patch(`/arenas/post/deleteComment/`, body);
+        return response.data
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+      }

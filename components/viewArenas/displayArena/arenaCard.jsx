@@ -15,61 +15,65 @@ export default function ArenaCard({
   arena,
   width,
   height,
+  loadUProfile,
+  playPerformance,
+  setSelectedArena , 
+  setSelectedPost
   }) {
 
-  const [profile , setProfile] = useState(null)
-  const [arenaPosts , setArenaPosts] = useState([])
+  // const [profile , setProfile] = useState(null)
+  // const [arenaPosts , setArenaPosts] = useState([])
   const thumbnail =
     arena?.posts?.[0]?.media?.thumbnail.cdnUrl ||
     arena?.coverImage?.publicUrl;
   const region = countries.find(  c => c.code === arena.region );
 
-  const loadUProfile = async()=>{
-      await getUserById(arena.owner_id ,setProfile)
-  }
+  // const loadUProfile = async()=>{
+  //     await getUserById(arena.owner_id ,setProfile)
+  // }
 
-  const playPerformance = async() => {
-    await getPostsArena(arena._id , setArenaPosts)
-  }
+  // const playPerformance = async() => {
+  //   await getPostsArena(arena._id , setArenaPosts)
+  // }
 
-  useEffect(() => {
-    if(!profile) return ;
-    router.push({
-        pathname: "/ViewProfile",
-        params: {
-          userProfile: JSON.stringify(
-            profile
-          ),
-          arena_id : arena._id
-        },
-    });
-  }, [profile])
+  // useEffect(() => {
+  //   if(!profile) return ;
+  //   router.push({
+  //       pathname: "/ViewProfile",
+  //       params: {
+  //         userProfile: JSON.stringify(
+  //           profile
+  //         ),
+  //         arena_id : arena._id
+  //       },
+  //   });
+  // }, [profile])
   
-  useEffect(() => {
-    if(!arenaPosts.length) return ; 
-    router.push({
-      pathname:
-        "/arenaPerformancePlayer",
-      params: {
-        selectedPostId:
-        arenaPosts[0]._id,
-        arenaPosts:
-          JSON.stringify(
-            arenaPosts
-          ),
-        arena : JSON.stringify(
-          arena
-        )
-      },
-    });
+  // useEffect(() => {
+  //   if(!arenaPosts.length) return ; 
+  //   router.push({
+  //     pathname:
+  //       "/arenaPerformancePlayer",
+  //     params: {
+  //       selectedPostId:
+  //       arenaPosts[0]._id,
+  //       arenaPosts:
+  //         JSON.stringify(
+  //           arenaPosts
+  //         ),
+  //       arena : JSON.stringify(
+  //         arena
+  //       )
+  //     },
+  //   });
  
-  }, [arenaPosts])
+  // }, [arenaPosts])
   
 
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress = {playPerformance}
+      onPress = { () => setSelectedPost(arena.posts[0]) }
       style={{
         width,
         height: height ,
@@ -93,9 +97,7 @@ export default function ArenaCard({
         }}
         resizeMode="cover"
       />
-
       {/* PLAY BUTTON */}
-
       <View
               style={{
                 position: "absolute",
@@ -105,22 +107,19 @@ export default function ArenaCard({
                 backgroundColor:  "rgba(234,179,8,0.7)",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-
-            >
+              }} >
               <MaterialCommunityIcons
                 name="play"
                 size={20}
                 color = "black"
               />
-        </View>
-
-
-
+      </View>
       {/* INFO OVERLAY */}
-
       <TouchableOpacity
-        onPress={loadUProfile }
+          onPress = {() => {
+            setSelectedArena(arena)
+            // loadUProfile
+          }}
         style={{
           position:"absolute",
           left:5,
@@ -136,9 +135,7 @@ export default function ArenaCard({
             flexDirection:"row",
             alignItems:"center",
           }} >
-
           {/* PROFILE IMAGE */}
-
           <Image
             source={{
               uri:
@@ -153,8 +150,6 @@ export default function ArenaCard({
               backgroundColor:"#111",
             }}
           />
-
-
           <View
             style={{
               marginLeft:14,
@@ -162,9 +157,7 @@ export default function ArenaCard({
             }} 
             className = ""
              >
-
             {/* NAME */}
-
             <Text
               numberOfLines={1}
               style={{
@@ -228,7 +221,6 @@ export default function ArenaCard({
                 }}  >
                  {arena.stars?.length || 0} {'     '}
              </Text>
-
              <MaterialCommunityIcons
                 name="video-outline"
                 size={23}
@@ -244,16 +236,10 @@ export default function ArenaCard({
                }}  >
                  {arena.posts?.length || 0}
              </Text>
-          
            </View>
-          
           </View>
-
         </View>
-
       </TouchableOpacity>
-
-
     </TouchableOpacity>
   );
 }

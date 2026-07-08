@@ -11,7 +11,7 @@ import UserProfile from '../components/home/UserProfile';
 import Favourite from '../components/home/Favourite';
 import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
-import ProfileDrawer from '../components/modal/profileDrawer';
+// import ProfileDrawer from '../components/profile/modal/profileDrawer';
 import {  getArenaByUser,  getFavouriteStages, getFollowData, getHotStages, getLocalArenas, getNotificationByUser, getRegionTalentStages, getTrendingStages, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
 import { getUserCountry } from '../utilities/userGeoLocation';
 import { clearPendingNotification, getPendingNotification } from '../notifications/pendingNotification';
@@ -23,6 +23,7 @@ import StageHomePage from '../components/home/stageHomePage';
 import FavouriteStageDrawer from '../components/modal/favouriteStageDrawer';
 import PerformanceHomePage from '../components/home/performanceHomePage';
 import Arena from '../components/home/arena';
+import ProfileDrawer from '../components/profile/modal/profileDrawer';
 
 
 

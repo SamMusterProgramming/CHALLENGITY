@@ -8,12 +8,13 @@ export default function StarArenaButton({isStarred , width , onPress}) {
         activeOpacity={0.85}
         onPress={onPress}
         style={{
-            // height: 52,
-            paddingHorizontal: 18,
+            height: width/3,
+            width : width/3,
+            // paddingHorizontal: 18,
             borderRadius: 9,
             flexDirection: "col",
-            alignItems: "center",
-            justifyContent: "center",
+            // alignItems: "center",
+            // justifyContent: "center",
             // backgroundColor:
             //  isStarred
             //     ? "rgba(234,179,8,0.08)"
@@ -25,7 +26,7 @@ export default function StarArenaButton({isStarred , width , onPress}) {
                 : "rgba(255,255,255,0.08)",
             
            }}
-           className= "py-4 gap-3 ite ms-end"
+           className= "z-50 justify-start items-end "
         >
         {/* <Text
             style={{
@@ -47,13 +48,13 @@ export default function StarArenaButton({isStarred , width , onPress}) {
             name={
             isStarred
                 ? "star"
-                : "star-outline"
+                : "star"
             }
-            size={35}
+            size={width/9}
             color = {
             isStarred
-                ? "#eab308"
-                : "#9CA3AF"
+            ? "rgba(234,179,8,0.95)"
+            : "rgba(255,255,255,0.95)"
             }
         />
         {/* <Text

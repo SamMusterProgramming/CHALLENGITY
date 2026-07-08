@@ -24,12 +24,9 @@ import React, {
     setVisible,
     setVideoUrl,
   }) {
-    const { width } =
-      useWindowDimensions();
-    const insets =
-      useSafeAreaInsets();
-    const cameraRef =
-      useRef(null);
+    const { width } = useWindowDimensions();
+    const insets = useSafeAreaInsets();
+    const cameraRef = useRef(null);
     const [recording, setRecording] =
       useState(false);
     const [cameraType, setCameraType] =

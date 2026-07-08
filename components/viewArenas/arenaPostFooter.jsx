@@ -1,37 +1,40 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
+import FollowArenaButton from './custom/followArenaButton'
 
-export default function ArenaPostFooter({arena ,width}) {
+export default function ArenaPostFooter({post ,width , loadProfile , isFollower ,toggleFollower }) {
   return (
-    <View
+    <TouchableOpacity
+    onPress={loadProfile}
     style={{
         position: "absolute",
-        bottom: 5,
-        left: 5,
-        right: 5,
+        bottom: 80,
+        left: 14,
+        // right: 0,
         zIndex:50,
         // height: 72,
-        borderRadius: 18,
-        backgroundColor:"rgba(10,10,10,0.55)",
-        borderWidth: 1,
-        borderColor: "rgba(234,179,8,0.12)",
+        // borderRadius: 18,
+        // backgroundColor:"rgba(10,10,10,0.55)",
+        // borderWidth: 1,
+        // borderColor: "rgba(234,179,8,0.12)",
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 12,
-        paddingVertical:8
+        paddingHorizontal: 8,
+        paddingVertical:0
     }}
+    className = "rounded-t-3xl"
     >
         {/* AVATAR */}
 
         <Image
             source={{
             uri:
-                arena?.profileImage
+                post?.profileImage
                 ?.publicUrl,
             }}
             style={{
-            width: width/10,
-            height: width/10,
+            width: width/13,
+            height: width/13,
             borderRadius: 999,
             borderWidth: 1.5,
             borderColor:
@@ -43,35 +46,38 @@ export default function ArenaPostFooter({arena ,width}) {
 
         <View
             style={{
-            flex: 1,
-            marginLeft: 10,
+            // flex: 1,
+            marginLeft: 20,
+            marginRight:20
             }}
         >
             <Text
             numberOfLines={1}
             style={{
                 color: "#fff",
-                fontSize: width / 34,
+                fontSize: width / 38,
                 fontWeight: "800",
             }}
             >
-            {arena?.arenaName}
+            {post?.arenaName}
             </Text>
             <Text
             numberOfLines={1}
             style={{
                 marginTop: 4,
                 color: "#eab308",
-                fontSize: width / 38,
+                fontSize: width / 42,
                 fontWeight: "700",
             }}
             >
-            {arena?.talentType}
+            {post?.talentType}
             {" • "}
-            {arena?.region}
+            {post?.region}
             </Text>
         </View>
         {/* FOLLOW */}
+        {/* <FollowArenaButton onPress={toggleFollower} width={width} isFollowed = {isFollower} /> */}
+{/* 
         <TouchableOpacity
             activeOpacity={0.8}
             style={{
@@ -96,7 +102,7 @@ export default function ArenaPostFooter({arena ,width}) {
             >
             Follow Arena
             </Text>
-        </TouchableOpacity>
-    </View>
+        </TouchableOpacity> */}
+    </TouchableOpacity>
   )
 }

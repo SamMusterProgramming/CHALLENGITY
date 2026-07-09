@@ -243,7 +243,7 @@ export default function UserModal({ user_id,
             <TouchableOpacity
               onPress={() => {
                 router.push({
-                  pathname: "/ViewProfile",
+                  pathname: "/ProfileScreen",
                   params: {
                     userProfile: JSON.stringify(
                       userProfile

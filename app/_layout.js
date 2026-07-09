@@ -32,6 +32,7 @@ export default function rootLayout() {
         <Stack.Screen name='index' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='Home' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='ViewProfile' options={{ headerShown:false,unmountOnBlur: true}} />
+        <Stack.Screen name='ProfileScreen' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='SetUpProfile' options={{ headerShown:false,unmountOnBlur: true}} />
         {/* <Stack.Screen name='favouriteChallenges' options={{ headerShown:false,unmountOnBlur: true}} /> */}
         {/* <Stack.Screen name='CoverNewChallenge' options={{ headerShown:false,unmountOnBlur: true}} /> */}

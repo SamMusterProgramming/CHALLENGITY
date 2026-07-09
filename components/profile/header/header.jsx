@@ -25,6 +25,7 @@ export default function Header({user , statData ,setModalVisible , logout , pick
         }, 3000);
         return () => clearTimeout(timer);
     }, [uploadMenu]);
+
     return (
         <View
           style={{
@@ -252,7 +253,6 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                 justifyContent: "center",
                 alignItems: "center",
                 }} 
-                className ="bg-black"
                  >
                 <View
                  style={{
@@ -261,7 +261,7 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                     justifyContent: "center",
                     alignItems: "center",
                     }}
-                    className = "p-2 rounded-full"
+                    className = "p-2 rounded-full bg-black"
                 >
                     <MaterialCommunityIcons
                     name="account-edit-outline"
@@ -283,7 +283,6 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                     setUploadMenu(!uploadMenu)
                     setHamburgerMenu(false)
                 }}
-                className ="bg-black"
               >
                 <View
                  style={{
@@ -292,7 +291,7 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                     justifyContent: "center",
                     alignItems: "center",
                     }}
-                    className = "p-2 rounded-full"
+                    className = "p-2 rounded-full bg-black"
                 >
                     <MaterialCommunityIcons
                     name="tray-arrow-up"
@@ -311,21 +310,18 @@ export default function Header({user , statData ,setModalVisible , logout , pick
             }
             }
             style={{
-                width: width/12,
-                height: width/12,
+                // width: width/12,
+                // height: width/12,
                 borderRadius: 26,
                 backgroundColor: "rgba(0,0,0,.55)",
                 borderWidth: 1,
                 borderColor: "rgba(234,179,8,.58)",
                 justifyContent: "center",
                 alignItems: "center",
-                shadowColor: "#000",
-                shadowOpacity: .35,
-                shadowRadius: 12,
-                elevation: 8,
+            
             }}
-            className ="bg-black"
-                 >
+            className = "p-2 rounded-full bg-black"
+            >
                 <MaterialCommunityIcons
                     name="dots-horizontal"
                     size={20}
@@ -333,41 +329,7 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                 />
             </TouchableOpacity>
 
-            {/* Settings */}
-            {/* <TouchableOpacity
-                activeOpacity={0.85}
-                style={{
-                justifyContent: "center",
-                alignItems: "center",
-                }}
-            >  
-               <View
-                 style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(234,179,8,.58)",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    }}
-                    className = "p-2 rounded-full"
-                >
-                    <MaterialCommunityIcons
-                    name="cog-outline"
-                    size={20}
-                    color="#eab308"
-                    />
-                </View>
-                <Text
-                style={{
-                    color: "#fff",
-                    fontSize: 10,
-                    fontWeight: "700",
-                    marginTop: 4,
-                    // letterSpacing: .5,
-                }}
-                >
-                Settings
-                </Text>
-            </TouchableOpacity> */}
+            
 
            {hamburgerMenu && (
             <View
@@ -381,10 +343,6 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                     borderWidth: 1,
                     borderColor: "rgba(234,179,8,.18)",
                     paddingVertical: 8,
-                    shadowColor: "#000",
-                    shadowOpacity: .35,
-                    shadowRadius: 18,
-                    elevation: 12,
                     zIndex : 999
                 }}
             >
@@ -585,43 +543,10 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                         </React.Fragment>
                         ))}
                 </View>
-                {/* <TouchableOpacity
-                    activeOpacity={0.8}
-                    className="items-center ml-4 px-4 py-1 justify-center"
-                >
-                    <MaterialCommunityIcons
-                        name="tray-arrow-up"
-                        size={25}
-                        color="#fff" />
-                </TouchableOpacity> */}
+               
             </View>   
          
         </View>
       );
 }
 
-/* STAT COMPONENT */
-// function Stat({ label, value }) {
-//     return (
-//       <View style={{ alignItems: "center" }}>
-//         <Text
-//           style={{
-//             color: "#fff",
-//             fontSize:20,
-//             fontWeight: "800",
-//           }}
-//         >
-//           {value}
-//         </Text>
-//         <Text
-//           style={{
-//             color: "rgba(255,255,255,0.5)",
-//             fontSize: 11,
-//             marginTop: 4,
-//           }}
-//         >
-//           {label}
-//         </Text>
-//       </View>
-//     );
-//   }

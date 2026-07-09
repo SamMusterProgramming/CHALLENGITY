@@ -1,378 +1,140 @@
-
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  useWindowDimensions,
-  Image,
-  ActivityIndicator
-} from "react-native";
-
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  runOnJS
-} from "react-native-reanimated";
-
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { useGlobalContext } from "../../../context/GlobalProvider";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import * as ImagePicker from 'expo-image-picker';
-import EditProfileModal from "./editProfileModal";
-
-import {
-  acceptFriendRequest,
-  createArenaByUser,
-  deleteArenaByUser,
-  deleteArenaPost,
-  deleteUserNotification,
-  getArenaByUser,
-  getFollowData,
-  getNotificationByUser,
-  getUserFriendsData,
-  removeFriendRequest,
-  updateArenaByUser,
-  updateUserInfo
-} from "../../../apiCalls";
-
-import { logoutUser } from "../../../services/userServices";
-import CountryFlag from "react-native-country-flag";
-import { countryCodes } from "../../../helper";
-import { icons } from "../../../constants";
-import { getUploadImageUrl, saveCoverImageToDataBase, saveProfileImageToDataBase, uploadImageToBlackBlaze } from "../../../uploadFileToBlackBlaze";
-import { compressImage } from "../../../utilities/fileCompressor";
-import Friend from "../friends/Friend";
-import { LinearGradient } from "expo-linear-gradient";
-import Header from "../header/header";
-import ProfileTabs from "../custom/profileTabs";
-import ArenaDisplayer from "../arena/arenaDisplayer";
-import PerformanceCard from "../../viewArenas/performance/performanceCard";
-import EmptyPostArena from "../arena/emptyPostArena";
-import WelcomeToCreateArena from "../arena/WelcomeToCreateArena";
-import ArenaAlertModal from "../../arena/modals/AlertArenaModal";
-import { useLoading } from "../../../context/loadingContext";
-import CreateArenaModal from "../../modal/createArenaModal";
-import EditArenaModal from "../../arena/modals/editArenaModal";
-// import { googleLogout } from "../../services/googleLogin";
+import { View, Text, useWindowDimensions, FlatList } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from 'expo-router';
+import { useGlobalContext } from '../context/GlobalProvider';
+import { getArenaByProfile, getFollowData, getUserFriendsData } from '../apiCalls';
+import PerformanceCard from '../components/viewArenas/performance/performanceCard';
 
 const chunkArray = (arr = [], size = 6) => {
-  const result = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-};
+    const result = [];
+    for (let i = 0; i < arr.length; i += size) {
+      result.push(arr.slice(i, i + size));
+    }
+    return result;
+  };
 
-
-export default function ProfileDrawer({ visible, onClose }) {
-  const {
-    user,
-    setUser,
-    userFriendData,
-    setUserFriendData,
-    notifications,
-    setNotifications,
-    follow,
-    setFollow,
-    userArenas,
-    setUserArenas,
-    arenaActionModal,
-    setArenaActionModal,
-    openArenaAlertModal, 
-    setOpenArenaAlertModal,
-    globalArenaRefresh,
-    setGlobalArenaRefresh,
-    uploadPerformanceLoading , 
-    setUploadPerformanceLoading ,
-    selectedArena, setSelectedArena
-  } = useGlobalContext();
- 
-  const { width, height } = useWindowDimensions();
+export default function ProfileScreen() {
+  const { userProfile, arena_id } = useLocalSearchParams();
+  const { user } = useGlobalContext();
   const insets = useSafeAreaInsets();
-  const translateX = useSharedValue(width);
-  const EDGE_WIDTH = 40;
-  const nativeGesture = Gesture.Native();
+  const {width , height} = useWindowDimensions()
+  const profile = userProfile ? JSON.parse(userProfile) : null;
+  const [arenas, setArenas] = useState([]);
+  const [selectedArena, setSelectedArena] = useState(null);
+  // const [totalPerformances, setTotalPerformancesa] = useState(0);
+  const [friendData, setFriendData] = useState([]);
+  const [followData, setFollowData] = useState([]);
   const [activeTab, setActiveTab] = useState("friends");
-  const [refresh, setRefresh] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const [deletedNot, setDeletedNot] = useState(null);
-  const [isExpired, setIsExpired] = useState(false);
-
-  const [coverImg, setCoverImg] = useState(null); 
-  const [profileImg, setProfileImg] = useState(null);
   const [selectedTab, setSelectedTab] = useState("arenas");
-  // const [selectedArena, setSelectedArena] = useState(userArenas[0]);
-  const [refreshing, setRefreshing] = useState(false);
-  const { showLoading, hideLoading } = useLoading();
-  const [openCreateArenaModal ,setOpenCreateArenaModal] = useState(false)
-  const [openEditArenaModal , setOpenEditArenaModal] = useState(false)
-  const [postToDeleteId, setPostToDeleteId] = useState(null)
-  const [userInfo, setUserInfo] = useState({
-    name: user?.name,
-    city: user?.city,
-    state: user?.state,
-    country: user?.country,
-  });
+  const [ready ,setReady] = useState (false)
   const CARD_WIDTH = (width - 30) / 2;
 
+
   useEffect(() => {
-   if(userArenas.length)  setSelectedArena(userArenas[0]) 
-    else setSelectedArena({
-      _id: "create-arena",
-      isCreateCard: true,
-    })
-  }, [])
-  
-  // ---------------- FETCH ----------------
-  useEffect(() => {
-    if (!refresh) return;
-    const load = async () => {
-      await Promise.all([
-        getUserFriendsData(user._id, setUserFriendData),
-        getFollowData(user._id, setFollow),
-        getNotificationByUser(user._id, setNotifications),
-      ]);
-    };
-    load();
-    setTimeout(() => setRefresh(false), 1500);
-  }, [refresh]);
+    const loadProfileMaterial  = async() => {
+          await  Promise.all([
+                            getUserFriendsData(profile._id, setFriendData),
+                            getFollowData(profile._id, setFollowData),
+                            getArenaByProfile(
+                            profile._id,
+                            { requesterId: user._id },
+                            (arena) => setSelectedArena(arena),
+                            (list) => setArenas(list),
+                            arena_id
+                            ) ])
+     }
+    if (!profile?._id) return;
+    loadProfileMaterial()
+  }, []);
 
+// ---------------- DATA ----------------
+const getActiveData = () => {
+  if (activeTab === "friends") return friendData?.friends || [];
+  if (activeTab === "followers") return followData?.followers || [];
+  return followData?.followings || [];
+};
 
-  /************************* MEDIA PICKER *************************/
-
-  const pickImage = async (setProfile_img) => {
-    const { status } =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4,3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setProfile_img(result.assets[0].uri);
-    }
-  };
-
-/************************* COVER IMAGE UPLOAD *************************/
-
-useEffect(() => {
-    const uploadImage = async () => {
-      if (!coverImg) return;
-      try {
-        // 1. Get upload URL
-        const data = await getUploadImageUrl(
-          user._id,
-          user.email,
-          "cover"
-        );
-        const compressed = await compressImage(coverImg)
-        // 2. Upload to BlackBlaze
-        const uploadResult = await uploadImageToBlackBlaze(
-          data,
-          compressed
-        );
-  
-        // 3. Save to DB
-        const res = await saveCoverImageToDataBase({
-          userId: user._id,
-          fileId: uploadResult.fileId,
-          fileName: uploadResult.fileName,
-          deleteFileId: user.coverImage?.fileId,
-          deleteFileName: user.coverImage?.fileName,
-        });
-  
-        setUser(res.data);
-      } catch (err) {
-        console.log("Cover upload error:", err);
-      } finally {
-        setCoverImg(null);
-      }
-    };
-  
-    uploadImage();
-  }, [coverImg]);
-
-  /************************* PROFILE IMAGE UPLOAD *************************/
-
-useEffect(() => {
-    const uploadProfileImage = async () => {
-      if (!profileImg) return;
-      try {
-        // 1. Get upload URL
-        const data = await getUploadImageUrl(
-          user._id,
-          user.email,
-          "profile"
-        );
-        const compressed = await compressImage(profileImg)
-        // 2. Upload to BlackBlaze
-        const uploadResult = await uploadImageToBlackBlaze(
-          data,
-          compressed
-        );
-  
-        // 3. Save to DB
-        const res = await saveProfileImageToDataBase({
-          userId: user._id,
-          fileId: uploadResult.fileId,
-          fileName: uploadResult.fileName,
-          deleteFileId: user.profileImage?.fileId,
-          deleteFileName: user.profileImage?.fileName,
-        });
-  
-        setUser(res.data);
-      } catch (err) {
-        console.log("Profile upload error:", err);
-      } finally {
-        setProfileImg(null);
-      }
-    };
-    uploadProfileImage();
-  }, [profileImg]);
-
-
-  // ---------------- DRAWER ANIMATION ----------------
-  useEffect(() => {
-    translateX.value = visible
-      ? withSpring(0)
-      : withTiming(width);
-  }, [visible]);
-
-const panGesture = Gesture.Pan()
-  .activeOffsetX([15, 999])     // must move right a bit
-  .failOffsetY([-20, 20])       // vertical scroll wins
-  .onStart((e) => {
-    // store whether gesture started from edge
-    panGesture.isEdge = e.absoluteX > width - EDGE_WIDTH;
-  })
-  .onUpdate((e) => {
-    // ❌ ignore if NOT from edge
-    if (!panGesture.isEdge) return;
-    if (e.translationX > 0) {
-      translateX.value = e.translationX * 0.85;
-    }
-  })
-  .onEnd((e) => {
-    if (!panGesture.isEdge) return;
-    const shouldClose =
-      e.velocityX > 1000 || translateX.value > width * 0.35;
-
-    if (shouldClose) {
-      translateX.value = withTiming(width, { duration: 200 });
-      runOnJS(onClose)();
-    } else {
-      translateX.value = withSpring(0, {
-        damping: 20,
-        stiffness: 150,
-      });
-    }
-  });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
-
-  // ---------------- NOTIFICATIONS ----------------
-  const friendRequestReceived = notifications
-    ?.filter((n) => n.type === "friend_request" || n.type === "friends")
-    ?.sort((a, b) => b.createdAt - a.createdAt);
-
-  // ---------------- DATA ----------------
-  const getActiveData = () => {
-    if (activeTab === "friends") return userFriendData?.friends || [];
-    if (activeTab === "followers") return follow?.followers || [];
-    return follow?.followings || [];
-  };
-
-  const pagedData = chunkArray(getActiveData(), 20);
-
+const pagedData = chunkArray(getActiveData(), 20);
   const sections = [
     { type: "header" },
-    { type: "stats" },
-    { type: "requests", data: friendRequestReceived },
-    { type: "tabs" },
-    { type: "friends", data: pagedData },
-    { type: "arenas", data: []},
-    { type: "performances", data: []},
-
+    // { type: "stats" },
+    // { type: "requests", data: friendRequestReceived },
+    // { type: "tabs" },
+    // { type: "friends", data: pagedData },
+    // { type: "arenas", data: []},
+    // { type: "performances", data: []},
   ];
 
-  // ---------------- ACTIONS ----------------
-  const acceptFRequest = (not) => {
-    console.log(not.sender_id)
-    const rawBody = {
-      _id: not._id,
-      user_id : user._id
-    };
-    acceptFriendRequest(
-      not.sender_id,
-      rawBody,
-      setUserFriendData,
-      setIsExpired
+  
+  // actions 
+  const totalStat = useMemo(() => {
+    let totalP = 0
+    let totalF = 0
+    arenas.map( a => {
+       totalP = totalP + a.postCount
+       totalF = totalF + a.followerCount
+    })
+    return {
+      totalPerformances : totalP ,
+      totalFollowers : totalF
+    }; 
+  }, [arenas]);
+
+  const performances = useMemo(() => {
+    return selectedArena?.posts || [];
+  }, [selectedArena]);
+
+  const toggleStar = async () => {
+    if (!selectedArena) return;
+
+    const response = await toggleStarArena({
+      arenaId: selectedArena._id,
+      userId: user._id,
+    });
+    const updated = {
+      ...response,
+      isFollower: selectedArena.isFollower,
+    }
+    setSelectedArena({
+      ...updated,
+      isFollower: selectedArena.isFollower,
+    });
+    setArenas(prev =>
+      prev.map(a =>
+        a._id.toString() === updated._id.toString()
+          ? updated
+          : a
+      )
     );
   };
 
-  const denyFriendRequest = (not) => {
-    const rawBody = {
-      _id: not.content.sender_id,
-    };
-    removeFriendRequest(user._id, rawBody, setUserFriendData);
+  const toggleFollower = async () => {
+    if (!selectedArena) return;
+    const response = await toggleFollowerArena({
+      arenaId: selectedArena._id,
+      userId: user._id,
+    });
+    const updated = {
+      ...response,
+      isStarred: selectedArena.isStarred,
+    }
+    setSelectedArena({
+      ...updated,
+      isStarred: selectedArena.isStarred,
+    });
+    setArenas(prev =>
+      prev.map(a =>
+        a._id.toString() === updated._id.toString()
+          ? updated
+          : a
+      )
+    );
   };
-
-  const deleteNotification = (not) => {
-    deleteUserNotification(not._id, setDeletedNot);
-  };
-
-  useEffect(() => {
-    getNotificationByUser(user._id, setNotifications);
-    if (!deletedNot) setDeletedNot(null);
-  }, [deletedNot, userFriendData]);
-
-  const handleSave = () => {
-    updateUserInfo(user._id, userInfo, setUser);
-  };
-
-  const statData = [
-    {
-      icon: "account-group-outline",
-      label: "Friends",
-      value: userFriendData?.friends.length,
-    },
-    {
-      icon: "heart-outline",
-      label: "Followers",
-      value: follow?.followers.length,
-    },
-    {
-      icon: "account-plus-outline",
-      label: "Following",
-      value: follow?.followings.length,
-    },
-    {
-      icon: "view-grid-outline",
-      label: "Arenas",
-      value: userArenas.length,
-    },
-  
-  ];
 
   const playPerformance = (item) => {
     let posts = []
-    selectedArena.posts.map( p => {
+    performances.map( p => {
       let post = {...p, arenaName :selectedArena.arenaName ,
         talentType : selectedArena.talentType ,
         region : selectedArena.region ,
@@ -395,177 +157,26 @@ const panGesture = Gesture.Pan()
   }
 
   const renderPerformance = ( {item , index } ) => {
-    
-    return  (
-      <View>
-      <PerformanceCard 
+    return  <PerformanceCard 
         item={item}
         index={index}
         CARD_WIDTH={CARD_WIDTH}
         playPerformance = {playPerformance}
-        performanceCount={selectedArena.posts.length}
-        canEdit = {true}
-        setPostToDeleteId ={setPostToDeleteId}
+        performanceCount={performances.length}
       />
-      </View>
-      )
   };
 
-  const logout = async () => {
-    { 
-      await logoutUser(setUser, router , user)
-    }
+  if (!selectedArena) {
+    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
   }
 
-  // refreshing data 
-  const onRefresh = async () => {
-    showLoading("Refreshing ...")
-    try {
-      setRefreshing(true);
-      await getArenaByUser(user._id ,setSelectedArena, setUserArenas , selectedArena._id);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setRefreshing(false);
-      hideLoading()
-    }
-  };
-  useEffect(() => {
-    if(!globalArenaRefresh) return ; 
-      onRefresh()
-      setGlobalArenaRefresh(false)
-  }, [globalArenaRefresh])
-
-  //modal alert , arena  actions , 
-  const createArena = async(d) => {
-    console.log(d)
-    const data =   await createArenaByUser(user._id,d)
-    if(data.message) return ; 
-    setUserArenas(data.arenas);
-    setSelectedArena(data.selectedArena)
-   }
-
-  const updateArena = async(body) => {
-    const data = await updateArenaByUser(selectedArena._id , {...body,userId:user._id})
-    setSelectedArena(data.selectedArena)
-    setUserArenas(data.arenas)
-    setTimeout(() => {
-        hideLoading()
-    }, 1000);
-}
-
-const handleDeleteArena = async() => {
-  const data = await deleteArenaByUser(selectedArena._id , {userId:user._id})
-  setUserArenas(data.arenas)
-  setSelectedArena(data.selectedArena)
-}
-
-const createPerformance = ()=>{
-        router.push({
-        pathname: "/CreatePerformance",
-        params: {
-            arena_id: selectedArena._id,
-        },
-        });
-}
-
-const deletePost = async()=>{
-    showLoading('deleting the post ...')
-    await deleteArenaPost( postToDeleteId, setSelectedArena , setUserArenas)
-    hideLoading()
- }
-
-const confirmAction =  {
-   delete_arena : handleDeleteArena,
-   delete_arena_deny : () => {} ,
-   create_arena : () => {
-                         setTimeout(() => {
-                          setOpenCreateArenaModal(true)
-                         }, 300);
-                        },
-   create_performance : createPerformance,
-   delete_performance : deletePost
-}
-const alertContent =  {
-    delete_arena : {
-        title : "Delete Arena",
-        text: "Deleting this arena will permanently remove all performances, followers, stars and statistics. This action cannot be undone."
-       },
-    delete_arena_deny : {
-        title : " Delete Arena ",
-        text : " can't delete this Arena , need to delete all performances first ",
-    },
-    create_arena : {
-        title : "Create Arena" ,
-        text : "are you sure you want to create New Arena"
-    },
-    create_performance : {
-        title : "Add Performance" ,
-        text : "are you sure you want to add a  performance"
-    },
-    delete_performance : {
-        title : "Delete Post" ,
-        text : "are you sure you want to delete this performance"
-    },
- }
-
- const alertType =  {
-    delete_arena : "confirm" ,
-    delete_arena_deny : "infos",
-    create_arena : "confirm",
-    create_performance : "confirm",
-    delete_performance : "confirm"
- }
-
-
-
-  if (!visible) return null;
-
   return (
-    <View className="absolute inset-0 z-50">
-  
-      {/* BACKDROP */}
-      <TouchableOpacity
-        className="absolute inset-0 bg-black/70"
-        onPress={onClose}
-      />
-  
-      {/* DRAWER (NO gesture here) */}
-      <Animated.View
-        style={[
-          animatedStyle,
-          { width, top: insets.top , bottom: 0 }
-        ]}
-        className="absolute right-0 bg-[#0A0B0D]"
-      >
-  
-        {/* HEADER */}
-        <View className="pl-2 py-2 flex-row justify-between items-center border-b border-white/5">
-          <Text 
-          style ={{
-            color :"#eab308",
-            fontSize: width / 20,
-            fontWeight : "800"
-          }}
-          className="text-white">
-            PROFILE
-          </Text>
-          <TouchableOpacity 
-          className ="p-2 px-4 b g-white justify-center items-center"
-          onPress={onClose}>
-             <MaterialCommunityIcons
-                name="chevron-right"
-                size={35}
-                color="#eab308"
-            />
-          </TouchableOpacity>
-        </View>
-  
-        {/* MAIN LIST */}
-        <FlatList
+    <View style={{ flex: 1, backgroundColor:"#000" , paddingTop: insets.top }}>
+          {/* MAIN LIST */}
+          <FlatList
           data={sections}
           keyExtractor={(item, i) => item.type + i}
-          extraData={refreshing}
+        //   extraData={refreshing}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled
           keyboardShouldPersistTaps="handled"
@@ -576,9 +187,7 @@ const alertContent =  {
   
               case "header":
                 return (
-                  <Header user = {user}  statData = {statData} setModalVisible={setModalVisible} logout = {logout}  
-                          onPress = {onClose} pickImage={pickImage} setCoverImg = {setCoverImg} setProfileImg= {setProfileImg}
-                   />
+                  <ProfileHeader user = {user}  statData = {statData}  />
                 );
             
               case "requests":
@@ -964,47 +573,6 @@ const alertContent =  {
             }
           }}
         />
-      </Animated.View>
-        {openCreateArenaModal && (
-        <CreateArenaModal 
-             user={user} 
-             isVisible={openCreateArenaModal} 
-             setOpenModal = {setOpenCreateArenaModal}
-             setIsVisible = {setOpenCreateArenaModal} 
-             onCreateArena = {createArena}
-             />
-        )}
-        {openEditArenaModal && (
-         <EditArenaModal
-         isVisible={openEditArenaModal}
-         setIsVisible={
-           setOpenEditArenaModal
-         }
-         arena={selectedArena}
-         width={width}
-         height={height}
-         onSave={updateArena}
-       />
-       )}
-        <EditProfileModal
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          handleSave={handleSave}
-          user={user}
-        />
-        {openArenaAlertModal && (
-        <ArenaAlertModal
-            isVisible={openArenaAlertModal}
-            setIsVisible={setOpenArenaAlertModal}
-            title = {alertContent[arenaActionModal].title}
-            message = {alertContent[arenaActionModal].text}
-            type = {alertType[arenaActionModal]}
-            onConfirm = {confirmAction[arenaActionModal]}
-            />
-        )}
-
     </View>
-  );
+  )
 }

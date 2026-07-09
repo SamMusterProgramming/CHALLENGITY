@@ -1,8 +1,20 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { useGlobalContext } from '../../../context/GlobalProvider'
 
-export default function PerformanceCard({item ,index , CARD_WIDTH , performanceCount ,playPerformance}) {
+export default function PerformanceCard({item ,
+    index ,
+    canEdit = false,
+    CARD_WIDTH ,
+    performanceCount ,
+    playPerformance,
+    setPostToDeleteId = null
+    }) {
+
+    const {setArenaActionModal,
+           openArenaAlertModal, 
+           setOpenArenaAlertModal} = useGlobalContext()
   return (
     <TouchableOpacity
     style={{
@@ -109,6 +121,38 @@ export default function PerformanceCard({item ,index , CARD_WIDTH , performanceC
                 </Text>
             </View>
     </View>
+     {canEdit && (
+      <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={ () => {
+        setArenaActionModal("delete_performance")
+        setOpenArenaAlertModal(true)
+        setPostToDeleteId(item._id)
+      }}
+      style={{
+        position :"absolute" , 
+        right: 5,
+        top: 5,
+        borderRadius: 22,
+        backgroundColor: "rgba(17,18,20,.96)",
+        borderWidth: 1,
+        borderColor: "rgba(255,70,70,.18)",
+        justifyContent: "center",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 12,
+        elevation: 8,
+      }}
+      className = "p-2 rounded-full bg-black"
+    >
+      <MaterialCommunityIcons
+        name="trash-can-outline"
+        size={21}
+        color="#ef4444"
+      />
+    </TouchableOpacity>
+    )}
   </TouchableOpacity>
   )
 }

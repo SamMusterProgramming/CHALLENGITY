@@ -469,6 +469,7 @@ import React,{
     import{
     deleteArenaPostComment,
     }from"../../../apiCalls";
+import { useGlobalContext } from "../../../context/GlobalProvider";
     
     export default function ArenaCommentDrawer({
     visible,
@@ -483,7 +484,7 @@ import React,{
     data=[],
     setCommentData,
     }){
-    
+    const { globalArenaRefresh ,  setGlobalArenaRefresh} = useGlobalContext()
     const{width,height}=Dimensions.get("window");
     const insets=useSafeAreaInsets();
     const bottomSheetRef=useRef(null);
@@ -526,6 +527,7 @@ import React,{
         setCommentText("");
         Keyboard.dismiss();
         setShowFeedbackModal(false);
+        setGlobalArenaRefresh(true)
     },[commentText,onAddComment]);
 
     const deleteComment=useCallback(async(body)=>{
@@ -534,6 +536,7 @@ import React,{
         userId:user._id,
         });
         setCommentData(response);
+        setGlobalArenaRefresh(true)
     },[user,setCommentData]);
     
     const openFeedbackModal=useCallback(()=>{

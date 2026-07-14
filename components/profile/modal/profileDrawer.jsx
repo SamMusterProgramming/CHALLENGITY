@@ -91,7 +91,8 @@ export default function ProfileDrawer({ visible, onClose }) {
     setGlobalArenaRefresh,
     uploadPerformanceLoading , 
     setUploadPerformanceLoading ,
-    selectedArena, setSelectedArena
+    selectedArena, setSelectedArena,
+
   } = useGlobalContext();
  
   const { width, height } = useWindowDimensions();
@@ -115,6 +116,7 @@ export default function ProfileDrawer({ visible, onClose }) {
   const [openCreateArenaModal ,setOpenCreateArenaModal] = useState(false)
   const [openEditArenaModal , setOpenEditArenaModal] = useState(false)
   const [postToDeleteId, setPostToDeleteId] = useState(null)
+
   const [userInfo, setUserInfo] = useState({
     name: user?.name,
     city: user?.city,
@@ -122,6 +124,7 @@ export default function ProfileDrawer({ visible, onClose }) {
     country: user?.country,
   });
   const CARD_WIDTH = (width - 30) / 2;
+  
 
   useEffect(() => {
    if(userArenas.length)  setSelectedArena(userArenas[0]) 
@@ -739,7 +742,8 @@ const alertContent =  {
               case "tabs":
                 return (
                   <ProfileTabs selectedTab = {selectedTab} setSelectedTab = {setSelectedTab} setActiveTab={setActiveTab} 
-                  setOpenArenaAlertModal ={setOpenArenaAlertModal}  setArenaActionModal ={setArenaActionModal} />
+                  setOpenArenaAlertModal ={setOpenArenaAlertModal}  setArenaActionModal ={setArenaActionModal} 
+                  />
                 );
   
               case "friends":
@@ -749,7 +753,7 @@ const alertContent =  {
                     className="b g-primary items-center justify-center"
                     style={{
                       width,
-                      height: width * 2 / 3 + 0,
+                      // height: width * 1,
                     //   flexDirection: "row",
                     //   flexWrap: "col",
                     //   justifyContent: "center",
@@ -785,6 +789,7 @@ const alertContent =  {
                          friend={friend}
                          index={index}
                          w={width}
+                         isMe = {true}
                        />
                      ))}
                    </View>
@@ -806,19 +811,20 @@ const alertContent =  {
                   if(selectedTab !== "arenas") return ; 
                    return (
                      <ArenaDisplayer userArenas={userArenas} onPressArena={()=>{}} selectedArena={selectedArena}
-                      setSelectedArena = {setSelectedArena} setOpenEditArenaModal = {setOpenEditArenaModal}/>
+                      setSelectedArena = {setSelectedArena} setOpenEditArenaModal = {setOpenEditArenaModal}
+                      playPerformance = {playPerformance} setPostToDeleteId = {setPostToDeleteId}
+
+                     />
                    )
 
                 case "performances":
                   if(!selectedArena || selectedTab !== "arenas" ) return ; 
-                  
-                  if(!selectedArena.posts) 
+                
+                  if(!selectedArena.posts) {
                     return (
-                    <>
-                      <WelcomeToCreateArena  setOpenArenaAlertModal={setOpenArenaAlertModal} setArenaActionModal={setArenaActionModal}
-                      />
-                    </>
-                  )
+                      <WelcomeToCreateArena  setOpenArenaAlertModal={setOpenArenaAlertModal} setArenaActionModal={setArenaActionModal} />
+                    ); 
+                  }
 
                   if(selectedArena.posts.length == 0) 
                     return (
@@ -894,7 +900,7 @@ const alertContent =  {
                       }}
                       style={{
                         marginHorizontal: 12,
-                        marginTop: 20,
+                        marginTop: 24,
                         marginBottom: 30,
                         // height: 62,
                         borderRadius: 12,
@@ -940,14 +946,13 @@ const alertContent =  {
                         </Text>
                       )}
                     </TouchableOpacity>
-                    
+                    <View>
                     <FlatList
                     data={selectedArena.posts}
                     keyExtractor={(item) => item._id}
                     numColumns={2}
                     renderItem={renderPerformance}
                     contentContainerStyle={{
-                      // paddingHorizontal: 16,
                       paddingBottom: 40,
                       marginTop: 80,
                     }}
@@ -958,6 +963,7 @@ const alertContent =  {
                     }}
                    
                   />
+                  </View>
                   </>
                   )
 

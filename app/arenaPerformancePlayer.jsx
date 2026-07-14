@@ -29,25 +29,32 @@ import React, {
   
   import ArenaVideoItem from "../components/viewArenas/ArenaVideoItem";
 import { useGlobalContext } from "../context/GlobalProvider";
+import { getGlobalSpotlightPerformances } from "../apiCalls";
   
   export default function ArenaPerformancePlayer() {
-    const { width, height } =useWindowDimensions();
+    const { width, height } = useWindowDimensions();
     const insets = useSafeAreaInsets();
-    const {user , setGlobalArenaRefresh} = useGlobalContext()
+    const {user , setGlobalArenaRefresh ,globalSpotlightPage, setGlobalSpotlightPage ,
+      gobalSpotlightPerformances,setGlobalSpotlightPerformances
+    } = useGlobalContext()
     const flatListRef = useRef(null);
     const {arenaPosts,selectedPostId ,arena} = useLocalSearchParams();
+    const [posts , setPosts] = useState([])
+    const [loadingMoreSpotlight, setLoadingMoreSpotlight] = useState(false);
+    const [hasMoreSpotlight, setHasMoreSpotlight] = useState(true);
+    
 
-    const posts =
-      useMemo(() => {
-        try {
-          return JSON.parse(
-            arenaPosts
-          );
-        } catch {
-          return [];
-        }
-      }, [arenaPosts]);
-
+    useEffect(() => {
+      const posts =
+          JSON.parse(
+              arenaPosts
+            );
+      setPosts(posts)
+      return () =>{
+        setGlobalSpotlightPage(2)
+      }
+    }, [])
+      
     const selectedArena = 
      useMemo(() => {
         try {
@@ -73,6 +80,7 @@ import { useGlobalContext } from "../context/GlobalProvider";
         posts,
         selectedPostId,
       ]);
+
     const [ currentIndex, setCurrentIndex, ] = useState(initialIndex);
   
     useEffect(() => {
@@ -117,6 +125,43 @@ import { useGlobalContext } from "../context/GlobalProvider";
         minimumViewTime:
           150,
       }).current;
+
+    const loadMoreSpotlightPerformances = async () => {
+        // Prevent duplicate requests
+        if (loadingMoreSpotlight || !hasMoreSpotlight) {
+            return;
+        }
+        setLoadingMoreSpotlight(true);
+        try {
+            const nextPage = globalSpotlightPage + 1;
+            const res = await getGlobalSpotlightPerformances(globalSpotlightPage);
+            const performances = res.data.performances
+            // No more cached pages
+            if (!performances || performances.length === 0) {
+                setHasMoreSpotlight(false);
+            } else {
+                setGlobalSpotlightPage(prev => prev + 1);
+                let pts = []
+                performances.map((a) => {
+                    let post = a
+                    post = {...post,  arena_id : a.arena._id ,
+                                      arenaName :a.arena.arenaName ,
+                                      talentType : a.arena.talentType ,
+                                      region : a.arena.region ,
+                                      profileImage : a.owner.profileImage ,
+                                      owner_id : a.owner._id
+                            }
+                       pts.push(post)
+                 })
+                 setPosts(prev => [...prev, ...pts]);
+            }
+        
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoadingMoreSpotlight(false);
+        }
+    };
 
     const topPadding = Platform.OS == "ios" ? insets.top : 30;
     const bottomPadding = Platform.OS == "ios" ? insets.bottom : 30
@@ -187,6 +232,8 @@ import { useGlobalContext } from "../context/GlobalProvider";
             }}
             />
           )}
+          onEndReached={loadMoreSpotlightPerformances}
+          onEndReachedThreshold={0.7}
         />
   
         <TouchableOpacity

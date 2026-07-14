@@ -7,18 +7,21 @@ export default function FollowArenaButton({width,onPress, isFollowed}) {
             activeOpacity={0.85}
             onPress={onPress}
             style={{
-            // marginTop: 12,
-            flex:1,
+            marginTop: 18,
+            marginBottom : 10 ,
+            // flex:1,
+            width : "100%",
             borderRadius: 12,
             backgroundColor: isFollowed
-                ? "rgba(234,179,8,0.08)"
+                ? "rgba(234,179,8,0.38)"
                 : "rgba(255,255,255,0.07)",
-            // borderWidth: 1,
-            // borderColor: isFollowed
-            //     ? "rgba(234,179,8,0.45)"
-            //     : "rgba(234,179,8,0.18)",
+            borderWidth: 1,
+            borderColor: isFollowed
+                ? "rgba(234,179,8,0.05)"
+                : "rgba(234,179,8,0.38)",
             justifyContent: "center",
             alignItems: "center",
+            alignSelf : "center"
             // premium glass depth
             // shadowColor: "#eab308",
             // shadowOpacity: isFollowed ? 0.18 : 0.08,
@@ -32,7 +35,7 @@ export default function FollowArenaButton({width,onPress, isFollowed}) {
             color: isFollowed
             ?   "#fff"
             : "#fff",
-            fontWeight: "700",
+            fontWeight: "600",
             fontSize: width / 32,
             letterSpacing: 0.3,
         }}

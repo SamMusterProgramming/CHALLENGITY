@@ -10,22 +10,26 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
+import { AnimatePresence, MotiView } from "moti";
+import WelcomeToCreateArena from "./WelcomeToCreateArena";
 
 export default function ArenaDisplayer({
     userArenas,
     onPressArena,
     selectedArena,
     setSelectedArena,
-    setOpenEditArenaModal
+    setOpenEditArenaModal,
 }) {
     const {setArenaActionModal,
           openArenaAlertModal, 
           setOpenArenaAlertModal} = useGlobalContext()
     const [hamburgerMenu , setHamburgerMenu] = useState(false)
     const { width } = useWindowDimensions();
-    const CARD_WIDTH = width * 0.82;
+
+    const CARD_WIDTH = width * 0.95;
     const SPACING = 14;
-    const SIDE_PADDING = 8;
+    const SIDE_PADDING = (width - CARD_WIDTH) / 2;
+    const ITEM_SIZE = CARD_WIDTH + SPACING;
     const flatListRef = useRef()
     const arenas = [
         ...userArenas,
@@ -34,6 +38,20 @@ export default function ArenaDisplayer({
           isCreateCard: true,
         },
     ];
+
+    const [showSwipeHint, setShowSwipeHint] = useState(userArenas.length > 1);
+    useEffect(() => {
+        if (!showSwipeHint) return;
+    
+        const timer = setTimeout(() => {
+        setShowSwipeHint(false);
+        }, 10000);
+    
+        return () => clearTimeout(timer);
+    }, [showSwipeHint]);
+  
+    const initialIndex =  arenas.findIndex( arena => arena._id === selectedArena?._id) || 0;
+
 
     useEffect(() => {
         if (!hamburgerMenu) return;
@@ -44,24 +62,26 @@ export default function ArenaDisplayer({
     }, [hamburgerMenu]);
 
     return (
+        <>
         <FlatList
         ref={flatListRef}
         horizontal
         data={arenas}
         keyExtractor={(item) => item._id}
+        extraData={selectedArena}
         showsHorizontalScrollIndicator={false}
         snapToInterval={CARD_WIDTH + SPACING }
         snapToAlignment="start"
         decelerationRate="fast"
         disableIntervalMomentum={false}
-        initialScrollIndex={arenas.indexOf(a => a._id === selectedArena._id)||0}
+        initialScrollIndex={initialIndex || 0}
         contentContainerStyle={{
-            paddingLeft: SIDE_PADDING,
-            // paddingRight:
+            paddingHorizontal: SIDE_PADDING,
+                        // paddingRight:
             //     width -
             //     CARD_WIDTH -
             //     SIDE_PADDING,
-            paddingTop: 12,
+            paddingTop: 24,
         }}
         ItemSeparatorComponent={() => (
             <View style={{ width: SPACING }} />
@@ -72,24 +92,30 @@ export default function ArenaDisplayer({
                 offsetX / (CARD_WIDTH + SPACING)
             );
             setSelectedArena(arenas[index]);
+            if (showSwipeHint) {
+                setShowSwipeHint(false);
+            }
         }}
+        getItemLayout={(_, index) => ({
+            length: ITEM_SIZE,
+            offset: ITEM_SIZE * index,
+            index,
+          })}
 
         renderItem={({item})=>{
             // const active = selectedArena._id == item._id
-            if (item.isCreateCard) {
+            if (item.isCreateCard == true) {
                 return (
                     <TouchableOpacity
                         activeOpacity={0.9}
                         // onPress={onCreateArena}
                         style={{
-                            width: width -10,
+                            width: CARD_WIDTH,
                             height: 180,
                             borderRadius: 18,
                             overflow: "hidden",
                             paddingVertical :16
-                            // backgroundColor: "#111214",
-                            // borderWidth: 1.5,
-                            // borderColor: "rgba(234,179,8,.18)",
+                      
                         }}
                     >
                         {/* Background glow */}
@@ -204,6 +230,7 @@ export default function ArenaDisplayer({
              }
              else
              return (
+              <>
                 <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => onPressArena(item)}
@@ -285,9 +312,9 @@ export default function ArenaDisplayer({
                             <Image
                                 source={{uri:item.profileImage.publicUrl}}
                                 style={{
-                                    width:52,
-                                    height:52,
-                                    borderRadius:26,
+                                    width:width/6,
+                                    height:width/6,
+                                    borderRadius:50,
 
                                     borderWidth:2,
                                     borderColor:"#eab308",
@@ -331,38 +358,43 @@ export default function ArenaDisplayer({
                                     style={{
                                         color:"#eab308",
                                         fontSize:width/32,
-                                        marginTop:2,
+                                        marginTop:4,
                                         fontWeight:"700",
                                     }}
                                 >
                                     {item.talentType} • {item.region}
                                 </Text>
+                                <Text
+                                    numberOfLines={2}
+                                    style={{
+                                        color:"rgba(255,255,255,.82)",
+                                        marginTop:4,
+                                        fontSize:13,
+                                        lineHeight:18,
+                                        fontWeight : "700",
+                                        fontSize : width/38
+                                    }}
+                                >
+                                    {item.biography}
+                                </Text>
                             </View>
                         </View>
 
-                        <Text
-                            numberOfLines={2}
-                            style={{
-                                color:"rgba(255,255,255,.72)",
-                                marginTop:12,
-                                fontSize:13,
-                                lineHeight:18,
-                            }}
-                        >
-                            {item.biography}
-                        </Text>
+                       
 
                         <Text 
-                      style ={{
-                        paddingTop :10,
-                        paddingBottom :18,
-                        // marginLeft : 18,
-                        fontWeight : "700",
-                        fontSize : width/38
-                      }}
-                      className="text-white text-xs tracking-widest">
-                       {selectedArena.description} 
-                    </Text> 
+                            numberOfLines={2}
+                            style ={{
+                                paddingTop :14,
+                                paddingBottom :14,
+                                lineHeight:18,
+                                fontWeight : "600",
+                                fontSize : width/39,
+                                width:width * 0.75
+                            }}
+                            className="text-white  ">
+                                {item.description} 
+                        </Text> 
                         {/* Stats */}
                         <View
                             style={{
@@ -396,7 +428,6 @@ export default function ArenaDisplayer({
                             />
                         </View>
                     </View>
-                    
                     <TouchableOpacity
                         activeOpacity={0.8}
                         onPress={ () => {
@@ -424,7 +455,6 @@ export default function ArenaDisplayer({
                                 color="#f4d44d"
                             />
                     </TouchableOpacity>
-
                     {hamburgerMenu && (
                     <View
                         style={{
@@ -458,7 +488,6 @@ export default function ArenaDisplayer({
                                 size={width/25}
                                 color="#eab308"
                             />
-
                             <Text
                                 style={{
                                     marginLeft: 14,
@@ -470,7 +499,6 @@ export default function ArenaDisplayer({
                                 Edit Arena
                             </Text>
                         </TouchableOpacity>
-
                         <View
                             style={{
                                 height: 1,
@@ -478,7 +506,6 @@ export default function ArenaDisplayer({
                                 marginHorizontal: 16,
                             }}
                         />
-
                         <TouchableOpacity
                             activeOpacity={0.85}
                             onPress={() => { 
@@ -499,7 +526,6 @@ export default function ArenaDisplayer({
                                 size={width/25}
                                 color="#eab308"
                             />
-
                             <Text
                                 style={{
                                     marginLeft: 14,
@@ -516,9 +542,63 @@ export default function ArenaDisplayer({
 
 
                 </TouchableOpacity>
+                </>
             )
         }}
+
         />
+         <AnimatePresence>
+                {showSwipeHint && (
+                    <MotiView
+                        from={{
+                            opacity: 0,
+                            translateY: 8,
+                        }}
+                        animate={{
+                            opacity: 1,
+                            translateY: 0,
+                        }}
+                        exit={{
+                            opacity: 0,
+                            translateY: -8,
+                        }}
+                        transition={{
+                            type: "timing",
+                            duration: 350,
+                        }}
+                        style={{
+                            alignSelf: "center",
+                            marginTop: 12,
+                            backgroundColor: "rgba(17,18,20,.92)",
+                            borderRadius: 22,
+                            borderWidth: 1,
+                            borderColor: "rgba(234,179,8,.18)",
+                            paddingHorizontal: 18,
+                            height: 38,
+                            flexDirection: "row",
+                            alignItems: "center",
+                        }}
+                    >
+                        <MaterialCommunityIcons
+                            name="gesture-swipe-horizontal"
+                            size={18}
+                            color="#eab308"
+                        />
+                        <Text
+                            style={{
+                                marginLeft: 8,
+                                color: "#fff",
+                                fontSize: 13,
+                                fontWeight: "600",
+                                letterSpacing: .2,
+                            }}
+                        >
+                            Swipe to explore more arenas
+                        </Text>
+                    </MotiView>
+                )}
+            </AnimatePresence>
+        </>
     );
 }
 

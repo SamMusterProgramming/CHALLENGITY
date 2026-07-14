@@ -233,8 +233,6 @@ export const  migrateToBackblaze = async (firebaseUrl,  contestantId, userName, 
 export const  migrateToBackblaze2 = async ( roomId , contestantId ) => {
   try {
     
-
-
     const body = {
         contestantId: contestantId ,
     };
@@ -316,4 +314,35 @@ export const generateThumbnail = async (
   }
 
   return null;
+};
+
+
+
+
+const MAX_VIDEO_SIZE_MB = 10;
+const MAX_VIDEO_DURATION_SECONDS = 180;
+
+
+export const validateVideo = async (videoUri) => {
+    try {
+        // 1. Get file size
+        const fileInfo = await FileSystem.getInfoAsync(videoUri);
+        if (!fileInfo.exists) {
+            throw new Error("Video file not found");
+        }
+        const sizeMB =
+            fileInfo.size / (1024 * 1024);
+        return {
+            valid: sizeMB <= MAX_VIDEO_SIZE_MB ,
+            sizeMB: Number(sizeMB.toFixed(2)),
+            tooLarge:
+                sizeMB > MAX_VIDEO_SIZE_MB,
+        };
+    } catch(error){
+        console.log(
+            "Video validation error:",
+            error
+        );
+        throw error;
+    }
 };

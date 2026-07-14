@@ -157,7 +157,7 @@ export default function TrendingStages({ user }) {
     <View
     className ="flex- 1 mt- 2 items-center   ">
         
-        <View className="px- 2 w-full text-center mt-4 mb-4 b g-darkBg">
+        <View className="px- 2 w-full text-center mt- 4 mb-4 b g-darkBg">
             <Text
                 style={{
                     color: colorTheme,

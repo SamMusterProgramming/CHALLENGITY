@@ -14,6 +14,7 @@ import{countries,stageIcons}from"../../utilities/TypeData";
 import{useGlobalContext}from"../../context/GlobalProvider";
 import StarArenaButton from"./custom/starArenaButton";
 import FollowArenaButton from"./custom/followArenaButton";
+import { CardSim } from "lucide-react-native";
 
 export const ViewArenaHeader=({
 arenas=[],
@@ -24,8 +25,11 @@ toggleFollower,
 })=>{
 const{width}=Dimensions.get("window");
 const{user}=useGlobalContext();
-const SPACING = 8;
-const CARD_WIDTH = width - SPACING * 2;
+const CARD_WIDTH = width * 0.95;
+const SPACING = 14;
+const SIDE_PADDING = (width - CARD_WIDTH) / 2;
+const ITEM_SIZE = CARD_WIDTH + SPACING;
+
 const flatListRef=useRef(null);
 const[index,setIndex]=useState(0);
 
@@ -54,7 +58,6 @@ useEffect(()=>{
 },[selectedArena]);
 
 const renderStat=(value,label)=>{
-
     return(
         <View
             style={{
@@ -62,7 +65,6 @@ const renderStat=(value,label)=>{
             // flex:1,
         }}
         >
-
             <Text
                 style={{
                 color:"#FFF",
@@ -72,7 +74,6 @@ const renderStat=(value,label)=>{
             >
                 {value??0}
             </Text>
-
             <Text
                 style={{
                 marginTop:4,
@@ -83,11 +84,8 @@ const renderStat=(value,label)=>{
             >
                 {label}
             </Text>
-
         </View>
-
     );
-
 };
 
 const renderArena=({item})=>{
@@ -116,7 +114,7 @@ return(
         activeOpacity={0.96}
         onPress={() => setSelectedArena(item)}
         style = {{
-            width:width,
+            width:CARD_WIDTH,
             borderRadius:6,
             overflow:"hidden",
             backgroundColor:"#111214",
@@ -483,12 +481,20 @@ return (
             keyExtractor={(item) => item._id}
             renderItem={renderArena}
             showsHorizontalScrollIndicator={false}
+            // contentContainerStyle={{
+            //     marginBottom :24
+            // }}
             contentContainerStyle={{
-                marginBottom :24
+                paddingHorizontal: SIDE_PADDING,
+                            // paddingRight:
+                //     width -
+                //     CARD_WIDTH -
+                //     SIDE_PADDING,
+                paddingTop: 12,
             }}
-            // ItemSeparatorComponent={() => (
-            //     <View style={{ width:8 }} />
-            // )}
+            ItemSeparatorComponent={() => (
+                <View style={{ width: SPACING }} />
+            )}
             onMomentumScrollEnd={(e) => {
                 const page = Math.round(
                     e.nativeEvent.contentOffset.x / (CARD_WIDTH + 12)

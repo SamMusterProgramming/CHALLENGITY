@@ -28,6 +28,7 @@ import { User } from "lucide-react-native";
 import ArenaCommentDrawer from "./modal/arenaCommentDrawer";
 import { router } from "expo-router";
 import VideoProgressBar from "./custom/VideoProgressBar";
+import { useGlobalContext } from "../../context/GlobalProvider";
   
   export default function ArenaVideoItem({
     item,
@@ -51,7 +52,7 @@ import VideoProgressBar from "./custom/VideoProgressBar";
     const [fireCount , setFireCount] = useState(0)
     const [commentCount , setCommentCount] = useState(0)
     const [commentData , setCommentData] = useState([])
-
+    const {globalArenaRefresh, setGlobalArenaRefresh } = useGlobalContext()
     const isVisible = index === currentIndex;
     const player =
     useVideoPlayer(
@@ -61,7 +62,7 @@ import VideoProgressBar from "./custom/VideoProgressBar";
     }
     );
 
-  
+   const isMe = item.owner_id === user._id
 
     const loadProfile = async() => {
         // if(!selectedArena) return ; 
@@ -72,7 +73,7 @@ import VideoProgressBar from "./custom/VideoProgressBar";
     useEffect(() => {
         if(!profile) return ;
         router.replace({
-            pathname: "/ViewProfile",
+            pathname: "/ProfileScreen",
             params: {
               userProfile: JSON.stringify(
                 profile
@@ -125,6 +126,7 @@ import VideoProgressBar from "./custom/VideoProgressBar";
       const count = data.count ;
       setFireCount(count) 
       setHasFired(fired)
+      setGlobalArenaRefresh(true)
     }
     
     useEffect(() => {
@@ -150,6 +152,7 @@ import VideoProgressBar from "./custom/VideoProgressBar";
     const addComment = async(text) =>{
        const comments = await addArenaPostComment(item._id , { userId:user._id , text})
        setCommentData(comments)
+       setGlobalArenaRefresh(true)
     }
 
     useEffect(() => {

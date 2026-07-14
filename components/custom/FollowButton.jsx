@@ -61,20 +61,17 @@ export default function FollowButton({ userProfile }) {
         <TouchableOpacity
           onPress={handleRequest}
           activeOpacity={0.92}
-          className="items-end"
           style={{
-            height: 42,
             paddingHorizontal: 18,
-            borderRadius: 14,
-  
+            borderRadius: 9,
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
   
-            // backgroundColor:
-            //   status === "Follow"
-            //     ? "#eab308"
-            //     : "rgba(255,255,255,0.04)",
+            backgroundColor:
+              status === "Follow"
+                ? "rgba(0,0,0,0.64)"
+                : "rgba(0,0,0,0.64)",
   
             // borderWidth: 1,
             // borderColor:
@@ -82,19 +79,20 @@ export default function FollowButton({ userProfile }) {
             //     ? "#f4d44d"
             //     : "rgba(234,179,8,0.25)",
   
-            shadowColor:
-              status === "Follow"
-                ? "#eab308"
-                : "#000",
+            // shadowColor:
+            //   status === "Follow"
+            //     ? "#eab308"
+            //     : "#000",
   
-            shadowOpacity:
-              status === "Follow"
-                ? 0.28
-                : 0.15,
+            // shadowOpacity:
+            //   status === "Follow"
+            //     ? 0.28
+            //     : 0.15,
   
-            shadowRadius: 12,
-            elevation: status === "Follow" ? 6 : 2,
+            // shadowRadius: 12,
+            // elevation: status === "Follow" ? 6 : 2,
           }}
+          className = "py-2"
         >
           <MaterialCommunityIcons
             name={
@@ -113,7 +111,7 @@ export default function FollowButton({ userProfile }) {
           <Text
             style={{
               marginLeft: 8,
-              fontSize: width / 32,
+              fontSize: width / 41,
               fontWeight: "700",
               letterSpacing: 0.4,
               color:

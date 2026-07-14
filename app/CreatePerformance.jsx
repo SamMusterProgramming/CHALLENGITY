@@ -23,14 +23,16 @@ import CameraRecordingModal from "../components/arena/modals/cameraRecordingModa
 import { stageIcons } from "../utilities/TypeData";
 import SubmitPerformanceModal from "../components/arena/modals/submitPerformanceModal";
 import { addPerformanceToArena } from "../apiCalls";
-import { generateThumbnail } from "../videoFiles";
-import { compressImage } from "../utilities/fileCompressor";
+import { generateThumbnail, validateVideo } from "../videoFiles";
+import { compressImage, compressVideo } from "../utilities/fileCompressor";
 import { useLoading } from "../context/loadingContext";
 import { getUploadImageUrl, getUploadVideoUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from "../uploadFileToBlackBlaze";
+import ArenaAlertModal from "../components/arena/modals/AlertArenaModal";
 
 
 export default function CreatePerformance() {
-const {userArenas , user ,selectedArena , setSelectedArena , setUserArenas, uploadPerformanceLoading , setUploadPerformanceLoading} = useGlobalContext()
+const {userArenas , user ,selectedArena , setSelectedArena , setUserArenas, uploadPerformanceLoading ,
+   setUploadPerformanceLoading , arenaActionModal , setArenaActionModal} = useGlobalContext()
 const { width , height} =  useWindowDimensions();
 const { arena_id } = useLocalSearchParams();
 const insets = useSafeAreaInsets();
@@ -45,7 +47,7 @@ const [spotlight, setSpotlight] =  useState(true);
 const [thumbNailURL,setThumbNailURL] = useState(null)
 const { showLoading, hideLoading } = useLoading();
 const [duration , setDuration] = useState(0)
-
+const [openPerformanceAlertModal ,setOpenPerformanceAlertModal] = useState(false)
 
 const player =
   useVideoPlayer(
@@ -93,7 +95,14 @@ const uploadVideo = async () => {
         });
   
       if (!result.canceled) {
-        setVideoUrl(
+        const validate = await validateVideo(result.assets[0].uri)
+        if(validate.tooLarge ) {
+              setOpenPerformanceAlertModal(true)
+               setArenaActionModal('uploadVideo_toolarge')
+               return;
+              }
+   
+        setVideoUrl(   
           result.assets[0].uri
         );
       }
@@ -138,15 +147,16 @@ const submitPerformance = async () => {
     Promise.all([
         getUploadVideoUrl(user._id , user.email , "talent" ),
         getUploadImageUrl(user._id , user.email , "thumbnail")
-        ]).then(([videoRes, thumbRes] ) =>
+        ]).then(async([videoRes, thumbRes] ) =>
             {
             setTimeout(() => {
                 hideLoading()
                 router.back()
                 setUploadPerformanceLoading(true)
             }, 2000);
-            Promise.all([
-                uploadVideoToBackblaze(videoRes, videoUrl ),
+            const compressedVideo = videoUrl ;// await compressVideo(videoUrl);
+            await  Promise.all([
+                uploadVideoToBackblaze(videoRes, compressedVideo  ),
                 uploadImageToBlackBlaze(thumbRes, thumbNailURL),
             ]).then(async([videoUpload, thumbnailUpload]) => {    
                 const data = {
@@ -167,6 +177,64 @@ const submitPerformance = async () => {
                 setUserArenas(response.data.arenas)
                 })
             })
+}
+
+// const submitPerformance = async () => {
+//   showLoading("uploading the video ...")
+//   Promise.all([
+//       getUploadVideoUrl(user._id , user.email , "talent" ),
+//       getUploadImageUrl(user._id , user.email , "thumbnail")
+//       ])
+//         .then(async([videoRes, thumbRes] ) =>
+//           {
+//           setTimeout(() => {
+//               hideLoading()
+//               router.back()
+//               setUploadPerformanceLoading(true)
+//           }, 2000);
+//           await compressVideo(videoUrl).then(async(compressVideoUrl) => {
+//                   await  Promise.all([
+//                     uploadVideoToBackblaze(videoRes, compressVideoUrl ),
+//                     uploadImageToBlackBlaze(thumbRes, thumbNailURL),
+//                   ]).
+//                     then(async([videoUpload, thumbnailUpload]) => {    
+//                         const data = {
+//                             owner_id:user._id,
+//                             description,
+//                             video:{
+//                                 fileName : videoRes.fileName,
+//                                 fileId : videoUpload.fileId,
+//                             },
+//                             thumbnail:{
+//                                 fileName : thumbRes.fileName,
+//                                 fileId : thumbnailUpload.fileId,
+//                             },
+//                         }
+//                         const response = await addPerformanceToArena(arena_id , data) 
+//                         setUploadPerformanceLoading(false)
+//                         setSelectedArena(response.data.selectedArena)
+//                         setUserArenas(response.data.arenas)
+//                   })
+//           })
+//         })
+// }
+
+const deleteVideo = () =>{
+  setVideoUrl(null)
+}
+const confirmAction =  {
+  uploadVideo_toolarge :() => deleteVideo,
+}
+const alertContent =  {
+   uploadVideo_toolarge : {
+       title : "Video File",
+       text: "video file you are trying to upload is too large , max size is 150 MB "
+      },
+   
+}
+
+const alertType =  {
+  uploadVideo_toolarge : "infos" ,
 }
 
 return (
@@ -632,6 +700,16 @@ return (
         spotlight={spotlight}
         setSpotLight={setSpotlight}
         />
+         {openPerformanceAlertModal && (
+        <ArenaAlertModal
+            isVisible={openPerformanceAlertModal}
+            setIsVisible={setOpenPerformanceAlertModal}
+            title = {alertContent[arenaActionModal]?.title}
+            message = {alertContent[arenaActionModal]?.text}
+            type = {alertType[arenaActionModal]}
+            onConfirm = {confirmAction[arenaActionModal]}
+            />
+        )}
     </View>
   );
 }

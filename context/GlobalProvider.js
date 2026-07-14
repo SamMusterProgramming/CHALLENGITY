@@ -51,6 +51,8 @@ export const GlobalProvider =({children}) => {
    const [selectedArena, setSelectedArena] = useState(null);
    const [uploadPerformanceLoading , setUploadPerformanceLoading] = useState(null);
    const [localArenas , setLocalArenas] = useState([])
+   const [globalSpotlightPerformances, setGlobalSpotlightPerformances] = useState([]);
+   const [globalSpotlightPage, setGlobalSpotlightPage] = useState(1);
    const [form, setForm] = useState({
     name : "",
     email : "",
@@ -118,7 +120,10 @@ export const GlobalProvider =({children}) => {
             localArenas, setLocalArenas ,
             globalArenaRefresh, setGlobalArenaRefresh ,
             openArenaAlertModal, setOpenArenaAlertModal,
-            arenaActionModal, setArenaActionModal
+            arenaActionModal, setArenaActionModal,
+            globalSpotlightPerformances, setGlobalSpotlightPerformances,
+            globalSpotlightPage, setGlobalSpotlightPage
+            
             }
             } >
             {children}

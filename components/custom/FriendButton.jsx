@@ -240,26 +240,23 @@ export default function FriendButton({ userProfile }) {
       onPress={handleRequest}
       activeOpacity={0.9}
       style={{
-        height: 36,
+
         paddingHorizontal: 14,
-  
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-  
-        borderRadius: 12,
-  
+        borderRadius: 8,
         backgroundColor:
           status === "Connect" || status === "Accept"
-            ? "#eab308"
-            : "rgba(255,255,255,0.04)",
-  
+          ? "rgba(0,0,0.64)"
+          : "rgba(0,0,0,0.64)",
         borderWidth: 1,
         borderColor:
           status === "Connect" || status === "Accept"
             ? "#eab308"
             : "rgba(234,179,8,.18)",
       }}
+       className = "py-2"
     >
       <MaterialCommunityIcons
         name={
@@ -282,7 +279,7 @@ export default function FriendButton({ userProfile }) {
       <Text
         style={{
           marginLeft: 6,
-          fontSize: width / 34,
+          fontSize: width / 42,
           fontWeight: "700",
           letterSpacing: 0.3,
           color:

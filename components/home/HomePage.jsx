@@ -14,6 +14,7 @@ import { router, useFocusEffect } from "expo-router";
 import TrendingStages from "../talent/trendingStages";
 import Favourites from "../talent/favourites";
 import LocalArenaCarousel from "../viewArenas/localArenas/localArenaCarousel";
+import SpotlightPerformances from "../spotlight/spotlightPerformances";
 export const homeState = {
   scrollY: 0,
 };
@@ -21,9 +22,10 @@ export default function HomePage({onScroll}) {
   const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading , userArenas,localArenas , 
     regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh} = useGlobalContext();
   const sections = [
+    {id:"spotlightPerformances"},
     { id: "trendingStage" },
     { id: "hotStage" },
-    { id: "favourite" },
+    // { id: "favourite" },
     {id: "LocalArenas"}
   ];
   const flatListRef = useRef(null);
@@ -116,6 +118,11 @@ export default function HomePage({onScroll}) {
             extraData={globalRefresh} 
             renderItem={({ item }) => 
               {switch (item.id) {
+                case  "spotlightPerformances" :
+                   return (
+                     <SpotlightPerformances  
+                     height={height * 0.31}  />
+                   )
                 case "trendingStage":
                     return (
                       <TrendingStages user={user} onReady={() => setIsHotStageReady(true)}  />

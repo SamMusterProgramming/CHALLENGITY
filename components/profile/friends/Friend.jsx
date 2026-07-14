@@ -70,7 +70,7 @@
 //   );
 // }
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -80,9 +80,37 @@ import {
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
+import { getUserById } from "../../../apiCalls";
 
-export default function Friend({ friend, w, index }) {
+export default function Friend({friend, w, index , isMe = true}) {
+  const [profile , setProfile] = useState(null)
+  const loadProfile = async()=> {
+    await getUserById(friend._id , setProfile)
+  }
 
+  useEffect(() => {
+    if(!profile) return ; 
+      if(isMe){
+       return  router.push({
+          pathname: "/ProfileScreen",
+          params: {
+            userProfile: JSON.stringify(
+            profile
+            ),
+          },
+        })
+      }
+      router.replace({
+        pathname: "/ProfileScreen",
+        params: {
+          userProfile: JSON.stringify(
+          profile
+          ),
+        },
+      })
+      
+  }, [profile])
+  
   const avatar = w / 5.9;
   const ITEM_WIDTH = (w - 36) / 4
   return (
@@ -109,14 +137,7 @@ export default function Friend({ friend, w, index }) {
       }}
     >
       <Pressable
-        onPress={() =>
-          router.push({
-            pathname: "/ViewProfile",
-            params: {
-              user_id: friend.user_id,
-            },
-          })
-        }
+        onPress={ loadProfile}
         style={({ pressed }) => ({
           alignItems: "center",
           opacity: pressed ? .8 : 1,

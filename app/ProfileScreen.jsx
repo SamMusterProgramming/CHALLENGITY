@@ -1,10 +1,21 @@
-import { View, Text, useWindowDimensions, FlatList } from 'react-native'
+import { View, Text, useWindowDimensions, FlatList, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useGlobalContext } from '../context/GlobalProvider';
-import { getArenaByProfile, getFollowData, getUserFriendsData } from '../apiCalls';
+import { getArenaByProfile, getFollowData, getUserFriendsData, toggleFollowerArena, toggleStarArena } from '../apiCalls';
 import PerformanceCard from '../components/viewArenas/performance/performanceCard';
+import ProfileHeader from '../components/viewArenas/header/profileHeader';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ProfileTabs from '../components/profile/custom/profileTabs';
+import DisplayViewArena from '../components/viewArenas/displayArena/displayViewArena';
+import Friend from '../components/profile/friends/Friend';
+import FollowArenaButton from '../components/viewArenas/custom/followArenaButton';
+import { countries } from '../utilities/TypeData';
+import { icons } from '../constants';
+import EmptyPostArena from '../components/profile/arena/emptyPostArena';
+import EmptyPerformanceCard from '../components/viewArenas/performance/emptyPerformanceCard';
+import LoadingModal from '../components/modal/loadingModal';
 
 const chunkArray = (arr = [], size = 6) => {
     const result = [];
@@ -16,7 +27,7 @@ const chunkArray = (arr = [], size = 6) => {
 
 export default function ProfileScreen() {
   const { userProfile, arena_id } = useLocalSearchParams();
-  const { user } = useGlobalContext();
+  const { user ,globalArenaRefresh, setGlobalArenaRefresh  } = useGlobalContext();
   const insets = useSafeAreaInsets();
   const {width , height} = useWindowDimensions()
   const profile = userProfile ? JSON.parse(userProfile) : null;
@@ -43,10 +54,29 @@ export default function ProfileScreen() {
                             (list) => setArenas(list),
                             arena_id
                             ) ])
+          setReady(true)
      }
     if (!profile?._id) return;
     loadProfileMaterial()
   }, []);
+
+  useEffect(() => {
+    const loadProfileMaterial  = async() => {
+          await  Promise.all([
+                            getUserFriendsData(profile._id, setFriendData),
+                            getFollowData(profile._id, setFollowData),
+                            getArenaByProfile(
+                            profile._id,
+                            { requesterId: user._id },
+                             setSelectedArena,
+                             setArenas,
+                            arena_id
+                            ) ])
+          setGlobalArenaRefresh(false)
+     }
+    if (!globalArenaRefresh) return;
+          loadProfileMaterial()
+  }, [globalArenaRefresh]);
 
 // ---------------- DATA ----------------
 const getActiveData = () => {
@@ -60,13 +90,36 @@ const pagedData = chunkArray(getActiveData(), 20);
     { type: "header" },
     // { type: "stats" },
     // { type: "requests", data: friendRequestReceived },
-    // { type: "tabs" },
-    // { type: "friends", data: pagedData },
-    // { type: "arenas", data: []},
-    // { type: "performances", data: []},
+    { type: "tabs" },
+    { type: "friends", data: pagedData },
+    { type: "arenas", data: []},
+    { type: "performances", data: []},
   ];
 
+  const statData = [
+    {
+      icon: "account-group-outline",
+      label: "Friends",
+      value: friendData?.friends?.length,
+    },
+    {
+      icon: "heart-outline",
+      label: "Followers",
+      value: followData?.followers?.length,
+    },
+    {
+      icon: "account-plus-outline",
+      label: "Following",
+      value: followData?.followings?.length,
+    },
+    {
+      icon: "view-grid-outline",
+      label: "Arenas",
+      value: arenas.length,
+    },
   
+  ];
+
   // actions 
   const totalStat = useMemo(() => {
     let totalP = 0
@@ -158,20 +211,54 @@ const pagedData = chunkArray(getActiveData(), 20);
 
   const renderPerformance = ( {item , index } ) => {
     return  <PerformanceCard 
-        item={item}
+        item = {item}
         index={index}
         CARD_WIDTH={CARD_WIDTH}
         playPerformance = {playPerformance}
         performanceCount={performances.length}
+
       />
   };
 
-  if (!selectedArena) {
-    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
+  // variables
+  const isStarred = selectedArena?.isStarred || false;
+  const isFollowed = selectedArena?.isFollower || false;
+  const country =
+  countries.find(
+  c=>c.code === selectedArena?.region 
+  ) || "US";
+
+  if (!ready) {
+    return <LoadingModal visible={true} text ="loading up the profile" />
+    //  <View style={{ flex: 1, backgroundColor: "#000" }} />;
   }
 
   return (
     <View style={{ flex: 1, backgroundColor:"#000" , paddingTop: insets.top }}>
+
+          <View className="pl-2 py-2 flex-row justify-between items-center border-b border-white/5">
+            <Text 
+            style ={{
+              color :"#eab308",
+              fontSize: width / 20,
+              fontWeight : "800"
+            }}
+            className="text-white">
+              PROFILE
+            </Text>
+            <TouchableOpacity 
+            className ="p-2 px-4 b g-white justify-center items-center"
+            onPress={() =>{
+                router.back()
+              }}
+            >
+              <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={35}
+                  color="#eab308"
+              />
+            </TouchableOpacity>
+          </View>
           {/* MAIN LIST */}
           <FlatList
           data={sections}
@@ -182,173 +269,20 @@ const pagedData = chunkArray(getActiveData(), 20);
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ paddingBottom: 120 }}
           renderItem={({ item }) => {
-  
             switch (item.type) {
   
               case "header":
                 return (
-                  <ProfileHeader user = {user}  statData = {statData}  />
+                  <ProfileHeader user = {profile}  statData = {statData}  />
                 );
             
-              case "requests":
-                 return ( 
-                    <>
-                     {friendRequestReceived?.length > 0 && (
-                        <View
-                        style={{
-                            width: "100%",
-                            marginTop: 24,
-                        }}   >
-                        <FlatList
-                            horizontal
-                            data={friendRequestReceived}
-                            keyExtractor={(item) => item._id}
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{
-                                paddingHorizontal: 10,
-                                paddingVertical: 10,
-                            }}
-                            ItemSeparatorComponent={() => <View style={{ width: 14 }} />}
-                            renderItem={({ item }) => (
-                                <View
-                                    style={{
-                                        width: width * 0.70,
-                                        // minHeight: 108,
-                                        borderRadius: 18,
-                                        backgroundColor: "#111214",
-                                        borderWidth: 1,
-                                        borderColor: "rgba(234,179,8,.15)",
-                                        padding: 14,
-                                    }}  >
-                                    {/* Top */}
-                                    <View
-                                        style={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                        }}  >
-                                        <Image
-                                            source={{ uri: item.presentation.image }}
-                                            style={{
-                                                width: 56,
-                                                height: 56,
-                                                borderRadius: 28,
-                                                borderWidth: 2,
-                                                borderColor: "#eab308",
-                                            }}
-                                        />
-                                        <View
-                                            style={{
-                                                flex: 1,
-                                                marginLeft: 12,
-                                            }}
-                                            className = "flex-col justify-start  "
-                                          >
-                                            <View>
-                                              <Text
-                                                  numberOfLines={1}
-                                                  style={{
-                                                      color: "#FFF",
-                                                      fontSize: width / 32,
-                                                      fontWeight: "700",
-                                                  }}  >
-                                                  {item.metadata.sender_name}
-                                              </Text>
-                                            </View>
-                                            <View>
-                                              <Text
-                                                  numberOfLines={2}
-                                                  style={{
-                                                      marginTop: 4,
-                                                      color: "rgba(255,255,255,.65)",
-                                                      fontSize: width / 36,
-                                                      lineHeight: 18,
-                                                  }}  >
-                                                  {item.presentation.text}
-                                              </Text>
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                    {/* Actions */}
-                                    <View
-                                        style={{
-                                            flexDirection: "row",
-                                            justifyContent: "center",
-                                            marginTop: 14,
-                                            width :"100%"
-                                        }}
-                                        className = "px-2 gap-2"
-                                    >
-                                        {!item.isRead &&
-                                            item.type !== "friends" && (
-                                                <TouchableOpacity
-                                                    activeOpacity={0.9}
-                                                    onPress={() => acceptFRequest(item)}
-                                                    style={{
-                                                        width : "50%" ,
-                                                        paddingHorizontal: 18,
-                                                        borderRadius: 5,
-                                                        backgroundColor: "#eab308",
-                                                        justifyContent: "center",
-                                                        alignItems: "center",
-                                                        marginRight: 10,
-                                                    }}
-                                                    className = "py-2"
-                                                >
-                                                    <Text
-                                                        style={{
-                                                            color: "#111214",
-                                                            fontWeight: "700",
-                                                            fontSize: width / 38,
-                                                        }}
-                                                    >
-                                                        Accept
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )}
-
-                                        <TouchableOpacity
-                                            activeOpacity={0.9}
-                                            onPress={() => {
-                                                if (item.type === "friend request")
-                                                    denyFriendRequest(item);
-                                                else deleteNotification(item);
-                                            }}
-                                            style={{
-                                                width : "50%" ,
-                                                paddingHorizontal: 18,
-                                                borderRadius: 5,
-                                                backgroundColor: "rgba(255,255,255,.04)",
-                                                borderWidth: 1,
-                                                borderColor: "rgba(255,255,255,.08)",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                            }}
-                                        >
-                                            <Text
-                                                style={{
-                                                    color: "#FFF",
-                                                    fontWeight: "700",
-                                                    fontSize: width / 38,
-                                                }}
-                                            >
-                                                {item.type === "friends"
-                                                    ? "Delete"
-                                                    : "Decline"}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            )}
-                        />
-                    </View>
-                         )} 
-                    </> )
+             
   
               case "tabs":
                 return (
                   <ProfileTabs selectedTab = {selectedTab} setSelectedTab = {setSelectedTab} setActiveTab={setActiveTab} 
-                  setOpenArenaAlertModal ={setOpenArenaAlertModal}  setArenaActionModal ={setArenaActionModal} />
+                  // setOpenArenaAlertModal ={setOpenArenaAlertModal}  setArenaActionModal ={setArenaActionModal}
+                   />
                 );
   
               case "friends":
@@ -358,7 +292,7 @@ const pagedData = chunkArray(getActiveData(), 20);
                     className="b g-primary items-center justify-center"
                     style={{
                       width,
-                      height: width * 2 / 3 + 0,
+                      // height: width * 2 / 3 + 0,
                     //   flexDirection: "row",
                     //   flexWrap: "col",
                     //   justifyContent: "center",
@@ -394,6 +328,7 @@ const pagedData = chunkArray(getActiveData(), 20);
                          friend={friend}
                          index={index}
                          w={width}
+                         isMe ={false}
                        />
                      ))}
                    </View>
@@ -414,145 +349,28 @@ const pagedData = chunkArray(getActiveData(), 20);
                 case "arenas":
                   if(selectedTab !== "arenas") return ; 
                    return (
-                     <ArenaDisplayer userArenas={userArenas} onPressArena={()=>{}} selectedArena={selectedArena}
-                      setSelectedArena = {setSelectedArena} setOpenEditArenaModal = {setOpenEditArenaModal}/>
+                     <DisplayViewArena userArenas={arenas} onPressArena={()=>{}} selectedArena={selectedArena}
+                      setSelectedArena = {setSelectedArena} toggleStar = {toggleStar} toggleFollower = {toggleFollower}/>
                    )
 
                 case "performances":
                   if(!selectedArena || selectedTab !== "arenas" ) return ; 
-                  
-                  if(!selectedArena.posts) 
-                    return (
-                    <>
-                      <WelcomeToCreateArena  setOpenArenaAlertModal={setOpenArenaAlertModal} setArenaActionModal={setArenaActionModal}
-                      />
-                    </>
-                  )
 
                   if(selectedArena.posts.length == 0) 
                     return (
                     <>
-                    <TouchableOpacity
-                          activeOpacity={0.85}
-                          // onPress={onUploadPerformance}
-                    
-                          onPress={() => {
-                            setArenaActionModal("create_performance")
-                            setOpenArenaAlertModal(true)
-                          }}
-                          style={{
-                            marginHorizontal: 12,
-                            marginTop: 20,
-                            marginBottom: 30,
-                            // height: 62,
-                            borderRadius: 12,
-                            backgroundColor:
-                              "#eab308",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                          className = "py-4"   >
-                        
-
-                        {uploadPerformanceLoading ? (
-                          <View
-                          style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                          }}
-                          >
-                          <ActivityIndicator
-                              size="small"
-                              color="#000"
-                          />
-                          <Text
-                              style={{
-                              color: "#000",
-                              fontWeight: "800",
-                              marginLeft: 10,
-                              // letterSpacing: 1,
-                              fontSize: width / 32,
-                              }}
-                          >
-                              UPLOADING...
-                          </Text>
-                          </View>
-                          ) : (
-                          <Text
-                          style={{
-                            color: "#000",
-                            fontWeight: "800",
-                            fontSize: width / 32,
-                          }}
-                        >
-                          Add Performance
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                    <EmptyPostArena width ={width} />
+                  
+                    <EmptyPerformanceCard width ={width} />
                     </>
                   )
 
                   return (
                     <>
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => {
-                        setArenaActionModal("create_performance")
-                        setOpenArenaAlertModal(true)
-                      }}
-                      style={{
-                        marginHorizontal: 12,
-                        marginTop: 20,
-                        marginBottom: 30,
-                        // height: 62,
-                        borderRadius: 12,
-                        backgroundColor:
-                          "#eab308",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      className = "py-4"   >
-                      {uploadPerformanceLoading ? (
-                          <View
-                          style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                          }}
-                          >
-                          <ActivityIndicator
-                              size="small"
-                              color="#000"
-                          />
-
-                          <Text
-                              style={{
-                              color: "#000",
-                              fontWeight: "800",
-                              marginLeft: 10,
-                              // letterSpacing: 1,
-                              fontSize: width / 32,
-                              }}
-                          >
-                              UPLOADING...
-                          </Text>
-                          </View>
-                          ) : (
-                          <Text
-                          style={{
-                            color: "#000",
-                            fontWeight: "800",
-                            fontSize: width / 32,
-                          }}
-                        >
-                          Add Performance
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                    
+                   
                     <FlatList
                     data={selectedArena.posts}
                     keyExtractor={(item) => item._id}
+                    extraData={selectedArena}
                     numColumns={2}
                     renderItem={renderPerformance}
                     contentContainerStyle={{

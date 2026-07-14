@@ -5,13 +5,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { useGlobalContext } from "../context/GlobalProvider";
-import { getArenaByProfile, toggleFollowerArena, toggleStarArena } from "../apiCalls";
-import { ViewArenaHeader } from "../components/viewArenas/viewArenaHeader";
-import FriendButton from "../components/custom/FriendButton";
-import FollowButton from "../components/custom/FollowButton";
-import ProfileHeader from "../components/viewArenas/header/profileHeader";
-import PerformanceCard from "../components/viewArenas/performance/performanceCard";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { getArenaByProfile, toggleFollowerArena, toggleStarArena } from "../../apiCalls";
+import { ViewArenaHeader } from "../viewArenas/viewArenaHeader";
+import FriendButton from "../custom/FriendButton";
+import FollowButton from "../custom/FollowButton";
+import ProfileHeader from "../viewArenas/header/profileHeader";
+import PerformanceCard from "../viewArenas/performance/performanceCard";
 
 
 export default function ViewProfile() {

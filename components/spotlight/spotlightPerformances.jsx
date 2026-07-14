@@ -6,25 +6,25 @@ import {
   Dimensions,
 } from "react-native";
 
-import ArenaCard from "../displayArena/arenaCard";
-import { useGlobalContext } from "../../../context/GlobalProvider";
-import StageIndicator from "../../custom/stageIndicator";
 import { router } from "expo-router";
-import { getUserById } from "../../../apiCalls";
-import { User } from "lucide-react-native";
+// import { User } from "lucide-react-native";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import ArenaCard from "../viewArenas/displayArena/arenaCard";
+import StageIndicator from "../custom/stageIndicator";
+import { getUserById } from "../../apiCalls";
+import PerformanceRepresentation from "./performance/performanceRepresentation";
 
 
-export default function LocalArenaCarousel({
-  arenas = [],
+export default function SpotlightPerformances({
   height,
 }) {
   const { width } = Dimensions.get("window");
-  const {user, colorTheme } = useGlobalContext();
-  const [currentIndex, setCurrentIndex] =useState(0);
+  const {user, colorTheme , globalSpotlightPerformances } = useGlobalContext();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const [profile , setProfile] = useState(null)
   const [arenaPosts , setArenaPosts] = useState([])
-  const [selectedArena , setSelectedArena] = useState(null)
+  const [selectedProfile , setSelectedProfile] = useState(null)
   const [selectedPost , setSelectedPost] = useState(null)
 
   const CARD_WIDTH = width * 0.96;
@@ -35,21 +35,31 @@ const loadUProfile = async()=>{
 }
 
 useEffect(() => {
-    if(!selectedArena) return ; 
-    getUserById(selectedArena.owner_id ,setProfile)
-}, [selectedArena])
+    if(!selectedProfile) return ; 
+    // getUserById(selectedArena.owner_id ,setProfile)
+    console.log(selectedProfile)
+    router.push({
+              pathname: "/ProfileScreen",
+              params: {
+                userProfile: JSON.stringify(
+                  selectedProfile
+                ),
+                arena_id : null // selectedArena._id
+              },
+          });
+}, [selectedProfile])
 
 useEffect(() => {
     if(!selectedPost) return ; 
     let posts = []
-    arenas.map((a) => {
-        // if(a.posts[0]._id !== selectedPost._id) {
-           let post = a.posts[0]
-           post = {...post, arena_id : a._id ,
-                            arenaName :a.arenaName ,
-                            talentType : a.talentType ,
-                            region : a.region ,
-                            profileImage : a . profileImage
+    globalSpotlightPerformances.map((a) => {
+           let post = a
+           post = {...post, arena_id : a.arena._id ,
+                            arenaName :a.arena.arenaName ,
+                            talentType : a.arena.talentType ,
+                            region : a.arena.region ,
+                            profileImage : a.owner.profileImage ,
+                            owner_id : a.owner._id
                   }
            posts.push(post)
         // }
@@ -61,22 +71,22 @@ useEffect(() => {
     setArenaPosts(updatedPosts)
 }, [selectedPost])
 
-const playPerformance = async() => {
-  await getPostsArena(selectedArena._id , setArenaPosts)
-}
+// const playPerformance = async() => {
+//   await getPostsArena(selectedArena._id , setArenaPosts)
+// }
 
-useEffect(() => {
-  if(!profile || selectedArena.owner_id === user._id) return ;
-  router.push({
-      pathname: "/ProfileScreen",
-      params: {
-        userProfile: JSON.stringify(
-          profile
-        ),
-        arena_id : selectedArena._id
-      },
-  });
-}, [profile])
+// useEffect(() => {
+//   if(!profile || selectedArena.owner_id === user._id) return ;
+//   router.push({
+//       pathname: "/ProfileScreen",
+//       params: {
+//         userProfile: JSON.stringify(
+//           profile
+//         ),
+//         arena_id : selectedArena._id
+//       },
+//   });
+// }, [profile])
 
 useEffect(() => {
   if(!arenaPosts.length) return ; 
@@ -105,7 +115,7 @@ useEffect(() => {
         alignItems:"center",
         // marginTop:16,
       }}
-      className ="mb-6"
+      className ="mt-4"
     >
 
       {/* HEADER */}
@@ -114,13 +124,13 @@ useEffect(() => {
         <Text
           style={{
             color:colorTheme,
-            fontSize:width/20,
+            fontSize:width/24,
             fontWeight:"800",
             letterSpacing:0.6,
             textTransform:"uppercase",
           }}
         >
-          Local Arenas
+          Spotlight Performances
         </Text>
         <Text
           style={{
@@ -148,7 +158,7 @@ useEffect(() => {
                 width,
                 }}
                 horizontal
-                data={arenas}
+                data={globalSpotlightPerformances}
                 keyExtractor={(item)=>item._id}
                 showsHorizontalScrollIndicator={false}
                 pagingEnabled
@@ -169,13 +179,13 @@ useEffect(() => {
                     justifyContent:"center",
                     }}
                 >
-                    <ArenaCard
-                    arena = {item}
+                    <PerformanceRepresentation
+                    performance = {item}
                     width={CARD_WIDTH}
                     height={height}
                     loadUProfile ={loadUProfile}
-                    playPerformance = {playPerformance}
-                    setSelectedArena ={setSelectedArena}
+                    // playPerformance = {playPerformance}
+                    setSelectedProfile = {setSelectedProfile}
                     setSelectedPost = {setSelectedPost}
                     />
                 </View>
@@ -185,10 +195,10 @@ useEffect(() => {
 
       {/* INDICATOR */}
 
-      { arenas.length > 1 && (
+      { globalSpotlightPerformances.length > 1 && (
         <StageIndicator
-                title="Arena"
-                count={arenas.length}
+                title="Performances"
+                count={globalSpotlightPerformances.length}
                 currentStage={currentIndex}
                 width={width}
             /> 

@@ -100,13 +100,7 @@ export const isAuthenticated = async(setUser)=>{
   try {
     await axios.get(BASE_URL +'/users/isAuthenticated')
     .then(res => { 
-      // res.data.profile_img = "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68"
       setUser(res.data)
-              //  if (res.data.auth) {
-              //    storeToken(res.data.token)
-              //    setUser({...res.data.user,isNewUser:false});
-              //  }
-              //  else setMessage(res.data.error)  
         })
   } catch (error) {
      console.log(error)     
@@ -1593,3 +1587,20 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
         throw error;
       }
       }
+ 
+    
+      export const getGlobalSpotlightPerformances = async (page = 1 ) => {
+        try {
+            return  await api.get(
+                `/arenas/global/spotlightPerformances?page=${page}`
+            );
+           
+        } catch (error) {
+            console.log(
+                "Spotlight performances error:",
+                error.response?.data || error.message
+            );
+            throw error;
+        }
+    };
+    

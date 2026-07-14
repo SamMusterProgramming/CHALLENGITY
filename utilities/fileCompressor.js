@@ -12,3 +12,17 @@ export const compressImage = async (uri) => {
 
   return result.uri;
 };
+// import { Video } from "react-native-compressor";
+
+export const compressVideo = async (videoUri) => {
+    try {
+        const uri = await Video.compress(videoUri, {
+            compressionMethod: "auto",
+        });
+
+        return uri;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

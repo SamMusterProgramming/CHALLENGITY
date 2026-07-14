@@ -35,7 +35,7 @@ export default function ProfileTabs({selectedTab , setSelectedTab ,setActiveTab}
     <View
       style={{
         marginHorizontal: 10,
-        marginTop: 24,
+        marginTop: 12,
         borderBottomWidth: 1,
         borderTopWidth: 1,
         borderColor: "rgba(255,255,255,.08)",
@@ -77,10 +77,11 @@ export default function ProfileTabs({selectedTab , setSelectedTab ,setActiveTab}
                 style={{
                 //   marginTop: 6,
                   color: active ? "#eab308" : "rgba(255,255,255,.95)",
-                  fontSize: width/36,
-                  fontWeight: active ? "800" : "800",
-                  letterSpacing: .4,
+                  fontSize: width/30,
+                  fontWeight: active ? "1200" : "1200",
+                  letterSpacing: 1.4,
                 }}
+                className ="font-bebas mt-1"
               >
                 {tab.label}
               </Text>

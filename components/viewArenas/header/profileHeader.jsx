@@ -6,6 +6,9 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { countries } from '../../../utilities/TypeData';
 import FriendButton from '../../custom/FriendButton';
+import FollowButton from '../../custom/FollowButton';
+
+import { Stats } from '../../profile/custom/stats';
 
 export default function ProfileHeader({user , statData}) {
     const {width , height} = useWindowDimensions()
@@ -168,8 +171,8 @@ export default function ProfileHeader({user , statData}) {
             >
               {user.name.slice(0,16)}
             </Text>
-{/*       
-            <Text
+      
+            {/* <Text
               style={{
                 color: "#C8C8C8",
                 fontSize: width / 42,
@@ -199,8 +202,8 @@ export default function ProfileHeader({user , statData}) {
                   fontSize: width / 32,
                 }}
               >
-                {user.city}, {user.state} , {countries.find ( c => c.code === user.country).name}  
-               {'  '} {countries.find ( c => c.code === user.country).flag}
+                {user.city}, {user.state} , {countries.find ( c => c.code === user.country)?.name}  
+               {'  '} {countries.find ( c => c.code === user.country)?.flag}
               </Text>
             </View>
       
@@ -245,272 +248,11 @@ export default function ProfileHeader({user , statData}) {
                 zIndex : 999,
                 position :"absolute"
             }}
+            className = "b g-black/50 gap-2 rounded-xl"
             >
-            {/* Edit */}
-            <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-                activeOpacity={0.85}
-                style={{
-                justifyContent: "center",
-                alignItems: "center",
-                }} 
-                 >
-                <View
-                 style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(234,179,8,.58)",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    }}
-                    className = "p-2 rounded-full bg-black"
-                >
-                    <MaterialCommunityIcons
-                    name="account-edit-outline"
-                    size={20}
-                    color="#eab308"
-                    />
-                </View>
-              
-            </TouchableOpacity>
-
-            {/* upload */}
-            <TouchableOpacity
-                activeOpacity={0.85}
-                style={{
-                justifyContent: "center",
-                alignItems: "center",
-                }}
-                onPress={ () => {
-                    setUploadMenu(!uploadMenu)
-                    setHamburgerMenu(false)
-                }}
-              >
-                <View
-                 style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(234,179,8,.58)",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    }}
-                    className = "p-2 rounded-full bg-black"
-                >
-                    <MaterialCommunityIcons
-                    name="tray-arrow-up"
-                    size={20}
-                    color="#eab308"
-                    />
-                </View>
-                
-            </TouchableOpacity>
-
-            <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={ () => {
-                setHamburgerMenu(!hamburgerMenu)
-                setUploadMenu(false)
-            }
-            }
-            style={{
-                // width: width/12,
-                // height: width/12,
-                borderRadius: 26,
-                backgroundColor: "rgba(0,0,0,.55)",
-                borderWidth: 1,
-                borderColor: "rgba(234,179,8,.58)",
-                justifyContent: "center",
-                alignItems: "center",
-            
-            }}
-            className = "p-2 rounded-full bg-black"
-            >
-                <MaterialCommunityIcons
-                    name="dots-horizontal"
-                    size={20}
-                    color="#f4d44d"
-                />
-            </TouchableOpacity>
-
-            
-
-           {hamburgerMenu && (
-            <View
-                style={{
-                    position: "absolute",
-                    top: 45,
-                    right: 10,
-                    width: 215,
-                    backgroundColor: "rgba(17,18,20,.98)",
-                    borderRadius: 18,
-                    borderWidth: 1,
-                    borderColor: "rgba(234,179,8,.18)",
-                    paddingVertical: 8,
-                    zIndex : 999
-                }}
-            >
-                <TouchableOpacity
-                    activeOpacity={0.85}
-                    onPress={() => {
-                        setHamburgerMenu(false);
-                        logout()
-                    }}
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingHorizontal: 18,
-                        paddingVertical: 14,
-                    }}
-                >
-                    <MaterialCommunityIcons
-                        name="image-outline"
-                        size={width/25}
-                        color="#eab308"
-                    />
-
-                    <Text
-                        style={{
-                            marginLeft: 14,
-                            color: "#FFF",
-                            fontSize: width/36,
-                            fontWeight: "600",
-                        }}
-                    >
-                        Log Out
-                    </Text>
-                </TouchableOpacity>
-
-                <View
-                    style={{
-                        height: 1,
-                        backgroundColor: "rgba(255,255,255,.06)",
-                        marginHorizontal: 16,
-                    }}
-                />
-
-                <TouchableOpacity
-                    activeOpacity={0.85}
-                    onPress={() => {
-                        setUploadMenu(false);
-                        pickImage(setProfileImg)
-                    }}
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-
-                        paddingHorizontal: 18,
-                        paddingVertical: 14,
-                    }}
-                >
-                    <MaterialCommunityIcons
-                        name="account-circle-outline"
-                        size={width/25}
-                        color="#eab308"
-                    />
-
-                    <Text
-                        style={{
-                            marginLeft: 14,
-                            color: "#FFF",
-                            fontSize: width/36,
-                            fontWeight: "600",
-                        }}
-                    >
-                        Update Profile
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            )}
-
-            {uploadMenu && (
-            <View
-                style={{
-                    position: "absolute",
-                    top: 45,
-                    right: 60,
-                    width: 215,
-                    backgroundColor: "rgba(17,18,20,.98)",
-                    borderRadius: 18,
-                    borderWidth: 1,
-                    borderColor: "rgba(234,179,8,.18)",
-                    paddingVertical: 8,
-                    shadowColor: "#000",
-                    shadowOpacity: .35,
-                    shadowRadius: 18,
-                    elevation: 12,
-                    zIndex : 999
-                }}
-            >
-                <TouchableOpacity
-                    activeOpacity={0.85}
-                    onPress={() => {
-                        setUploadMenu(false);
-                        pickImage(setCoverImg)
-                    }}
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingHorizontal: 18,
-                        paddingVertical: 14,
-                    }}
-                >
-                    <MaterialCommunityIcons
-                        name="image-outline"
-                        size={width/25}
-                        color="#eab308"
-                    />
-
-                    <Text
-                        style={{
-                            marginLeft: 14,
-                            color: "#FFF",
-                            fontSize: width/36,
-                            fontWeight: "600",
-                        }}
-                    >
-                        Update Cover
-                    </Text>
-                </TouchableOpacity>
-
-                <View
-                    style={{
-                        height: 1,
-                        backgroundColor: "rgba(255,255,255,.06)",
-                        marginHorizontal: 16,
-                    }}
-                />
-
-                <TouchableOpacity
-                    activeOpacity={0.85}
-                    onPress={() => {
-                        setUploadMenu(false);
-                        pickImage(setProfileImg)
-                    }}
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-
-                        paddingHorizontal: 18,
-                        paddingVertical: 14,
-                    }}
-                >
-                    <MaterialCommunityIcons
-                        name="account-circle-outline"
-                        size={width/25}
-                        color="#eab308"
-                    />
-
-                    <Text
-                        style={{
-                            marginLeft: 14,
-                            color: "#FFF",
-                            fontSize: width/36,
-                            fontWeight: "600",
-                        }}
-                    >
-                        Update Profile
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        )}
+            <FriendButton userProfile={user} />
+            <FollowButton userProfile={user} />
+         
         </View>
 
          {/* stats bar followers , friend */}

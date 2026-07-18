@@ -29,7 +29,7 @@ import React, {
   
   import ArenaVideoItem from "../components/viewArenas/ArenaVideoItem";
 import { useGlobalContext } from "../context/GlobalProvider";
-import { getGlobalSpotlightPerformances } from "../apiCalls";
+import { getGlobalSpotlightPerformances, getRegionalSpotlightPerformances } from "../apiCalls";
   
   export default function ArenaPerformancePlayer() {
     const { width, height } = useWindowDimensions();
@@ -38,7 +38,7 @@ import { getGlobalSpotlightPerformances } from "../apiCalls";
       gobalSpotlightPerformances,setGlobalSpotlightPerformances
     } = useGlobalContext()
     const flatListRef = useRef(null);
-    const {arenaPosts,selectedPostId ,arena} = useLocalSearchParams();
+    const {arenaPosts,selectedPostId ,type ,arena} = useLocalSearchParams();
     const [posts , setPosts] = useState([])
     const [loadingMoreSpotlight, setLoadingMoreSpotlight] = useState(false);
     const [hasMoreSpotlight, setHasMoreSpotlight] = useState(true);
@@ -120,10 +120,8 @@ import { getGlobalSpotlightPerformances } from "../apiCalls";
 
     const viewabilityConfig =
       useRef({
-        itemVisiblePercentThreshold:
-          80,
-        minimumViewTime:
-          150,
+        itemVisiblePercentThreshold: 80,
+        minimumViewTime: 150,
       }).current;
 
     const loadMoreSpotlightPerformances = async () => {
@@ -134,8 +132,18 @@ import { getGlobalSpotlightPerformances } from "../apiCalls";
         setLoadingMoreSpotlight(true);
         try {
             const nextPage = globalSpotlightPage + 1;
-            const res = await getGlobalSpotlightPerformances(globalSpotlightPage);
-            const performances = res.data.performances
+            let res = null
+            switch (type) {
+              case "global":
+                    res = await getGlobalSpotlightPerformances(globalSpotlightPage);
+                 break;
+              case "regional":
+                  res = await getRegionalSpotlightPerformances(globalSpotlightPage);
+                 break;
+              default:
+                break;
+            }
+            const performances = res?.data.performances || []
             // No more cached pages
             if (!performances || performances.length === 0) {
                 setHasMoreSpotlight(false);

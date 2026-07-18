@@ -17,18 +17,21 @@ import PerformanceRepresentation from "./performance/performanceRepresentation";
 
 export default function SpotlightPerformances({
   height,
+  type = "global"
 }) {
   const { width } = Dimensions.get("window");
-  const {user, colorTheme , globalSpotlightPerformances } = useGlobalContext();
+  const {user, colorTheme , globalSpotlightPerformances , regionalSpotlightPerformances } = useGlobalContext();
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const [profile , setProfile] = useState(null)
   const [arenaPosts , setArenaPosts] = useState([])
   const [selectedProfile , setSelectedProfile] = useState(null)
   const [selectedPost , setSelectedPost] = useState(null)
 
   const CARD_WIDTH = width * 0.96;
-
+  
+  const performances = type == "global" ? globalSpotlightPerformances :  type == "regional" ? regionalSpotlightPerformances : []
+  const title = global ? "Global Performances" : "Regional Performances"
+  const subTitle = global ? "explore best performances acrros the globe" : "explore the best performances from your region"
 
 const loadUProfile = async()=>{
    
@@ -52,7 +55,7 @@ useEffect(() => {
 useEffect(() => {
     if(!selectedPost) return ; 
     let posts = []
-    globalSpotlightPerformances.map((a) => {
+    performances.map((a) => {
            let post = a
            post = {...post, arena_id : a.arena._id ,
                             arenaName :a.arena.arenaName ,
@@ -94,11 +97,11 @@ useEffect(() => {
     pathname:
       "/arenaPerformancePlayer",
     params: {
-      selectedPostId:
-      arenaPosts[0]._id,
+      selectedPostId: arenaPosts[0]._id,
+      type : type,
       arenaPosts:
         JSON.stringify(
-          arenaPosts
+           arenaPosts
         ),
       arena : JSON.stringify(
         null
@@ -106,6 +109,8 @@ useEffect(() => {
     },
   });
 }, [arenaPosts])
+
+if(performances.length == 0 ) return ;
 
   return (
 
@@ -129,8 +134,8 @@ useEffect(() => {
             letterSpacing:0.6,
             textTransform:"uppercase",
           }}
-        >
-          Spotlight Performances
+        > 
+           {title} 
         </Text>
         <Text
           style={{
@@ -140,9 +145,8 @@ useEffect(() => {
             fontWeight:"700",
             letterSpacing:0.3,
           }}
-          className="text-gray-100 mt-1 mb-2 font-semiMontserrat tex t-center mt- "
-        >
-          Explore talent arenas and creators near you
+          className="text-gray-100 mt-1 mb-2 font-semiMontserrat tex t-center mt- " >
+           {subTitle}
         </Text>
       </View>
 
@@ -158,7 +162,7 @@ useEffect(() => {
                 width,
                 }}
                 horizontal
-                data={globalSpotlightPerformances}
+                data={performances}
                 keyExtractor={(item)=>item._id}
                 showsHorizontalScrollIndicator={false}
                 pagingEnabled
@@ -195,10 +199,10 @@ useEffect(() => {
 
       {/* INDICATOR */}
 
-      { globalSpotlightPerformances.length > 1 && (
+      { performances.length > 1 && (
         <StageIndicator
                 title="Performances"
-                count={globalSpotlightPerformances.length}
+                count={performances.length}
                 currentStage={currentIndex}
                 width={width}
             /> 

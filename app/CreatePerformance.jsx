@@ -180,7 +180,7 @@ const submitPerformance = async () => {
 }
 
 // const submitPerformance = async () => {
-//   showLoading("uploading the video ...")
+//   showLoading("Preparing the video ...")
 //   Promise.all([
 //       getUploadVideoUrl(user._id , user.email , "talent" ),
 //       getUploadImageUrl(user._id , user.email , "thumbnail")
@@ -193,6 +193,11 @@ const submitPerformance = async () => {
 //               setUploadPerformanceLoading(true)
 //           }, 2000);
 //           await compressVideo(videoUrl).then(async(compressVideoUrl) => {
+//                   hideLoading()
+//                   showLoading("uploading the video ...")
+//                   setTimeout(() => {
+//                     hideLoading()
+//                   }, 5000);
 //                   await  Promise.all([
 //                     uploadVideoToBackblaze(videoRes, compressVideoUrl ),
 //                     uploadImageToBlackBlaze(thumbRes, thumbNailURL),
@@ -223,18 +228,25 @@ const deleteVideo = () =>{
   setVideoUrl(null)
 }
 const confirmAction =  {
-  uploadVideo_toolarge :() => deleteVideo,
+  uploadVideo_toolarge: () => deleteVideo,
+  submit_performance: () =>  submitPerformance()
 }
+
 const alertContent =  {
-   uploadVideo_toolarge : {
-       title : "Video File",
+   uploadVideo_toolarge: {
+       title : "Upload Performance",
        text: "video file you are trying to upload is too large , max size is 150 MB "
+      },
+   submit_performance: {
+       title : "Upload Performance",
+       text: "are you sure you want to add this performance to your arena , you will be notified when it is published "
       },
    
 }
 
 const alertType =  {
   uploadVideo_toolarge : "infos" ,
+  submit_performance : "confirm"
 }
 
 return (
@@ -684,14 +696,17 @@ return (
           </Text>
         </TouchableOpacity>
       </View>
+
       <CameraRecordingModal
         visible={showCamera}
         setVisible={setShowCamera}
         setVideoUrl={setVideoUrl}
         />
+
       <SubmitPerformanceModal
         visible={submitModal}
         setVisible={setSubmitModal}
+        setOpenPerformanceAlertModal={setOpenPerformanceAlertModal}
         arena={arena}
         videoUrl={videoUrl}
         description = {description}
@@ -700,16 +715,17 @@ return (
         spotlight={spotlight}
         setSpotLight={setSpotlight}
         />
-         {openPerformanceAlertModal && (
-        <ArenaAlertModal
-            isVisible={openPerformanceAlertModal}
-            setIsVisible={setOpenPerformanceAlertModal}
-            title = {alertContent[arenaActionModal]?.title}
-            message = {alertContent[arenaActionModal]?.text}
-            type = {alertType[arenaActionModal]}
-            onConfirm = {confirmAction[arenaActionModal]}
-            />
-        )}
+       
+      {openPerformanceAlertModal && (
+      <ArenaAlertModal
+          isVisible={openPerformanceAlertModal}
+          setIsVisible={setOpenPerformanceAlertModal}
+          title = {alertContent[arenaActionModal]?.title}
+          message = {alertContent[arenaActionModal]?.text}
+          type = {alertType[arenaActionModal]}
+          onConfirm = {confirmAction[arenaActionModal]}
+          />
+      )}
     </View>
   );
 }

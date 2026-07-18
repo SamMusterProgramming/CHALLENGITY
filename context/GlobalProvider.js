@@ -52,6 +52,7 @@ export const GlobalProvider =({children}) => {
    const [uploadPerformanceLoading , setUploadPerformanceLoading] = useState(null);
    const [localArenas , setLocalArenas] = useState([])
    const [globalSpotlightPerformances, setGlobalSpotlightPerformances] = useState([]);
+   const [regionalSpotlightPerformances, setRegionalSpotlightPerformances] = useState([])
    const [globalSpotlightPage, setGlobalSpotlightPage] = useState(1);
    const [form, setForm] = useState({
     name : "",
@@ -122,7 +123,8 @@ export const GlobalProvider =({children}) => {
             openArenaAlertModal, setOpenArenaAlertModal,
             arenaActionModal, setArenaActionModal,
             globalSpotlightPerformances, setGlobalSpotlightPerformances,
-            globalSpotlightPage, setGlobalSpotlightPage
+            globalSpotlightPage, setGlobalSpotlightPage,
+            regionalSpotlightPerformances, setRegionalSpotlightPerformances
             
             }
             } >

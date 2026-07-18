@@ -7,7 +7,7 @@ import { stageOrderMap } from './utilities/TypeData'
 const baseURL_DEVOLOPMENT = "http://localhost:8000"
 const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-export const BASE_URL =  baseURL_PRODUCTION
+export const BASE_URL =  baseURL_DEVOLOPMENT
 export const api = axios.create({
   baseURL: BASE_URL,
 });
@@ -1594,7 +1594,6 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
             return  await api.get(
                 `/arenas/global/spotlightPerformances?page=${page}`
             );
-           
         } catch (error) {
             console.log(
                 "Spotlight performances error:",
@@ -1603,4 +1602,18 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
             throw error;
         }
     };
+
+    export const getRegionalSpotlightPerformances = async (page = 1 , countryCode ="US" ) => {
+      try {
+        return await api.get(
+          `/arenas/regional/spotlightPerformances?page=${page}&countryCode=${countryCode}`
+        );
+      } catch (error) {
+          console.log(
+              "Spotlight performances error:",
+              error.response?.data || error.message
+          );
+          throw error;
+      }
+  };
     

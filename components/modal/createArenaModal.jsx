@@ -34,7 +34,7 @@ export default function CreateArenaModal({
   const [form , setForm] = useState({
                                     arenaName : user.name.split(" ")[0] + talentType + userCountryCode ,
                                     talentType : "Sport" ,
-                                    region : countries.find(c => c.code == userCountryCode)?.code,
+                                    region : user.country , // countries.find(c => c.code == userCountryCode)?.code,
                                     biography : "",
                                     description : ""
                                     })
@@ -46,7 +46,7 @@ export default function CreateArenaModal({
     setForm({
         arenaName : "" ,
         talentType : "" ,
-        region : countries.find(c => c.code == userCountryCode)?.code,
+        region : user.country ,// countries.find(c => c.code == userCountryCode)?.code,
         biography : "",
         description : ""
         })
@@ -430,20 +430,14 @@ export default function CreateArenaModal({
                         style={{
                         width: "32%",
                         height: 52,
-
                         marginBottom: 10,
-
                         borderRadius: 8,
-
                         justifyContent: "center",
                         alignItems: "center",
-
                         backgroundColor: selected
                             ? "#eab308"
                             : "rgba(255,255,255,0.03)",
-
                         borderWidth: 1,
-
                         borderColor: selected
                             ? "#eab308"
                             : "rgba(234,179,8,0.35)",
@@ -485,12 +479,9 @@ export default function CreateArenaModal({
   style={{
     marginHorizontal: 10,
     marginTop: 20,
-
     borderRadius: 12,
     padding: 14,
-
     backgroundColor: "rgba(255,255,255,0.03)",
-
     borderWidth: 1,
     borderColor: "rgba(234,179,8,0.20)",
   }}

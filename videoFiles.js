@@ -319,7 +319,7 @@ export const generateThumbnail = async (
 
 
 
-const MAX_VIDEO_SIZE_MB = 10;
+const MAX_VIDEO_SIZE_MB = 150;
 const MAX_VIDEO_DURATION_SECONDS = 180;
 
 

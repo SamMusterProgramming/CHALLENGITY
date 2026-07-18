@@ -21,6 +21,7 @@ import React, {
     VideoView,
     useVideoPlayer,
   } from "expo-video";
+import { useGlobalContext } from "../../../context/GlobalProvider";
 
   export default function SubmitPerformanceModal({
     visible,
@@ -31,11 +32,12 @@ import React, {
     description,
     setDescription,
     spotlight ,
-    setSpotLight
+    setSpotLight ,
+    setOpenPerformanceAlertModal
   }) {
     const { width ,height } = useWindowDimensions();
     const insets =useSafeAreaInsets();
-  
+    const {setUploadPerformanceLoading , arenaActionModal , setArenaActionModal} = useGlobalContext()
     // const [description,setDescription] =useState("");
   
     const player =
@@ -435,8 +437,12 @@ import React, {
             <TouchableOpacity
               activeOpacity={0.9}
               disabled = {description.length <= 5 ? true : false}
-              onPress={
-                handleSubmit
+              onPress={ () => {
+                setVisible(false)
+                setOpenPerformanceAlertModal(true)
+                setArenaActionModal("submit_performance")
+                 }
+                // handleSubmit
               }
               style={{
                 height: height/16,

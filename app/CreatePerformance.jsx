@@ -32,7 +32,7 @@ import ArenaAlertModal from "../components/arena/modals/AlertArenaModal";
 
 export default function CreatePerformance() {
 const {userArenas , user ,selectedArena , setSelectedArena , setUserArenas, uploadPerformanceLoading ,
-   setUploadPerformanceLoading , arenaActionModal , setArenaActionModal} = useGlobalContext()
+   setUploadPerformanceLoading , arenaActionModal , setArenaActionModal ,tempPerformance, setTempPerformance} = useGlobalContext()
 const { width , height} =  useWindowDimensions();
 const { arena_id } = useLocalSearchParams();
 const insets = useSafeAreaInsets();
@@ -149,10 +149,27 @@ const submitPerformance = async () => {
         getUploadImageUrl(user._id , user.email , "thumbnail")
         ]).then(async([videoRes, thumbRes] ) =>
             {
+            const performance = {
+                _id : "00000000000" ,
+                arena_id: selectedArena._id,
+                owner_id: user._id,
+                caption: description ,
+                temp:true ,
+                media: {
+                    video: {
+                       url:videoUrl
+                    },
+                    thumbnail: {
+                       url:thumbNailURL
+                    },
+                },
+              }
+            setTempPerformance(performance)
+            setUploadPerformanceLoading(true)
             setTimeout(() => {
                 hideLoading()
                 router.back()
-                setUploadPerformanceLoading(true)
+                // setUploadPerformanceLoading(true)
             }, 2000);
             const compressedVideo = videoUrl ;// await compressVideo(videoUrl);
             await  Promise.all([
@@ -161,6 +178,7 @@ const submitPerformance = async () => {
             ]).then(async([videoUpload, thumbnailUpload]) => {    
                 const data = {
                     owner_id:user._id,
+                    region: selectedArena.region,
                     description,
                     video:{
                         fileName : videoRes.fileName,
@@ -187,10 +205,27 @@ const submitPerformance = async () => {
 //       ])
 //         .then(async([videoRes, thumbRes] ) =>
 //           {
+//             const performance = {
+//               _id : "00000000000" ,
+//               arena_id: selectedArena._id,
+//               owner_id: user._id,
+//               caption: description ,
+//               temp:true ,
+//               media: {
+//                   video: {
+//                      url:videoUrl
+//                   },
+//                   thumbnail: {
+//                      url:thumbNailURL
+//                   },
+//               },
+//             }
+//           setTempPerformance(performance)
+//           setUploadPerformanceLoading(true)
 //           setTimeout(() => {
 //               hideLoading()
 //               router.back()
-//               setUploadPerformanceLoading(true)
+//               // setUploadPerformanceLoading(true)
 //           }, 2000);
 //           await compressVideo(videoUrl).then(async(compressVideoUrl) => {
 //                   hideLoading()
@@ -205,6 +240,7 @@ const submitPerformance = async () => {
 //                     then(async([videoUpload, thumbnailUpload]) => {    
 //                         const data = {
 //                             owner_id:user._id,
+//                             region: selectedArena.region,
 //                             description,
 //                             video:{
 //                                 fileName : videoRes.fileName,

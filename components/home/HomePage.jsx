@@ -20,8 +20,10 @@ export const homeState = {
 };
 export default function HomePage({onScroll}) {
   const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading , userArenas,localArenas , 
-    regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh} = useGlobalContext();
+    regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh
+  } = useGlobalContext();
   const sections = [
+    {id:"spotlightPerformancesL"},
     {id:"spotlightPerformancesR"},
     {id:"spotlightPerformancesG"},
     { id: "trendingStage" },
@@ -119,6 +121,13 @@ export default function HomePage({onScroll}) {
             extraData={globalRefresh} 
             renderItem={({ item }) => 
               {switch (item.id) {
+                case  "spotlightPerformancesL" :
+                  return (
+                    <SpotlightPerformances  
+                    height = {height * 0.31} 
+                    type = "local"
+                       />
+                  )
                 case  "spotlightPerformancesR" :
                    return (
                      <SpotlightPerformances  
@@ -130,6 +139,7 @@ export default function HomePage({onScroll}) {
                    return (
                      <SpotlightPerformances  
                      height = {height * 0.31} 
+                     type = "global"
                         />
                    )
                 case "trendingStage":

@@ -229,7 +229,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
                 width: width/11,
                 height: width/11,
                 borderRadius: 24,
-                backgroundColor:  "rgba(234,179,8,0.7)",
+                backgroundColor:  "rgba(255,255,255,0.7)",
                 justifyContent: "center",
                 alignItems: "center",
               }}

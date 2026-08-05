@@ -367,10 +367,12 @@ return(
                 <View
                 style={{
                 flex:1,
+                // width : width,
                 }}
+                className = "px-12"
                 >
                     <FollowArenaButton
-                    width={CARD_WIDTH}
+                    width={width}
                     isFollowed={isFollowed}
                     onPress={toggleFollower}
                     />

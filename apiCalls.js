@@ -7,26 +7,12 @@ import { stageOrderMap } from './utilities/TypeData'
 const baseURL_DEVOLOPMENT = "http://localhost:8000"
 const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-export const BASE_URL =  baseURL_DEVOLOPMENT
+export const BASE_URL =  baseURL_PRODUCTION
 export const api = axios.create({
   baseURL: BASE_URL,
 });
 
-// api.interceptors.request.use(async (config) => {
-//   const token = await auth.currentUser.getIdToken();
-//   config.headers.Authorization = `Bearer ${token}`;
-//   return config;
-// });
 
-// [
-//   "expo-navigation-bar",
-//   {
-//     "position": "absolute",
-//     "visibility": "hidden",
-//     "behavior": "overlay-swipe",
-//     "backgroundColor": "#00000080"
-//   }
-// ]
 
 export const setLoadingBarAxios = (loadingRef) => {
   axios.interceptors.request.use(async(config) => {
@@ -54,31 +40,6 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-// const getToken = async () => {
-//   try {
-//     const token = await AsyncStorage.getItem('jwt_token');
-//     return token;
-//   } catch (error) {
-//     console.error('Error getting token:', error);
-//     return null;
-//   }
-// };
-
-// const storeToken = async (token) => {
-//   try {
-//     await AsyncStorage.setItem('jwt_token', token);
-//   } catch (error) {
-//     console.error('Error storing token:', error);
-//   }
-// };
-// const removeToken = async (token) => {
-//   try {
-//     await AsyncStorage.removeItem('jwt_token');
-//   } catch (error) {
-//     console.error('Error removing token:', error);
-//   }
-// };
 
 export const saveToken = async (token) => {
   await AsyncStorage.setItem("token", token);
@@ -1413,7 +1374,7 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
     export const getLocalArenas = async (arena_id , body , setArenas ) => {
       try {
            const response = await api.get(
-          `/arenas/local/${arena_id}`,body);
+          `/arenas/local/arena/${arena_id}`,body);
           //  if(response.data.length) setSelectedArena(response.data[0])
            setArenas(response.data);
       } catch (error) {
@@ -1589,7 +1550,7 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       }
  
     
-      export const getGlobalSpotlightPerformances = async (page = 1 ) => {
+    export const getGlobalSpotlightPerformances = async (page = 1 ) => {
         try {
             return  await api.get(
                 `/arenas/global/spotlightPerformances?page=${page}`
@@ -1616,4 +1577,30 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
           throw error;
       }
   };
+
+    export const getLocalSpotlightPerformances = async (page = 1 , countryCode ="US" ) => {
+      try {
+        return await api.get(
+          `/arenas/local/spotlightPerformances?page=${page}&countryCode=${countryCode}`
+        );
+      } catch (error) {
+        console.log(
+            "Spotlight performances error:",
+            error.response?.data || error.message
+        );
+        throw error;
+     }
+    }; 
+
+    export const getFollowedArenas = async (userId, page = 1 , setArenas) => {
+      try {
+        const response = await api.get(
+          `/arenas/following?userId=${userId}&page=${page}`
+        );
+        setArenas(response.data);
+      } catch (error) {
+        throw error;
+      }
+    };
+
     

@@ -5,8 +5,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { countries } from '../../../utilities/TypeData';
 import { Stats } from '../custom/stats';
 import FriendButton from '../../custom/FriendButton';
+import { router } from 'expo-router';
 
-export default function Header({user , statData ,setModalVisible , logout , pickImage , setCoverImg , setProfileImg}) {
+export default function Header({user , onPress, statData ,setModalVisible , logout , pickImage , setCoverImg , setProfileImg}) {
     const {width , height} = useWindowDimensions()
     const [uploadMenu , setUploadMenu] = useState(false)
     const [hamburgerMenu , setHamburgerMenu] = useState(false)
@@ -30,189 +31,116 @@ export default function Header({user , statData ,setModalVisible , logout , pick
         <View
           style={{
             width,
-            // height: height / 3.5,
-            // backgroundColor: "#111214",
-            // borderTopLeftRadius: 28,
-            // borderTopRightRadius: 28,
             overflow: "hidden",
           }}
-          className = "justify-center it ems-center  rounded-t-3xl"
-        >
+          className = "justify-center it ems-center  rounde d-t-3xl" >
           {/* Cover */}
-          <Image
-            source={{ uri: user.coverImage?.publicUrl }}
-            resizeMode="cover"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height:  height / 2.5,
-            }}
-            className = "rounded-t-3xl"
-          />
-
-       
-      
-        {/* Top fade (very light) */}
-        <LinearGradient
-            colors={[
-              "rgba(17,18,20,0)",
-              "rgba(17,18,20,0)",
-              "rgba(17,18,20,.03)",
-              "rgba(17,18,20,.08)",
-            ]}
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,
-              height: height / 7,
-
-            }}
-           
-          />
-      
-          {/* Bottom fade */}
-          <LinearGradient
-            colors={[
-              "transparent",
-              "rgba(0,0,0,.05)",
-              "rgba(0,0,0,.65)",
-              "rgba(0,0,0,1)",
-              "#000",
-            ]}
-            style={{
-              position: "absolute",
-              left: 0,
-              right:width/2,
-              bottom: 0,
-              height: height / 4.5,
-            }}
-           
-          />
-           <LinearGradient
-            colors={[
-              "transparent",
-              "rgba(0,0,0,.05)",
-              "rgba(0,0,0,.65)",
-              "rgba(0,0,0,1)",
-              "#000",
-            ]}
-            style={{
-              position: "absolute",
-              left: 0,
-              right:0,
-              bottom: 0,
-              height: height /3.2,
-            }}
-          />
-      
+          <View
+          className = "">
+            <Image
+              source={{ uri: user.coverImage?.publicUrl }}
+              resizeMode="cover"
+              style={{
+                // position: "absolute",
+                width: "100%",
+                height:  height / 5,
+              }}
+              className = "roun ded-t-3xl "
+            />
+          
+          </View>
+   
         
       
           {/* Content */}
           <View
             style={{
-            //   flex: 1,
-              width : width /1 ,
-              justifyContent: "center",
-              alignItems: "start",
-              marginLeft: 18,
-              marginBottom :24,
-              paddingTop:30,
-            //   marginTop :50
-            }}
-            className = "mt-auto"
-          >
-            <View
-            style={{
-                position: "relative",
-                width: width / 4.8,
-                height: width / 4.8,
+              //   flex: 1,
+                width : width /1 ,
                 justifyContent: "center",
-                alignItems: "center",
-            }}
-            >
-                <Image
-                source={{ uri: user.profileImage?.publicUrl }}
+                alignItems: "start",
+                // marginLeft: 18,
+                marginBottom :24,
+                
+              }}
+              className = " rounded-t-full w-full mt -[-7] "
+            
+          >
+             <View
+              className = "flex-row w-full items-center  bg-black justify-end mt-[-27] rounded-t-[30]">
+                  <View
+                  style={{
+                      // position: "relative",
+                      width: width / 4.8,
+                      height: width / 4.8,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    className = "ml-8 mt-[-10]" >
+                      <Image
+                      source={{ uri: user.profileImage?.publicUrl }}
+                      style={{
+                          width: width / 4.8,
+                          height: width / 4.8,
+                          borderRadius:999,
+                          borderWidth: 4,
+                          borderColor: "#000",
+                          marginBottom: 14,
+                          // marginLeft:12
+                      }}
+                      />
+                      {/* Verification Badge */}
+                      <View
+                      style={{
+                          position: "absolute",
+                          bottom:14,
+                          right: -0,
+                          }} className = " bg-black rounded-full"  >
+                          <MaterialCommunityIcons
+                              name="check-decagram"
+                              size={25}
+                              color="#eab308"
+                          />
+                      </View>
+                  </View>
+                  <View
+                    className = " flex-1 ml-4 justify-end  ">
+                          <Text
+                            style={{
+                              color: "#FFF",
+                              fontSize: width / 22,
+                              fontWeight: "700",
+                            }}
+                          >
+                            {user.name.slice(0,20)}
+                          </Text>
+                          <Text
+                            style={{
+                              color: "#E2E2E2",
+                              marginTop: 5,
+                              fontSize: width / 34,
+                            }}
+                          >
+                            {user.city}, {user.state} , {countries.find ( c => c.code === user.country).name}  
+                          {'  '} {countries.find ( c => c.code === user.country).flag}
+                          </Text>
+                         
+                  </View>
+            </View>
+
+            <Text
                 style={{
-                    width: width / 4.8,
-                    height: width / 4.8,
-                    borderRadius:999,
-                    borderWidth: 1.5,
-                    borderColor: "#eab308",
-                    marginBottom: 14,
-                    marginLeft:12
-                }}
-                />
-                {/* Verification Badge */}
-                <View
-                style={{
-                    position: "absolute",
-                    bottom:2,
-                    right: -0,
-                }}
+                  marginTop: 8,
+                  color: "#eab308",
+                  fontWeight: "800",
+                  fontSize: width / 30,
+                  }}
+                  className = "ml-8"
                 >
-                    <MaterialCommunityIcons
-                        name="check-decagram"
-                        size={25}
-                        color="#eab308"
-                    />
-                    </View>
-            </View>
-            <Text
-              style={{
-                color: "#FFF",
-                fontSize: width / 20,
-                fontWeight: "700",
-              }}
-            >
-              {user.name.slice(0,16)}
+                    Singer . professional Chabbi
             </Text>
-{/*       
-            <Text
-              style={{
-                color: "#C8C8C8",
-                fontSize: width / 42,
-                marginLeft: 12,
-              }}
-            >
-              @{user.username}
-            </Text> */}
       
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 8,
-              }}
-            >
-              {/* <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={15}
-                color="#eab308"
-              /> */}
-      
-              <Text
-                style={{
-                  color: "#E2E2E2",
-                //   marginLeft: 5,
-                  fontSize: width / 32,
-                }}
-              >
-                {user.city}, {user.state} , {countries.find ( c => c.code === user.country).name}  
-               {'  '} {countries.find ( c => c.code === user.country).flag}
-              </Text>
-            </View>
-      
-            <Text
-              style={{
-                marginTop: 8,
-                color: "#eab308",
-                fontWeight: "600",
-                fontSize: width / 38,
-              }}
-            >
-              Singer . professional Chabbi
-            </Text>
+            
       
             {!!user.tellus && (
               <Text
@@ -230,6 +158,29 @@ export default function Header({user , statData ,setModalVisible , logout , pick
               </Text>
             )}
 
+          </View>
+
+          <View
+            className = "w-full flex-row px-6">
+           
+                <View className="flex-row flex-1 px-2 justify-evenly border-t border-l border-r rounded-t-xl border-white/30 mt- 5 ">
+                        {statData.map((item, index) => (
+                        <React.Fragment key={item.label}>
+                            <Stats
+                                {...item}
+                                width={width}
+                            />
+                            {index !== statData.length - 1 && (
+                                <View
+                                    className="h-8 w-px mt-4 bg-white/40"
+                                />
+                            )}
+                        </React.Fragment>
+                        ))}
+                </View>
+               
+          </View>   
+
 
           {/* absolute edit share setting */}
 
@@ -238,15 +189,15 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
-                right:30,
-                top: 10,
+                right:10,
+                top:10,
                 gap: 28,
                 zIndex : 999,
                 position :"absolute"
             }}
             >
             {/* Edit */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
             onPress={() => setModalVisible(true)}
                 activeOpacity={0.85}
                 style={{
@@ -264,16 +215,16 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                     className = "p-2 rounded-full bg-black"
                 >
                     <MaterialCommunityIcons
-                    name="account-edit-outline"
+                    name="account-edit"
                     size={20}
                     color="#eab308"
                     />
                 </View>
               
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* upload */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 activeOpacity={0.85}
                 style={{
                 justifyContent: "center",
@@ -300,9 +251,9 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                     />
                 </View>
                 
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
             activeOpacity={0.8}
             onPress={ () => {
                 setHamburgerMenu(!hamburgerMenu)
@@ -324,10 +275,10 @@ export default function Header({user , statData ,setModalVisible , logout , pick
             >
                 <MaterialCommunityIcons
                     name="dots-horizontal"
-                    size={20}
+                    size={25}
                     color="#f4d44d"
                 />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             
 
@@ -385,6 +336,67 @@ export default function Header({user , statData ,setModalVisible , logout , pick
                     }}
                 />
 
+                <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                        setUploadMenu(false);
+                        setModalVisible(true)
+                      }}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+
+                        paddingHorizontal: 18,
+                        paddingVertical: 14,
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="account-circle-outline"
+                        size={width/25}
+                        color="#eab308"
+                    />
+
+                    <Text
+                        style={{
+                            marginLeft: 14,
+                            color: "#FFF",
+                            fontSize: width/36,
+                            fontWeight: "600",
+                        }}
+                    >
+                        Edit Profile
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                        setUploadMenu(false);
+                        pickImage(setCoverImg)
+                    }}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingHorizontal: 18,
+                        paddingVertical: 14,
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="image-outline"
+                        size={width/25}
+                        color="#eab308"
+                    />
+
+                    <Text
+                        style={{
+                            marginLeft: 14,
+                            color: "#FFF",
+                            fontSize: width/36,
+                            fontWeight: "600",
+                        }}
+                    >
+                        Update Cover
+                    </Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.85}
                     onPress={() => {
@@ -511,40 +523,6 @@ export default function Header({user , statData ,setModalVisible , logout , pick
             </View>
         )}
         </View>
-
-         {/* stats bar followers , friend */}
-            
-          </View>
-
-
-          <View
-            className = "w-full flex-row m t -auto ite ms-end">
-                {/* <TouchableOpacity
-                            onPress={() => setModalVisible(true)}
-                            className="px-4 mr-4 py-1  border border-white/10 rounded-lg" >
-                           <MaterialCommunityIcons
-                                name="square-edit-outline"
-                                size={25}
-                                color="#fff"
-                            />
-                </TouchableOpacity> */}
-                <View className="flex-row flex-1 px-2 justify-evenly border-t border-l border-r rounded-t-xl border-white/30 mt- 5 ">
-                        {statData.map((item, index) => (
-                        <React.Fragment key={item.label}>
-                            <Stats
-                                {...item}
-                                width={width}
-                            />
-                            {index !== statData.length - 1 && (
-                                <View
-                                    className="h-8 w-px mt-4 bg-white/40"
-                                />
-                            )}
-                        </React.Fragment>
-                        ))}
-                </View>
-               
-            </View>   
          
         </View>
       );

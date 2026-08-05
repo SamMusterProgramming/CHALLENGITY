@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useGlobalContext } from '../../../context/GlobalProvider'
+import SpotlightIcon from '../../custom/spotlightIcon'
 
 export default function PerformanceCard({item ,
     index ,
@@ -15,6 +16,12 @@ export default function PerformanceCard({item ,
     const {setArenaActionModal,
            openArenaAlertModal, 
            setOpenArenaAlertModal} = useGlobalContext()
+
+    const isLocalSpotlight = item?.localSpotlight?.spotlight;
+    const isRegionalSpotlight = item?.regionalSpotlight?.spotlight;
+    const isGlobalSpotlight = item?.globalSpotlight?.spotlight;
+    const noSpotLight = isLocalSpotlight  || isRegionalSpotlight ||  isGlobalSpotlight 
+   
   return (
     <TouchableOpacity
     style={{
@@ -36,6 +43,21 @@ export default function PerformanceCard({item ,
       style={{ width: "100%", height: "100%" }}
       resizeMethod = "cover"
     />
+
+    {noSpotLight ? (
+      <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg-black/70  p-1">
+            <SpotlightIcon size ={14} />
+      </View>
+        ):(
+        <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg-black/70  p-2">
+            <MaterialCommunityIcons
+              name="chart-line"
+              size={22}
+              color="#fff"
+            />
+        </View>
+    )}
+
     <View
           style={{
             position: "absolute",
@@ -56,7 +78,7 @@ export default function PerformanceCard({item ,
               width: CARD_WIDTH/7,
               height: CARD_WIDTH/7,
               borderRadius: 999,
-              backgroundColor:  "rgba(234,179,8,0.6)",
+              backgroundColor:  "rgba(255,255,255,0.8)",
               justifyContent: "center",
               alignItems:
                 "center",
@@ -87,10 +109,10 @@ export default function PerformanceCard({item ,
                 className ="flex-row gap-1 items-center" >
                 <MaterialCommunityIcons
                     name="eye"
-                    size={CARD_WIDTH/15}
+                    size={CARD_WIDTH/10}
                     color="#eab308"
                 />
-                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
+                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/17 }}>
                      {item.viewCount || 0}
                 </Text>
             </View>
@@ -99,11 +121,11 @@ export default function PerformanceCard({item ,
                 style={{
                 }}  className ="flex-row gap-1 items-center"  >
                 <MaterialCommunityIcons
-                    name="star-four-points"
-                    size={CARD_WIDTH/13}
+                    name="fire"
+                    size={CARD_WIDTH/10}
                     color="#eab308"
                 />
-                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
+                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/17 }}>
                     {item.fireCount || 0}
                 </Text>
             </View>
@@ -113,10 +135,10 @@ export default function PerformanceCard({item ,
                 }}  className ="flex-row gap-1 items-center"  >
                 <MaterialCommunityIcons
                     name="message"
-                    size={CARD_WIDTH/15}
+                    size={CARD_WIDTH/10}
                     color="#eab308"
                 />
-                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/17 }}>
                     {item.commentCount || 0}
                 </Text>
             </View>

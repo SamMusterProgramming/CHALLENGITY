@@ -6,12 +6,12 @@ const tabs = [
   {
     key: "arenas",
     label: "Arenas",
-    icon: "view-grid-outline",
+    icon: "stadium",
   },
   {
     key: "stages",
     label: "Stages",
-    icon: "account-plus-outline",
+    icon: "trophy",
   }
   ,
   {

@@ -14,8 +14,8 @@ import ArenaAlertModal from '../arena/modals/AlertArenaModal'
 import EditArenaModal from '../arena/modals/editArenaModal'
 
 export default function Arena({user , onScroll}) {
-const {userArenas , setUserArenas , selectedArena, setSelectedArena , arenaActionModal,
-      openArenaAlertModal, setOpenArenaAlertModal, globalArenaRefresh ,setGlobalArenaRefresh } = useGlobalContext()
+const {userArenas , setUserArenas , selectedArena, setSelectedArena , arenaActionModal,tempPerformance, setTempPerformance,
+     uploadPerformanceLoading ,openArenaAlertModal, setOpenArenaAlertModal, globalArenaRefresh ,setGlobalArenaRefresh } = useGlobalContext()
 const { showLoading, hideLoading } = useLoading();
 const [openModal , setOpenModal] = useState(false)
 const [openEditArenaModal , setOpenEditArenaModal] = useState(false)
@@ -28,6 +28,8 @@ const [postToDeleteId, setPostToDeleteId] = useState(null);
 const [playerPosts, setPlayerPosts] = useState([]);
 const [selectedPost, setSelectedPost] = useState(null);
 const {width ,height} = useWindowDimensions()
+const [showArenaSelector, setShowArenaSelector] = useState(false);
+
 
 // const [textAlert, setTextAlert] = useState("");
 
@@ -76,7 +78,7 @@ useEffect(() => {
   }, [selectedPost]);
 
  
-  useEffect(() => {
+useEffect(() => {
       if (!selectedPost) return;
       router.push({
         pathname:
@@ -93,9 +95,15 @@ useEffect(() => {
           )
         },
       });
-  }, [playerPosts])
+}, [playerPosts])
 
 
+useEffect(() => {
+   if(!uploadPerformanceLoading || !tempPerformance) return;
+   console.log(tempPerformance);
+   setArenaPosts(prev => [tempPerformance, ...prev]);
+   setTempPerformance(null)
+}, [tempPerformance])
 
 
 const onRefresh = async () => {
@@ -206,19 +214,14 @@ if (userArenas.length === 0 ) return (
 return (
     <View
     className = "flex-1 bg-black ">
-        <ArenaSelector
-        userArenas={userArenas}
-        selectedArena={selectedArena}
-        setSelectedArena={setSelectedArena}
-        onCreateArena={() =>
-            setOpenModal(true)
-        }
-        />
+       
         <FlatList
             data={arenaPosts}
             keyExtractor={(item) => item._id}
+            showsHorizontalScrollIndicator = {false}
+            showsVerticalScrollIndicator ={false}
             ListHeaderComponent={
-                <ArenaHeader arena={selectedArena} setSelectedArena = {setSelectedArena} 
+                <ArenaHeader arena={selectedArena} setSelectedArena = {setSelectedArena} setShowArenaSelector = {setShowArenaSelector}
                 setShownMenuPostId = {setShowMenuPostId} setOpenEditArenaModal={setOpenEditArenaModal}
                 onRefresh={onRefresh} refresh = {refreshing} />
             }
@@ -258,14 +261,6 @@ return (
             }}
             onScroll={onScroll}
             scrollEventThrottle={16}
-            // refreshing={refreshing}
-            // onRefresh={onRefresh}
-            // refreshControl={
-            //     <RefreshControl
-            //       refreshing={refreshing}
-            //       onRefresh={onRefresh}
-            //     />
-            //   }
         />
        {openEditArenaModal && (
          <EditArenaModal
@@ -296,6 +291,16 @@ return (
             onConfirm = {confirmAction[arenaActionModal]}
             />
         )}
+        <ArenaSelector
+          userArenas={userArenas}
+          selectedArena={selectedArena}
+          setSelectedArena={setSelectedArena}
+          setVisible ={setShowArenaSelector}
+          visible = {showArenaSelector}
+          onCreateArena={() =>
+              setOpenModal(true)
+          }
+          />
     </View>
   )
 }

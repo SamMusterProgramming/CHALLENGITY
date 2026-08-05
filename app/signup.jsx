@@ -388,7 +388,7 @@ return (
                     textAlign: "center",
                     // backgroundColor: "#17181B",
                     }}
-                    className="absolute top-[-10] pl-2 pr-4 bg-[#050505] tracking-wide font-montserrat  left-0" >
+                    className="absolute top-[-10] pl-2 pr-4 bg-[#0a0a0a] tracking-wide font-montserrat  left-0" >
                     Full Name
                 </Text>
                 <TextInput

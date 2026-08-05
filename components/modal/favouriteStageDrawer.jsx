@@ -1,213 +1,4 @@
 
-// import React, { useEffect, useMemo, useRef, useState } from "react";
-// import {
-// View,
-// Text,
-// TouchableOpacity,
-// FlatList,
-// useWindowDimensions,
-// Dimensions,
-// Animated
-// } from "react-native";
-// import  {
-// useSharedValue,
-// useAnimatedStyle,
-// withSpring,
-// withTiming,
-// runOnJS,
-// } from "react-native-reanimated";
-// import { Gesture, GestureDetector } from "react-native-gesture-handler";
-// import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import { useGlobalContext } from "../../context/GlobalProvider";
-// import StageDisplayer from "../talent/stageDisplayer";
-
-
-// const { width , height } = Dimensions.get("window");
-
-// /* ---------------- SELECTOR CONFIG ---------------- */
-
-// const ICON_SIZE = 70;
-// const ICON_MARGIN = 18;
-
-// const ITEM_WIDTH = ICON_SIZE + ICON_MARGIN * 2;
-// const SNAP_INTERVAL = ITEM_WIDTH;
-
-// /* ---------------- MAIN CAROUSEL ---------------- */
-
-// const MAIN_ITEM_WIDTH = width * 0.95;
-// const MAIN_ITEM_MARGIN = 2;
-// const MAIN_SNAP_INTERVAL = MAIN_ITEM_WIDTH + MAIN_ITEM_MARGIN * 2;
-// const SIDE_SPACING = (width - MAIN_ITEM_WIDTH) / 2;
-
-// export default function FavouriteStageDrawer({ visible, onClose }) {
-// const insets = useSafeAreaInsets();
-// const drawerWidth = width ;
-// const translateX = useSharedValue(drawerWidth);
-// const flatListRef = useRef(null);
-// const { user ,favouriteStages , setFavouriteStages } = useGlobalContext();
-// const nativeGesture = Gesture.Native();
-// const [scrollEnabled, setScrollEnabled] = useState(true);
-// const [activeTab, setActiveTab] = useState("competition");
-// const indicator = useSharedValue(0);
-// const mainScrollX = useRef(new Animated.Value(0)).current;
-// const mainFlatListRef = useRef(null);
-
-
-
-// useEffect(() => {
-//   if (visible) {
-//     translateX.value = withSpring(0, {
-//     damping: 18,
-//     stiffness: 160,
-//     overshootClamping: true
-//     });
-//   } else {
-//     translateX.value = withTiming(drawerWidth);
-//   }
-// }, [visible]);
-
-// const closeDrawer = () => {
-// onClose();
-// };
-
-// const panGesture = Gesture.Pan()
-// .activeOffsetX([-10, 10])   // only triggers for horizontal swipe
-// .failOffsetY([-10, 10])     // vertical motion fails the gesture
-// .onUpdate((event) => {
-//   translateX.value = Math.max(0, event.translationX); 
-// })
-// .onEnd(() => {
-//   if (translateX.value > 120) {
-//       translateX.value = withTiming(width);
-//       runOnJS(onClose)();
-//   } else {
-//       translateX.value = withSpring(0);
-//   }
-// });
-
-
-
-// const animatedStyle = useAnimatedStyle(() => ({
-// transform: [{ translateX: translateX.value }]
-// }));
-
-// const renderItem = ({ item, index }) => {
-//     const inputRange = [
-//       (index - 1) * MAIN_SNAP_INTERVAL,
-//       index * MAIN_SNAP_INTERVAL,
-//       (index + 1) * MAIN_SNAP_INTERVAL,
-//     ];
-//     const scale = mainScrollX.interpolate({
-//       inputRange,
-//       outputRange: [0.85, 1, 0.85],
-//       extrapolate: "clamp",
-//     });
-//     const translateY = mainScrollX.interpolate({
-//         inputRange,
-//         outputRange: [30, 0, 20],
-//         extrapolate: "clamp",
-//       });
-//     return (
-//       <Animated.View
-//         style={{
-//           width: MAIN_ITEM_WIDTH,
-//           marginHorizontal: MAIN_ITEM_MARGIN,
-//           transform: [{ scale } , {translateY}],
-//         }}
-//       >
-//         <StageDisplayer
-//           userTalent={item}
-//           user={user}
-//           userProfile={user}
-//           activity={true}
-//           width={MAIN_ITEM_WIDTH}
-//           height={height * 0.3}
-//         />
-//       </Animated.View>
-//     );
-//   };
-
-
-
-// if (!visible) return null;
-
-// return (
-
-// <View className="absolute inset-0 z-50">
-
-// <GestureDetector gesture={panGesture}>
-
-// <Animated.View
-//   style={[
-//   animatedStyle,
-//   {
-//   width: drawerWidth,
-//   top: insets.top,
-//   bottom: 0
-//   }
-//   ]}
-//   className="absolute right-0 bg-zinc-900">
-
-//     <View className="flex-1 bg-[#000000] /40 p- 2">
-//     {/* HEADER */}
-//       <View className="flex-row justify-between items-center px-5 py-2 mt-2 bg-zinc-900">
-//         <Text
-//             style ={{}}
-//             className="font-bebas text-center text-lg text-pink-400 tracking-widest mb-1" >
-//             Favorite Stages
-//         </Text>
-//         <TouchableOpacity onPress={onClose}>
-//           <Text className="text-gray-400 text-3xl">X</Text>
-//         </TouchableOpacity>
-//           {/* SEGMENTED CONTROL */}
-//       </View>
-     
-
-//       {/* LIST */}
-//       <GestureDetector gesture={nativeGesture}>
-//         {/* <View
-//           style={{  minHeight: width /2  + width / 4.5 + width * 0.1   }}
-//           className="flex-1  items-start justify-center"> */}
-//                 <Animated.FlatList
-//                     ref={mainFlatListRef}
-//                     // vertical = {true}
-//                     data={favouriteStages}
-//                     // extraData={globalRefresh}  
-//                     renderItem={renderItem}
-//                     keyExtractor={(item) => item._id}
-//                     showsHorizontalScrollIndicator={false}
-//                     snapToInterval={MAIN_SNAP_INTERVAL}
-//                     decelerationRate="fast"
-//                     bounces={false}
-//                     contentContainerStyle={{
-//                     paddingHorizontal: SIDE_SPACING- MAIN_ITEM_MARGIN,
-//                     marginVertical: 20,
-//                     }}
-//                     onScroll={Animated.event(
-//                     [{ nativeEvent: { contentOffset: { x: mainScrollX } } }],
-//                     { useNativeDriver: true }
-//                     )}
-//                     scrollEventThrottle={16}
-//                     initialNumToRender={2}
-//                     maxToRenderPerBatch={5}
-//                     windowSize={5}
-//                 />
-            
-//         {/* </View> */}
-//       </GestureDetector>
-//       <View className="flex-row justify-between items-center h-[5%]  b g-zinc-800" />
-
-//     </View>
-
-// </Animated.View>
-
-// </GestureDetector>
-        
-// </View>
-
-// );
-
-// }
 
 
 import React, { useEffect } from "react";
@@ -224,6 +15,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   runOnJS,
+  withSpring,
 } from "react-native-reanimated";
 
 import {
@@ -233,7 +25,6 @@ import {
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
 import { useGlobalContext } from "../../context/GlobalProvider";
 import StageDisplayer from "../talent/stageDisplayer";
 
@@ -245,12 +36,12 @@ export default function FavouriteStageDrawer({
 }) {
   const insets = useSafeAreaInsets();
 
-  const { favouriteStages, user } =
+  const { favouriteStages, user, userFollowedArenas } =
     useGlobalContext();
-
-  const drawerWidth = width * 0.95;
-
+  const drawerWidth = width ;
   const translateX = useSharedValue(drawerWidth);
+   
+
 
   useEffect(() => {
     translateX.value = visible
@@ -277,16 +68,23 @@ export default function FavouriteStageDrawer({
   };
 
   const panGesture = Gesture.Pan()
-    .onUpdate((e) => {
-      if (e.translationX > 0) {
-        translateX.value = e.translationX;
-      }
+    .activeOffsetX([-10, 10])
+    .failOffsetY([-10, 10])
+    .onUpdate((event) => {
+      translateX.value = Math.max(
+        0,
+        event.translationX
+      );
     })
     .onEnd(() => {
-      if (translateX.value > drawerWidth * 0.25) {
-        runOnJS(closeDrawer)();
+      if (translateX.value > 120) {
+        translateX.value =
+          withTiming(width);
+
+        runOnJS(onClose)();
       } else {
-        translateX.value = withTiming(0);
+        translateX.value =
+          withSpring(0);
       }
     });
 
@@ -314,12 +112,9 @@ export default function FavouriteStageDrawer({
     <View
       style={{
         position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 9999,
+        inset : 0
       }}
+      className = "z-0"
     >
       {/* BACKDROP */}
 
@@ -336,22 +131,27 @@ export default function FavouriteStageDrawer({
       />
 
       <GestureDetector gesture={panGesture}>
-        <Animated.View
+      <Animated.View
           style={[
             animatedStyle,
             {
               position: "absolute",
               right: 0,
-              top: 0,
+              top: insets.top,
               bottom: 0,
               width: drawerWidth,
-              backgroundColor: "#050505",
+              backgroundColor:
+                "#070707",
+              borderTopLeftRadius: 28,
+              borderBottomLeftRadius: 28,
+              borderLeftWidth: 1,
+              overflow: "hidden",
             },
           ]}
         >
           {/* GOLD GLOW */}
 
-          <View
+          {/* <View
             style={{
               position: "absolute",
               top: -height / 8,
@@ -362,13 +162,13 @@ export default function FavouriteStageDrawer({
               backgroundColor:
                 "rgba(234,179,8,0.05)",
             }}
-          />
+          /> */}
 
           {/* HEADER */}
 
           <View
             style={{
-              paddingTop: insets.top,
+              // paddingTop: insets.top,
               paddingHorizontal: width / 18,
               paddingBottom: height / 50,
               borderBottomWidth: 1,
@@ -388,11 +188,12 @@ export default function FavouriteStageDrawer({
                 <Text
                   style={{
                     color: "#EAB308",
-                    fontSize: width / 15,
+                    fontSize: width / 20,
                     fontWeight: "900",
                   }}
                 >
-                  Favourite Stages
+                  FOLLOWINGS {'  '}
+                  
                 </Text>
 
                 <Text
@@ -403,7 +204,7 @@ export default function FavouriteStageDrawer({
                     marginTop: 4,
                   }}
                 >
-                  Your saved competitions
+                  Arenas and Stages you followed
                 </Text>
               </View>
 
@@ -422,10 +223,10 @@ export default function FavouriteStageDrawer({
                 }}
               >
                 <MaterialCommunityIcons
-                  name="close"
-                  size={width / 18}
-                  color="#EAB308"
-                />
+                      name="chevron-right"
+                      size={55}
+                      color="#eab308"
+                  />
               </TouchableOpacity>
             </View>
           </View>

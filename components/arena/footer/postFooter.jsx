@@ -27,12 +27,9 @@ export default function PostFooter({
 
     <View
       style={{
-        // position:"absolute",
-        // bottom:8,
-        // left:10,
-        // right:10,
+   
         borderRadius:16,
-        backgroundColor:"rgba(8,8,8,0.86)",
+        // backgroundColor:"rgba(8,8,8,0.86)",
         // borderWidth:1,
         // borderColor: "rgba(234,179,8,0.20)",
         paddingHorizontal:14,
@@ -41,6 +38,7 @@ export default function PostFooter({
         alignItems:"center",
         justifyContent:"space-between",
       }}
+      className = "w- [100%] absolute bottom-2 bg-black/60 left-2 right-2"
     >
 
 
@@ -78,14 +76,19 @@ export default function PostFooter({
         }}
       >
 
-        <Text
+        {/* <Text
             style={{
                 fontSize: width/15,
                 color: hasFired ? "#eab308" : "#eab308",
                 fontWeight: "900",
                 }} >
                 {hasFired ? "✦" : "✧"}
-        </Text>
+        </Text> */}
+        <MaterialCommunityIcons
+                    name="fire"
+                    size={width/13}
+                    color= {hasFired ? "#eab308" : "#fff"}
+                />
         <Text
           style={{
             marginLeft:5,

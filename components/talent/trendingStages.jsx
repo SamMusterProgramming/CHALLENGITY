@@ -155,7 +155,7 @@ export default function TrendingStages({ user }) {
 
   return (
     <View
-    className ="flex- 1 mt- 2 items-center   ">
+    className ="flex- 1 mt-4 items-center   ">
         
         <View className="px- 2 w-full text-center mt- 4 mb-4 b g-darkBg">
             <Text
@@ -166,7 +166,7 @@ export default function TrendingStages({ user }) {
                     letterSpacing: 0.6,
                     // textAlign: "center",
                   }}
-                className="fon t-bold mb-1 text-white track ing-widest mb- 1" >
+                className="fon t-bold mb-1 text-white text-center" >
                 TRENDING STAGES
             </Text>
             <Text 
@@ -176,7 +176,7 @@ export default function TrendingStages({ user }) {
                 letterSpacing: 0.3,
                 fontWeight:700,
               }}
-                className="text-gray-100 mt-1 mb-2 font-semiMontserrat te xt-center mt- ">
+                className="text-gray-100 mt-1 mb-2 font-semiMontserrat text-center mt- ">
               {`Explore  stages near you and across ${REGION_TITLES[getRegionName(userCountryCode)]}`}
             </Text>
            
@@ -237,7 +237,7 @@ export default function TrendingStages({ user }) {
             style={{
                 alignSelf: "start",
                 width: width ,
-                height: 8,
+                height: 4,
                 backgroundColor: "rgba(212,175,55,0.52)",
                 // marginVertical: 20,
             }}

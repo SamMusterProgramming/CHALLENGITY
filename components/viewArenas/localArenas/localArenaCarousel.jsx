@@ -105,7 +105,7 @@ useEffect(() => {
         alignItems:"center",
         // marginTop:16,
       }}
-      className ="mb-6"
+      className ="mb-6  mt-2"
     >
 
       {/* HEADER */}
@@ -119,6 +119,7 @@ useEffect(() => {
             letterSpacing:0.6,
             textTransform:"uppercase",
           }}
+          className ="text-center"
         >
           Local Arenas
         </Text>
@@ -130,7 +131,7 @@ useEffect(() => {
             fontWeight:"700",
             letterSpacing:0.3,
           }}
-          className="text-gray-100 mt-1 mb-2 font-semiMontserrat tex t-center mt- "
+          className="text-gray-100 mt-1 mb-2 font-semiMontserrat text-center mt- "
         >
           Explore talent arenas and creators near you
         </Text>

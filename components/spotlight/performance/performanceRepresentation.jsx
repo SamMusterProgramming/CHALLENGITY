@@ -21,53 +21,8 @@ export default function PerformanceRepresentation({
   setSelectedPost
   }) {
 
-  // const [profile , setProfile] = useState(null)
-  // const [arenaPosts , setArenaPosts] = useState([])
   const thumbnail = performance.media?.thumbnail.cdnUrl 
-//   || arena?.coverImage?.publicUrl;
   const region = countries.find(  c => c.code === performance.arena.region );
-
-  // const loadUProfile = async()=>{
-  //     await getUserById(arena.owner_id ,setProfile)
-  // }
-
-  // const playPerformance = async() => {
-  //   await getPostsArena(arena._id , setArenaPosts)
-  // }
-
-  // useEffect(() => {
-  //   if(!profile) return ;
-  //   router.push({
-  //       pathname: "/ViewProfile",
-  //       params: {
-  //         userProfile: JSON.stringify(
-  //           profile
-  //         ),
-  //         arena_id : arena._id
-  //       },
-  //   });
-  // }, [profile])
-  
-  // useEffect(() => {
-  //   if(!arenaPosts.length) return ; 
-  //   router.push({
-  //     pathname:
-  //       "/arenaPerformancePlayer",
-  //     params: {
-  //       selectedPostId:
-  //       arenaPosts[0]._id,
-  //       arenaPosts:
-  //         JSON.stringify(
-  //           arenaPosts
-  //         ),
-  //       arena : JSON.stringify(
-  //         arena
-  //       )
-  //     },
-  //   });
- 
-  // }, [arenaPosts])
-  
 
   return (
     <TouchableOpacity
@@ -103,7 +58,7 @@ export default function PerformanceRepresentation({
                 width: width/11,
                 height: width/11,
                 borderRadius: 999,
-                backgroundColor:  "rgba(234,179,8,0.7)",
+                backgroundColor:  "rgba(255,255,255,0.9)",
                 justifyContent: "center",
                 alignItems: "center",
               }} >

@@ -4,26 +4,28 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { deleteUserNotification, getNotificationByUser, updateNotificationByUser } from '../../apiCalls';
+import { acceptFriendRequest, deleteUserNotification, getNotificationByUser, getUserById, removeFriendRequest, updateNotificationByUser } from '../../apiCalls';
 import { countries, stageIcons } from '../../utilities/TypeData';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export default function DisplayTalentNotification({ notification, setNotifications, user }) {
+export default function DisplaySocialNotification({ notification, setNotifications, user }) {
 
   const { width, height } = useWindowDimensions();
   const { userFriendData, setUserFriendData  } = useGlobalContext();
   const [isRead, setIsRead] = useState(notification.is_read);
   const [showDelete, setShowDelete] = useState(false);
   const [not, setNot] = useState(null);
+  const [profile , setProfile] = useState(null)
 
   // Animate layout changes
   const toggleDelete = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowDelete(!showDelete);
+    
   };
 
   const markAsRead = () => {
@@ -43,99 +45,38 @@ export default function DisplayTalentNotification({ notification, setNotificatio
   const handleAction = () => {
     markAsRead();
     switch (notification.type) {
-      case 'contest_joined':
-        router.push({
-          pathname: '/TalentContestRoom',
-          params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
-            // selectedIcon: icons.dance,
-            // regionIcon: icons.africa,
-            startIntroduction: 'true',
-            showGo: 'true',
-            location: 'contest',
-            contestant_id: notification.metadata.contestant_id ,
-            startPlayer : "true"
-          }
-        });
-      break;
-      case 'performance_posted':
-        router.push({
-          pathname: '/TalentContestRoom',
-          params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
-            // selectedIcon: icons.dance,
-            // regionIcon: icons.africa,
-            startIntroduction: 'true',
-            showGo: 'true',
-            location: 'contest',
-            contestant_id: notification.metadata.contestant_id ,
-            startPlayer : "true"
-          }
-        });
-      break;
-      case 'contest_queued':
-        router.push({
-          pathname: '/TalentContestRoom',
-          params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
-            // selectedIcon: icons.dance,
-            // regionIcon: icons.africa,
-            startIntroduction: 'true',
-            showGo: 'true',
-            location: 'contest',
-            contestant_id: notification.metadata.contestant_id ,
-            startPlayer : "true"
-          }
-        });
-      break;
-      case 'eliminated':
-        router.push({
-          pathname: '/TalentContestRoom',
-          params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
-            // selectedIcon: icons.dance,
-            // regionIcon: icons.africa,
-            startIntroduction: 'true',
-            showGo: 'true',
-            location: 'contest',
-            contestant_id: null ,
-            startPlayer : "true"
-          }
-        });
-      break;
-      case 'vote_received':
-        router.push({
-          pathname: '/TalentContestRoom',
-          params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
-            // selectedIcon: icons.dance,
-            // regionIcon: icons.africa,
-            startIntroduction: 'true',
-            showGo: 'true',
-            location: 'contest',
-            contestant_id: notification.metadata.contestant_id || null,
-            startPlayer : "true"
-          }
-        });
-      break;
       case 'followers':
         router.push({
           pathname: 'FSinstantChallengeDisplayer',
           params: { challenge_id: notification.content.challenge_id }
         });
         break;
-      case 'friends':
-        router.navigate({ pathname: '/ViewProfile', params: { user_id: notification.content.sender_id } });
-      break;
+      case 'friend_request_accepted':
+            getUserById(notification.sender_id , setProfile)
+            break;
+      case 'friend_request_accepted_byou':
+            getUserById(notification.sender_id , setProfile)
+            break;
+      case 'friend_request':
+            getUserById(notification.sender_id , setProfile)
       default:
         break;
     }
   };
+
+  useEffect(() => {
+    if(!profile) return ;
+    router.push({
+        pathname: "/ProfileScreen",
+        params: {
+          userProfile: JSON.stringify(
+            profile
+          ),
+          arena_id : null // selectedArena._id
+        },
+    });
+  }, [profile])
+  
 
   const deleteNotification = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -150,31 +91,48 @@ export default function DisplayTalentNotification({ notification, setNotificatio
     }
   }, [showDelete]);
 
+  const acceptFRequest =()=>{
+    const rawBody ={
+      user_id:user._id,
+      _id:notification._id
+    }
+    acceptFriendRequest(notification.sender_id,rawBody,setUserFriendData)
+  }
+
+  const denyFriendRequest =()=>{
+    markAsRead() ;
+    const rawBody ={
+      _id:notification.sender_id,
+    }
+    removeFriendRequest(user._id,rawBody,setUserFriendData)
+  }
+
+  useEffect(() => {
+    getNotificationByUser(user._id,setNotifications)
+  }, [not,userFriendData])
+
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={handleAction}
       style ={{
-        // zIndex: showDelete ? 9999 : 1,
-        // elevation: showDelete ? 9999 : 1,
-        // opacity :showDelete ? 0.3 :1
       }}
-      className={`mx-1 mb-4 rounded-xl z-50   border overflow-hidden
-         ${
+      className={`mx-1 mb-4 rounded-xl z-50  border overflow-hidden ${
         isRead
-          ? "bg-[#121111] border-white/10"
-          : "bg-[#17120A] bo rder-[#F4C542]/25"
+          ? "bg-[#111111] border-white/5"
+          : "bg-[#17120A] border-[#F4C542]/25"
       }`}
       >
       {/* Gold Accent */}
       {!isRead && (
         <View className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#F4C542]" />
       )}
-       {!isRead && (
+      {!isRead && (
         <View className="absolute left -0 top-0 bott om-0 w-[100%] h-[3px] bg-[#F4C542]" />
       )}
       
-        <View className="flex-row items-center px-4 py-4">
+      <View className="flex-row items-center px-4 py-4">
          {/* Thumbnail */}
          <View className="ml- 4">
           <Image
@@ -200,16 +158,29 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                 fontSize: width / 27,
               }}
             >
-              {notification.metadata.stageName} Stage
+              {notification.metadata.sender_name} 
             </Text>
-           
-            <Text
+            {!isRead && (
+              <View className="flex-row ml-4 rounded-full b g-[#F4C542]" >
+                 <View className="w-2 h-2 ml-4 rounded-full bg-[#F4C542]" />
+                 <Text
+                    numberOfLines={1}
+                    className="text-white pb-2  font-extrabold ml-2"
+                    style={{
+                        fontSize: width / 47,
+                    }}
+                    >
+                              New
+                  </Text>
+              </View>
+            )}
+            {/* <Text
               style={{
                 fontSize: width / 32,
               }}
             >
               {stageIcons[notification.metadata.stageName]}
-            </Text>
+            </Text> */}
           </View>
   
           <Text
@@ -222,15 +193,18 @@ export default function DisplayTalentNotification({ notification, setNotificatio
               countries.find(
                 c =>
                   c.code ===
-                  notification.metadata.stageRegion
-              )?.name
+                  notification.metadata.sender_region
+              )?.name || "united states"
             }
            {" "}
            {
               countries.find(
                 c =>
                   c.code ===
-                  notification.metadata.stageRegion
+                  notification.metadata.sender_region
+              )?.flag || countries.find(
+                c =>
+                  c.code === 'US'
               )?.flag
             }
           </Text>
@@ -247,7 +221,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
           </Text>
 
 
-           <TouchableOpacity
+          <TouchableOpacity
                   onPress={toggleDelete}
                   style={{
                     // width: width/18,
@@ -268,7 +242,8 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                     color="#F4C542"
                   />
             </TouchableOpacity>
-  
+       
+            
               {/* FLOATING MENU */}
               {showDelete && (
                   <View
@@ -361,13 +336,45 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                 )}
            
         </View>
-       
-        {!isRead && (
+            
+      </View>
+
+      {notification.type == "friend_request" && (
+      <View className="flex-row items-center mt-4 mb-4 px-4">
+            <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={acceptFRequest}
+            className="flex-row flex-1 h-10 rounded-xl bg-[#F4C542] items-center justify-center"
+            >
+                <Ionicons
+                    name="checkmark"
+                    size={18}
+                    color="#000"
+                />
+                <Text className="ml-2 text-black font-bold">
+                    Accept
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={denyFriendRequest}
+            className="flex-row flex-1 h-10 ml-3 rounded-xl bg-[#171717] border border-white/10 items-center justify-center"
+            >
+            <Ionicons
+                name="close"
+                size={18}
+                color="#fff"
+            />
+            <Text className="ml-2 text-white font-semibold">
+                Decline
+            </Text>
+            </TouchableOpacity>
+      </View>
+      )}
+         {!isRead && (
               <View className="absolute bottom-4 right-6 w-2 h-2 rounded-full bg-[#F4C542]" />
             )}
-       
-  
-      </View>
+     
     </TouchableOpacity>
   );
 }

@@ -104,7 +104,7 @@ export default function ArenaCard({
                 width: width/11,
                 height: width/11,
                 borderRadius: 999,
-                backgroundColor:  "rgba(234,179,8,0.7)",
+                backgroundColor:  "rgba(255,255,255,0.8)",
                 justifyContent: "center",
                 alignItems: "center",
               }} >

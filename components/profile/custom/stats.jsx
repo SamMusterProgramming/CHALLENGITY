@@ -26,7 +26,7 @@ export function Stats({ icon, label, value, width }) {
       <Text
         style={{
           marginTop: 4,
-          color: "#FFF",
+          color: "#fff",
           fontSize: width / 30,
           fontWeight: "800",
         }}
@@ -42,7 +42,7 @@ export function Stats({ icon, label, value, width }) {
       <Text
         style={{
           marginTop: 3,
-          color: "rgba(255,255,255,.55)",
+          color: "rgba(255,255,255,.85)",
           fontSize: width / 45,
           fontWeight: "600",
           letterSpacing: 1,

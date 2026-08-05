@@ -155,7 +155,7 @@ export default function HotStage({ user }) {
 
   return (
     <View
-    className ="flex- 1 mt- 4 items-center   ">
+    className ="flex- 1 mt-2 items-center   ">
         
         <View className="px- 3 w-full text-center pb-4 b g-darkBg">
             <Text
@@ -166,7 +166,7 @@ export default function HotStage({ user }) {
                   letterSpacing: 0.6,
                   // textAlign: "center",
                 }}
-                className="fon t-bold mb-1 text-white tracking-widest mb- 1" >
+                className="fon t-bold mb-1 text-white tracking-widest text-center" >
                 HOT STAGES {' '}
                
             </Text>
@@ -177,7 +177,7 @@ export default function HotStage({ user }) {
                   letterSpacing: 0.3,
                   fontWeight:700,
                 }}
-                  className="text-gray-100 mt-1 mb-2 font-semiMontserrat tex t-center mt- ">
+                  className="text-gray-100 mt-1 mb-2 font-semiMontserrat text-center mt- ">
                 Discover where talent is making waves right now
             </Text>
            
@@ -242,7 +242,7 @@ export default function HotStage({ user }) {
             style={{
                 alignSelf: "start",
                 width: width ,
-                height: 8,
+                height: 4,
                 backgroundColor: "rgba(212,175,55,0.52)",
                 // marginVertical: 20,
             }}

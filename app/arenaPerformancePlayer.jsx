@@ -4,6 +4,7 @@ import React, {
     useRef,
     useState,
     useEffect,
+    useCallback,
   } from "react";
   
   import {
@@ -29,7 +30,7 @@ import React, {
   
   import ArenaVideoItem from "../components/viewArenas/ArenaVideoItem";
 import { useGlobalContext } from "../context/GlobalProvider";
-import { getGlobalSpotlightPerformances, getRegionalSpotlightPerformances } from "../apiCalls";
+import { getGlobalSpotlightPerformances, getLocalSpotlightPerformances, getRegionalSpotlightPerformances } from "../apiCalls";
   
   export default function ArenaPerformancePlayer() {
     const { width, height } = useWindowDimensions();
@@ -136,10 +137,13 @@ import { getGlobalSpotlightPerformances, getRegionalSpotlightPerformances } from
             switch (type) {
               case "global":
                     res = await getGlobalSpotlightPerformances(globalSpotlightPage);
-                 break;
+                    break;
               case "regional":
                   res = await getRegionalSpotlightPerformances(globalSpotlightPage);
-                 break;
+                  break;
+              case "local":
+                  res = await getLocalSpotlightPerformances(globalSpotlightPage);
+                  break;
               default:
                 break;
             }
@@ -171,6 +175,31 @@ import { getGlobalSpotlightPerformances, getRegionalSpotlightPerformances } from
         }
     };
 
+
+    const renderItem = useCallback(
+      ({ item, index }) => (
+          <ArenaVideoItem
+              item={item}
+              index={index}
+              currentIndex={currentIndex}
+              width={width}
+              height={screenHeight}
+              selectedArena={selectedArena}
+              user={user}
+              onVideoEnd={() => {
+                  const nextIndex = index + 1;
+                  if (nextIndex < posts.length) {
+                      flatListRef.current?.scrollToIndex({
+                          index: nextIndex,
+                          animated: true,
+                      });
+                  }
+              }}
+          />
+      ),
+      [currentIndex, width, screenHeight, selectedArena, user, posts.length]
+    );
+
     const topPadding = Platform.OS == "ios" ? insets.top : 30;
     const bottomPadding = Platform.OS == "ios" ? insets.bottom : 30
     const screenHeight = height - topPadding - bottomPadding
@@ -197,10 +226,10 @@ import { getGlobalSpotlightPerformances, getRegionalSpotlightPerformances } from
           disableIntervalMomentum
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item._id}
-          removeClippedSubviews
-          initialNumToRender={3}
-          maxToRenderPerBatch={3}
-          windowSize={3}
+          removeClippedSubviews ={true}
+          windowSize={2}
+          initialNumToRender={1}
+          maxToRenderPerBatch={2}
           getItemLayout={(_, index) => ({
             length: screenHeight ,
             offset: (screenHeight) * index,
@@ -215,31 +244,7 @@ import { getGlobalSpotlightPerformances, getRegionalSpotlightPerformances } from
           viewabilityConfig={
             viewabilityConfig
           }
-          renderItem={({
-            item,
-            index,
-          }) => (
-            <ArenaVideoItem
-              item={item}
-              index={index}
-              currentIndex={
-                currentIndex
-              }
-              width={width}
-              height={screenHeight}
-              selectedArena ={selectedArena}
-              user  = {user}
-              onVideoEnd={() => {
-                const nextIndex = index + 1;
-                if (nextIndex < posts.length) {
-                    flatListRef.current?.scrollToIndex({
-                        index: nextIndex,
-                        animated: true,
-                    });
-                }
-            }}
-            />
-          )}
+          renderItem={renderItem}
           onEndReached={loadMoreSpotlightPerformances}
           onEndReachedThreshold={0.7}
         />
@@ -252,17 +257,18 @@ import { getGlobalSpotlightPerformances, getRegionalSpotlightPerformances } from
             position: "absolute",
             top: insets.top + 5,
             left: 5,
-            width: 42,
-            height: 42,
+            // width: 42,
+            // height: 42,
             borderRadius: 999,
-            backgroundColor: "rgba(0,0,0,0.45)",
+            backgroundColor: "rgba(0,0,0,0.75)",
             justifyContent: "center",
             alignItems: "center",
           }}
+          className ="p-3"
         >
           <Ionicons
             name="arrow-back"
-            size={22}
+            size={28}
             color="#fff"
           />
         </TouchableOpacity>

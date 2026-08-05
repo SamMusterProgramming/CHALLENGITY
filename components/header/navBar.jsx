@@ -238,14 +238,14 @@ import {
   Home,
   Play,
   Trophy,
-  User,
+  Building2
 } from "lucide-react-native";
 
 const TABS = [
   { name: "Home", Icon: Home },
-  { name: "Stage", Icon: Play },
-  { name: "Entry", Icon: Trophy },
-  { name: "Arena", Icon: User },
+  { name: "Stage", Icon: Trophy },
+  { name: "Entry", Icon: Play },
+  { name: "Arena", Icon: Building2},
 ];
 
 export default function NavBar({
@@ -272,77 +272,111 @@ export default function NavBar({
 
   return (
     <View
-      style={{ width, height: headerHeight * 0.4 }}
-      className="bg -white/10 [primary] [#2a1f08] /80 justify-center border-b bor der-b b order-gold/40 [#35270c]"
+      style={{
+        height: headerHeight * 0.48,
+        // backgroundColor: "#16110A",
+        borderTopLeftRadius: 28,
+        borderTopRightRadius: 28,
+        borderTopWidth: 1,
+        borderColor: "rgba(244,197,66,.18)",
+        paddingBottom: 10,
+        shadowColor: "#000",
+        shadowOpacity: 0.45,
+        shadowRadius: 22,
+        shadowOffset: {
+          width: 0,
+          height: -8,
+        },
+        elevation: 25,
+        justifyContent: "center",
+      }}
+      className = "px-4"
     >
-      <View className="flex-row items-center justify-between px-6">
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingHorizontal: 12,
+        }}
+      >
         {TABS.map((tab, index) => {
           const scale = animValues[index].interpolate({
             inputRange: [0, 1],
-            outputRange: [1, 1],
+            outputRange: [0.99, 1],
           });
-
+  
           const opacity = animValues[index].interpolate({
             inputRange: [0, 1],
-            outputRange: [0.45, 1],
+            outputRange: [0.75, 1],
           });
-
+  
           const translateY = animValues[index].interpolate({
             inputRange: [0, 1],
-            outputRange: [0, -2],
+            outputRange: [6, 6],
           });
-
+  
           const Icon = tab.Icon;
-
-          const isActive = index === activeIndex;
-
+  
+          const isActive = activeIndex === index;
+  
           return (
             <TouchableOpacity
               key={tab.name}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
               onPress={() => setActiveIndex(index)}
-              className="fle x-1 items-center justify-center"
-              style ={{
-                height : "100%"
+              style={{
+                // flex: 1,
+                alignItems: "center",
               }}
             >
               <Animated.View
-                className="items-center justify-center gap-1 "
-                style ={{
-                  height : "100%"
+                style={{
+                  // width: 78,
+                  height: 40,
+                  borderRadius: 5,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transform: [
+                    { scale },
+                    { translateY },
+                  ],
+                  opacity,
+                  // backgroundColor: isActive
+                  //   ? "rgba(244,197,66,.12)"
+                  //   : "transparent",
+                  // borderWidth: isActive ? 1 : 0,
+                  // borderColor: "rgba(244,197,66,.28)",
                 }}
               >
-      
-                {/* <Icon
-                  size={12}
-                  color={isActive ? "rgb(240 ,197,55, 1)" : "#8A8A8A"}
-                  strokeWidth={3}
-                /> */}
-
+                <Icon
+                  size={20}
+                  strokeWidth={2.6}
+                  color={
+                    isActive
+                      ? "#F4C542"
+                      : "rgba(255,255,255,.95)"
+                  }
+                />
+  
                 <Text
-                  className={` tracking-wide font-black ${
-                    isActive ? "text-[#eab308]" : "text-white/90"
-                  }`}
-                  style={{ fontSize: width/30 }}  >
+                  style={{
+                    marginTop: 6,
+                    fontSize: 9,
+                    fontWeight: "900",
+                    letterSpacing: 1.6,
+                    color: isActive
+                      ? "#F4C542"
+                      : "rgba(255,255,255,.95)",
+                  }}
+                >
                   {tab.name.toUpperCase()}
                 </Text>
-
-              <Animated.View
-                  className = "justify-center absolute bottom-[2] items-center "
-                  style={{
-                    // marginTop: 4,
-                    height: 6,
-                    width:  tab.name.length * 12,
-                    borderRadius: 2,
-                    backgroundColor: "#eab308" , //"rgb(240 ,197,55, 0.8)",
-                    opacity: animValues[index],
-                  }}
-                 />
               </Animated.View>
             </TouchableOpacity>
           );
         })}
       </View>
-    </View>
+  </View>
   );
 }

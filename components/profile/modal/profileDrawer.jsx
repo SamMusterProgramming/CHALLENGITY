@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,11 @@ import {
   FlatList,
   useWindowDimensions,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
+  Animated
 } from "react-native";
 
-import Animated, {
+import {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
@@ -60,6 +61,7 @@ import ArenaAlertModal from "../../arena/modals/AlertArenaModal";
 import { useLoading } from "../../../context/loadingContext";
 import CreateArenaModal from "../../modal/createArenaModal";
 import EditArenaModal from "../../arena/modals/editArenaModal";
+import StageCaroussel from "../stage/stageCaroussel";
 // import { googleLogout } from "../../services/googleLogin";
 
 const chunkArray = (arr = [], size = 6) => {
@@ -92,7 +94,7 @@ export default function ProfileDrawer({ visible, onClose }) {
     uploadPerformanceLoading , 
     setUploadPerformanceLoading ,
     selectedArena, setSelectedArena,
-
+    userTalents
   } = useGlobalContext();
  
   const { width, height } = useWindowDimensions();
@@ -116,6 +118,26 @@ export default function ProfileDrawer({ visible, onClose }) {
   const [openCreateArenaModal ,setOpenCreateArenaModal] = useState(false)
   const [openEditArenaModal , setOpenEditArenaModal] = useState(false)
   const [postToDeleteId, setPostToDeleteId] = useState(null)
+  const [hamburgerMenu , setHamburgerMenu] = useState(false)
+  
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const [headerBlack, setHeaderBlack] = useState(false);
+  const THRESHOLD = height/12;
+  
+  const handleScroll = (e) => {
+    const y = e.nativeEvent.contentOffset.y;
+    if (y >= THRESHOLD && !headerBlack) {
+      setHeaderBlack(true);
+    } else if (y < THRESHOLD && headerBlack) {
+      setHeaderBlack(false);
+    }
+  }
+  
+  const headerTranslateY = scrollY.interpolate({
+    inputRange: [height * 0.22, height * 0.25],
+    outputRange: [-12, 0],
+    extrapolate: "clamp",
+  });
 
   const [userInfo, setUserInfo] = useState({
     name: user?.name,
@@ -126,13 +148,13 @@ export default function ProfileDrawer({ visible, onClose }) {
   const CARD_WIDTH = (width - 30) / 2;
   
 
-  useEffect(() => {
-   if(userArenas.length)  setSelectedArena(userArenas[0]) 
-    else setSelectedArena({
-      _id: "create-arena",
-      isCreateCard: true,
-    })
-  }, [])
+  // useEffect(() => {
+  //  if(userArenas.length)  setSelectedArena(userArenas[0]) 
+  //   else setSelectedArena({
+  //     _id: "create-arena",
+  //     isCreateCard: true,
+  //   })
+  // }, [])
   
   // ---------------- FETCH ----------------
   useEffect(() => {
@@ -249,45 +271,45 @@ useEffect(() => {
 
 
   // ---------------- DRAWER ANIMATION ----------------
-  useEffect(() => {
-    translateX.value = visible
-      ? withSpring(0)
-      : withTiming(width);
-  }, [visible]);
+//   useEffect(() => {
+//     translateX.value = visible
+//       ? withSpring(0)
+//       : withTiming(width);
+//   }, [visible]);
 
-const panGesture = Gesture.Pan()
-  .activeOffsetX([15, 999])     // must move right a bit
-  .failOffsetY([-20, 20])       // vertical scroll wins
-  .onStart((e) => {
-    // store whether gesture started from edge
-    panGesture.isEdge = e.absoluteX > width - EDGE_WIDTH;
-  })
-  .onUpdate((e) => {
-    // ❌ ignore if NOT from edge
-    if (!panGesture.isEdge) return;
-    if (e.translationX > 0) {
-      translateX.value = e.translationX * 0.85;
-    }
-  })
-  .onEnd((e) => {
-    if (!panGesture.isEdge) return;
-    const shouldClose =
-      e.velocityX > 1000 || translateX.value > width * 0.35;
+// const panGesture = Gesture.Pan()
+//   .activeOffsetX([15, 999])     // must move right a bit
+//   .failOffsetY([-20, 20])       // vertical scroll wins
+//   .onStart((e) => {
+//     // store whether gesture started from edge
+//     panGesture.isEdge = e.absoluteX > width - EDGE_WIDTH;
+//   })
+//   .onUpdate((e) => {
+//     // ❌ ignore if NOT from edge
+//     if (!panGesture.isEdge) return;
+//     if (e.translationX > 0) {
+//       translateX.value = e.translationX * 0.85;
+//     }
+//   })
+//   .onEnd((e) => {
+//     if (!panGesture.isEdge) return;
+//     const shouldClose =
+//       e.velocityX > 1000 || translateX.value > width * 0.35;
 
-    if (shouldClose) {
-      translateX.value = withTiming(width, { duration: 200 });
-      runOnJS(onClose)();
-    } else {
-      translateX.value = withSpring(0, {
-        damping: 20,
-        stiffness: 150,
-      });
-    }
-  });
+//     if (shouldClose) {
+//       translateX.value = withTiming(width, { duration: 200 });
+//       runOnJS(onClose)();
+//     } else {
+//       translateX.value = withSpring(0, {
+//         damping: 20,
+//         stiffness: 150,
+//       });
+//     }
+//   });
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+//   const animatedStyle = useAnimatedStyle(() => ({
+//     transform: [{ translateX: translateX.value }],
+//   }));
 
   // ---------------- NOTIFICATIONS ----------------
   const friendRequestReceived = notifications
@@ -310,6 +332,7 @@ const panGesture = Gesture.Pan()
     { type: "tabs" },
     { type: "friends", data: pagedData },
     { type: "arenas", data: []},
+    { type: "stages", data: []},
     { type: "performances", data: []},
 
   ];
@@ -350,27 +373,28 @@ const panGesture = Gesture.Pan()
   };
 
   const statData = [
+    
     {
-      icon: "account-group-outline",
-      label: "Friends",
-      value: userFriendData?.friends.length,
-    },
-    {
-      icon: "heart-outline",
-      label: "Followers",
-      value: follow?.followers.length,
-    },
-    {
-      icon: "account-plus-outline",
-      label: "Following",
-      value: follow?.followings.length,
-    },
-    {
-      icon: "view-grid-outline",
+      icon: "stadium",
       label: "Arenas",
       value: userArenas.length,
     },
   
+    {
+      icon: "account-group",
+      label: "Friends",
+      value: userFriendData?.friends.length,
+    },
+    {
+      icon: "heart",
+      label: "Followers",
+      value: follow?.followers.length,
+    },
+    {
+      icon: "account-plus",
+      label: "Following",
+      value: follow?.followings.length,
+    }
   ];
 
   const playPerformance = (item) => {
@@ -400,7 +424,7 @@ const panGesture = Gesture.Pan()
   const renderPerformance = ( {item , index } ) => {
     
     return  (
-      <View>
+      // <View>
       <PerformanceCard 
         item={item}
         index={index}
@@ -410,7 +434,7 @@ const panGesture = Gesture.Pan()
         canEdit = {true}
         setPostToDeleteId ={setPostToDeleteId}
       />
-      </View>
+      // </View>
       )
   };
 
@@ -520,6 +544,14 @@ const alertContent =  {
     delete_performance : "confirm"
  }
 
+ useEffect(() => {
+  if (!hamburgerMenu) return;
+  const timer = setTimeout(() => {
+      setHamburgerMenu(false);
+  }, 3000);
+  return () => clearTimeout(timer);
+}, [hamburgerMenu]);
+
 
 
   if (!visible) return null;
@@ -536,47 +568,83 @@ const alertContent =  {
       {/* DRAWER (NO gesture here) */}
       <Animated.View
         style={[
-          animatedStyle,
-          { width, top: insets.top , bottom: 0 }
+          // animatedStyle,
+          { width, 
+            height ,
+            top: insets.top ,
+             bottom: 0 }
         ]}
-        className="absolute right-0 bg-[#0A0B0D]"
-      >
+        className="abs olute  right-0 bg-[#0A0B0D]"  >
   
         {/* HEADER */}
-        <View className="pl-2 py-2 flex-row justify-between items-center border-b border-white/5">
-          <Text 
-          style ={{
-            color :"#eab308",
-            fontSize: width / 20,
-            fontWeight : "800"
+        <Animated.View
+          style={{
+            backgroundColor: headerBlack
+            ? "rgba(0,0,0,1)"
+            : "rgba(0,0,0,0)",
           }}
-          className="text-white">
-            PROFILE
-          </Text>
+          className=" bg -black/60 py-1  z-10 absolute top-0 left-0 right-0 b g-black/60 flex-row justify-between items-center bor der-b bo rder-white/5"> 
+
           <TouchableOpacity 
-          className ="p-2 px-4 b g-white justify-center items-center"
+          className ="p-1 ml-1 bg-black/60 rounded-full justify-center items-center"
           onPress={onClose}>
              <MaterialCommunityIcons
-                name="chevron-right"
-                size={35}
+                name="chevron-left"
+                size={30}
                 color="#eab308"
-            />
+             />
           </TouchableOpacity>
-        </View>
+
+          <Text 
+            style ={{
+              color :"#eab308",
+              fontSize: width / 22,
+              fontWeight : "800"
+            }}
+            className="text-white">
+            {headerBlack ?"PROFILE" : ""}  
+          </Text>      
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={ () => {
+                setHamburgerMenu(!hamburgerMenu)
+            }}
+            style={{
+                borderRadius: 26,
+                backgroundColor: "rgba(0,0,0,.55)",
+                // borderWidth: 1,
+                // borderColor: "rgba(234,179,8,.58)",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+            className = "p-2 mr-1 rounded-full bg-black"  >
+                <MaterialCommunityIcons
+                    name="dots-horizontal"
+                    size={25}
+                    color="#f4d44d"
+                />
+          </TouchableOpacity>
+
+        </Animated.View>
   
         {/* MAIN LIST */}
-        <FlatList
+        <View className = "flex-1 w-full">
+        <Animated.FlatList
           data={sections}
           keyExtractor={(item, i) => item.type + i}
           extraData={refreshing}
           showsVerticalScrollIndicator={false}
-          nestedScrollEnabled
+          nestedScrollEnabled ={true}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 80  }}
+          onScroll={(e) => {
+            handleScroll(e);
+            scrollY.setValue(e.nativeEvent.contentOffset.y);
+          }}
+          scrollEventThrottle={16}
           renderItem={({ item }) => {
-  
             switch (item.type) {
-  
               case "header":
                 return (
                   <Header user = {user}  statData = {statData} setModalVisible={setModalVisible} logout = {logout}  
@@ -813,82 +881,78 @@ const alertContent =  {
                      <ArenaDisplayer userArenas={userArenas} onPressArena={()=>{}} selectedArena={selectedArena}
                       setSelectedArena = {setSelectedArena} setOpenEditArenaModal = {setOpenEditArenaModal}
                       playPerformance = {playPerformance} setPostToDeleteId = {setPostToDeleteId}
-
                      />
                    )
 
                 case "performances":
-                  if(!selectedArena || selectedTab !== "arenas" ) return ; 
-                
-                  if(!selectedArena.posts) {
+                  if(selectedTab !== "arenas" ) return ; 
+                  if(!selectedArena) {
                     return (
                       <WelcomeToCreateArena  setOpenArenaAlertModal={setOpenArenaAlertModal} setArenaActionModal={setArenaActionModal} />
                     ); 
                   }
-
-                  if(selectedArena.posts.length == 0) 
-                    return (
-                    <>
-                    <TouchableOpacity
-                          activeOpacity={0.85}
-                          // onPress={onUploadPerformance}
+                  // if( selectedArena?.posts.length == 0) 
+                  //   return (
+                  //   <>
+                  //   <TouchableOpacity
+                  //         activeOpacity={0.85}
+                  //         // onPress={onUploadPerformance}
                     
-                          onPress={() => {
-                            setArenaActionModal("create_performance")
-                            setOpenArenaAlertModal(true)
-                          }}
-                          style={{
-                            marginHorizontal: 12,
-                            marginTop: 20,
-                            marginBottom: 30,
-                            // height: 62,
-                            borderRadius: 12,
-                            backgroundColor:
-                              "#eab308",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                          className = "py-4"   >
+                  //         onPress={() => {
+                  //           setArenaActionModal("create_performance")
+                  //           setOpenArenaAlertModal(true)
+                  //         }}
+                  //         style={{
+                  //           marginHorizontal: 12,
+                  //           marginTop: 20,
+                  //           marginBottom: 30,
+                  //           // height: 62,
+                  //           borderRadius: 12,
+                  //           backgroundColor:
+                  //             "#eab308",
+                  //           justifyContent: "center",
+                  //           alignItems: "center",
+                  //         }}
+                  //         className = "py-4"   >
                         
-
-                        {uploadPerformanceLoading ? (
-                          <View
-                          style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                          }}
-                          >
-                          <ActivityIndicator
-                              size="small"
-                              color="#000"
-                          />
-                          <Text
-                              style={{
-                              color: "#000",
-                              fontWeight: "800",
-                              marginLeft: 10,
-                              // letterSpacing: 1,
-                              fontSize: width / 32,
-                              }}
-                          >
-                              UPLOADING...
-                          </Text>
-                          </View>
-                          ) : (
-                          <Text
-                          style={{
-                            color: "#000",
-                            fontWeight: "800",
-                            fontSize: width / 32,
-                          }}
-                        >
-                          Add Performance
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                    <EmptyPostArena width ={width} />
-                    </>
-                  )
+                  //       {uploadPerformanceLoading ? (
+                  //         <View
+                  //         style={{
+                  //             flexDirection: "row",
+                  //             alignItems: "center",
+                  //         }}
+                  //         >
+                  //         <ActivityIndicator
+                  //             size="small"
+                  //             color="#000"
+                  //         />
+                  //         <Text
+                  //             style={{
+                  //             color: "#000",
+                  //             fontWeight: "800",
+                  //             marginLeft: 10,
+                  //             // letterSpacing: 1,
+                  //             fontSize: width / 32,
+                  //             }}
+                  //         >
+                  //             UPLOADING...
+                  //         </Text>
+                  //         </View>
+                  //         ) : (
+                  //         <Text
+                  //         style={{
+                  //           color: "#000",
+                  //           fontWeight: "800",
+                  //           fontSize: width / 32,
+                  //         }}
+                  //       >
+                  //         Add Performance
+                  //       </Text>
+                  //     )}
+                  //   </TouchableOpacity>
+                  //   <EmptyPostArena width ={width} />
+                  //   </>
+                  // )
 
                   return (
                     <>
@@ -900,7 +964,7 @@ const alertContent =  {
                       }}
                       style={{
                         marginHorizontal: 12,
-                        marginTop: 24,
+                        marginTop: 12,
                         marginBottom: 30,
                         // height: 62,
                         borderRadius: 12,
@@ -946,14 +1010,19 @@ const alertContent =  {
                         </Text>
                       )}
                     </TouchableOpacity>
-                    <View>
+                    <View
+                    style ={{
+                      width,
+                      // height:height/2
+                    }}>
                     <FlatList
-                    data={selectedArena.posts}
-                    keyExtractor={(item) => item._id}
-                    numColumns={2}
-                    renderItem={renderPerformance}
-                    contentContainerStyle={{
-                      paddingBottom: 40,
+                    data = {selectedArena.posts}
+                    keyExtractor = {(item) => item._id}
+                    nestedScrollEnabled = {true}
+                    numColumns = {2}
+                    renderItem = {renderPerformance}
+                    contentContainerStyle = {{
+                      // paddingBottom: 80,
                       marginTop: 80,
                     }}
                     columnWrapperStyle={{
@@ -964,13 +1033,225 @@ const alertContent =  {
                    
                   />
                   </View>
+                  {selectedArena.posts.length >= 5 && (
+                    <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      setArenaActionModal("create_performance")
+                      setOpenArenaAlertModal(true)
+                    }}
+                    style={{
+                      marginHorizontal: 12,
+                      marginTop: 24,
+                      marginBottom: 30,
+                      // height: 62,
+                      borderRadius: 12,
+                      backgroundColor:
+                        "#eab308",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    className = "py-4"   >
+                    {uploadPerformanceLoading ? (
+                        <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                        }}
+                        >
+                        <ActivityIndicator
+                            size="small"
+                            color="#000"
+                        />
+
+                        <Text
+                            style={{
+                            color: "#000",
+                            fontWeight: "800",
+                            marginLeft: 10,
+                            // letterSpacing: 1,
+                            fontSize: width / 32,
+                            }}
+                        >
+                            UPLOADING...
+                        </Text>
+                        </View>
+                        ) : (
+                        <Text
+                        style={{
+                          color: "#000",
+                          fontWeight: "800",
+                          fontSize: width / 32,
+                        }}
+                      >
+                        Add Performance
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                  )}
+               
                   </>
                   )
-
-            }
+                 
+              case "stages":
+            
+                if(selectedTab !== "stages" ) return ; 
+                 return  <StageCaroussel  onPress={() => {}} />
+             }
           }}
         />
+        </View>
       </Animated.View>
+   
+
+      {hamburgerMenu && (
+            <View
+                style={{
+                    position: "absolute",
+                    top: insets.top + 45,
+                    right: 10,
+                    width: 215,
+                    backgroundColor: "rgba(17,18,20,.98)",
+                    borderRadius: 18,
+                    borderWidth: 1,
+                    borderColor: "rgba(234,179,8,.18)",
+                    paddingVertical: 8,
+                    zIndex : 999
+                }}
+            >
+                <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                        setHamburgerMenu(false);
+                        logout()
+                    }}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingHorizontal: 18,
+                        paddingVertical: 14,
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="image-outline"
+                        size={width/25}
+                        color="#eab308"
+                    />
+
+                    <Text
+                        style={{
+                            marginLeft: 14,
+                            color: "#FFF",
+                            fontSize: width/36,
+                            fontWeight: "600",
+                        }}
+                    >
+                        Log Out
+                    </Text>
+                </TouchableOpacity>
+
+                <View
+                    style={{
+                        height: 1,
+                        backgroundColor: "rgba(255,255,255,.06)",
+                        marginHorizontal: 16,
+                    }}
+                />
+
+                <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                        setModalVisible(true)
+                        setHamburgerMenu(false)
+                      }}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+
+                        paddingHorizontal: 18,
+                        paddingVertical: 14,
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="account-circle-outline"
+                        size={width/25}
+                        color="#eab308"
+                    />
+
+                    <Text
+                        style={{
+                            marginLeft: 14,
+                            color: "#FFF",
+                            fontSize: width/36,
+                            fontWeight: "600",
+                        }}
+                    >
+                        Edit Profile
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                        pickImage(setCoverImg)
+                        setHamburgerMenu(false)
+                    }}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingHorizontal: 18,
+                        paddingVertical: 14,
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="image-outline"
+                        size={width/25}
+                        color="#eab308"
+                    />
+
+                    <Text
+                        style={{
+                            marginLeft: 14,
+                            color: "#FFF",
+                            fontSize: width/36,
+                            fontWeight: "600",
+                        }}
+                    >
+                        Update Cover
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => {
+                        pickImage(setProfileImg)
+                        setHamburgerMenu(false)
+                    }}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+
+                        paddingHorizontal: 18,
+                        paddingVertical: 14,
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="account-circle-outline"
+                        size={width/25}
+                        color="#eab308"
+                    />
+                    <Text
+                        style={{
+                            marginLeft: 14,
+                            color: "#FFF",
+                            fontSize: width/36,
+                            fontWeight: "600",
+                        }}
+                    >
+                        Update Profile
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            )}
+
         {openCreateArenaModal && (
         <CreateArenaModal 
              user={user} 
@@ -1010,7 +1291,7 @@ const alertContent =  {
             onConfirm = {confirmAction[arenaActionModal]}
             />
         )}
-
+  
     </View>
   );
 }

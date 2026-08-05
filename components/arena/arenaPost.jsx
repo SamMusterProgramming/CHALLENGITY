@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   useWindowDimensions,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -107,20 +108,21 @@ const [isLoaded , setIsLoaded] = useState(false)
   }
 
   useEffect(() => {
+    if(item.temp) return ; 
     const checkFire = async() =>{
         const fired = await  isUserFiredPost({postId:item._id , userId:user._id})
         setHasFired(fired)
         setIsLoaded(true)
     }
     checkFire()
-   
   }, [])
 
-if(!isLoaded) return null
+if(!isLoaded && !item.temp) return null
 
   return (
     <TouchableOpacity
       activeOpacity={0.95}
+      disabled = {item.temp}
       onPress={() => setSelectedPost(item)}
       style={{
         marginHorizontal: 14,
@@ -131,23 +133,48 @@ if(!isLoaded) return null
         borderWidth: 1,
         borderColor:
           "rgba(234,179,8,0.12)",
+        height: width * 1.05,
       }}
+      className = "items-center justify-center "
     >
-      <ArenaPostHeader  
-        item ={item}
-        width = {width}
-        setShowMenuPostId = {setShowMenuPostId}
-        showMenuPostId = {showMenuPostId} />
+     
  
       {/* THUMBNAIL */}
 
       <View
         style={{
-          height: width * 0.85,
+          // height: width * 0.85,
           position: "relative",
+          flex:1
         }}
+        className = "items-center rounded-xl w-full justify-center"
       >
-        <Image
+        {!item.temp ? (
+            <Image
+            resizeMode="cover"
+            source={{
+              uri:
+                item?.media?.thumbnail
+                  ?.cdnUrl,
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            className = "rounded-xl"
+          />
+        ):(
+          <Image
+          resizeMode="cover"
+          source={{ uri : item?.media?.thumbnail?.url }}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          className = "rounded-xl"
+        />
+        )}
+        {/* <Image
           resizeMode="cover"
           source={{
             uri:
@@ -158,7 +185,13 @@ if(!isLoaded) return null
             width: "100%",
             height: "100%",
           }}
-        />
+        /> */}
+
+        <ArenaPostHeader  
+            item ={item}
+            width = {width}
+            setShowMenuPostId = {setShowMenuPostId}
+            showMenuPostId = {showMenuPostId} />
 
         <View
           style={{
@@ -177,20 +210,29 @@ if(!isLoaded) return null
         >
           <View
             style={{
-              width: width/11,
-              height: width/11,
+              width: width/10,
+              height: width/10,
               borderRadius: 999,
-              backgroundColor:  "rgba(234,179,8,0.7)",
+              backgroundColor: "rgba(255,255,255,0.8)",// "rgba(234,179,8,0.7)",
               justifyContent: "center",
               alignItems:
                 "center",
             }}
           >
-            <MaterialCommunityIcons
-              name="play"
-              size={32}
-              color="#000"
-            />
+            {
+              item?.temp ? (
+                <ActivityIndicator
+                  size="large"
+                  color="#000"
+                />
+              ) : (
+                <MaterialCommunityIcons
+                  name="play"
+                  size={32}
+                  color="#000"
+                />
+              )
+            }
           </View>
         </View>
       </View>
@@ -218,21 +260,23 @@ if(!isLoaded) return null
       )} */}
 
       {/* FOOTER */}
-
-      <PostFooter
-            width ={width}
-            views =  {item.viewCount}
-            fires =  {item.fireCount}
-            comments =  {item.ccommentCount}
-            shares = {item.shareCount}
-            hasFired = {hasFired}
-            toggleFire ={toggleFire}
-            onComments = {() => {}}
-            onShare = {() => {}}
-            onReport = {() => {}}
-      />
+      {!item.temp && (
+         <PostFooter
+         width ={width}
+         views =  {item.viewCount}
+         fires =  {item.fireCount}
+         comments =  {item.ccommentCount}
+         shares = {item.shareCount}
+         hasFired = {hasFired}
+         toggleFire ={toggleFire}
+         onComments = {() => {}}
+         onShare = {() => {}}
+         onReport = {() => {}}
+        />
+      )}
+     
       
-      { showMenu && (
+      { showMenu && !item.temp && (
         <View
         style={{
         position: "absolute",

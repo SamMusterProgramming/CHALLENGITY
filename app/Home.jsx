@@ -12,7 +12,7 @@ import Favourite from '../components/home/Favourite';
 import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
 // import ProfileDrawer from '../components/profile/modal/profileDrawer';
-import {  getArenaByUser,  getFavouriteStages, getFollowData, getGlobalSpotlightPerformances, getHotStages, getLocalArenas, getNotificationByUser, getRegionalSpotlightPerformances, getRegionTalentStages, getTrendingStages, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
+import {  getArenaByUser,  getFavouriteStages, getFollowData, getFollowedArenas, getGlobalSpotlightPerformances, getHotStages, getLocalArenas, getLocalSpotlightPerformances, getNotificationByUser, getRegionalSpotlightPerformances, getRegionTalentStages, getTrendingStages, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
 import { getUserCountry } from '../utilities/userGeoLocation';
 import { clearPendingNotification, getPendingNotification } from '../notifications/pendingNotification';
 import { routeNotification } from '../notifications/notificationRouter';
@@ -31,8 +31,8 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const {user,setUser ,activeIndex,setActiveIndex , isLoggingOut , setSelectedArena , setFavouriteList,setUserTalents,setTopTalents , setRegionStages, allStages, setAllStages ,trendingStages, setTrendingStages,hotStages , setHotStages,favouriteStages, setFavouriteStages
     ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg , userArenas , setUserArenas , setLocalArenas,
-    setGlobalSelectedRegion , setUserCountryCode , globalSpotlightPerformances, setGlobalSpotlightPerformances,globalSpotlightPage, setGlobalSpotlightPage,
-    regionalSpotlightPerformances, setRegionalSpotlightPerformances } = useGlobalContext() 
+    setGlobalSelectedRegion , setUserCountryCode , globalSpotlightPerformances, setGlobalSpotlightPerformances,globalSpotlightPage, setGlobalSpotlightPage,setUserFollowedArenas,
+    regionalSpotlightPerformances, setRegionalSpotlightPerformances  ,setLocalSpotlightPerformances} = useGlobalContext() 
   const { width, height } = useWindowDimensions();
   const [selectedPage , setSelectedPage] = useState(null)
   const [displayNotificationsModal , setDisplayNotificationsModal] = useState(false)
@@ -156,20 +156,24 @@ export default function Home() {
           // getRegionTalentStages("US" , setRegionStages),
           getHotStages(user._id, setHotStages),
           getArenaByUser(user._id ,setSelectedArena, setUserArenas),
+          getFollowedArenas(user._id,1,setUserFollowedArenas)
           // getUserCountryFromGPS(setGpsLocation),
         ]);
         await getUserCountry().then( async(r) =>{
-                           const res = r;
+                           const res = user.country;
                            setGlobalSelectedRegion(res)
                            setUserCountryCode(res)
                            await getRegionalSpotlightPerformances(globalSpotlightPage , res ).then((response) =>{
                                               const data = response.data;
-                                              // console.log(data)
                                               if(!data.success) return null;
                                               setRegionalSpotlightPerformances(data.performances);
-                                              // setGlobalSpotlightPage(data.page+1)
                                                })
-                           await Promise.all ([getRegionTalentStages(res, setRegionStages),
+                          await getLocalSpotlightPerformances(globalSpotlightPage , res ).then((response) =>{
+                                                const data = response.data;
+                                                if(!data.success) return null;
+                                                setLocalSpotlightPerformances(data.performances);
+                                                 })
+                           await Promise.all([getRegionTalentStages(res, setRegionStages),
                                                getTrendingStages(res, setTrendingStages),
                                                getLocalArenas(res,{userId:user._id}, setLocalArenas)]
                            )
@@ -181,7 +185,7 @@ export default function Home() {
                            setGlobalSpotlightPage(data.page+1)
                         })
        
-
+        
         setUserProfileImg(user.profileImage?.publicUrl);
         // router.replace("/Home");
         const pending = getPendingNotification();

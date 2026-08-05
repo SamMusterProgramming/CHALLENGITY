@@ -200,8 +200,8 @@ export default function StageIndicator({
                     style={{
                       // opacity,
                       // transform: [{ scale }],
-                      width: width / 45,
-                      height: width / 45,
+                      width: width / 35,
+                      height: width / 35,
                       borderRadius: 999,
                       backgroundColor: currentStage === index ? colorTheme : "rgba(255,255,255,0.25)" ,
                     }}

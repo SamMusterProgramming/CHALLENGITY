@@ -4,7 +4,7 @@
 import { Image, Text, View, TouchableOpacity } from "react-native";
 import { icons, images } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 export default function HeaderApp({
   user,
   showNotifications,
@@ -25,32 +25,69 @@ export default function HeaderApp({
 
   return (
     <View
-      style= {{ height:headerHeight * 0.6}}
+      style= {{ height:headerHeight * 0.8}}
       className = "flex-row items-center gap-2 bor der-b  bo rder-[#7d5706] rounded-tl-[40] justify-start w-full b g-[#5b4c40]"
     >
-     
-       <View
-      //  style ={{width : headerHeight * 0.5 }}
-       className = " flex-row w-[45%] h-[100%] pl-2 justify-center items-center  roun ded-tl-3xl ">
-           <Image
-              source={images.applogo}
-              style={{
-                width: "100%" ,
-                height:  headerHeight * 0.5
-              }}
-              resizeMethod="cover"
-              className=""
-            />
-      </View>
-      
-      <View 
-      className="flex-row  flex-1 h-[100%]  rounded-xl justify-evenly   items-center  gap-2">
-            <TouchableOpacity
+       <View 
+      className="flex-row  w-[35%] h-[100%] pl-2 rounded-xl justify-start pt-4  items-center  gap-4">
+           <TouchableOpacity
               onPress={() => setShowFavourite(true)}
               className="
                 rounde d-xl
                 bg -[#2a1f08]
-                rounded-full border -b border-goldSoft/80
+                rounded-full border-2 -b border-goldSoft/80
+                items-center justify-center  "
+              style={{
+                width:avatarSize  ,
+                height :avatarSize , 
+              }} >
+               <MaterialCommunityIcons
+                name="account-multiple-outline"
+                size={30}
+                color="#EAB308"
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="
+                rounde d-xl
+                bg -[#2a1f08]
+                rounded-full border-2 -b border-goldSoft/80
+                items-center justify-center
+                 "
+              style={{
+                width:avatarSize  ,
+                height :avatarSize , 
+              }} >
+              <Ionicons name="search" size={30} color="#eab308" />
+            </TouchableOpacity>
+      </View>
+     
+       <View
+      //  style ={{width : headerHeight * 0.5 }}
+       className = " flex-row flex-1 h-[100%] pb-4  justify-center items-center   ">
+           <View
+           className ="flex-1 border-b-4 border-goldSoft">
+              <Image
+                  source={images.applogo}
+                  style={{
+                    width: "100%" ,
+                    height:  headerHeight * 0.6
+                  }}
+                  resizeMethod="cover"
+                  className="mb-auto"
+                />
+            </View>
+      </View>
+      
+      <View 
+      className="flex-row  w-[35%] h-[100%]  rounded-xl justify-end pt-4 pr-2  items-center  gap-4">
+            {/* <TouchableOpacity
+              onPress={() => setShowFavourite(true)}
+              className="
+                rounde d-xl
+                bg -[#2a1f08]
+                rounded-full border-2 -b border-goldSoft/80
                 items-center justify-center  "
               style={{
                 width:avatarSize  ,
@@ -63,7 +100,7 @@ export default function HeaderApp({
               className="
                 rounde d-xl
                 bg -[#2a1f08]
-                rounded-full border -b border-goldSoft/80
+                rounded-full border-2 -b border-goldSoft/80
                 items-center justify-center
                  "
               style={{
@@ -71,7 +108,7 @@ export default function HeaderApp({
                 height :avatarSize , 
               }} >
               <Ionicons name="search" size={30} color="#eab308" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               onPress={() => setShowNotifications(!showNotifications)}
@@ -82,7 +119,7 @@ export default function HeaderApp({
               className="
                 roun ded-xl
                 bg- gold/80
-                rounded-full border -b border-goldSoft/80
+                rounded-full border-2 -b border-goldSoft/80
                 items-center justify-center">
               <Ionicons name="notifications-outline" size={30} color="#eab308" />
               {unread > 0 && (
@@ -96,7 +133,7 @@ export default function HeaderApp({
 
             <TouchableOpacity
             onPress={()=> setShowProfile(true)}
-            className = " bg -[#2a1f08]   items-center justify-center p- 1  rounded-full border -b border-[#a57806] "
+            className = " bg -[#2a1f08]   items-center justify-center p- 1  rounded-full border-2 -b border-[#a57806] "
             style={{
               width: avatarSize ,
               height: avatarSize 
@@ -121,13 +158,7 @@ export default function HeaderApp({
                   className="round ed-full"
                 />
               )}
-               {/* {unread > 0 && (
-                <View className="absolute top-[-4] bg-black right-[-2] b g-blue-800 w- 4 h-4 rounded-md items-center justify-center">
-                  <Text className="text-white text-[8px] font-black tracking-normal">
-                    {getInition(user.name)}
-                  </Text>
-                </View>
-              )} */}
+              
             </TouchableOpacity>
 
       </View>

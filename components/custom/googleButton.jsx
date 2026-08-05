@@ -8,7 +8,7 @@ const GoogleButton = ({ onPress }) => {
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.85}
-      className="w-[100%] py-4 flex-row items-center gap-4 justify-center bg-white/90  rounded-lg border border-gray-200"
+      className="w-[100%] py-4 flex-row items-center gap-4 justify-center bg-white/90  rounded-xl border border-gray-200"
       style={{
         shadowColor: "#000",
         shadowOpacity: 0.1,
@@ -19,12 +19,6 @@ const GoogleButton = ({ onPress }) => {
       }}
     >
    
-      {/* <Image
-        source={{
-          uri: "https://developers.google.com/identity/images/g-logo.png",
-        }}
-        style={{ width: 17, height: 17, marginRight: 10 }}
-      /> */}
       <GoogleLogo size={width / 18} />
 
       <Text

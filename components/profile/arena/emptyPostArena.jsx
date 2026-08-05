@@ -42,7 +42,7 @@ export default function EmptyPostArena({width , onUploadPerformance }) {
     /> */}
 
     {/* Icon */}
-    <View
+    {/* <View
         style={{
         width: width/7,
         height: width/7,
@@ -59,7 +59,7 @@ export default function EmptyPostArena({width , onUploadPerformance }) {
         size={30}
         color="#eab308"
         />
-    </View>
+    </View> */}
 
     {/* Title */}
     <Text
@@ -67,7 +67,7 @@ export default function EmptyPostArena({width , onUploadPerformance }) {
         color: "#FFF",
         fontSize: width/25,
         fontWeight: "700",
-        marginTop: 24,
+        // marginTop: 24,
         letterSpacing: 0.4,
         }}
     >
@@ -77,7 +77,7 @@ export default function EmptyPostArena({width , onUploadPerformance }) {
     {/* Description */}
     <Text
         style={{
-        marginTop: 14,
+        marginTop: 4,
         color: "rgba(255,255,255,.70)",
         textAlign: "center",
         lineHeight: 23,
@@ -101,9 +101,7 @@ export default function EmptyPostArena({width , onUploadPerformance }) {
         flexDirection: "row",
         alignItems: "center",
         marginTop : 24,
-
-        }}
-    >
+        }}  >
             <MaterialCommunityIcons
             name="star-four-points"
             size={14}
@@ -114,7 +112,7 @@ export default function EmptyPostArena({width , onUploadPerformance }) {
             style={{
                 color: "#eab308",
                 marginLeft: 6,
-                fontSize: width/38,
+                fontSize: width/32,
                 fontWeight: "600",
             }}
             >

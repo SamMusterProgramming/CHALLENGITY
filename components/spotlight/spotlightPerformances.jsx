@@ -20,7 +20,8 @@ export default function SpotlightPerformances({
   type = "global"
 }) {
   const { width } = Dimensions.get("window");
-  const {user, colorTheme , globalSpotlightPerformances , regionalSpotlightPerformances } = useGlobalContext();
+  const {user, colorTheme , globalSpotlightPerformances , regionalSpotlightPerformances,localSpotlightPerformances,
+        setLocalSpotlightPerformances } = useGlobalContext();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [profile , setProfile] = useState(null)
   const [arenaPosts , setArenaPosts] = useState([])
@@ -29,18 +30,21 @@ export default function SpotlightPerformances({
 
   const CARD_WIDTH = width * 0.96;
   
-  const performances = type == "global" ? globalSpotlightPerformances :  type == "regional" ? regionalSpotlightPerformances : []
-  const title = global ? "Global Performances" : "Regional Performances"
-  const subTitle = global ? "explore best performances acrros the globe" : "explore the best performances from your region"
+  const performances = type === "global" ? globalSpotlightPerformances :  
+                       type === "regional" ? regionalSpotlightPerformances :
+                       type === "local" ? localSpotlightPerformances: []
 
-const loadUProfile = async()=>{
+  const title = type == "global" ?  "Global Spotlights" : type === "regional" ? "Regional Spotlight":"Local spotlight"
+  const subTitle = type == "global" ?  "explore best performances acrros the globe" :
+                   type == "regional" ? "explore the best performances from your region" : "explore the best performances near you"
+  
+  const loadUProfile = async()=>{
    
-}
+  }
 
 useEffect(() => {
     if(!selectedProfile) return ; 
     // getUserById(selectedArena.owner_id ,setProfile)
-    console.log(selectedProfile)
     router.push({
               pathname: "/ProfileScreen",
               params: {
@@ -129,23 +133,24 @@ if(performances.length == 0 ) return ;
         <Text
           style={{
             color:colorTheme,
-            fontSize:width/24,
+            fontSize:width/20,
             fontWeight:"800",
             letterSpacing:0.6,
             textTransform:"uppercase",
           }}
+          className = "text-center"
         > 
            {title} 
         </Text>
         <Text
           style={{
             marginTop:6,
-            color:"rgba(255,255,255,0.7)",
-            fontSize:width/30,
-            fontWeight:"700",
-            letterSpacing:0.3,
+            color:"rgba(255,255,255,0.9)",
+            fontSize:width/25,
+            // fontWeight:"500",
+            // letterSpacing:0.3,
           }}
-          className="text-gray-100 mt-1 mb-2 font-semiMontserrat tex t-center mt- " >
+          className="text-g ray-100 mt-1 mb-2 font-semiMontserrat text-center  " >
            {subTitle}
         </Text>
       </View>
@@ -213,11 +218,11 @@ if(performances.length == 0 ) return ;
             style={{
                 alignSelf: "start",
                 width: width ,
-                height: 8,
+                height: 4,
                 backgroundColor: "rgba(212,175,55,0.52)",
-                // marginVertical: 20,
+                marginVertical: 20,
             }}
-            className="  [95%] px-2 h-[8] bg-gold/90 mb-6 mt-6"
+            className="  [95%] px-2 h- [8] b g-gold/90 mb-4 mt-6"
         />
 
     </View>

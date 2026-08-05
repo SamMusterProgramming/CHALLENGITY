@@ -97,26 +97,27 @@ const pagedData = chunkArray(getActiveData(), 20);
   ];
 
   const statData = [
+    
     {
-      icon: "account-group-outline",
+      icon: "stadium",
+      label: "Arenas",
+      value: arenas.length,
+    },
+    {
+      icon: "account-group",
       label: "Friends",
       value: friendData?.friends?.length,
     },
     {
-      icon: "heart-outline",
+      icon: "heart",
       label: "Followers",
       value: followData?.followers?.length,
     },
     {
-      icon: "account-plus-outline",
+      icon: "account-plus",
       label: "Following",
       value: followData?.followings?.length,
-    },
-    {
-      icon: "view-grid-outline",
-      label: "Arenas",
-      value: arenas.length,
-    },
+    }
   
   ];
 
@@ -144,6 +145,7 @@ const pagedData = chunkArray(getActiveData(), 20);
     const response = await toggleStarArena({
       arenaId: selectedArena._id,
       userId: user._id,
+      userName : user.name
     });
     const updated = {
       ...response,
@@ -167,6 +169,7 @@ const pagedData = chunkArray(getActiveData(), 20);
     const response = await toggleFollowerArena({
       arenaId: selectedArena._id,
       userId: user._id,
+      userName: user.name
     });
     const updated = {
       ...response,
@@ -234,31 +237,37 @@ const pagedData = chunkArray(getActiveData(), 20);
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor:"#000" , paddingTop: insets.top }}>
+    <View style={{ flex: 1, backgroundColor:"#000" , 
+     paddingTop: insets.top
+      }}>
 
-          <View className="pl-2 py-2 flex-row justify-between items-center border-b border-white/5">
-            <Text 
-            style ={{
-              color :"#eab308",
-              fontSize: width / 20,
-              fontWeight : "800"
-            }}
-            className="text-white">
-              PROFILE
-            </Text>
-            <TouchableOpacity 
-            className ="p-2 px-4 b g-white justify-center items-center"
-            onPress={() =>{
-                router.back()
-              }}
-            >
-              <MaterialCommunityIcons
-                  name="chevron-right"
-                  size={35}
-                  color="#eab308"
-              />
-            </TouchableOpacity>
+           <View 
+           style ={{
+            marginTop : insets.top
+           }}
+           className="pl-2 py- 2 absolute z-50 top-2 16 left-0 rig ht-0 w- full flex-row justify-between items-center bg -black/50 border-white /5">
+              {/* <Text 
+                style ={{
+                  color :"#eab308",
+                  fontSize: width / 28,
+                  fontWeight : "800"
+                }}
+                className="text-white">
+                   Profile
+              </Text> */}
+              <TouchableOpacity 
+              className ="p-1 px- 4 b g-white bg-black/50 rounded-full justify-center items-center"
+              onPress={() =>{
+                  router.back()
+                }}  >
+                <MaterialCommunityIcons
+                    name="chevron-left"
+                    size={30}
+                    color="#fff"
+                />
+              </TouchableOpacity>
           </View>
+
           {/* MAIN LIST */}
           <FlatList
           data={sections}
@@ -267,7 +276,7 @@ const pagedData = chunkArray(getActiveData(), 20);
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 50 }}
           renderItem={({ item }) => {
             switch (item.type) {
   
@@ -276,8 +285,6 @@ const pagedData = chunkArray(getActiveData(), 20);
                   <ProfileHeader user = {profile}  statData = {statData}  />
                 );
             
-             
-  
               case "tabs":
                 return (
                   <ProfileTabs selectedTab = {selectedTab} setSelectedTab = {setSelectedTab} setActiveTab={setActiveTab} 
@@ -383,14 +390,19 @@ const pagedData = chunkArray(getActiveData(), 20);
                       marginBottom: 8,
                       gap :8
                     }}
-                   
                   />
+                   <View
+                        className ="flex-row w-full justify-start items-center gap-2">
+                              <FollowArenaButton width={width} onPress = {toggleFollower} isFollowed={selectedArena.isFollower} />
+                  </View>
                   </>
                   )
 
             }
           }}
         />
+
+      
     </View>
   )
 }

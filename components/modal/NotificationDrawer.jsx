@@ -264,6 +264,10 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import DisplayTalentNotification from "../notification/DisplayTalentNotifications";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import DisplayNotification from "../notification/DisplayNotification";
+import DisplaySocialNotification from "../notification/DisplaySocialNotification";
+import DisplayArenaNotification from "../notification/DisplayArenaNotification";
 export default function NotificationDrawer({
   visible,
   onClose,
@@ -281,43 +285,54 @@ export default function NotificationDrawer({
   const nativeGesture = Gesture.Native();
   const [scrollEnabled, setScrollEnabled] =
     useState(true);
-  const [activeTab, setActiveTab] =
-    useState("competition");
+  const [activeTab, setActiveTab] = useState("stage");
   const indicator = useSharedValue(0);
+
   const competitionNotifications =
     notifications.filter(
       (n) => n.category === "competition"
     );
+
   const friendNotifications =
     notifications.filter(
       (n) => n.category === "friends"
     );
-  const competitionBadgeNumber =
-    competitionNotifications.length;
-  const friendBadgeNumber =
-    friendNotifications.length;
-  const TABS = [
-    {
-      key: "competition",
-      label: "Competition",
-      badge: competitionBadgeNumber,
-    },
-    // {
-    //   key: "challenge",
-    //   label: "Challenge",
-    //   badge: friendBadgeNumber,
-    // },
-    {
-      key: "friends",
-      label: "Friends",
-      badge: friendBadgeNumber,
-    },
-    {
-      key: "followers",
-      label: "Followers",
-      badge: 0,
-    },
-  ];
+
+  const arenaNotifications =
+  notifications.filter(
+    (n) => n.category === "arena"
+  );
+   
+  const competitionBadgeNumber = competitionNotifications.length;
+  const friendBadgeNumber = friendNotifications.length;
+
+
+    const TABS = [
+      {
+        key: "stage",
+        label: "Stage",
+        icon: "trophy-outline",
+        badge: 2,
+      },
+      {
+        key: "arena",
+        label: "Arena",
+        icon: "stadium",
+        badge: 1,
+      },
+      {
+        key: "social",
+        label: "Social",
+        icon: "account-group-outline",
+        badge: 6,
+      },
+      {
+        key: "system",
+        label: "System",
+        icon: "bell-outline",
+        badge: 0,
+      },
+    ];
 
   useEffect(() => {
     if (visible) {
@@ -360,10 +375,13 @@ export default function NotificationDrawer({
   const filteredNotifications =
     useMemo(() => {
       switch (activeTab) {
-        case "competition":
+        case "stage":
           return competitionNotifications;
+ 
+        case "arena":
+          return arenaNotifications;
 
-        case "friends":
+        case "social":
           return friendNotifications;
 
         default:
@@ -386,7 +404,7 @@ export default function NotificationDrawer({
       ],
     }));
 
-  const renderNotification = ({
+  const renderStageNotification = ({
     item,
   }) => {
     return (
@@ -401,88 +419,72 @@ export default function NotificationDrawer({
   };
 
   const TabButton = ({
-    item,
-    index,
-  }) => {
-    const isActive =
-      activeTab === item.key;
-
-    return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => {
-          setActiveTab(item.key);
-
-          indicator.value =
-            withSpring(index);
-        }}
-        style={{
-          height: 38,
-          paddingHorizontal: 14,
-          borderRadius: 9,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: isActive
-            ? "rgba(234,179,8,0.12)"
-            : "#111114",
-          borderWidth: 1,
-          borderColor: isActive
-            ? "rgba(234,179,8,0.25)"
-            : "rgba(255,255,255,0.06)",
-        }}
-      >
-        <Text
-          style={{
-            color: isActive
-              ? "#eab308"
-              : "#8A8A8A",
-
-            fontSize: width / 34,
-
-            fontWeight: "600",
+                      item,
+                      index,
+                    }) => {
+    const isActive =  activeTab === item.key;
+      return (
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => {
+            setActiveTab(item.key);
+            indicator.value = withSpring(index);
           }}
+          style={{
+            width: "23%",
+            // height: height/10,
+            borderRadius: 12,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: isActive
+              ? "rgba(244,197,66,.10)"
+              : "#0F0F10",
+            borderWidth: 1,
+            borderColor: isActive
+              ? "rgba(244,197,66,.35)"
+              : "rgba(255,255,255,.15)",
+           
+          }}
+          className ="py-4"
         >
-          {item.label}
-        </Text>
-
-        {item.badge > 0 && (
-          <View
+          <MaterialCommunityIcons
+            name={item.icon}
+            size={28}
+            color={
+              isActive
+                ? "#F4C542"
+                : "#8C8C8C"
+            }
+          />
+      
+          <Text
             style={{
-              marginLeft: 6,
-
-              minWidth: 18,
-
-              height: 18,
-
-              borderRadius: 999,
-
-              backgroundColor:
-                "#eab308",
-
-              justifyContent:
-                "center",
-
-              alignItems: "center",
-
-              paddingHorizontal: 4,
+              marginTop: 10,
+              fontWeight: "700",
+              fontSize: 12,
+              color: isActive
+                ? "#F4C542"
+                : "#8C8C8C",
             }}
           >
-            <Text
+            {item.label}
+          </Text>
+      
+          {item.badge > 0 && (
+            <View
               style={{
-                color: "#000",
-
-                fontSize: 10,
-
-                fontWeight: "700",
+                position: "absolute",
+                top: 10,
+                right: 10,
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: "#F4C542",
               }}
-            >
-              {item.badge}
-            </Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    );
+            />
+          )}
+        </TouchableOpacity>
+      );
   };
 
   if (!visible) return null;
@@ -491,9 +493,9 @@ export default function NotificationDrawer({
     <View
       style={{
         position: "absolute",
-        inset: 0,
-        zIndex: 999,
+        inset : 0
       }}
+      className = "z-0"
     >
       <TouchableOpacity
         activeOpacity={1}
@@ -501,9 +503,8 @@ export default function NotificationDrawer({
         style={{
           position: "absolute",
           inset: 0,
-
           backgroundColor:
-            "rgba(0,0,0,0.55)",
+            "rgba(0,0,0,1)",
         }}
       />
 
@@ -515,27 +516,15 @@ export default function NotificationDrawer({
             animatedStyle,
             {
               position: "absolute",
-
               right: 0,
-
               top: insets.top,
-
               bottom: 0,
-
               width: drawerWidth,
-
               backgroundColor:
                 "#070707",
-
               borderTopLeftRadius: 28,
-
               borderBottomLeftRadius: 28,
-
               borderLeftWidth: 1,
-
-              borderLeftColor:
-                "rgba(234,179,8,0.15)",
-
               overflow: "hidden",
             },
           ]}
@@ -543,15 +532,10 @@ export default function NotificationDrawer({
           <View
             style={{
               position: "absolute",
-
               left: 0,
-
               top: 0,
-
               bottom: 0,
-
               width: 2,
-
               backgroundColor:
                 "rgba(234,179,8,0.25)",
             }}
@@ -560,133 +544,61 @@ export default function NotificationDrawer({
           <View
             style={{
               flex: 1,
-
               backgroundColor:
                 "#090909",
             }}
           >
+      
             <View
               style={{
-                paddingHorizontal: 20,
-
-                paddingTop: 16,
-
-                paddingBottom: 18,
-
+                // paddingTop: 18,
+                // paddingBottom: 18,
+                paddingHorizontal: 2,
                 borderBottomWidth: 1,
-
-                borderBottomColor:
-                  "rgba(255,255,255,0.05)",
+                borderBottomColor: "rgba(234,179,8,.50)",
+                backgroundColor: "#090909",
               }}
+              className = "mb-4"
             >
-              <View
-                style={{
-                  flexDirection: "row",
+         
 
-                  justifyContent:
-                    "space-between",
-
-                  alignItems: "center",
+               {/* HEADER */}
+              <View className="pl-2 pt-2  flex-row justify-between items-center border-b border-[rgba(234,179,8,.50)]">
+                <Text 
+                style ={{
+                  color :"#eab308",
+                  fontSize: width / 20,
+                  fontWeight : "800"
                 }}
-              >
-                <View>
-                  <Text
-                    style={{
-                      color: "#fff",
-
-                      fontSize:
-                        width / 16,
-
-                      fontWeight:
-                        "800",
-                    }}
-                  >
-                    Notifications
-                  </Text>
-
-                  <Text
-                    style={{
-                      color:
-                        "#71717A",
-
-                      marginTop: 3,
-
-                      fontSize:
-                        width / 34,
-                    }}
-                  >
-                    {
-                      notifications.length
-                    }{" "}
-                    updates
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  onPress={closeDrawer}
-                  style={{
-                    width: 38,
-
-                    height: 38,
-
-                    borderRadius: 999,
-
-                    backgroundColor:
-                      "#111114",
-
-                    borderWidth: 1,
-
-                    borderColor:
-                      "rgba(255,255,255,0.06)",
-
-                    alignItems:
-                      "center",
-
-                    justifyContent:
-                      "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color:
-                        "#A1A1AA",
-
-                      fontSize: 18,
-
-                      fontWeight:
-                        "700",
-                    }}
-                  >
-                    ✕
-                  </Text>
+                className="text-white">
+                  NOTIFICATION
+                </Text>
+                <TouchableOpacity 
+                className ="p-2 px-4 b g-white justify-center items-center"
+                onPress={onClose}>
+                  <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={35}
+                      color="#eab308"
+                  />
                 </TouchableOpacity>
               </View>
 
               <View
                 style={{
                   flexDirection: "row",
-
-                  flexWrap: "wrap",
-
-                  gap: 8,
-
-                  marginTop: 18,
+                  justifyContent: "space-between",
+                  // marginTop: 24,
                 }}
+                className = "items-center py-4"
               >
-                {TABS.map(
-                  (
-                    item,
-                    index
-                  ) => (
-                    <TabButton
-                      key={
-                        item.key
-                      }
-                      item={item}
-                      index={index}
-                    />
-                  )
-                )}
+                {TABS.map((item, index) => (
+                  <TabButton
+                    key={item.key}
+                    item={item}
+                    index={index}
+                  />
+                ))}
               </View>
             </View>
 
@@ -698,8 +610,43 @@ export default function NotificationDrawer({
                 data={
                   filteredNotifications
                 }
-                renderItem={
-                  renderNotification
+                renderItem = {({item}) =>{
+                  switch (activeTab) {
+                    case "stage":
+                      return (
+                        <DisplayTalentNotification
+                          notification={item}
+                          setNotifications={
+                            setNotifications
+                          }
+                          user={user}
+                        />
+                      );
+                    case "arena":
+                      return (
+                        <DisplayArenaNotification
+                          notification={item}
+                          setNotifications={
+                            setNotifications
+                          }
+                          user={user}
+                        />
+                      );
+                    case "social":
+                      return (
+                        <DisplaySocialNotification
+                          notification={item}
+                          setNotifications={
+                            setNotifications
+                          }
+                          user={user}
+                        />
+                      );
+                    default:
+                      break;
+                  }
+                  // renderNotification
+                 }
                 }
                 keyExtractor={(
                   item
@@ -726,12 +673,18 @@ export default function NotificationDrawer({
                   )
                 }
                 contentContainerStyle={{
-                  paddingHorizontal: 14,
-                  paddingTop: 14,
-                  paddingBottom: 60,
+                  paddingHorizontal: 0,
+                  // paddingVertical : 18,
+                  // paddingTop: 18,
+                  paddingBottom: 20,
+                  zIndex :999
                 }}
               />
             </GestureDetector>
+
+            <View
+              className = "h-14 w-full"
+            />
           </View>
         </Animated.View>
       </GestureDetector>

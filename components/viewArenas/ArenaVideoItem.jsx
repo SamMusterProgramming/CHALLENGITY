@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
     useEffect,
     useState,
   } from "react";
@@ -29,6 +30,7 @@ import ArenaCommentDrawer from "./modal/arenaCommentDrawer";
 import { router } from "expo-router";
 import VideoProgressBar from "./custom/VideoProgressBar";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import SpotlightIcon from "../custom/spotlightIcon";
   
   export default function ArenaVideoItem({
     item,
@@ -63,6 +65,11 @@ import { useGlobalContext } from "../../context/GlobalProvider";
     );
 
    const isMe = item.owner_id === user._id
+
+   const isLocalSpotlight = item?.localSpotlight?.spotlight;
+   const isRegionalSpotlight = item?.regionalSpotlight?.spotlight;
+   const isGlobalSpotlight = item?.globalSpotlight?.spotlight;
+   const noSpotLight = isLocalSpotlight  || isRegionalSpotlight ||  isGlobalSpotlight 
 
     const loadProfile = async() => {
         // if(!selectedArena) return ; 
@@ -120,7 +127,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 
     const toggleFire = async() => {
       // showLoading('deleting the post ...')
-      const data = await toggleArenaPostFire({postId:item._id ,userId:user._id})
+      const data = await toggleArenaPostFire({postId:item._id ,userId:user._id , userName:user.name})
       const fired = data.active
     //   const updatedPost = data.post
       const count = data.count ;
@@ -150,7 +157,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
     }
 
     const addComment = async(text) =>{
-       const comments = await addArenaPostComment(item._id , { userId:user._id , text})
+       const comments = await addArenaPostComment(item._id , { userId:user._id , text ,userName : user.name})
        setCommentData(comments)
        setGlobalArenaRefresh(true)
     }
@@ -178,13 +185,15 @@ import { useGlobalContext } from "../../context/GlobalProvider";
                 player.duration > 0 &&
                 player.currentTime >= player.duration - 0.2
             ) {
-                if(!openCommentDrawer) onVideoEnd?.();
-                player.currentTime = 0
+                if(!openCommentDrawer) 
+                  onVideoEnd?.();
+                  player.currentTime = 0
                 // player.seekTo?.(0)
             }
-        }, 200);
+        }, 1000);
         return () => clearInterval(interval);
     }, [player, isVisible]);
+
 
     if(!isLoaded) return null
   
@@ -250,30 +259,6 @@ import { useGlobalContext } from "../../context/GlobalProvider";
           </View>
         )}
   
-        {item?.spotlight && paused && (
-          <View
-            style={{
-              position: "absolute",
-              top: 5,
-              right: 5,
-              paddingHorizontal: 12,
-              paddingVertical: 12,
-              borderRadius:9,
-            //   borderWidth:  1,
-            //   borderColor: "#eab308",
-              backgroundColor: "rgba(0,0,0,0.15)",
-            }}
-          >
-            <Text
-              style={{
-                color: "#eab308",
-                fontWeight: "700",
-              }}
-            >
-              ⭐ Spotlight
-            </Text>
-          </View>
-        )}
   
         <ArenaPostData item={item} width={width} onPress = {loadComments} setOpenCommentDrawer = {setOpenCommentDrawer} 
                        hasFired = {hasFired} fireCount ={fireCount}  toggleFire={toggleFire} commentCount = {commentCount} />
@@ -319,6 +304,20 @@ import { useGlobalContext } from "../../context/GlobalProvider";
         player={player}
         visible={true}
         />
+
+        {noSpotLight ? (
+          <View className="absolute top-2 right-2  flex-row items-center gap-1 rounded-full bg-black/70  ">
+            <SpotlightIcon size ={23} />
+          </View>
+          ):(
+          <View className="absolute top-2 right-2 p-3 flex-row items-center gap-1 rounded-full bg-black/70  ">
+              <MaterialCommunityIcons
+                name="chart-line"
+                size={30}
+                color="#fff"
+              />
+          </View>
+        )}
 
         <ArenaPostFooter post = {item} width = {width} loadProfile = {loadProfile} isFollower = {isFollower} />
         {openCommentDrawer && (

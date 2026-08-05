@@ -17,10 +17,10 @@ export default function ArenaSelector({
   selectedArena,
   setSelectedArena,
   onCreateArena,
+  visible, setVisible
 }) {
   const { width, height } = useWindowDimensions();
   const {openArenaAlertModal, setOpenArenaAlertModal , setArenaActionModal} = useGlobalContext()
-  const [visible, setVisible] = useState(false);
 
   const renderArena = ({ item }) => {
     const active =
@@ -106,21 +106,10 @@ export default function ArenaSelector({
     <>
       {/* SELECTOR BAR */}
 
-      <View
+      {/* <View
         style={{
-        //   position: "absolute",
-        //   top: 0,
-        //   left: 0,
-        //   right: 0,
-        //   zIndex: 999,
-          paddingTop: 8,
-          paddingBottom: 10,
-          backgroundColor:
-            "rgba(5,5,5,0.96)",
-          borderBottomWidth: 1,
-          borderBottomColor:
-            "rgba(234,179,8,0.08)",
         }}
+        className = "pb-4"
       >
         <View
           style={{
@@ -129,23 +118,23 @@ export default function ArenaSelector({
             justifyContent: "center",
             gap: 10,
           }}
-        >
-          {/* SELECTOR */}
+        > */}
 
-          <TouchableOpacity
+
+          {/* <TouchableOpacity
             activeOpacity={0.9}
             onPress={() =>
               setVisible(true)
             }
             style={{
-              width: width * 0.98,
+              width: width ,
               height: 52,
               borderRadius: 999,
               backgroundColor:
-                "#111214",
+               "#191109",
               borderWidth: 1,
               borderColor:
-                "rgba(234,179,8,0.18)",
+                "rgba(234,179,8,0.78)",
               flexDirection: "row",
               alignItems: "center",
               justifyContent:
@@ -189,7 +178,7 @@ export default function ArenaSelector({
               size={24}
               color="#eab308"
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* ADD BUTTON */}
 
@@ -220,8 +209,8 @@ export default function ArenaSelector({
               color="#eab308"
             />
           </TouchableOpacity> */}
-        </View>
-      </View>
+        {/* </View>
+      </View> */}
 
       {/* BOTTOM SHEET */}
 

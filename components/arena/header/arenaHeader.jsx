@@ -12,9 +12,11 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ArenaRefreshButton from "../custom/arenaRefreshButton";
 import ArenaHumburgerMenu from "../custom/arenaHumburgerMenu";
+import { LinearGradient } from "expo-linear-gradient";
 
 
-export default function ArenaHeader({ arena ,setSelectedArena ,setOpenEditArenaModal, setShownMenuPostId , onRefresh , refresh}) {
+export default function ArenaHeader({ arena ,setSelectedArena ,setOpenEditArenaModal,
+  setShowArenaSelector, setShownMenuPostId , onRefresh , refresh}) {
   const { width, height } = useWindowDimensions();
   const {uploadPerformanceLoading , setUploadPerformanceLoading , arenaModalAction, setArenaActionModal
   ,setOpenArenaAlertModal} = useGlobalContext()
@@ -27,16 +29,19 @@ export default function ArenaHeader({ arena ,setSelectedArena ,setOpenEditArenaM
   return (
     <View
       style={{
-        backgroundColor: "#050505",
+        backgroundColor: "#000", // "#050505",
         paddingBottom: 24,
-      }} >
+      }}
+      className ="item s-center" >
       {/* COVER */}
       <View
         style={{
-          height: height * 0.24,
+          height: height * 0.25,
           width: "100%",
           overflow: "hidden",
-        }} >
+        }} 
+        className = "items-center  [#191109]"
+        >
         <Image
           source={{
             uri:
@@ -48,40 +53,36 @@ export default function ArenaHeader({ arena ,setSelectedArena ,setOpenEditArenaM
             width: "100%",
             height: "100%",
           }}
+          className ="rounded-t-xl  p- 2 bg-black"
         />
         <ArenaHumburgerMenu setShowArenaMenu = {setShowArenaMenu} showArenaMenu={showArenaMenu} size={width/10}  />
-
-        {/* DARK OVERLAY */}
+        <LinearGradient
+            colors={[
+              "transparent",
+              "rgba(0,0,0,.05)",
+              "rgba(0,0,0,.65)",
+              "rgba(0,0,0,1)",
+              "#000",
+            ]}
+            style={{
+              position: "absolute",
+              left: 0,
+              right:0,
+              bottom: -5,
+              height: height / 9,
+            }}
+          />
         <View
           style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.25)",
-          }}
-        />
-       
-      </View>
-
-      {/* PROFILE IMAGE */}
-      <View
-        style={{
-          alignItems: "center",
-          marginTop: -55,
-        }}
-      >
-        <ArenaRefreshButton onRefresh={onRefresh} refresh ={refresh} size = {width/10}/>
-
-        <View
-          style={{
-            width: 110,
-            height: 110,
+            width: 90,
+            height: 90,
             borderRadius: 999,
             overflow: "hidden",
-            borderWidth: 3,
-            borderColor: "#eab308",
+            // borderWidth: 3,
+            // borderColor: "#eab308",
             backgroundColor: "#111",
-          }}
-        >
+          }} 
+          className = "absolute bottom-0 left-5" >
           <Image
             source={{
               uri:
@@ -95,52 +96,83 @@ export default function ArenaHeader({ arena ,setSelectedArena ,setOpenEditArenaM
             }}
           />
         </View>
+        {/* DARK OVERLAY */}
+        {/* <View
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.25)",
+          }}
+        /> */}
+       
       </View>
 
+      {/* PROFILE IMAGE */}
+      
+
       {/* ARENA INFO */}
-      <View
-        style={{
-          paddingHorizontal: 22,
-          alignItems: "center",
-          marginTop: 14,
-        }}
-      >
-        <Text
+      <View className = "px-4 w-[100%] mi n-h -24">
+      <TouchableOpacity
+      onPress={() => setShowArenaSelector(true)}
+      className = "flex-row items-start p-4 mt-6 fle x-1 justify-between bg-gold/10 rounded-3xl">
+        <MaterialCommunityIcons
+                name="chevron-down"
+                size={44}
+                color="#eab308"
+              />
+        <View
           style={{
-            color: "#fff",
-            fontSize: height/39,//width / 16,
-            fontWeight: "800",
-            letterSpacing: 0.6,
-            textAlign: "center",
-          }}
-        >
-          {arena.arenaName}
-        </Text>
+            paddingHorizontal: 22,
+            alignItems: "center",
+            marginTop: 14,
+            // flex:1
+          }} >
+          <View
+          className ="flex-row gap-4" >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: height/45,//width / 16,
+                fontWeight: "800",
+                letterSpacing: 0.6,
+                textAlign: "center",
+              }}
+            >
+              {arena.arenaName}
+            </Text>
+          </View>
 
-        <Text
-          style={{
-            color: "#eab308",
-            marginTop: 4,
-            fontWeight: "700",
-            fontSize: height/62,
-          }}
-        >
-          {arena.region} • {arena.talentType}
-        </Text>
-
-        {arena.biography && (
           <Text
             style={{
-              color: "#B5B5B5",
-              marginTop: 12,
-              textAlign: "center",
-              lineHeight: 22,
-              fontSize: width / 28,
+              color: "#eab308",
+              marginTop: 4,
+              fontWeight: "700",
+              fontSize: height/62,
             }}
           >
-            {arena.biography}
+            {arena.region} • {arena.talentType}
           </Text>
-        )}
+
+          {arena.biography && (
+            <Text
+              style={{
+                color: "#B5B5B5",
+                marginTop: 12,
+                textAlign: "center",
+                lineHeight: 22,
+                fontSize: width / 28,
+              }}
+            >
+              {arena.biography}
+            </Text>
+          )}
+        </View>
+        <MaterialCommunityIcons
+                name="chevron-down"
+                size={44}
+                color="#eab308"
+              />
+      </TouchableOpacity>
       </View>
 
       {/* STATS */}
@@ -287,7 +319,7 @@ export default function ArenaHeader({ arena ,setSelectedArena ,setOpenEditArenaM
                 marginTop: 18,
                 borderRadius: 9,
                 backgroundColor: uploadPerformanceLoading
-                ? "#a16207"
+                ? "#eab308"
                 : "#eab308",
                 justifyContent: "center",
                 alignItems: "center",

@@ -51,8 +51,11 @@ export const GlobalProvider =({children}) => {
    const [selectedArena, setSelectedArena] = useState(null);
    const [uploadPerformanceLoading , setUploadPerformanceLoading] = useState(null);
    const [localArenas , setLocalArenas] = useState([])
+   const [userFollowedArenas , setUserFollowedArenas] = useState([])
+
    const [globalSpotlightPerformances, setGlobalSpotlightPerformances] = useState([]);
    const [regionalSpotlightPerformances, setRegionalSpotlightPerformances] = useState([])
+   const [localSpotlightPerformances, setLocalSpotlightPerformances] = useState([])
    const [globalSpotlightPage, setGlobalSpotlightPage] = useState(1);
    const [form, setForm] = useState({
     name : "",
@@ -67,6 +70,7 @@ export const GlobalProvider =({children}) => {
   const[globalArenaRefresh, setGlobalArenaRefresh] = useState(false)
   const [openArenaAlertModal, setOpenArenaAlertModal] = useState(false)
   const [arenaActionModal, setArenaActionModal] = useState("")
+  const [tempPerformance, setTempPerformance] = useState(null)
 
   const colorTheme = "#eab308"
 
@@ -124,8 +128,10 @@ export const GlobalProvider =({children}) => {
             arenaActionModal, setArenaActionModal,
             globalSpotlightPerformances, setGlobalSpotlightPerformances,
             globalSpotlightPage, setGlobalSpotlightPage,
-            regionalSpotlightPerformances, setRegionalSpotlightPerformances
-            
+            regionalSpotlightPerformances, setRegionalSpotlightPerformances,
+            localSpotlightPerformances, setLocalSpotlightPerformances,
+            tempPerformance, setTempPerformance,
+            userFollowedArenas , setUserFollowedArenas
             }
             } >
             {children}

@@ -32,11 +32,7 @@ export default function ArenaDisplayer({
     const ITEM_SIZE = CARD_WIDTH + SPACING;
     const flatListRef = useRef()
     const arenas = [
-        ...userArenas,
-        {
-          _id: "create-arena",
-          isCreateCard: true,
-        },
+        ...userArenas
     ];
 
     const [showSwipeHint, setShowSwipeHint] = useState(userArenas.length > 1);
@@ -103,132 +99,7 @@ export default function ArenaDisplayer({
           })}
 
         renderItem={({item})=>{
-            // const active = selectedArena._id == item._id
-            if (item.isCreateCard == true) {
-                return (
-                    <TouchableOpacity
-                        activeOpacity={0.9}
-                        // onPress={onCreateArena}
-                        style={{
-                            width: CARD_WIDTH,
-                            height: 180,
-                            borderRadius: 18,
-                            overflow: "hidden",
-                            paddingVertical :16
-                      
-                        }}
-                    >
-                        {/* Background glow */}
-        
-                        <LinearGradient
-                            colors={[
-                                "rgba(234,179,8,.46)",
-                                "rgba(234,179,8,.22)",
-                                "#111214",
-                            ]}
-                            style={{
-                                position: "absolute",
-                                left: 0,
-                                right: 0,
-                                top: 0,
-                                bottom: 0,
-                            }}
-                        />
-        
-                        {/* Decorative circles */}
-        
-                        <View
-                            style={{
-                                position: "absolute",
-                                width: 220,
-                                height: 220,
-                                borderRadius: 110,
-                                backgroundColor: "rgba(234,179,8,.04)",
-                                top: -70,
-                                right: -70,
-                            }}
-                        />
-        
-                        <View
-                            style={{
-                                position: "absolute",
-                                width: 140,
-                                height: 140,
-                                borderRadius: 70,
-                                borderWidth: 1,
-                                borderColor: "rgba(234,179,8,.08)",
-                                bottom: -30,
-                                left: -20,
-                            }}
-                        />
-
-                    <LinearGradient
-                        colors={[
-                            "transparent",
-                            "rgba(0,0,0,.35)",
-                            "rgba(0,0,0,.55)",
-                            "rgba(0,0,0,.85)",
-                            "#000",
-                        ]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            width: "100%",
-                            bottom:0,
-                            height:"40%",
-                        }}
-                    />
-                    {/* )} */}
-                  
-        
-                        <View
-                            style={{
-                                flex: 1,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                paddingHorizontal: 28,
-                            }}
-                        >
-        
-                            <Text
-                                style={{
-                                    color: "#FFF",
-                                    fontSize: width/23,
-                                    fontWeight: "700",
-                                    marginTop: 12,
-                                }}
-                            >
-                                Create Arena
-                            </Text>
-        
-            
-                            <View
-                                style={{
-                                width: width/5,
-                                height: width/5,
-                                borderRadius: 999,
-                                backgroundColor:
-                                    "rgba(0,0,0,0.38)",
-                                justifyContent:
-                                    "center",
-                                alignItems: "center",
-                                borderWidth: 1,
-                                borderColor:
-                                    "rgba(234,179,8,0.15)",
-                                }}
-                                className ="mt-auto"
-                                 >
-                                <MaterialCommunityIcons
-                                name="star-four-points"
-                                size={39}
-                                color="#eab308"
-                                />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                );
-             }
-             else
+      
              return (
               <>
                 <TouchableOpacity
@@ -236,15 +107,12 @@ export default function ArenaDisplayer({
                     onPress={() => onPressArena(item)}
                     style={{
                         width:CARD_WIDTH,
-                        height:230,
+                        height:280,
                         borderRadius:12,
                         overflow:"hidden",
-                        // backgroundColor: selectedArena._id == item._id ? "#000" : "gold",
-                        // borderWidth:selectedArena._id == item._id ? 0 : 2,
-                        // borderTopColor:selectedArena._id == item._id ? "transparent" : "rgba(234,179,8,.15)",
                         padding: selectedArena._id == item._id ? 1 : 1
                     }} 
-                    className ="justi fy-center item s-center"
+                    className ="justi fy-center mb-6 item s-center"
                      >
 
                     {/* Cover */}
@@ -300,7 +168,7 @@ export default function ArenaDisplayer({
                             position:"absolute",
                             left:16,
                             right:16,
-                            bottom:16,
+                            bottom:0,
                         }}
                     >
                         <View
@@ -372,7 +240,7 @@ export default function ArenaDisplayer({
                                         fontSize:13,
                                         lineHeight:18,
                                         fontWeight : "700",
-                                        fontSize : width/38
+                                        fontSize : width/34
                                     }}
                                 >
                                     {item.biography}
@@ -389,7 +257,7 @@ export default function ArenaDisplayer({
                                 paddingBottom :14,
                                 lineHeight:18,
                                 fontWeight : "600",
-                                fontSize : width/39,
+                                fontSize : width/32,
                                 width:width * 0.75
                             }}
                             className="text-white  ">
@@ -404,28 +272,28 @@ export default function ArenaDisplayer({
                             }}
                         >
                             <Stat
-                                icon="star-four-points-outline"
+                                icon="star"
                                 value={item.starCount}
                                 width={width}
                             />
                             <Stat
-                                icon="play-box-multiple-outline"
+                                icon="play-box-multiple"
                                 value={item.postCount}
                                 width={width}
 
                             />
                             <Stat
-                                icon="account-group-outline"
+                                icon="heart"
                                 value={item.followerCount}
                                 width={width}
 
                             />
-                            <Stat
+                            {/* <Stat
                                 icon="eye-outline"
                                 value={item.viewCount}
                                 width={width}
 
-                            />
+                            /> */}
                         </View>
                     </View>
                     <TouchableOpacity
@@ -612,7 +480,7 @@ function Stat({icon,value,width}){
         >
             <MaterialCommunityIcons
                 name={icon}
-                size={width/26}
+                size={width/20}
                 color="#eab308"
             />
             <Text
@@ -620,7 +488,7 @@ function Stat({icon,value,width}){
                     color:"#FFF",
                     marginLeft:4,
                     fontWeight:"600",
-                    fontSize:width/34,
+                    fontSize:width/28,
                 }}
             >
                 {value}

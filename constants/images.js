@@ -19,10 +19,12 @@ import christiano from  "../assets/images/christiano.jpg";
 import bean from  "../assets/images/bean.jpg";
 import artist from  "../assets/images/artist.webp";
 import guitarist from  "../assets/images/guitarist.jpg";
-import applogo from  "../assets/images/itri.webp";
+import applogo from  "../assets/images/ithri.png";
+import hero from  "../assets/images/hero.png";
 
 
 export default {    
+      hero,
      logo, 
      empty , applogo,
      art, singing, 

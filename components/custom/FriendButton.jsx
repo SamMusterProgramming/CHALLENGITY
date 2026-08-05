@@ -248,15 +248,15 @@ export default function FriendButton({ userProfile }) {
         borderRadius: 8,
         backgroundColor:
           status === "Connect" || status === "Accept"
-          ? "rgba(0,0,0.64)"
-          : "rgba(0,0,0,0.64)",
+          ? "#eab308"
+          : "#eab308",
         borderWidth: 1,
         borderColor:
           status === "Connect" || status === "Accept"
             ? "#eab308"
             : "rgba(234,179,8,.18)",
       }}
-       className = "py-2"
+       className = "py-2 flex-1"
     >
       <MaterialCommunityIcons
         name={
@@ -271,21 +271,21 @@ export default function FriendButton({ userProfile }) {
         size={17}
         color={
           status === "Connect" || status === "Accept"
-            ? "#111214"
-            : "#eab308"
+            ? "#000"
+            : "#000"
         }
       />
   
       <Text
         style={{
           marginLeft: 6,
-          fontSize: width / 42,
+          fontSize: width / 36,
           fontWeight: "700",
           letterSpacing: 0.3,
           color:
             status === "Connect" || status === "Accept"
-              ? "#111214"
-              : "#eab308",
+              ? "#000"
+              : "#000",
         }}
       >
         {status === "Friend"

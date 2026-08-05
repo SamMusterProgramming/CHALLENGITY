@@ -71,14 +71,19 @@ export default function ArenaPostData({item,width , onPress , commentCount ,
                 }}
             onPress={toggleFire}
             >
-                <Text
+                {/* <Text
                 style={{
                     fontSize: width/12,
                     color: hasFired ? "#eab308" : "#eab308",
                     fontWeight: "900",
                     }} >
                     {hasFired ? "✦" : "✧"}
-                </Text>
+                </Text> */}
+                <MaterialCommunityIcons
+                    name="fire"
+                    size={width/13}
+                    color= {hasFired ? "#eab308" : "#fff"}
+                />
 
                 <Text
                     style={{

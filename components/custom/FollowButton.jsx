@@ -70,8 +70,8 @@ export default function FollowButton({ userProfile }) {
   
             backgroundColor:
               status === "Follow"
-                ? "rgba(0,0,0,0.64)"
-                : "rgba(0,0,0,0.64)",
+                ? "rgba(255,255,255,0.64)"
+                : "rgba(255,255,255,1)",
   
             // borderWidth: 1,
             // borderColor:
@@ -92,7 +92,7 @@ export default function FollowButton({ userProfile }) {
             // shadowRadius: 12,
             // elevation: status === "Follow" ? 6 : 2,
           }}
-          className = "py-2"
+          className = "py-2 flex-1"
         >
           <MaterialCommunityIcons
             name={
@@ -103,21 +103,21 @@ export default function FollowButton({ userProfile }) {
             size={20}
             color={
               status === "Follow"
-                ? "#eab308"
-                : "#eab308"
+                ? "#000"
+                : "#000"
             }
           />
   
           <Text
             style={{
               marginLeft: 8,
-              fontSize: width / 41,
+              fontSize: width / 36,
               fontWeight: "700",
               letterSpacing: 0.4,
               color:
                 status === "Follow"
-                  ? "#eab308"
-                  : "#eab308",
+                  ? "#000"
+                  : "#000",
             }}
           >
             {status}

@@ -38,7 +38,7 @@ export default function DisplayViewArena({
     }, [showSwipeHint]);
 
     const { width } = useWindowDimensions();
-    const CARD_WIDTH = width * 0.95;
+    const CARD_WIDTH = width * 1;
     const SPACING = 14;
     const SIDE_PADDING = (width - CARD_WIDTH) / 2;
     const ITEM_SIZE = CARD_WIDTH + SPACING;
@@ -92,8 +92,8 @@ export default function DisplayViewArena({
                     activeOpacity={0.9}
                     onPress={() => onPressArena(item)}
                     style={{
-                        width:CARD_WIDTH,
-                        height:280,
+                        width:CARD_WIDTH ,
+                        height:300,
                         borderRadius:12,
                         overflow:"hidden",
                         // backgroundColor: selectedArena._id == item._id ? "#000" : "gold",
@@ -101,13 +101,13 @@ export default function DisplayViewArena({
                         // borderTopColor:selectedArena._id == item._id ? "transparent" : "rgba(234,179,8,.15)",
                         padding: selectedArena._id == item._id ? 1 : 1
                     }} 
-                    className ="justi fy-center item s-center"
+                    className ="justify-center  items-center"
                      >
                     {/* Cover */}
                     <Image
                         source={{uri:item.coverImage.publicUrl}}
                         style={{
-                            width:"100%",
+                            width:"95%",
                             height:"100%",
                             position:"absolute",
                             // borderRadius:12,
@@ -158,8 +158,8 @@ export default function DisplayViewArena({
                     <View
                         style={{
                             position:"absolute",
-                            left:16,
-                            right:16,
+                            left:10,
+                            right:10,
                             bottom:16,
                         }}
                        
@@ -169,6 +169,7 @@ export default function DisplayViewArena({
                                 flexDirection:"row",
                                 alignItems:"center",
                             }}
+                            className = "px-4"
                         >
                             <Image
                                 source={{uri:item.profileImage.publicUrl}}
@@ -231,7 +232,7 @@ export default function DisplayViewArena({
                                         color:"rgba(255,255,255,.82)",
                                         marginTop:4,
                                         fontWeight : "700",
-                                        fontSize : width/38,
+                                        fontSize : width/35,
                                         lineHeight:18,
                                     }} >
                                     {item.biography}
@@ -242,19 +243,19 @@ export default function DisplayViewArena({
                         
 
                         <Text 
-                        numberOfLines={2}
-                        style ={{
-                            paddingTop :18,
-                            paddingBottom :18,
-                            // marginLeft : 18,
-                            fontWeight : "600",
-                            fontSize : width/38,
-                            lineHeight : 18 ,
-                            width : width * 0.75
-                        }}
-                      className="text-white text-xs tracking-wide">
-                       {item.description} 
-                      </Text> 
+                            numberOfLines={2}
+                            style ={{
+                                paddingTop :18,
+                                paddingBottom :18,
+                                // marginLeft : 18,
+                                fontWeight : "600",
+                                fontSize : width/32,
+                                lineHeight : 18 ,
+                                width : width * 0.75
+                            }}
+                        className="text-white ml-6 text-xs tracking-wide">
+                        {item.description} 
+                        </Text> 
                         {/* Stats */}
                         <View
                             style={{
@@ -262,6 +263,7 @@ export default function DisplayViewArena({
                                 marginTop:0,
                                 justifyContent:"space-between",
                             }}
+                            className = "px-4"
                         >
                             <Stat
                                 icon="star"
@@ -280,30 +282,45 @@ export default function DisplayViewArena({
                                 width={width}
 
                             />
-                            <Stat
-                                icon="eye-outline"
-                                value={item.viewCount}
+                             {/* <Stat
+                                icon=""
+                                value={""}
                                 width={width}
 
-                            />
+                            /> */}
                         </View>
-                        <FollowArenaButton width={width} onPress = {toggleFollower} isFollowed={item.isFollower} />
+                        {item.posts.length >= 5 && (
+                              <View
+                              className ="flex-row w-full justify-start items-center gap-2">
+                                    <FollowArenaButton width={width} onPress = {toggleFollower} isFollowed={item.isFollower} />
+                              </View>
+                        )}
+                    
                     </View>
 
                     <View
-                        style={{
-                        // flex:1,
-                        position:"absolute",
-                        right:8,
-                        top:8,
-                        }}
-                        >
-                            <StarArenaButton
-                            width={CARD_WIDTH}
-                            isStarred={item.isStarred}
-                            onPress={toggleStar}
-                            />
+                        className = "absolute top-4 right-8" >
+                              <StarArenaButton
+                                    width={CARD_WIDTH}
+                                    isStarred={item.isStarred}
+                                    onPress={toggleStar}
+                                    />
                     </View>
+
+                    {/* <View
+                                style={{
+                                // flex:1,
+                                position:"absolute",
+                                right:10,
+                                bottom:86,
+                                }}
+                                >
+                                    <StarArenaButton
+                                    width={CARD_WIDTH}
+                                    isStarred={item.isStarred}
+                                    onPress={toggleStar}
+                                    />
+                    </View> */}
 
                 </TouchableOpacity>
             )
@@ -375,7 +392,7 @@ function Stat({icon,value,width}){
         >
             <MaterialCommunityIcons
                 name={icon}
-                size={width/26}
+                size={width/18}
                 color="#eab308"
             />
             <Text
@@ -383,7 +400,7 @@ function Stat({icon,value,width}){
                     color:"#FFF",
                     marginLeft:4,
                     fontWeight:"600",
-                    fontSize:width/34,
+                    fontSize:width/28,
                 }}
             >
                 {value}

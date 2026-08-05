@@ -9,6 +9,7 @@ import FriendButton from '../../custom/FriendButton';
 import FollowButton from '../../custom/FollowButton';
 
 import { Stats } from '../../profile/custom/stats';
+import { router } from 'expo-router';
 
 export default function ProfileHeader({user , statData}) {
     const {width , height} = useWindowDimensions()
@@ -34,30 +35,40 @@ export default function ProfileHeader({user , statData}) {
         <View
           style={{
             width,
-            // height: height / 3.5,
-            // backgroundColor: "#111214",
-            // borderTopLeftRadius: 28,
-            // borderTopRightRadius: 28,
             overflow: "hidden",
           }}
-          className = "justify-center it ems-center  rounded-t-3xl"
+          className = "justify-center it ems-center  roun ded-t-3xl"
         >
           {/* Cover */}
-          <Image
-            source={{ uri: user.coverImage?.publicUrl }}
-            resizeMode="cover"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height:  height / 2.5,
-            }}
-            className = "rounded-t-3xl"
-          />
-
+          <View
+          className = "">
+              <Image
+                source={{ uri: user.coverImage?.publicUrl }}
+                resizeMode="cover"
+                style={{
+                  // position: "absolute",
+                  width: "100%",
+                  height:  height / 4,
+                }}
+                className = "roun ded-t-3xl "
+              />
+              {/* <TouchableOpacity 
+                  className ="absolute top-[45] left-[10]  b g-white justify-center items-center"
+                  onPress={() =>{
+                      router.back()
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                        name="chevron-left"
+                        size={55}
+                        color="#fff"
+                    />
+              </TouchableOpacity> */}
+         </View>
        
       
         {/* Top fade (very light) */}
-        <LinearGradient
+        {/* <LinearGradient
             colors={[
               "rgba(17,18,20,0)",
               "rgba(17,18,20,0)",
@@ -73,10 +84,10 @@ export default function ProfileHeader({user , statData}) {
 
             }}
            
-          />
+          /> */}
       
           {/* Bottom fade */}
-          <LinearGradient
+          {/* <LinearGradient
             colors={[
               "transparent",
               "rgba(0,0,0,.05)",
@@ -92,8 +103,8 @@ export default function ProfileHeader({user , statData}) {
               height: height / 4.5,
             }}
            
-          />
-           <LinearGradient
+          /> */}
+           {/* <LinearGradient
             colors={[
               "transparent",
               "rgba(0,0,0,.05)",
@@ -108,7 +119,7 @@ export default function ProfileHeader({user , statData}) {
               bottom: 0,
               height: height /3.2,
             }}
-          />
+          /> */}
       
         
       
@@ -119,58 +130,82 @@ export default function ProfileHeader({user , statData}) {
               width : width /1 ,
               justifyContent: "center",
               alignItems: "start",
-              marginLeft: 18,
+              // marginLeft: 18,
               marginBottom :24,
-              paddingTop:30,
-            //   marginTop :50
+              
             }}
-            className = "mt-auto"
+            className = " rounded-t-full w-full mt -[-7] "
           >
-            <View
-            style={{
-                position: "relative",
-                width: width / 4.8,
-                height: width / 4.8,
-                justifyContent: "center",
-                alignItems: "center",
-            }}
-            >
-                <Image
-                source={{ uri: user.profileImage?.publicUrl }}
-                style={{
-                    width: width / 4.8,
-                    height: width / 4.8,
-                    borderRadius:999,
-                    borderWidth: 1.5,
-                    borderColor: "#eab308",
-                    marginBottom: 14,
-                    marginLeft:12
-                }}
-                />
-                {/* Verification Badge */}
-                <View
-                style={{
-                    position: "absolute",
-                    bottom:2,
-                    right: -0,
-                }}
-                >
-                    <MaterialCommunityIcons
-                        name="check-decagram"
-                        size={25}
-                        color="#eab308"
-                    />
+              <View
+              className = "flex-row w-full items-center  bg-black justify-end mt-[-27] rounded-t-[30]">
+                    <View
+                    style={{
+                        position: "relative",
+                        width: width / 4.8,
+                        height: width / 4.8,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        }}
+                        className = "ml-8 mt-[-10]"
+                         >
+                        <Image
+                        source={{ uri: user.profileImage?.publicUrl }}
+                        style={{
+                            width: width / 4.8,
+                            height: width / 4.8,
+                            borderRadius:999,
+                            borderWidth: 6,
+                            borderColor: "#000",
+                            marginBottom: 14,
+                            // marginLeft:12
+                        }}
+                        />
+                        {/* Verification Badge */}
+                        <View
+                          style={{
+                              position: "absolute",
+                              bottom:16,
+                              right: -0,
+                            }}
+                          className = "bg-black rounded-full"  >
+                            <MaterialCommunityIcons
+                                name="check-decagram"
+                                size={25}
+                                color="#eab308"
+                            />
+                        </View>
                     </View>
-            </View>
-            <Text
-              style={{
-                color: "#FFF",
-                fontSize: width / 20,
-                fontWeight: "700",
-              }}
-            >
-              {user.name.slice(0,16)}
-            </Text>
+                    <View
+                    className = " flex-1 ml-4 justify-end  ">
+                              <Text
+                                style={{
+                                  color: "#FFF",
+                                  fontSize: width / 24,
+                                  fontWeight: "700",
+                                }}   >
+                                {user.name.slice(0,16)}
+                              </Text>
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  marginTop: 8,
+                                }}  >
+                          
+                                <Text
+                                  style={{
+                                    color: "#E2E2E2",
+                                  //   marginLeft: 5,
+                                    fontSize: width / 32,
+                                  }}
+                                >
+                                   {user.state} , {countries.find ( c => c.code === user.country)?.name}  
+                                {'  '} {countries.find ( c => c.code === user.country)?.flag}
+                                </Text>
+                              </View>
+                    </View>
+              </View>
+           
       
             {/* <Text
               style={{
@@ -182,41 +217,19 @@ export default function ProfileHeader({user , statData}) {
               @{user.username}
             </Text> */}
       
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 8,
-              }}
-            >
-              {/* <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={15}
-                color="#eab308"
-              /> */}
+               <Text
+                  style={{
+                    marginTop: 8,
+                    color: "#fff",
+                    fontWeight: "600",
+                    fontSize: width / 32,
+                  }}
+                  className="ml-4"
+                >
+                  Singer . professional Chabbi
+               </Text>
       
-              <Text
-                style={{
-                  color: "#E2E2E2",
-                //   marginLeft: 5,
-                  fontSize: width / 32,
-                }}
-              >
-                {user.city}, {user.state} , {countries.find ( c => c.code === user.country)?.name}  
-               {'  '} {countries.find ( c => c.code === user.country)?.flag}
-              </Text>
-            </View>
-      
-            <Text
-              style={{
-                marginTop: 8,
-                color: "#eab308",
-                fontWeight: "600",
-                fontSize: width / 38,
-              }}
-            >
-              Singer . professional Chabbi
-            </Text>
+         
       
             {!!user.tellus && (
               <Text
@@ -242,13 +255,13 @@ export default function ProfileHeader({user , statData}) {
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
-                right:30,
-                top: 10,
-                gap: 28,
+                // right:30,
+                // top: 10,
+                // gap: 28,
                 zIndex : 999,
-                position :"absolute"
+                // position :"absolute"
             }}
-            className = "b g-black/50 gap-2 rounded-xl"
+            className = "b g-black/50 gap-4 px-4 mt-6 flex-1 justify-center items-center rounded-xl"
             >
             <FriendButton userProfile={user} />
             <FollowButton userProfile={user} />
@@ -261,7 +274,7 @@ export default function ProfileHeader({user , statData}) {
 
 
           <View
-            className = "w-full flex-row m t -auto ite ms-end">
+            className = "w-full flex-row px-4 ite ms-end">
                 {/* <TouchableOpacity
                             onPress={() => setModalVisible(true)}
                             className="px-4 mr-4 py-1  border border-white/10 rounded-lg" >

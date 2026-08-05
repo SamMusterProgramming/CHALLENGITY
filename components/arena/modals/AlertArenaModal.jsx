@@ -119,7 +119,7 @@ export default function ArenaAlertModal({
               <TouchableOpacity
                 onPress={() =>{
                   setIsVisible(false)
-                  onConfirm();
+                  // onConfirm();
                 }
                 }
                 style={{

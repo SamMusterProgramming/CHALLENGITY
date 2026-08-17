@@ -1096,7 +1096,7 @@ const alertContent =  {
               case "stages":
             
                 if(selectedTab !== "stages" ) return ; 
-                 return  <StageCaroussel  onPress={() => {}} />
+                 return  <StageCaroussel  onPress={() => { onClose() }} />
              }
           }}
         />

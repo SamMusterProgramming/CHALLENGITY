@@ -19,7 +19,7 @@ export const homeState = {
   scrollY: 0,
 };
 export default function HomePage({onScroll}) {
-  const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading , userArenas,localArenas , 
+  const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading , userArenas, localArenas , 
     regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh
   } = useGlobalContext();
   const sections = [

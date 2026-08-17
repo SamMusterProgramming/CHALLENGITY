@@ -71,6 +71,7 @@ export const GlobalProvider =({children}) => {
   const [openArenaAlertModal, setOpenArenaAlertModal] = useState(false)
   const [arenaActionModal, setArenaActionModal] = useState("")
   const [tempPerformance, setTempPerformance] = useState(null)
+  const [showProfile, setShowProfile]  = useState(false)
 
   const colorTheme = "#eab308"
 
@@ -131,7 +132,8 @@ export const GlobalProvider =({children}) => {
             regionalSpotlightPerformances, setRegionalSpotlightPerformances,
             localSpotlightPerformances, setLocalSpotlightPerformances,
             tempPerformance, setTempPerformance,
-            userFollowedArenas , setUserFollowedArenas
+            userFollowedArenas , setUserFollowedArenas,
+            showProfile, setShowProfile
             }
             } >
             {children}

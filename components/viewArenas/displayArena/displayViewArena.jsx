@@ -307,20 +307,7 @@ export default function DisplayViewArena({
                                     />
                     </View>
 
-                    {/* <View
-                                style={{
-                                // flex:1,
-                                position:"absolute",
-                                right:10,
-                                bottom:86,
-                                }}
-                                >
-                                    <StarArenaButton
-                                    width={CARD_WIDTH}
-                                    isStarred={item.isStarred}
-                                    onPress={toggleStar}
-                                    />
-                    </View> */}
+             
 
                 </TouchableOpacity>
             )

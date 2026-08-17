@@ -24,15 +24,17 @@ import FavouriteStageDrawer from '../components/modal/favouriteStageDrawer';
 import PerformanceHomePage from '../components/home/performanceHomePage';
 import Arena from '../components/home/arena';
 import ProfileDrawer from '../components/profile/modal/profileDrawer';
+import MyJourney from '../components/home/MyJourney';
 
 
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const {user,setUser ,activeIndex,setActiveIndex , isLoggingOut , setSelectedArena , setFavouriteList,setUserTalents,setTopTalents , setRegionStages, allStages, setAllStages ,trendingStages, setTrendingStages,hotStages , setHotStages,favouriteStages, setFavouriteStages
-    ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg , userArenas , setUserArenas , setLocalArenas,
-    setGlobalSelectedRegion , setUserCountryCode , globalSpotlightPerformances, setGlobalSpotlightPerformances,globalSpotlightPage, setGlobalSpotlightPage,setUserFollowedArenas,
-    regionalSpotlightPerformances, setRegionalSpotlightPerformances  ,setLocalSpotlightPerformances} = useGlobalContext() 
+  const {user,setUser ,activeIndex,setActiveIndex , isLoggingOut , setSelectedArena , setFavouriteList,setUserTalents,setTopTalents ,showProfile, setShowProfile,
+         setRegionStages, allStages, setAllStages ,trendingStages, setTrendingStages,hotStages , setHotStages,favouriteStages, setFavouriteStages
+        ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg , userArenas , setUserArenas , setLocalArenas,
+        setGlobalSelectedRegion , setUserCountryCode , globalSpotlightPerformances, setGlobalSpotlightPerformances,globalSpotlightPage, setGlobalSpotlightPage,setUserFollowedArenas,
+        regionalSpotlightPerformances, setRegionalSpotlightPerformances  ,setLocalSpotlightPerformances} = useGlobalContext() 
   const { width, height } = useWindowDimensions();
   const [selectedPage , setSelectedPage] = useState(null)
   const [displayNotificationsModal , setDisplayNotificationsModal] = useState(false)
@@ -40,7 +42,7 @@ export default function Home() {
   const [isFetching, setIsFetching] = useState(false);
   // const [activeIndex, setActiveIndex] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
+  // const [showProfile, setShowProfile] = useState(false);
   const headerHeight = height * 0.14;
   const [isReady ,setIsReady] = useState(false)
   const { showLoading, hideLoading } = useLoading();
@@ -265,14 +267,14 @@ export default function Home() {
                     className="w-[100%] h- [79%] flex-1  mt- 2 bg-black [#3b4348]  rounde-xl borde-[#272d31]  g-[#3b4348] 
                        flex-col justify-center items-center">
                         {activeIndex === 0 && ! isFetching && (
-                          <HomePage onScroll ={handleScroll} />
+                          <HomePage onScroll = {handleScroll} />
                         )}
                         {activeIndex === 1 && ! isFetching && (
                           <StageHomePage onScroll = {handleScroll} />
                         )}
                         {activeIndex === 2 && ! isFetching && (
                           // <Challenge setSelectedPage={setSelectedPage} />
-                          <PerformanceHomePage onScroll={handleScroll} setSelectedPage={setSelectedPage} />
+                          <MyJourney onScroll={handleScroll} setSelectedPage={setSelectedPage} />
                         )}
                         {activeIndex === 3 && ! isFetching && ! isLoggingOut && (
                           <Arena user={user}  onScroll={handleScroll}/>
@@ -301,10 +303,10 @@ export default function Home() {
             <Animated.View
               style={{
                 position: "absolute",
-                bottom: height * 0.02,
+                bottom:  height * 0.015,
                 left: 0,
                 right: 0,
-                height : headerHeight * 0.5,
+                // height : headerHeight * 0.5,
                 zIndex: 999,
                 transform: [
                   {
@@ -324,7 +326,7 @@ export default function Home() {
            <View
            className = "bg-black"
              style={{ 
-             height: Platform.OS =="ios" ? height * 0.02 : height * 0.02  ,
+             height: Platform.OS =="ios" ? height * 0.016 : height * 0.016  ,
              width:"100%",
              }}/>
 

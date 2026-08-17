@@ -6,38 +6,66 @@ export default function SpotlightIcon({size}) {
   return (
          <View
             style={{
-              width: size * 2.2,
-              height: size * 2.2,
+              width: size * 2.4,
+              height: size * 2.4,
               borderRadius: 999,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(234,179,8,0.08)",
+              backgroundColor: "black" , //"rgba(234,179,8,0.28)",
               borderWidth: 1,
               borderColor: "rgba(234,179,8,0.18)",
             }}
           >
-  
+{/*   
             <MaterialCommunityIcons
               name="spotlight-beam"
               size={size}
-              color="#FDE68A"
-            />
+              color="#eab308"
+            /> */}
+             <Text
+             style = {{
+              fontSize : size/1
+             }}
+             className="text-[#eab308]  font-bold">
+                 S
+             </Text>
   
             <MaterialCommunityIcons
               name="star-four-points"
               size={size/2}
-              color="#FDE68A"
+              color="#eab308"
               style={{
                 position: "absolute",
                 top: size /4,
                 right: size /3,
               }}
             />
+
+            <MaterialCommunityIcons
+              name="star-four-points"
+              size={size/2}
+              color="#eab308"
+              style={{
+                position: "absolute",
+                bottom: size /4,
+                right: size /3,
+              }}
+            />
+            <MaterialCommunityIcons
+              name="star-four-points"
+              size={size/2}
+              color="#eab308"
+              style={{
+                position: "absolute",
+                top: size /4,
+                left : size /3,
+              }}
+            />
   
             <MaterialCommunityIcons
               name="star-four-points"
               size={size/2}
-              color="#FDE68A"
+              color="#eab308"
               style={{
                 position: "absolute",
                 bottom: size /4,

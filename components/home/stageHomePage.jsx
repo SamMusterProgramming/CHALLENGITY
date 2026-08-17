@@ -5,34 +5,40 @@ import {
   Dimensions,
   FlatList,
   Text,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 } from "react-native";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { generateChallengeTalentGuinessData, getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
+import { generateChallengeTalentGuinessData, getLocalArenas, getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
 import StageSelector from "../custom/StageSelector";
 import HotStage from "../talent/hotStages";
 import { useFocusEffect } from "expo-router";
 import StageSelectorFooter from "../custom/stageSelectorFooter";
 import RegionalStages from "../talent/regionalStages";
 import StageCard from "../talent/stageCard";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import StageDisplayer from "../talent/stageDisplayer";
+import ArenaCard from "../viewArenas/displayArena/arenaCard";
 
 export const homeState = {
   scrollY: 0,
 };
 
 export default function StageHomePage({onScroll}) {
-  const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading ,regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh} = useGlobalContext();
+  const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading ,regionStages,setRegionStages,
+          localArenas, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh} = useGlobalContext();
   const sections = [
     { id: "stageSelector" },
     // { id: "hotStage" }
   ];
   const flatListRef = useRef(null);
-  const [isHotStageReady, setIsHotStageReady] = useState(false);
   const [loadingStages, setLoadingStages] = useState(false);
- const {colorTheme} = useGlobalContext()
+  const {colorTheme} = useGlobalContext()
   const { width, height } = Dimensions.get("window");
-
+  const [selectedTab, setSelectedTab] = useState("stages");
   const scrollY = useRef(homeState.scrollY || 0);
+  const [arenas, setArenas] = useState([]);
+
 
   useEffect(() => {
     if (!globalRefresh) return;
@@ -78,16 +84,33 @@ export default function StageHomePage({onScroll}) {
 //   }, [regionStages])
 
 useEffect(() => {
-    if(!globalSelectedRegion || (globalSelectedRegion === regionStages[0]?.region)) return 
-      const getStages = async () => {
-        setLoadingStages(true)
-      await getRegionTalentStages(globalSelectedRegion, setRegionStages)
-      setTimeout(() => {
-        setLoadingStages(false)
-      }, 20);
-    }
-    getStages()
-  }, [globalSelectedRegion , globalRefresh]);
+    if(!globalSelectedRegion || ((globalSelectedRegion === regionStages[0]?.region)&& selectedTab === "stages") || 
+    ((globalSelectedRegion === arenas[0]?.region)&& selectedTab === "arenas")) return 
+    const loadData = async () => {
+      try {
+        setLoadingStages(true);
+  
+        await Promise.all([
+          getRegionTalentStages(
+            globalSelectedRegion,
+            setRegionStages
+          ),
+          getLocalArenas(
+            globalSelectedRegion,
+            { userId: user._id },
+            setArenas
+          ),
+        ]);
+      } catch (error) {
+        console.error("Error loading explore data:", error);
+      } finally {
+        setLoadingStages(false);
+      }
+    };
+    loadData();
+  }, [globalSelectedRegion , globalRefresh , selectedTab ]);
+
+
 
   
   const [isFocused, setIsFocused] = useState(true);
@@ -108,99 +131,145 @@ useEffect(() => {
     }, [])
   );
 
-  const renderItem = ({ item }) => (
-    <StageCard
-      stage = {item}
-      width={width}
-      height={width/3.05}
-      region = {globalSelectedRegion}
-      user = {user}
-    />
-  );
+  const renderItem = ({ item }) => {
+    if (selectedTab === "stages") {
+      return (
+        <View
+          style={{
+            width: "100%",
+            alignItems: "center",
+            // marginBottom: 10,
+          }}
+        >
+          <StageDisplayer
+            userTalent={item}
+            user={user}
+            userProfile={user}
+            activity={true}
+            width={width * 0.95}
+            height={height * 0.30}
+          />
+        </View>
+      );
+    }
   
-  const handleScroll = (e) => {
-    const offset = e.nativeEvent.contentOffset.y;
-    scrollY.current = offset;
-    homeState.scrollY = offset; 
+    return (
+      <View
+        style={{
+          width: "100%",
+          alignItems: "center",
+          marginBottom: 14,
+          // height:height * 0.30
+
+        }}
+      >
+        <ArenaCard
+          arena={item}
+          width={width * 0.95}
+          height={height * 0.30}
+        />
+      </View>
+    );
   };
-
+  
   if (!isFocused) { return null; }
-
 
   return (
     
     <View
     style ={{
-        marginBottom : height * 0.073 ,
+        // marginBottom : height * 0.073 ,
+       
     }}
-    className="flex-1 px-2 mb-12 w-[100%] bg-black">
-        <View className="px- 2 w-full mt-4 mb-4 item s-center pb- 2 bg-dark Bg">
-            
-            <Text 
-            // style={{
-            //   fontSize: width / 30,
-            //   lineHeight: width / 20,
-            //   letterSpacing: 0.3,
-            //   fontWeight:700,
-            // }}
-            style={{
-                color: colorTheme,
-                fontSize: width / 20,
-                fontWeight: "800",
-                letterSpacing: 0.6,
-                // textAlign: "center",
-              }}
-            className="fon t-bold tex t-lg tex t-center text-white tracki ng-wide mb- 1">
-              EXPLORE STAGES {' '}
-            </Text>
-          
+    className="flex-1 px- mb -8 w-[100%] justify-center items-center bg-black">
+   
+        <View
+          style={{
+            width: "100%",
+            // zIndex: 1000,
+            // elevation: 1000,
+          }}
+          className = "justify-center items-center"
+        >
+          <StageSelectorFooter
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+          />
         </View>
-    
-        <FlatList
-            initialNumToRender={2}
-            data={regionStages}
-            extraData={loadingStages}
-            renderItem={!loadingStages ? renderItem : ()=>{
-            return (
-                <View 
-                style={{
-                    height: width / 3.05,
-                    width :width * 0.49,
-                }}
-                className=" mb- 4 flex-1 justify-center items-center">
-                    <ActivityIndicator
+
+        <View
+          style={{
+            flex: 1,
+            width: "100%",
+            // zIndex: 1,
+            elevation: 1,
+          }}
+          className="flex-1 h- [100%] w-full items-center justify-center">
+             {loadingStages ? (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}  >
+                  <ActivityIndicator
                     size="small"
-                    color="#D4AF37"
-                    />
-                    <Text
-                    className="text-white mt-3 font-semibold"
+                    color="#EAB308"
+                  />
+
+                  <Text
                     style={{
-                        fontSize: width / 38,
+                      marginTop: 12,
+                      color: "rgba(255,255,255,0.65)",
+                      fontSize: width / 34,
                     }}
-                    >
-                    Loading stages...
-                    </Text>
+                  >
+                    Loading {selectedTab === "stages" ? "stages" : "arenas"}...
+                  </Text>
                 </View>
-            )
-            }}
-            keyExtractor={(item, index) =>
-                item._id || index.toString()
-            }
-            numColumns={2}
-            showsVerticalScrollIndicator={false}
-            columnWrapperStyle={{
-                justifyContent: "center",
-                gap: 8
-                
-            }}
-            contentContainerStyle={{
-                gap: 4
-            }}
-            // onScroll={onScroll}
-            
-            />
-          
-          <StageSelectorFooter />
+              ) : (
+                <>
+                 {!regionStages.length || (!arenas.length && selectedTab == "arenas")?
+                  (
+                    <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}  >
+              
+                    <Text
+                      style={{
+                        marginTop: 12,
+                        color: "rgba(255,255,255,0.65)",
+                        fontSize: width / 30,
+                      }}
+                    >
+                      No Arena Found
+                    </Text>
+                  </View>
+                  )
+                 :(
+                    <FlatList
+                    ref={flatListRef}
+                    data={selectedTab === "stages" ? regionStages : arenas}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item._id}
+                    showsVerticalScrollIndicator={false}
+                    // onScroll={onScroll}
+                    scrollEventThrottle={16}
+                    contentContainerStyle={{
+                      paddingTop: 8,
+                      paddingBottom: height * 0.02,
+                    }}
+                  />
+                 )
+                 }
+                   
+                </>
+              )}
+        </View>
+       
     </View>
   );
 

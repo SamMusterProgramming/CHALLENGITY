@@ -28,7 +28,7 @@ export default function SpotlightPerformances({
   const [selectedProfile , setSelectedProfile] = useState(null)
   const [selectedPost , setSelectedPost] = useState(null)
 
-  const CARD_WIDTH = width * 0.96;
+  const CARD_WIDTH = width * 0.95;
   
   const performances = type === "global" ? globalSpotlightPerformances :  
                        type === "regional" ? regionalSpotlightPerformances :
@@ -124,21 +124,21 @@ if(performances.length == 0 ) return ;
         alignItems:"center",
         // marginTop:16,
       }}
-      className ="mt-4"
+      className ="mt-4 mb-4 pb-4 pt-4 px- 4 bg-[#18191e] rounde d-3xl"
     >
 
       {/* HEADER */}
 
-      <View className="px- 3 w-full text-center pb-4 b g-darkBg">
+      <View className="px-6 w-[100%] text-center pb- 4 bg-[black] roun ed-t-full ">
         <Text
           style={{
             color:colorTheme,
-            fontSize:width/20,
+            fontSize:width/25,
             fontWeight:"800",
             letterSpacing:0.6,
             textTransform:"uppercase",
           }}
-          className = "text-center"
+          className = "text-center b g-[black] pt-4 pb- 2 rounde d-t-xl"
         > 
            {title} 
         </Text>
@@ -146,11 +146,11 @@ if(performances.length == 0 ) return ;
           style={{
             marginTop:6,
             color:"rgba(255,255,255,0.9)",
-            fontSize:width/25,
+            fontSize:width/32,
             // fontWeight:"500",
             // letterSpacing:0.3,
           }}
-          className="text-g ray-100 mt-1 mb-2 font-semiMontserrat text-center  " >
+          className=" b g-[black] pb-2 px- 6 rou nde d-t-xl font-semiMontserrat text-center  " >
            {subTitle}
         </Text>
       </View>
@@ -161,7 +161,7 @@ if(performances.length == 0 ) return ;
             height: height,
             width,
             }}
-          className="flex- 1 h-[100%] w-full items-start justify-center mb-6 bg-[#392a0e]/30">
+          className="flex-1 bg-black h- [100%] w -full items-start justify-center mb-4 bg- [#392a0e] /30">
             <FlatList
                 style={{
                 width,
@@ -191,7 +191,7 @@ if(performances.length == 0 ) return ;
                     <PerformanceRepresentation
                     performance = {item}
                     width={CARD_WIDTH}
-                    height={height}
+                    height={height * 0.95}
                     loadUProfile ={loadUProfile}
                     // playPerformance = {playPerformance}
                     setSelectedProfile = {setSelectedProfile}
@@ -214,7 +214,7 @@ if(performances.length == 0 ) return ;
 
         )}
 
-        <View
+        {/* <View
             style={{
                 alignSelf: "start",
                 width: width ,
@@ -223,7 +223,7 @@ if(performances.length == 0 ) return ;
                 marginVertical: 20,
             }}
             className="  [95%] px-2 h- [8] b g-gold/90 mb-4 mt-6"
-        />
+        /> */}
 
     </View>
 

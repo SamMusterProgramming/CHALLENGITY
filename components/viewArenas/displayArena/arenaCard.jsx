@@ -9,237 +9,300 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { countries, stageIcons } from "../../../utilities/TypeData";
 import { router } from "expo-router";
 import { getPostsArena, getUserById } from "../../../apiCalls";
+import { LinearGradient } from "expo-linear-gradient";
+import StarArenaButton from "../custom/starArenaButton";
+import FollowArenaButton from "../custom/followArenaButton";
 
 
 export default function ArenaCard({
   arena,
   width,
   height,
-  loadUProfile,
-  playPerformance,
   setSelectedArena , 
   setSelectedPost
   }) {
 
-  // const [profile , setProfile] = useState(null)
-  // const [arenaPosts , setArenaPosts] = useState([])
-  const thumbnail =
-    arena?.posts?.[0]?.media?.thumbnail.cdnUrl ||
-    arena?.coverImage?.publicUrl;
-  const region = countries.find(  c => c.code === arena.region );
-
-  // const loadUProfile = async()=>{
-  //     await getUserById(arena.owner_id ,setProfile)
-  // }
-
-  // const playPerformance = async() => {
-  //   await getPostsArena(arena._id , setArenaPosts)
-  // }
-
-  // useEffect(() => {
-  //   if(!profile) return ;
-  //   router.push({
-  //       pathname: "/ViewProfile",
-  //       params: {
-  //         userProfile: JSON.stringify(
-  //           profile
-  //         ),
-  //         arena_id : arena._id
-  //       },
-  //   });
-  // }, [profile])
-  
-  // useEffect(() => {
-  //   if(!arenaPosts.length) return ; 
-  //   router.push({
-  //     pathname:
-  //       "/arenaPerformancePlayer",
-  //     params: {
-  //       selectedPostId:
-  //       arenaPosts[0]._id,
-  //       arenaPosts:
-  //         JSON.stringify(
-  //           arenaPosts
-  //         ),
-  //       arena : JSON.stringify(
-  //         arena
-  //       )
-  //     },
-  //   });
  
-  // }, [arenaPosts])
-  
+const thumbnail = arena?.coverImage?.publicUrl;
+const region = countries.find(  c => c.code === arena.region );
 
-  return (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      onPress = { () => setSelectedPost(arena.posts[0]) }
-      style={{
-        width,
-        height: height ,
-        borderRadius: 18,
-        overflow:"hidden",
-        backgroundColor:"#111",
-        borderWidth:1,
-        borderColor:
-          "rgba(234,179,8,0.18)",
-      }}
-      className ="justify-center items-center"
-    >
-      {/* THUMBNAIL */}
-      <Image
-        source={{
-          uri: thumbnail
-        }}
-        style={{
-          width:"100%",
-          height:"100%",
-        }}
-        resizeMode="cover"
-      />
-      {/* PLAY BUTTON */}
-      <View
-              style={{
-                position: "absolute",
-                width: width/11,
-                height: width/11,
-                borderRadius: 999,
-                backgroundColor:  "rgba(255,255,255,0.8)",
-                justifyContent: "center",
-                alignItems: "center",
-              }} >
-              <MaterialCommunityIcons
-                name="play"
-                size={20}
-                color = "black"
-              />
-      </View>
-      {/* INFO OVERLAY */}
-      <TouchableOpacity
-          onPress = {() => {
-            setSelectedArena(arena)
-            // loadUProfile
-          }}
-        style={{
-          position:"absolute",
-          left:5,
-          right:5,
-          bottom:5,
-          backgroundColor:
-            "rgba(0,0,0,0.55)",
-          borderRadius :18
-        }}
-        className = "p-3"  >
-        <View
-          style={{
-            flexDirection:"row",
-            alignItems:"center",
-          }} >
-          {/* PROFILE IMAGE */}
-          <Image
-            source={{
-              uri:
-              arena?.profileImage?.publicUrl
-            }}
-            style={{
-              width:width/9,
-              height:width/9,
-              borderRadius:999,
-              borderWidth:2,
-              borderColor:"#eab308",
-              backgroundColor:"#111",
-            }}
-          />
-          <View
-            style={{
-              marginLeft:14,
-              flex:1,
-            }} 
-            className = ""
-             >
-            {/* NAME */}
-            <Text
-              numberOfLines={1}
-              style={{
-                color:"#fff",
-                fontSize:width/32,
-                fontWeight:"900",
-              }}
-            >
-              {arena.arenaName}
-            </Text>
-
-            {/* TYPE */}
-           <View
-           style ={{
-            marginTop:8,
-           }}
-           className ="flex-row justify-start items-center">
-              <Text
-              style={{
-          
-                color:"#eab308",
-                fontSize:width/34,
-                fontWeight:"700",
-              }}  >
-
-              {arena.talentType}
-              {" "}
-              {stageIcons[arena.talentType]}
-
-              {"  •  "}
-
-              <Text
-                style={{
-                  color:
-                  "rgba(255,255,255,0.65)",
-                  fontSize:width/34,
-                }}
-              >
-                {region?.flag}
-                {" "}
-                {region?.name} {'    '}
-              </Text>
-
-            </Text>
-            <Text
-                style={{
-                  color:"#eab308",
-                  fontWeight:"800",
-                  fontSize:width/34,
-                  marginLeft : "auto",
-                  marginBottom :4
-                }}  >
-                ⭐  {''}
-             </Text>
-             <Text
-                style={{
-                  color:"#eab308",
-                  fontWeight:"800",
-                  fontSize:width/34,
-                  marginRight : 10
-                }}  >
-                 {arena.stars?.length || 0} {'     '}
-             </Text>
-             <MaterialCommunityIcons
-                name="video-outline"
-                size={23}
-                color="#fff"
-              />
-             <Text
-              style={{
-              color:
-              "rgba(255,255,255,0.85)",
-              marginLeft:8,
-              fontSize:width/34,
-              fontWeight:"700",
-               }}  >
-                 {arena.posts?.length || 0}
-             </Text>
-           </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
+const handleOpenArena = () => {
+  router.push({
+    pathname:
+      "/arenaDisplayer",
+    params: {
+      arena_id:
+        arena._id,
+      // arena:
+      //   JSON.stringify(
+      //     arena
+      //   ),
+      // arena : JSON.stringify(
+      //   []
+      // )
+    },
+  });
 }
+return (
+<TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={ handleOpenArena}
+                    style={{
+                        width:width,
+                        height:height,
+                        borderRadius:12,
+                        overflow:"hidden",
+                    }} 
+                    className ="justify-center mb- 4 p- 2 items-center"
+                     >
+                    {/* Cover */}
+                    <Image
+                        source={{uri:arena.coverImage.publicUrl}}
+                        style={{
+                            width:"100%",
+                            height:"100%",
+                            position:"absolute",
+                            opacity : 0.4
+                            // borderRadius:12,
+                        }}
+                        resizeMode="cover"
+                        className ="rounded-xl"
+                    />
+                   {/* {active && ( */}
+                    {/* <LinearGradient
+                        colors={[
+                            "transparent",
+                            "rgba(0,0,0,.15)",
+                            "rgba(0,0,0,.45)",
+                            "rgba(0,0,0,.65)",
+                             "transparent"
+                        ]}
+                        style={{
+                            position:"absolute",
+                            left:0,
+                            width: "100%",
+                            bottom:0,
+                            height:"100%",
+                        }}
+                    /> */}
+                    {/* )} */}
+                    {/* <LinearGradient
+                        colors={[
+                            "transparent",
+                            "rgba(0,0,0,.75)",
+                            "rgba(0,0,0,.75)",
+                            "transparent",
+                        ]}
+                        style={{
+                            position:"absolute",
+                            left:0,
+                            right:width/4,
+                            bottom:110,
+                            height:"50%",
+                            borderTopRightRadius: 30,
+                            borderBottomRightRadius: 30,
+                        
+                            overflow: "hidden",
+                        }}
+                    /> */}
+
+                    {/* Header */}
+
+                    <View
+                        style={{
+                            position:"absolute",
+                            left:10,
+                            right:10,
+                            bottom:10,
+                        }}  >
+                        <View
+                            style={{
+                                flexDirection:"row",
+                                alignItems:"center",
+                            }}
+                            className = "px-4" >
+                            <Image
+                                source={{uri:arena.profileImage.publicUrl}}
+                                style={{
+                                    width:width/6,
+                                    height:width/6,
+                                    borderRadius:50,
+                                    borderWidth:1,
+                                    borderColor:"#eab308",
+                                }}
+                            />
+                            <View
+                                style={{
+                                    flex:1,
+                                    marginLeft:12,
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        flexDirection:"row",
+                                        alignItems:"center",
+                                    }}
+                                >
+                                    <Text
+                                        numberOfLines={1}
+                                        style={{
+                                            color:"#FFF",
+                                            fontWeight:"700",
+                                            fontSize:width/23,
+                                            flex:1,
+                                        }}
+                                    >
+                                        {arena.arenaName} 
+                                    </Text>
+                                    {arena.verified && (
+
+                                        <MaterialCommunityIcons
+                                            name="check-decagram"
+                                            size={18}
+                                            color="#eab308"
+                                        />
+
+                                    )}
+
+                                </View>
+                                <View
+                                className = "flex-row gap-4 mt-2" >
+                                    <Text
+                                        style={{
+                                            color:"#eab308",
+                                            fontSize:width/27,
+                                            marginTop:8,
+                                            fontWeight:"700",
+                                        }}  >
+                                       {arena.talentType} {' '} {stageIcons[arena.talentType]} {'.'}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            color: "#fff",
+                                            marginTop: 8,
+                                            fontSize: width / 27,
+                                            fontWeight:"700",
+                                        }}   >
+                                        {countries.find(c => c.code == arena.region)?.name} - {arena.region} {countries.find(c => c.code == arena.region)?.flag}
+                                    </Text>
+                                </View>
+                                
+                            </View>
+                        </View>
+                        {/* <Text
+                            numberOfLines={2}
+                            style={{
+                                color:"rgba(255,255,255,.82)",
+                                marginTop:12,
+                                marginLeft:12,
+                                fontWeight : "800",
+                                fontSize : width/30,
+                                lineHeight:18,
+                            }} >
+                            {arena.biography}
+                         </Text> */}
+
+                        
+
+                        {/* <Text 
+                            numberOfLines={2}
+                            style ={{
+                                paddingTop :18,
+                                paddingBottom :18,
+                                // marginLeft : 18,
+                                fontWeight : "600",
+                                fontSize : width/32,
+                                lineHeight : 18 ,
+                                width : width * 0.75
+                            }}
+                        className="text-white ml-6 text-xs tracking-wide">
+                        {arena.description} 
+                        </Text>  */}
+                        {/* Stats */}
+                        <View
+                            style={{
+                                flexDirection:"row",
+                                marginTop:20,
+                                justifyContent:"space-between",
+                                alignSelf : "center"
+                            }}
+                            className = "px-4 w-[93%] bg-black/40 p-3 rounded-xl "
+                        >
+                            <Stat
+                                icon="star"
+                                value={arena.starCount}
+                                width={width }
+                            />
+                            <Stat
+                                icon="play-box-multiple-outline"
+                                value={arena.postCount}
+                                width={width  * 1}
+
+                            />
+                            <Stat
+                                icon="account-group-outline"
+                                value={arena.followerCount}
+                                width={width  }
+
+                            />
+                             {/* <Stat
+                                icon=""
+                                value={""}
+                                width={width}
+
+                            /> */}
+                        </View>
+                        {/* {arena.postCount.length >= 5 && ( */}
+                        {/* <View
+                        className ="flex-row w-full px-4 justify-start items-center gap-2">
+                              <FollowArenaButton width={width}
+                                                //  onPress = {toggleFollower} 
+                                                  isFollowed={arena.isFollower} />
+                        </View> */}
+                        {/* )} */}
+                    
+                    </View>
+
+                    <View
+                        className = "absolute top-2 right-6" >
+                              <MaterialCommunityIcons
+                                  name= "stadium"
+                                  size={38}
+                                  color = "#F4C542"
+                                     
+                                  
+                              />
+                    </View>
+
+            
+         </TouchableOpacity>
+)
+}
+
+
+function Stat({icon,value,width}){
+  return(
+      <View
+          style={{
+              flexDirection:"row",
+              alignItems:"center",
+          }}
+      >
+          <MaterialCommunityIcons
+              name={icon}
+              size={width/17}
+              color="#eab308"
+          />
+          <Text
+              style={{
+                  color:"#FFF",
+                  marginLeft:4,
+                  fontWeight:"600",
+                  fontSize:width/27,
+              }}
+          >
+              {value}
+          </Text>
+      </View>
+   )
+  }

@@ -36,12 +36,6 @@ import StageCoverIntroduction from '../components/talent/stageCoverIntroduction'
 
 
 
-
-
-
-
-
-
 export default function TalentContestRoom() {
 const {user , setUserTalents ,globalRefresh,setGlobalRefresh , favouriteStages , setFavouriteStages , favouriteList , setFavouriteList,  setUserTalentPerformance} = useGlobalContext()
 

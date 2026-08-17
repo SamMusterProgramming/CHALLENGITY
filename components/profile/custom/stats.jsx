@@ -5,23 +5,15 @@ export function Stats({ icon, label, value, width }) {
   return (
     <View
       style={{
-        // width: width / 5.8,
-        // height: width / 7.7,
+    
         borderRadius: 18,
         backgroundColor: "rgba(255,255,255,0.035)",
-        // borderWidth: 1,
-        // borderColor: "rgba(234,179,8,.12)",
         justifyContent: "center",
         alignItems: "center",
         paddingVertical :8,
-        // marginTop:10
       }}
     >
-      {/* <MaterialCommunityIcons
-        name={icon}
-        size={width/25}
-        color="#eab308"
-      /> */}
+
 
       <Text
         style={{

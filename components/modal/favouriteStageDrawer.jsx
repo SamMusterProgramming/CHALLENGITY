@@ -1,13 +1,14 @@
 
 
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Image,
 } from "react-native";
 
 import Animated, {
@@ -27,6 +28,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import StageDisplayer from "../talent/stageDisplayer";
+import ArenaCard from "../viewArenas/displayArena/arenaCard";
+import { LinearGradient } from "expo-linear-gradient";
+import FollowArenaButton from "../viewArenas/custom/followArenaButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -40,9 +44,10 @@ export default function FavouriteStageDrawer({
     useGlobalContext();
   const drawerWidth = width ;
   const translateX = useSharedValue(drawerWidth);
-   
+  const [selectedTab,setSelectedTab] = useState("arenas")
 
-
+ 
+ 
   useEffect(() => {
     translateX.value = visible
       ? withTiming(0, { duration: 250 })
@@ -88,31 +93,48 @@ export default function FavouriteStageDrawer({
       }
     });
 
+    const filteredData =
+    useMemo(() => {
+      switch (selectedTab) {
+        case "arenas":
+          return userFollowedArenas;
+
+        case "stages":
+          return favouriteStages;
+
+        default:
+          break;
+      }
+      // return notifications.filter(
+      //   (n) =>
+      //     n.category === activeTab
+      // );
+    }, [userFollowedArenas, favouriteStages, selectedTab]);
+
+    useEffect(() => {
+      if (visible) {
+        translateX.value = withSpring(0, {
+          damping: 18,
+          stiffness: 160,
+          overshootClamping: true,
+        });
+      } else {
+        translateX.value =
+          withTiming(drawerWidth);
+      }
+    }, [visible]);
+
+  
+
   if (!visible) return null;
 
-  const renderStage = ({ item }) => (
-    <View
-      style={{
-        marginBottom: height / 45,
-        alignItems: "center",
-      }}
-    >
-      <StageDisplayer
-        userTalent={item}
-        user={user}
-        userProfile={user}
-        activity={true}
-        width={drawerWidth * 0.95}
-        height={height * 0.28}
-      />
-    </View>
-  );
 
   return (
     <View
       style={{
         position: "absolute",
-        inset : 0
+        inset : 0 ,
+        zIndex : 9999
       }}
       className = "z-0"
     >
@@ -149,86 +171,137 @@ export default function FavouriteStageDrawer({
             },
           ]}
         >
-          {/* GOLD GLOW */}
-
-          {/* <View
+         
+         <View
             style={{
-              position: "absolute",
-              top: -height / 8,
-              alignSelf: "center",
-              width: width,
-              height: height / 3,
-              borderRadius: width,
+              flex: 1,
               backgroundColor:
-                "rgba(234,179,8,0.05)",
+                "#090909",
             }}
-          /> */}
+          >
+          
 
-          {/* HEADER */}
+          {/* HEADER */}        
+          <View
+            className="pl-2 pt-2 pb- 2 mb- 2 w-full  flex-row justify-between items-center borde r-b bo rder-[rgba(234,179,8,.50)]">
+            <View
+              className = "flex-1 px-2"
+            >
+              <Text
+                style={{
+                  color: "#EAB308",
+                  fontSize: width / 20,
+                  fontWeight: "900",
+                }}
+              >
+                FOLLOWINGS {'  '}
+              </Text>
+              <Text
+                style={{
+                  color:
+                    "rgba(255,255,255,0.45)",
+                  fontSize: width / 34,
+                  marginTop: 4,
+                }} >
+                Arenas and Stages you followed
+              </Text>
+            </View>
+            <TouchableOpacity 
+              className ="p-2 px-4 b g-white justify-center items-center"
+              onPress={closeDrawer}>
+                <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={55}
+                    color="#eab308"
+                />
+            </TouchableOpacity>
+          </View>
+       
+
 
           <View
             style={{
-              // paddingTop: insets.top,
-              paddingHorizontal: width / 18,
-              paddingBottom: height / 50,
-              borderBottomWidth: 1,
-              borderBottomColor:
-                "rgba(234,179,8,0.15)",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 8,
+              marginTop: 12,
+              marginBottom: 18,
             }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent:
-                  "space-between",
-                alignItems: "center",
-              }}
-            >
-              <View>
-                <Text
-                  style={{
-                    color: "#EAB308",
-                    fontSize: width / 20,
-                    fontWeight: "900",
-                  }}
-                >
-                  FOLLOWINGS {'  '}
-                  
-                </Text>
+            {[
+              {
+                key: "arenas",
+                label: "Arenas",
+                icon: "stadium",
+              },
+              {
+                key: "stages",
+                label: "Stages",
+                icon: "trophy",
+              },
+            ].map((item) => {
+              const isActive = selectedTab === item.key;
 
-                <Text
-                  style={{
-                    color:
-                      "rgba(255,255,255,0.45)",
-                    fontSize: width / 34,
-                    marginTop: 4,
+              return (
+            
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  key={item.key}
+                  onPress={() => {
+                    setSelectedTab(item.key);
+                    // indicator.value = withSpring(index);
                   }}
+                  style={{
+                    width: "48%",
+                    // height: height/10,
+                    borderRadius: 6,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: isActive
+                      ? "rgba(244,197,66,.10)"
+                      : "#0F0F10",           
+                  }}
+                  className ="py-4 flex-row gap-2"
                 >
-                  Arenas and Stages you followed
-                </Text>
-              </View>
-
-              <TouchableOpacity
-                onPress={closeDrawer}
-                style={{
-                  width: width / 10,
-                  height: width / 10,
-                  borderRadius:
-                    width / 20,
-                  backgroundColor:
-                    "rgba(255,255,255,0.05)",
-                  justifyContent:
-                    "center",
-                  alignItems: "center",
-                }}
-              >
-                <MaterialCommunityIcons
-                      name="chevron-right"
-                      size={55}
-                      color="#eab308"
+                  <MaterialCommunityIcons
+                    name={item.icon}
+                    size={28}
+                    color={
+                      isActive
+                        ? "#F4C542"
+                        : "#8C8C8C"
+                    }
                   />
-              </TouchableOpacity>
-            </View>
+              
+                  <Text
+                    style={{
+                      marginTop: 6,
+                      fontWeight: "700",
+                      fontSize:  width / 28,
+                      color: isActive
+                        ? "#F4C542"
+                        : "#8C8C8C",
+                    }}
+                  >
+                    {item.label}
+                  </Text>
+              
+                  {item.badge > 0 && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 10,
+                        right: 10,
+                        width: 8,
+                        height: 8,
+                        borderRadius: 4,
+                        backgroundColor: "#F4C542",
+                      }}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* CONTENT */}
@@ -278,24 +351,59 @@ export default function FavouriteStageDrawer({
             </View>
           ) : (
             <FlatList
-              data={favouriteStages}
-              renderItem={renderStage}
-              keyExtractor={(item) =>
-                item._id
-              }
-              showsVerticalScrollIndicator={
-                false
-              }
+              data={filteredData}
+              renderItem={({item}) =>{
+                switch (selectedTab) {
+                  case "stages":
+                    return (
+                      <View
+                        style={{
+                          marginBottom: height / 45,
+                          alignItems: "center",
+                            }} >
+                            <StageDisplayer
+                              userTalent={item}
+                              user={user}
+                              userProfile={user}
+                              activity={true}
+                              width={drawerWidth * 0.95}
+                              height={width * 0.7}
+                            />
+                      </View>
+                    );
+                  case "arenas":
+                    return (<View
+                      style={{
+                        marginBottom: height / 55,
+                        alignItems: "center",
+                          }} className ="mb-4" >
+                          <ArenaCard
+                            arena={item}
+                            user={user}
+                            userProfile={user}
+                            activity={true}
+                            width={drawerWidth }
+                            height={width * 0.7}
+                          />
+                    </View>)
+                  default:
+                    break;
+                }
+                // renderNotification
+               }}
+              keyExtractor={(item) => item._id.toString() }
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={ false }
               contentContainerStyle={{
-                paddingTop:
-                  height / 50,
                 paddingBottom:
-                  height / 8,
-                paddingHorizontal:
-                  width / 40,
+                  height / 28,
               }}
+              scrollEventThrottle={16}
+              
             />
           )}
+         
+         </View>
         </Animated.View>
       </GestureDetector>
     </View>

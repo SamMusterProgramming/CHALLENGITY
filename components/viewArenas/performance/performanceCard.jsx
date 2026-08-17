@@ -10,7 +10,8 @@ export default function PerformanceCard({item ,
     CARD_WIDTH ,
     performanceCount ,
     playPerformance,
-    setPostToDeleteId = null
+    setPostToDeleteId = null,
+    height = 300,
     }) {
 
     const {setArenaActionModal,
@@ -20,16 +21,16 @@ export default function PerformanceCard({item ,
     const isLocalSpotlight = item?.localSpotlight?.spotlight;
     const isRegionalSpotlight = item?.regionalSpotlight?.spotlight;
     const isGlobalSpotlight = item?.globalSpotlight?.spotlight;
-    const noSpotLight = isLocalSpotlight  || isRegionalSpotlight ||  isGlobalSpotlight 
+    const isSpotLight = isLocalSpotlight  || isRegionalSpotlight ||  isGlobalSpotlight 
    
   return (
     <TouchableOpacity
     style={{
-      height : 300,
+      height : height,
       width : index === performanceCount  -1 && index % 2 == 0 ? CARD_WIDTH * 2 : CARD_WIDTH ,
       // aspectRatio: 1,
       // margin: 12,
-      borderRadius: 8,
+      borderRadius: 5,
       backgroundColor: "#111",
       overflow: "hidden",
     }}
@@ -44,9 +45,9 @@ export default function PerformanceCard({item ,
       resizeMethod = "cover"
     />
 
-    {noSpotLight ? (
+    {isSpotLight ? (
       <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg-black/70  p-1">
-            <SpotlightIcon size ={14} />
+            <SpotlightIcon size ={12} />
       </View>
         ):(
         <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg-black/70  p-2">
@@ -101,7 +102,7 @@ export default function PerformanceCard({item ,
             width : "98%",
             padding : 10
         }}
-        className = " rounded-3xl flex-row justify-between items-center bg-[#000]/40"
+        className = " rounded-lg flex-row justify-between items-center bg-[#000]/40"
          > 
             <View
                 style={{
@@ -109,10 +110,10 @@ export default function PerformanceCard({item ,
                 className ="flex-row gap-1 items-center" >
                 <MaterialCommunityIcons
                     name="eye"
-                    size={CARD_WIDTH/10}
+                    size={CARD_WIDTH/13}
                     color="#eab308"
                 />
-                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/17 }}>
+                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/20 }}>
                      {item.viewCount || 0}
                 </Text>
             </View>
@@ -122,10 +123,10 @@ export default function PerformanceCard({item ,
                 }}  className ="flex-row gap-1 items-center"  >
                 <MaterialCommunityIcons
                     name="fire"
-                    size={CARD_WIDTH/10}
+                    size={CARD_WIDTH/12}
                     color="#eab308"
                 />
-                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/17 }}>
+                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/20 }}>
                     {item.fireCount || 0}
                 </Text>
             </View>
@@ -135,10 +136,10 @@ export default function PerformanceCard({item ,
                 }}  className ="flex-row gap-1 items-center"  >
                 <MaterialCommunityIcons
                     name="message"
-                    size={CARD_WIDTH/10}
+                    size={CARD_WIDTH/16}
                     color="#eab308"
                 />
-                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/17 }}>
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
                     {item.commentCount || 0}
                 </Text>
             </View>

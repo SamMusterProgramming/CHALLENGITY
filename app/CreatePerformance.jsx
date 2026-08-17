@@ -31,7 +31,7 @@ import ArenaAlertModal from "../components/arena/modals/AlertArenaModal";
 
 
 export default function CreatePerformance() {
-const {userArenas , user ,selectedArena , setSelectedArena , setUserArenas, uploadPerformanceLoading ,
+const {userArenas , user ,selectedArena , setSelectedArena , setUserArenas, uploadPerformanceLoading , setGlobalArenaRefresh,
    setUploadPerformanceLoading , arenaActionModal , setArenaActionModal ,tempPerformance, setTempPerformance} = useGlobalContext()
 const { width , height} =  useWindowDimensions();
 const { arena_id } = useLocalSearchParams();
@@ -193,7 +193,11 @@ const submitPerformance = async () => {
                 setUploadPerformanceLoading(false)
                 setSelectedArena(response.data.selectedArena)
                 setUserArenas(response.data.arenas)
+                setGlobalArenaRefresh(true)
                 })
+            })
+            .catch(e => {
+               setUploadPerformanceLoading(false)
             })
 }
 

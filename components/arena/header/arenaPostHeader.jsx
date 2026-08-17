@@ -37,15 +37,15 @@ export default function ArenaPostHeader({
       {/* STATUS */}
       
       {noSpotLight ? (
-        <View className="flex-row items-center gap-1 rounded-full bg-[#eab308]/10 px-1 py-1">
-            <SpotlightIcon size={14} />
+        <View className="flex-row items-center gap-1 rounded-full b g-[#eab308]/10 px-1 py-1">
+            <SpotlightIcon size={15} />
         </View>
         ):(
         <View className="flex-row items-center p-2 rounded-full bg-[#eab308]/20 ">
       
               <MaterialCommunityIcons
                 name="chart-line"
-                size={20}
+                size={22}
                 color="#fff"
               />
         </View>
@@ -63,24 +63,40 @@ export default function ArenaPostHeader({
           <View className="flex-row  items-center ga p-2">
 
             {isLocalSpotlight && (
-             <Text className="text-[#fffffd] text-[10px] font-bold">
+             <Text
+             style = {{
+              fontSize : width /32
+             }}
+             className="text-[#fffffd]  font-bold">
                  LOCAL {' '}
              </Text>
             )}
 
           {isRegionalSpotlight && (
-              <Text className="text-[#fffffd] text-[10px] font-bold">
+              <Text
+              style = {{
+                fontSize : width /32
+              }}
+               className="text-[#fffffd]  font-bold">
                 REGIONAL {' '}
               </Text>
           )}
 
           {isGlobalSpotlight && (
-              <Text className="text-[#fffffd] text-[10px] font-bold">
+              <Text
+              style = {{
+                fontSize : width /32
+              }}
+               className="text-[#fffffd]  font-bold">
                   GLOBAL {' '}
               </Text>
           )}
           {!noSpotLight && (
-              <Text className="text-[#fffffd] text-[10px] font-bold">
+              <Text
+              style = {{
+                fontSize : width /32
+              }}
+               className="text-[#fffffd]  font-bold">
                  Progressive performance {' '}
               </Text>
           )}
@@ -151,7 +167,7 @@ export default function ArenaPostHeader({
 
         <MaterialCommunityIcons
           name="dots-horizontal"
-          size={23}
+          size={25}
           color="#eab308"
         />
 

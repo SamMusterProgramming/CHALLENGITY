@@ -59,7 +59,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
         overflow: "hidden",
         paddingHorizontal:2
       }}
-      className=" bg- [#b68b0b]/20 p- 2"
+      className=" bg-black [#b68b0b]/20 p-2"
     >
       <Pressable
         onPress={() =>
@@ -88,11 +88,10 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
             style={{
               width: "100%",
               height: "100%",
-              opacity:0.9,
-              borderRadius : 18
+              opacity:0.5,
+              borderRadius : 5
             }}
             resizeMethod="cover"
-        
           />
         ) : (
           <Image
@@ -102,8 +101,8 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
           style={{
             width: "100%",
             height: "100%",
-            opacity:0.8,
-            borderRadius:18
+            opacity:0.5,
+            borderRadius: 5
           }}
           resizeMethod="cover"
           className ="roun ded-[5px] "
@@ -114,12 +113,12 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
          {/* STAGE */}
          <View
           style ={{
-            borderRadius:18
+            borderRadius:5
           }}
           className="flex-row absolute top-2 left-2  items-center bg-black/65  p-2 px-4 " >
                 <Text
                   style={{
-                    fontSize: width /32,
+                    fontSize: width /25,
                   }}
                 >
                   {stageIcons[userTalent.name]}
@@ -127,13 +126,13 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
                 <Text
                   numberOfLines={1}
                   style={{
-                    fontSize: width / 30,
+                    fontSize: width / 28,
                     marginLeft: 6,
                   }}
                   className="
                     text-white
-                    font-bebas
-                    tracking-widest
+                    font-bold 
+                    tracking-wider
                     uppercase
                   " >
                   {userTalent.name}
@@ -142,7 +141,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
 
          <View
             style ={{
-              borderRadius:18
+              borderRadius:5
             }}
             className="
               flex-row
@@ -153,13 +152,13 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
                 <Text
                   numberOfLines={1}
                   style={{
-                    fontSize: width / 30,
+                    fontSize: width / 28,
                     marginLeft: 6,
                   }}
                   className="
                     text-white
-                    font-bebas
-                    tracking-widest
+                    font-bold bebas
+                    tracking-wide
                     uppercase
                   " >
                   {region?.name} {'  '}
@@ -167,7 +166,7 @@ export default function StageDisplayer({ userTalent, user, width , height }) {
                 <Text
                   numberOfLines={1}
                   style={{
-                    fontSize: width /30,
+                    fontSize: width /26,
                   }}
                     className="ml-auto"
                 >

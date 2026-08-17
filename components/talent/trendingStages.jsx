@@ -104,7 +104,7 @@ export default function TrendingStages({ user }) {
           userProfile={user}
           activity={true}
           width={MAIN_ITEM_WIDTH}
-          height= {height * 0.3}
+          height= {height * 0.32}
         />
       </Animated.View>
     );
@@ -155,28 +155,34 @@ export default function TrendingStages({ user }) {
 
   return (
     <View
-    className ="flex- 1 mt-4 items-center   ">
+    style={{
+      width:"100%",
+      alignItems:"center",
+      // marginTop:16,
+    }}
+    className ="mt-4 mb-4 pb-4 pt-4 px- 4 bg-[#18191e]  rounde d-3xl">
         
-        <View className="px- 2 w-full text-center mt- 4 mb-4 b g-darkBg">
+        <View className="px-6 w-[100%] text-center pb- 4 bg-[black] roun ded-t-full ">
             <Text
                 style={{
                     color: colorTheme,
-                    fontSize: width / 20,
+                    fontSize: width / 25,
                     fontWeight: "800",
-                    letterSpacing: 0.6,
-                    // textAlign: "center",
+                    // letterSpacing: 0.6,
+                    textAlign: "center",
                   }}
-                className="fon t-bold mb-1 text-white text-center" >
+                  className = "text-center b g-[black] pt-4 pb- 2 rounde d-t-xl" >
                 TRENDING STAGES
             </Text>
             <Text 
-               style={{
-                fontSize: width / 30,
-                lineHeight: width / 24,
-                letterSpacing: 0.3,
-                fontWeight:700,
+              style={{
+                marginTop:6,
+                color:"rgba(255,255,255,0.9)",
+                fontSize:width/32,
+                // fontWeight:"500",
+                // letterSpacing:0.3,
               }}
-                className="text-gray-100 mt-1 mb-2 font-semiMontserrat text-center mt- ">
+              className=" b g-[black] pb-2 px- 6 rou nde d-t-xl font-semiMontserrat text-center  ">
               {`Explore  stages near you and across ${REGION_TITLES[getRegionName(userCountryCode)]}`}
             </Text>
            
@@ -185,10 +191,10 @@ export default function TrendingStages({ user }) {
 
         <View
           style={{
-            height: 0.3 * height,
+            height: 0.32 * height,
             width,
           }}
-          className="flex- 1 mb-6 h-[100%] w-full items-start justify-center  bg-[#392a0e]/30">
+          className="flex- 1 mb-4 h-[100%] w-full items-start justify-center  bg-[#000000] /30">
                 <LoadingActivity visible = {isLoading} />
                 <Animated.FlatList
                     ref={mainFlatListRef}
@@ -233,7 +239,7 @@ export default function TrendingStages({ user }) {
             /> 
 
             {/* <View className=" w-full [95%] px-2 h-[2] bg-gold/40 mt- 4 mt-4" /> */}
-            <View
+            {/* <View
             style={{
                 alignSelf: "start",
                 width: width ,
@@ -242,7 +248,7 @@ export default function TrendingStages({ user }) {
                 // marginVertical: 20,
             }}
             className="  [95%] px-2 h-[2] bg-gold/90 mb-6 mt-6"
-            />
+            /> */}
 
     </View>
 

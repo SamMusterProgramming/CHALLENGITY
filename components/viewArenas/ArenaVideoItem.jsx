@@ -64,7 +64,7 @@ import SpotlightIcon from "../custom/spotlightIcon";
     }
     );
 
-   const isMe = item.owner_id === user._id
+  //  const isMe = item.owner_id === user._id
 
    const isLocalSpotlight = item?.localSpotlight?.spotlight;
    const isRegionalSpotlight = item?.regionalSpotlight?.spotlight;
@@ -307,7 +307,7 @@ import SpotlightIcon from "../custom/spotlightIcon";
 
         {noSpotLight ? (
           <View className="absolute top-2 right-2  flex-row items-center gap-1 rounded-full bg-black/70  ">
-            <SpotlightIcon size ={23} />
+            <SpotlightIcon size ={20} />
           </View>
           ):(
           <View className="absolute top-2 right-2 p-3 flex-row items-center gap-1 rounded-full bg-black/70  ">

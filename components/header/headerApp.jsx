@@ -25,11 +25,11 @@ export default function HeaderApp({
 
   return (
     <View
-      style= {{ height:headerHeight * 0.8}}
+      style= {{ height:headerHeight * 0.6}}
       className = "flex-row items-center gap-2 bor der-b  bo rder-[#7d5706] rounded-tl-[40] justify-start w-full b g-[#5b4c40]"
     >
        <View 
-      className="flex-row  w-[35%] h-[100%] pl-2 rounded-xl justify-start pt-4  items-center  gap-4">
+      className="flex-row  w-[35%] h-[100%] pl-2 rounded-xl justify-start pt-3  items-center  gap-4">
            <TouchableOpacity
               onPress={() => setShowFavourite(true)}
               className="
@@ -65,13 +65,13 @@ export default function HeaderApp({
      
        <View
       //  style ={{width : headerHeight * 0.5 }}
-       className = " flex-row flex-1 h-[100%] pb-4  justify-center items-center   ">
+       className = " flex-row flex-1 h-[100%] pb- 4  justify-center items-center   ">
            <View
-           className ="flex-1 border-b-4 border-goldSoft">
+           className ="flex-1 borde r-b-4 bord er-goldSoft">
               <Image
                   source={images.applogo}
                   style={{
-                    width: "100%" ,
+                    width: "90%" ,
                     height:  headerHeight * 0.6
                   }}
                   resizeMethod="cover"
@@ -81,34 +81,8 @@ export default function HeaderApp({
       </View>
       
       <View 
-      className="flex-row  w-[35%] h-[100%]  rounded-xl justify-end pt-4 pr-2  items-center  gap-4">
-            {/* <TouchableOpacity
-              onPress={() => setShowFavourite(true)}
-              className="
-                rounde d-xl
-                bg -[#2a1f08]
-                rounded-full border-2 -b border-goldSoft/80
-                items-center justify-center  "
-              style={{
-                width:avatarSize  ,
-                height :avatarSize , 
-              }} >
-                <Ionicons name="heart-outline" size={30} color="#eab308" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="
-                rounde d-xl
-                bg -[#2a1f08]
-                rounded-full border-2 -b border-goldSoft/80
-                items-center justify-center
-                 "
-              style={{
-                width:avatarSize  ,
-                height :avatarSize , 
-              }} >
-              <Ionicons name="search" size={30} color="#eab308" />
-            </TouchableOpacity> */}
+      className="flex-row  w-[35%] h-[100%]  rounded-xl justify-end pt-3 pr-2  items-center  gap-4">
+       
 
             <TouchableOpacity
               onPress={() => setShowNotifications(!showNotifications)}

@@ -9,6 +9,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { countries, stageIcons } from "../../../utilities/TypeData";
 import { router } from "expo-router";
 import { getPostsArena, getUserById } from "../../../apiCalls";
+import SpotlightIcon from "../../custom/spotlightIcon";
 
 
 export default function PerformanceRepresentation({
@@ -31,14 +32,14 @@ export default function PerformanceRepresentation({
       style={{
         width,
         height: height ,
-        borderRadius: 18,
+        // borderRadius: 18,
         overflow:"hidden",
         backgroundColor:"#111",
         borderWidth:1,
-        borderColor:
-          "rgba(234,179,8,0.18)",
+        // borderColor:
+        //   "rgba(234,179,8,0.18)",
       }}
-      className ="justify-center items-center"
+      className ="justify-center items-center bg-black p- 2"
     >
       {/* THUMBNAIL */}
       <Image
@@ -50,6 +51,7 @@ export default function PerformanceRepresentation({
           height:"100%",
         }}
         resizeMode="cover"
+        className = "rounded-xl"
       />
       {/* PLAY BUTTON */}
       <View
@@ -84,9 +86,9 @@ export default function PerformanceRepresentation({
           }}
         style={{
           position:"absolute",
-          left:5,
-          right:5,
-          bottom:5,
+          left:10,
+          right:10,
+          bottom:10,
           backgroundColor:
             "rgba(0,0,0,0.55)",
           borderRadius :18
@@ -216,43 +218,15 @@ export default function PerformanceRepresentation({
 
             </Text>
 
-            
-            {/* <Text
-                style={{
-                  color:"#eab308",
-                  fontWeight:"800",
-                  fontSize:width/34,
-                  marginLeft : "auto",
-                  marginBottom :4
-                }}  >
-                ⭐  {''}
-             </Text>
-             <Text
-                style={{
-                  color:"#eab308",
-                  fontWeight:"800",
-                  fontSize:width/34,
-                  marginRight : 10
-                }}  >
-             </Text>
-             <MaterialCommunityIcons
-                name="video-outline"
-                size={23}
-                color="#fff"
-              />
-             <Text
-              style={{
-              color:
-              "rgba(255,255,255,0.85)",
-              marginLeft:8,
-              fontSize:width/34,
-              fontWeight:"700",
-               }}  >
-             </Text> */}
            </View>
           </View>
         </View>
       </TouchableOpacity>
+
+      <View
+      className = "absolute top-4 right-4">
+                <SpotlightIcon  size ={17} />
+      </View>
     </TouchableOpacity>
   );
 }

@@ -7,7 +7,7 @@ import { stageOrderMap } from './utilities/TypeData'
 const baseURL_DEVOLOPMENT = "http://localhost:8000"
 const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-export const BASE_URL =  baseURL_PRODUCTION
+export const BASE_URL =  baseURL_DEVOLOPMENT
 export const api = axios.create({
   baseURL: BASE_URL,
 });
@@ -1359,6 +1359,18 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       }
     };
 
+    export const getArenaById = async (user_id ,arena_id ) => {
+      try {
+       
+           const response = await api.get(
+          `/arenas/arena?userId=${user_id}&arenaId=${arena_id}`);
+           return response.data
+      } catch (error) {
+        console.error("creating arena error:", error.response?.data);
+        throw error;
+      }
+    };
+
     export const getArenaByProfile = async (profile_id ,body, setSelectedArena , setArenas, arena_id  ) => {
       try {
            const response = await api.post(
@@ -1603,4 +1615,18 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       }
     };
 
+    export const getRegionalArenas = async(region , setRegionalArenas) =>{
+      try {
+        await api.get(`/arens/region/${region}` )
+        .then(res =>  {
+          const arenas = res.data ; 
+          setRegionalArenas([...arenas])  
+          })
+          .finally(()=>{
+            // setIsLoading(false)
+          })
+      } catch (error) {
+        console.log(error)
+      }
+     }
     

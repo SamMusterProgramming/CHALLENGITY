@@ -237,27 +237,7 @@ if(!isLoaded && !item.temp) return null
         </View>
       </View>
 
-      {/* DESCRIPTION */}
-
-      {/* {!!item.caption && (
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 14,
-          }}
-        >
-          <Text
-            style={{
-              color: "#fff",
-              lineHeight: 22,
-              fontSize:width / 34,
-              fontWeight: "600",
-            }}
-          >
-            {item.caption}
-          </Text>
-        </View>
-      )} */}
+  
 
       {/* FOOTER */}
       {!item.temp && (

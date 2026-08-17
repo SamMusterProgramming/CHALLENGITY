@@ -347,8 +347,6 @@ export function selectIconColor(name){
 }
 
 
-
-
 export const getCountriesByRegion = (regionId) => {
   const codes = COUNTRY_CONTINENTS[regionId];
   return countries.filter(country =>
@@ -365,3 +363,174 @@ export const getRegionName = (countryCode) => {
       
         return null;
 };
+
+
+export const extractStageEntries = (
+        userTalents = [],
+        userId
+      ) => {
+        if (!Array.isArray(userTalents) || !userId) {
+          return [];
+        }
+      
+        const normalizedUserId = userId.toString();
+        const stageEntries = [];
+      
+        userTalents.forEach((stage) => {
+          if (!stage?._id) {
+            return;
+          }
+      
+          const stageId = stage._id.toString();
+  
+      
+          const contestantEntry =
+            stage.contestants?.find(
+              (entry) =>
+                entry?.user_id?.toString() ===
+                normalizedUserId
+            );
+      
+          const queueEntry =
+            stage.queue?.find(
+              (entry) =>
+                entry?.user_id?.toString() ===
+                normalizedUserId
+            );
+      
+          const eliminationEntry =
+            stage.eliminations?.find(
+              (entry) =>
+                entry?.user_id?.toString() ===
+                normalizedUserId
+            );
+      
+      
+          let entry = null;
+          let status = null;
+          let statusKey = null;
+      
+          if (eliminationEntry) {
+            entry = eliminationEntry;
+            status = "Eliminated";
+            statusKey = "eliminated";
+          } else if (queueEntry) {
+            entry = queueEntry;
+      
+            status = "In Queue";
+            statusKey = "queue";
+          } else if (contestantEntry) {
+            entry = contestantEntry;
+      
+            status = "On Stage";
+            statusKey = "contestant";
+          }
+      
+   
+      
+          if (!entry) {
+            return;
+          }
+      
+      
+      
+          const performances = Array.isArray(
+            entry.performances
+          )
+            ? [...entry.performances]
+            : [];
+      
+          
+      
+          performances.sort((a, b) => {
+            const dateA = new Date(
+              a?.date ||
+                a?.createdAt ||
+                0
+            ).getTime();
+      
+            const dateB = new Date(
+              b?.date ||
+                b?.createdAt ||
+                0
+            ).getTime();
+      
+            return dateB - dateA;
+          });
+      
+          
+      
+          const latestPerformance =
+            performances.length > 0
+              ? performances[0]
+              : null;
+      
+      
+      
+          const rank =
+            entry.rank !== undefined &&
+            entry.rank !== null
+              ? entry.rank
+              : null;
+      
+          const votes =
+            typeof entry.votes === "number"
+              ? entry.votes
+              : 0;
+      
+          const likes =
+            typeof entry.likes === "number"
+              ? entry.likes
+              : 0;
+      
+          
+      
+          stageEntries.push({
+            _id: entry._id,
+            entryId: entry._id,
+            userId: entry.user_id,
+            // src: "stage" ,
+            stageId: stage._id,
+            stageName: stage.name,
+            region: stage.region,
+            description: stage.desc || "",
+            status,
+            statusKey,
+            performances,
+            performanceCount: performances.length,
+            latestPerformance,
+            rank,
+            votes,
+            likes,
+            maxContestants:
+              stage.MAXCONTESTANTS ?? null,
+            audience:
+              stage.audience || null,
+            createdAt:
+              entry.createdAt || null,
+            stageCreatedAt:
+              stage.createdAt || null,
+            updatedAt:
+              stage.updatedAt || null,
+            stage: {
+              _id: stage._id,
+              name: stage.name,
+              contestantCount : stage.contestants.length,
+              desc: stage.desc || "",
+              region: stage.region,
+              MAXCONTESTANTS:
+                stage.MAXCONTESTANTS ?? null,
+              audience:
+                stage.audience || null,
+              createdAt:
+                stage.createdAt || null,
+              updatedAt:
+                stage.updatedAt || null,
+            },
+    
+            entry,
+          });
+        });
+      
+        return stageEntries;
+      };

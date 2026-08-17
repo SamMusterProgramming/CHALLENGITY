@@ -49,7 +49,8 @@ useEffect(() => {
                             arenaName :a.arenaName ,
                             talentType : a.talentType ,
                             region : a.region ,
-                            profileImage : a . profileImage
+                            profileImage : a . profileImage,
+                            owner_id : a.owner._id
                   }
            posts.push(post)
         // }
@@ -100,39 +101,36 @@ useEffect(() => {
   return (
 
     <View
-      style={{
-        width:"100%",
-        alignItems:"center",
-        // marginTop:16,
-      }}
-      className ="mb-6  mt-2"
-    >
+    style={{
+      width:"100%",
+      alignItems:"center",
+      // marginTop:16,
+    }}
+    className ="mt-4 mb-4 pb-4 pt-4 px- 4 bg-[#18191e]  rounde d-3xl">
 
       {/* HEADER */}
 
-      <View className="px- 3 w-full text-center pb-4 b g-darkBg">
+      <View className="px-6 w-[100%] text-center pb- 4 bg-[black] rounde d-t-full ">
         <Text
           style={{
             color:colorTheme,
-            fontSize:width/20,
+            fontSize:width/25,
             fontWeight:"800",
             letterSpacing:0.6,
             textTransform:"uppercase",
           }}
-          className ="text-center"
-        >
+          className = "text-center b g-[black] pt-4 pb- 2 rounde d-t-xl" >
           Local Arenas
         </Text>
         <Text
-          style={{
-            marginTop:6,
-            color:"rgba(255,255,255,0.7)",
-            fontSize:width/30,
-            fontWeight:"700",
-            letterSpacing:0.3,
-          }}
-          className="text-gray-100 mt-1 mb-2 font-semiMontserrat text-center mt- "
-        >
+            style={{
+              marginTop:6,
+              color:"rgba(255,255,255,0.9)",
+              fontSize:width/32,
+              // fontWeight:"500",
+              // letterSpacing:0.3,
+            }}
+            className=" b g-[black] pb-2 px- 6 rou nde d-t-xl font-semiMontserrat text-center  ">
           Explore talent arenas and creators near you
         </Text>
       </View>
@@ -143,7 +141,7 @@ useEffect(() => {
             height: height,
             width,
             }}
-          className="flex- 1 h-[100%] w-full items-start justify-center mb-6 bg-[#392a0e]/30">
+            className="flex- 1 h-[100%] w-full items-start justify-center mb-4 bg-[#000000] /30">
             <FlatList
                 style={{
                 width,
@@ -173,7 +171,7 @@ useEffect(() => {
                     <ArenaCard
                     arena = {item}
                     width={CARD_WIDTH}
-                    height={height}
+                    height={height * 0.95}
                     loadUProfile ={loadUProfile}
                     playPerformance = {playPerformance}
                     setSelectedArena ={setSelectedArena}
@@ -196,7 +194,7 @@ useEffect(() => {
 
         )}
 
-        <View
+        {/* <View
             style={{
                 alignSelf: "start",
                 width: width ,
@@ -205,7 +203,7 @@ useEffect(() => {
                 // marginVertical: 20,
             }}
             className="  [95%] px-2 h-[8] bg-gold/90 mb-6 mt-6"
-        />
+        /> */}
 
     </View>
 

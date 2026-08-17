@@ -10,6 +10,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import StarArenaButton from '../viewArenas/custom/starArenaButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import FollowArenaButton from '../viewArenas/custom/followArenaButton';
+import ArenaCard from '../viewArenas/displayArena/arenaCard';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -262,7 +263,24 @@ const toggleStar = async () => {
    return (
     <TouchableOpacity
     activeOpacity={0.9}
-    onPress={() => onPressArena(item)}
+    onPress={() => {
+        router.push({
+          pathname:
+            "/arenaDisplayer",
+          params: {
+            arena_id:
+              selectedArena._id,
+            // arena:
+            //   JSON.stringify(
+            //     arena
+            //   ),
+            // arena : JSON.stringify(
+            //   []
+            // )
+          },
+        });
+      
+    }}
     style={{
         width:width ,
         height:height/3,
@@ -452,7 +470,7 @@ const toggleStar = async () => {
 
     {notification.sender_id && (
       <View
-        className = "absolute top-4 right-8" >
+        className = "absolute top-4 right-8 " >
               <StarArenaButton
                     width={width}
                     isStarred={selectedArena.isStarred}
@@ -663,91 +681,19 @@ const toggleStar = async () => {
       )}
 
         {showArena && selectedArena &&  (
-          //  <TouchableOpacity
-          //  onPress={playPerformance}
-          //  className ="p-2 px-4 w-full mt-2 items-center opa ci ty-80">
-          //     <Image
-          //       source={{
-          //         uri:
-          //           selectedArena.coverImage.publicUrl || user.profileImage.publicUrl
-          //       }}
-          //       style ={{
-          //         height : height/3
-          //       }}
-          //       resizeMode="cover"
-          //       className="w-full h-[200] rounded-xl b order borde r-[#F4C542]/20"
-          //     />
-          //     <View
-          //       style={{
-          //         position: "absolute",
-          //         top: 0,
-          //         left: 3,
-          //         right: 3,
-          //         bottom: 0,
-          //         backgroundColor:"rgba(0,0,0,0.4)",
-          //         justifyContent:"center",
-          //         alignItems: "center",
-          //       }}
-          //     >
-          //       <Ionicons
-          //         name="play-circle"
-          //         size={60}
-          //         color="rgba(255,255,255,0.9)"
-          //       />
-          //     </View>
-          //     <View
-          //           style={{
-          //               position: "absolute",
-          //               bottom: 10,
-          //               // left: 2,
-          //               // right: 2,
-          //               width : "98%",
-          //               padding : 10
-          //           }}
-          //           className = " rounded-3xl flex-row justify-between items-center bg-[#000]/40"
-          //           > 
-          //               <View
-          //                   style={{
-          //                   }}
-          //                   className ="flex-row gap-1 items-center" >
-          //                   <MaterialCommunityIcons
-          //                       name="eye"
-          //                       size={width/25}
-          //                       color="#eab308"
-          //                   />
-          //                   <Text style={{ color: "#fff", fontWeight: "700", fontSize: width/30 }}>
-          //                       {selectedArena.postCount || 0}
-          //                   </Text>
-          //               </View>
-                        
-          //               <View
-          //                   style={{
-          //                   }}  className ="flex-row gap-1 items-center"  >
-          //                   <MaterialCommunityIcons
-          //                       name="star-four-points"
-          //                       size={width/23}
-          //                       color="#eab308"
-          //                   />
-          //                   <Text style={{ color: "#fff", fontWeight: "700", fontSize: width/30 }}>
-          //                       {selectedArena.starCount || 0}
-          //                   </Text>
-          //               </View>
-
-          //               <View
-          //                   style={{
-          //                   }}  className ="flex-row gap-1 items-center"  >
-          //                   <MaterialCommunityIcons
-          //                       name="message"
-          //                       size={width/25}
-          //                       color="#eab308"
-          //                   />
-          //                   <Text style={{ color: "#fff", fontWeight: "700", fontSize: width/30 }}>
-          //                       {selectedArena.followerCount || 0}
-          //                   </Text>
-          //               </View>
-          //      </View>
-          //  </TouchableOpacity>
-          displayArena()
+            <View
+            style={{
+            }}  className ="mt-4 self-center px-4"  >
+                <ArenaCard
+                arena = {selectedArena}
+                user = {user}
+                userProfile = {user}
+                activity={true}
+                width={width * 0.95 }
+                height={width * 0.7}
+              />
+            </View>
+          // displayArena()
       )}
 
       <TouchableOpacity

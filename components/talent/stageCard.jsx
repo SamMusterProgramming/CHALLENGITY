@@ -323,7 +323,7 @@ export default function StageCard({
                   items-center
                  bg-black/65
                   p-2
-                  rounded-xl
+                  rounded-md
                 "
               >
                 <Text
@@ -342,9 +342,8 @@ export default function StageCard({
                   }}
                   className="
                     text-white
-                    font-bebas
-                    tracking-[1px]
-                  "
+                    font-bold bebas
+                    tra"
                 >
                   {stage.name}
                 </Text>
@@ -356,16 +355,16 @@ export default function StageCard({
                 className="
                   flex-row
                   items-center
-                  justify-end
-                  
+                  justify-center
+                  p- 1 bg-blac k/60 text-center rounded-lg
                 "
               >
                 <Text
-                  numberOfLines={1}
+                  // numberOfLines={1}
                   style={{
-                    fontSize: width / 40,
+                    fontSize: width / 10,
                   }}
-                    className="ml-auto"
+                    className="text-center"
                 >
                   {region?.flag}{' '}
                          

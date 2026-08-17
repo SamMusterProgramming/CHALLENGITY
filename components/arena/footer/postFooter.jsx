@@ -47,11 +47,10 @@ export default function PostFooter({
         style={{
           flexDirection:"row",
           alignItems:"center",
-        }}
-      >
+        }}  >
         <MaterialCommunityIcons
           name="eye"
-          size={23}
+          size={width/15}
           color="#eab308"
         />
         <Text
@@ -86,7 +85,7 @@ export default function PostFooter({
         </Text> */}
         <MaterialCommunityIcons
                     name="fire"
-                    size={width/13}
+                    size={width/15}
                     color= {hasFired ? "#eab308" : "#fff"}
                 />
         <Text
@@ -100,8 +99,7 @@ export default function PostFooter({
               "#E5E5E5",
             fontSize:width/40,
             fontWeight:"800",
-          }}
-        >
+          }}  >
           {fires}
         </Text>
       </TouchableOpacity>
@@ -119,7 +117,7 @@ export default function PostFooter({
 
       <Ionicons
             name="chatbubble"
-            size={20}
+            size={width/17}
             color="#eab308"
       />
         <Text
@@ -146,7 +144,7 @@ export default function PostFooter({
       >
         <MaterialCommunityIcons
           name="share"
-          size={28}
+          size={width/13}
           color="#eab308"
         />
         <Text

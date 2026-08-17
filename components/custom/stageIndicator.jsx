@@ -126,9 +126,9 @@ export default function StageIndicator({
  
 
   return (
-    <View className="w-full px-2">
+    <View className="w-full px-4">
 
-      <View className="flex-row items-center justify-between">
+      <View className="flex-row items-center bg-black p-4 justify-between">
 
         {/* LEFT */}
         <View
@@ -136,11 +136,12 @@ export default function StageIndicator({
 
           <Text
             style={{
-              fontSize: width / 32,
-              letterSpacing: 1,
+              fontSize: width / 34,
+              fontWeight : "900"
+              // letterSpacing: 1,
             //   color: colorTheme
             }}
-            className="text-zinc-300 uppercase font-bold"
+            className="text-zinc-200 uppercase fon t-bold"
           >
             {title}
           </Text>
@@ -200,8 +201,8 @@ export default function StageIndicator({
                     style={{
                       // opacity,
                       // transform: [{ scale }],
-                      width: width / 35,
-                      height: width / 35,
+                      width: width / 45,
+                      height: width / 45,
                       borderRadius: 999,
                       backgroundColor: currentStage === index ? colorTheme : "rgba(255,255,255,0.25)" ,
                     }}

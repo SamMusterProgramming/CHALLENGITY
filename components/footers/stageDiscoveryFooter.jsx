@@ -14,7 +14,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 
 
 
-export default function StageDiscoveryFooter({width, height}) {
+export default function StageDiscoveryFooter({width, height , onPress = () => {} } ) {
     const {setActiveIndex} = useGlobalContext()
   return (
     <View
@@ -69,6 +69,7 @@ export default function StageDiscoveryFooter({width, height}) {
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => { setActiveIndex(1) }}
+        onPressOut={onPress}
       >
         <View
           style={{

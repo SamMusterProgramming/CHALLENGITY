@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import { AnimatePresence, MotiView } from "moti";
 import StageDisplayer from "../../talent/stageDisplayer";
+import StageDiscoveryFooter from "../../footers/stageDiscoveryFooter";
 
 function PerformanceDescription({stageData , user , width}) {
     const contestant = stageData.contestants?.find(
@@ -79,14 +80,10 @@ function PerformanceDescription({stageData , user , width}) {
   }
 
 export default function StageCaroussel({
-
     onPress,
-
 }) {
     const { userTalents, user} = useGlobalContext()
-
     const { width ,height } = useWindowDimensions();
-
     const CARD_WIDTH = width * 0.95;
     const SPACING = 14;
     const SIDE_PADDING = (width - CARD_WIDTH) / 2;
@@ -97,11 +94,9 @@ export default function StageCaroussel({
     const [showSwipeHint, setShowSwipeHint] = useState(false);
     useEffect(() => {
         if (!showSwipeHint) return;
-    
         const timer = setTimeout(() => {
         setShowSwipeHint(false);
         }, 10000);
-    
         return () => clearTimeout(timer);
     }, [showSwipeHint]);
   
@@ -126,7 +121,7 @@ export default function StageCaroussel({
               height={height * 0.35}
             />
            <View className="w-full px-2 3 bg-[#000000]  items-ce nter py-2 mt-4 ">
-                   <PerformanceDescription stageData={item} user={user} width={width}/>
+                   <PerformanceDescription  user={user} width={width}/>
            </View>
         
           </View>
@@ -136,48 +131,40 @@ export default function StageCaroussel({
 
     return (
         <>
-        <FlatList
-        ref={flatListRef}
-        horizontal
-        data={userTalents}
-        keyExtractor={(item) => item._id}
-        // extraData={selectedArena}
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={CARD_WIDTH + SPACING }
-        snapToAlignment="start"
-        decelerationRate="fast"
-        disableIntervalMomentum={false}
-        // initialScrollIndex={initialIndex || 0}
-        contentContainerStyle={{
-            paddingHorizontal: SIDE_PADDING,
-                        // paddingRight:
-            //     width -
-            //     CARD_WIDTH -
-            //     SIDE_PADDING,
-            paddingTop: 24,
-        }}
-        ItemSeparatorComponent={() => (
-            <View style={{ width: SPACING }} />
+        {!userTalents.length ? (
+          <View
+          className= "justify-center items-center w-[95%] self-center p-8 rounded-xl border-2 border-[#d79f08]/30 flex-1 mt-6">
+             <StageDiscoveryFooter onPress = {onPress} height ={height/1.2} width={width/1.2}/>
+          </View>
+        ) : (
+            <FlatList
+            ref={flatListRef}
+            horizontal
+            data={userTalents}
+            keyExtractor={(item) => item._id}
+            // extraData={selectedArena}
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CARD_WIDTH + SPACING }
+            snapToAlignment="start"
+            decelerationRate="fast"
+            disableIntervalMomentum={false}
+            // initialScrollIndex={initialIndex || 0}
+            contentContainerStyle={{
+                paddingHorizontal: SIDE_PADDING,
+                paddingTop: 24,
+            }}
+            ItemSeparatorComponent={() => (
+                <View style={{ width: SPACING }} />
+            )}
+            getItemLayout={(_, index) => ({
+                length: ITEM_SIZE,
+                offset: ITEM_SIZE * index,
+                index,
+              })}
+            renderItem={renderMainItem}
+            />
         )}
-        // onMomentumScrollEnd={(e) => {
-        //     const offsetX = e.nativeEvent.contentOffset.x;
-        //     const index = Math.round(
-        //         offsetX / (CARD_WIDTH + SPACING)
-        //     );
-        //     setSelectedArena(arenas[index]);
-        //     if (showSwipeHint) {
-        //         setShowSwipeHint(false);
-        //     }
-        // }}
-        getItemLayout={(_, index) => ({
-            length: ITEM_SIZE,
-            offset: ITEM_SIZE * index,
-            index,
-          })}
-
-        renderItem={renderMainItem}
-
-        />
+       
          <AnimatePresence>
                 {showSwipeHint && (
                     <MotiView

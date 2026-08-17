@@ -1,246 +1,4 @@
 
-// import React, { useEffect, useMemo, useRef, useState } from "react";
-// import {
-// View,
-// Text,
-// TouchableOpacity,
-// FlatList,
-// useWindowDimensions
-// } from "react-native";
-// import Animated, {
-// useSharedValue,
-// useAnimatedStyle,
-// withSpring,
-// withTiming,
-// runOnJS
-// } from "react-native-reanimated";
-// import { Gesture, GestureDetector } from "react-native-gesture-handler";
-// import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import { useGlobalContext } from "../../context/GlobalProvider";
-// import DisplayTalentNotification from "../notification/DisplayTalentNotifications";
-
-// export default function NotificationDrawer({ visible, onClose }) {
-// const { width } = useWindowDimensions();
-// const insets = useSafeAreaInsets();
-// const drawerWidth = width ;
-// const translateX = useSharedValue(drawerWidth);
-// const flatListRef = useRef(null);
-// const { notifications, setNotifications, user } = useGlobalContext();
-// const nativeGesture = Gesture.Native();
-// const [scrollEnabled, setScrollEnabled] = useState(true);
-// const [activeTab, setActiveTab] = useState("competition");
-// const indicator = useSharedValue(0);
-
-// const competitionNotifications = notifications.filter((n) => n.category === "competition");
-// const friendNotifications = notifications.filter((n) => n.category === "friends");
-// const competitionBadgeNumber = competitionNotifications.length;
-// const friendBadgeNumber = friendNotifications.length;
-
-// const TABS = [
-//   { key: "competition", label: "Competition" , badge : competitionBadgeNumber},
-//   { key: "challenge", label: "Challenge" ,badge : friendBadgeNumber},
-//   { key: "friends", label: "Friends" , badge : 0 },
-//   { key: "followers", label: "Followers" , badge : 0 },
-// ];
-
-
-
-// useEffect(() => {
-//   if (visible) {
-//     translateX.value = withSpring(0, {
-//     damping: 18,
-//     stiffness: 160,
-//     overshootClamping: true
-//     });
-//   } else {
-//     translateX.value = withTiming(drawerWidth);
-//   }
-// }, [visible]);
-
-// const closeDrawer = () => {
-// onClose();
-// };
-
-// const panGesture = Gesture.Pan()
-// .activeOffsetX([-10, 10])   // only triggers for horizontal swipe
-// .failOffsetY([-10, 10])     // vertical motion fails the gesture
-// .onUpdate((event) => {
-//   translateX.value = Math.max(0, event.translationX); 
-// })
-// .onEnd(() => {
-//   if (translateX.value > 120) {
-//       translateX.value = withTiming(width);
-//       runOnJS(onClose)();
-//   } else {
-//       translateX.value = withSpring(0);
-//   }
-// });
-
-// const filteredNotifications = useMemo(() => {
-//   switch (activeTab) {
-//     case "competition":
-//         return  competitionNotifications ; 
-//     case "friends":
-//       return  friendNotifications ; 
-//     default:
-//       break;
-//   }
-//   return notifications.filter((n) => n.category === activeTab);
-// }, [notifications, activeTab]);
-
-// const animatedStyle = useAnimatedStyle(() => ({
-// transform: [{ translateX: translateX.value }]
-// }));
-
-// const renderNotification = ({ item }) => {
-// if (item.category === "competition") {
-//   return (
-//   <DisplayTalentNotification
-//     notification={item}
-//     setNotifications={setNotifications}
-//     user={user}
-//   />
-//   );
-// }
-// if (item.category === "friends") {
-//   return (
-//   <DisplayTalentNotification
-//     notification={item}
-//     setNotifications={setNotifications}
-//     user={user}
-//   />
-//   );
-// }
-// if (item.category === "following") {
-//   return (
-//   <DisplayTalentNotification
-//     notification={item}
-//     setNotifications={setNotifications}
-//     user={user}
-//   />
-//   );
-// }
-// return null;
-// };
-
-// const TabButton = ({ item, index }) => {
-//   const isActive = activeTab === item.key;
-//   return (
-//     <TouchableOpacity
-//       onPress={() => {
-//         setActiveTab(item.key);
-//         indicator.value = withSpring(index);
-//       }}
-//       style={{
-//         // paddingVertical: 10,
-//         alignItems: "center",
-//         width : "25%",
-//         // backgroundColor : isActive ? "transparent" : "#8A8A8A",
-//       }}
-//       className = "p-2 px-2  " >
-//       <Text
-//         style={{
-//           color: isActive ? "gold" : "#8A8A8A",
-//           // fontWeight: "700",
-//           fontSize: width /39,
-//         }}
-//         className = "font-bebas tracking-widest"
-//       >   
-//         {item.label}
-//       </Text>
-
-//       <View className="absolute top-[-2]  right-[4] bg-red-800 w-4 h-4 rounded-full items-center justify-center">
-//         <Text className="text-white text-[7px] font-bold track ing-wide">
-//           {item.badge}
-//         </Text>
-//       </View>
-    
-//     </TouchableOpacity>
-//   );
-// };
-
-
-// if (!visible) return null;
-
-// return (
-
-// <View className="absolute inset-0 z-50">
-
-// {/* BACKDROP */}
-// {/* <TouchableOpacity
-// className="absolute inset-0 bg-gold"
-// onPress={onClose}
-// /> */}
-
-// {/* DRAWER */}
-// <GestureDetector gesture={panGesture}>
-
-// <Animated.View
-//   style={[
-//   animatedStyle,
-//   {
-//   width: drawerWidth,
-//   top: insets.top,
-//   bottom: 0
-//   }
-//   ]}
-//   className="absolute right-0 bg-zinc-900">
-  
-  
-//     <View className="flex-1 bg-[#000000] /40 p- 2">
-//     {/* HEADER */}
-//       <View className="flex-row justify-between items-center px-5 py-2 mt-2 bg-zinc-900">
-//         <Text className="text-white text-xl font-bold">
-//             Notifications
-//         </Text>
-//         <TouchableOpacity onPress={onClose}>
-//           <Text className="text-gray-400 text-3xl">X</Text>
-//         </TouchableOpacity>
-//           {/* SEGMENTED CONTROL */}
-//       </View>
-//       <View className="w-full flex-row bg-[#30240f] mt-2 roun ded-lg py-2 justify-between items-center ">
-//                 {TABS.map((item, index) => (
-//                   <TabButton key={item.key} item={item} index={index} />
-//                 ))}
-//       </View>
-
-//       {/* LIST */}
-//       <GestureDetector gesture={nativeGesture}>
-//           <FlatList
-//           ref={flatListRef}
-//           data={filteredNotifications}
-//           renderItem={renderNotification}
-//           keyExtractor={(item) => item._id}
-//           showsVerticalScrollIndicator={false}
-//           contentContainerStyle={{
-//           // paddingBottom: 40,
-//           // paddingHorizontal: 16,
-//           paddingTop: 10
-//           }}
-//           keyboardShouldPersistTaps="handled"
-//           nestedScrollEnabled
-//           initialNumToRender={10}        
-//           maxToRenderPerBatch={10}       
-//           windowSize={10}                
-//           removeClippedSubviews={true}   
-//           scrollEnabled={scrollEnabled}
-//           onScrollBeginDrag={() => setScrollEnabled(true)}
-//           />
-//       </GestureDetector>
-//       <View className="flex-row justify-between items-center h-[5%]  b g-zinc-800" />
-
-//     </View>
-
-// </Animated.View>
-
-// </GestureDetector>
-        
-// </View>
-
-// );
-
-// }
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
@@ -326,12 +84,12 @@ export default function NotificationDrawer({
         icon: "account-group-outline",
         badge: 6,
       },
-      {
-        key: "system",
-        label: "System",
-        icon: "bell-outline",
-        badge: 0,
-      },
+      // {
+      //   key: "system",
+      //   label: "System",
+      //   icon: "bell-outline",
+      //   badge: 0,
+      // },
     ];
 
   useEffect(() => {
@@ -387,7 +145,6 @@ export default function NotificationDrawer({
         default:
           break;
       }
-
       return notifications.filter(
         (n) =>
           n.category === activeTab
@@ -404,19 +161,7 @@ export default function NotificationDrawer({
       ],
     }));
 
-  const renderStageNotification = ({
-    item,
-  }) => {
-    return (
-      <DisplayTalentNotification
-        notification={item}
-        setNotifications={
-          setNotifications
-        }
-        user={user}
-      />
-    );
-  };
+ 
 
   const TabButton = ({
                       item,
@@ -431,7 +176,7 @@ export default function NotificationDrawer({
             indicator.value = withSpring(index);
           }}
           style={{
-            width: "23%",
+            width: "31%",
             // height: height/10,
             borderRadius: 12,
             justifyContent: "center",
@@ -493,7 +238,8 @@ export default function NotificationDrawer({
     <View
       style={{
         position: "absolute",
-        inset : 0
+        inset : 0,
+        zIndex : 9999
       }}
       className = "z-0"
     >
@@ -551,8 +297,6 @@ export default function NotificationDrawer({
       
             <View
               style={{
-                // paddingTop: 18,
-                // paddingBottom: 18,
                 paddingHorizontal: 2,
                 borderBottomWidth: 1,
                 borderBottomColor: "rgba(234,179,8,.50)",
@@ -560,25 +304,34 @@ export default function NotificationDrawer({
               }}
               className = "mb-4"
             >
-         
-
                {/* HEADER */}
               <View className="pl-2 pt-2  flex-row justify-between items-center border-b border-[rgba(234,179,8,.50)]">
-                <Text 
-                style ={{
-                  color :"#eab308",
-                  fontSize: width / 20,
-                  fontWeight : "800"
-                }}
-                className="text-white">
-                  NOTIFICATION
-                </Text>
+                <View>
+                  <Text 
+                    style ={{
+                      color :"#eab308",
+                      fontSize: width / 20,
+                      fontWeight : "800"
+                    }}
+                    className="text-white">
+                    NOTIFICATION
+                  </Text>
+                  <Text
+                    style={{
+                      color:
+                        "rgba(255,255,255,0.45)",
+                      fontSize: width / 34,
+                      marginTop: 4,
+                    }} >
+                    Explore notifications from Arenas , stages , friends
+                  </Text>
+                </View>
                 <TouchableOpacity 
                 className ="p-2 px-4 b g-white justify-center items-center"
                 onPress={onClose}>
                   <MaterialCommunityIcons
                       name="chevron-right"
-                      size={35}
+                      size={55}
                       color="#eab308"
                   />
                 </TouchableOpacity>
@@ -648,12 +401,8 @@ export default function NotificationDrawer({
                   // renderNotification
                  }
                 }
-                keyExtractor={(
-                  item
-                ) => item._id}
-                showsVerticalScrollIndicator={
-                  false
-                }
+                keyExtractor={(item) => item._id}
+                showsVerticalScrollIndicator={ false  }
                 keyboardShouldPersistTaps="handled"
                 nestedScrollEnabled
                 initialNumToRender={

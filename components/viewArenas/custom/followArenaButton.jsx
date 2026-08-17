@@ -9,7 +9,7 @@ export default function FollowArenaButton({width,onPress, isFollowed}) {
             onPress={onPress}
             style={{
             marginTop: 18,
-            marginBottom : 10 ,
+            // marginBottom : 10 ,
             // flex:1,
             // width : "50%",
             // borderRadius: 12,

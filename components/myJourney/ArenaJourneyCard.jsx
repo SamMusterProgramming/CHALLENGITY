@@ -21,6 +21,7 @@ const ArenaJourneyCard = ({
   }
 
   const performances = entry.posts || [];
+  
 
   /*
    * Newest performances first
@@ -50,7 +51,7 @@ const ArenaJourneyCard = ({
   const getThumbnailUrl = (performance) => {
     return (
       performance?.media?.thumbnail?.cdnUrl ||
-      performance?.media?.video?.cdnUrl ||
+      performance?.media?.thumbnail?.publicUrl ||
       null
     );
   };
@@ -83,13 +84,8 @@ const ArenaJourneyCard = ({
     performance,
     index
   ) => {
-    const imageUri =
-      getThumbnailUrl(performance);
-
-    const isLastVisible =
-      index === 1 &&
-      remainingCount > 0;
-
+    const imageUri =  getThumbnailUrl(performance);
+    const isLastVisible = index === 1 && remainingCount > 0;
     return (
       <View
         key={
@@ -103,7 +99,10 @@ const ArenaJourneyCard = ({
         //     entry
         //   )
         // }
-        className="relative flex-1 overflow-hidden rounded-[5px] border border-white/[0.07] bg-[#000000]"
+        style ={{
+          height
+        }}
+        className="rela tive flex-1 overflow-hidden rounded-[5px] border border-white/[0.07] bg-[#000000]"
       >
   
 
@@ -112,7 +111,7 @@ const ArenaJourneyCard = ({
             source={{
               uri: imageUri,
             }}
-            className="absolute inset-0 h-full w-full"
+            className="absolute inset-0 h- full w- full"
             resizeMode="cover"
           />
         ) : (
@@ -127,7 +126,7 @@ const ArenaJourneyCard = ({
 
   
 
-        <LinearGradient
+        {/* <LinearGradient
           pointerEvents="none"
           colors={[
             "transparent",
@@ -135,7 +134,7 @@ const ArenaJourneyCard = ({
             "rgba(0,0,0,0.88)",
           ]}
           className="absolute inset-0"
-        />
+        /> */}
 
        
 
@@ -148,7 +147,7 @@ const ArenaJourneyCard = ({
         )}
 
         {isLastVisible && (
-          <View className="absolute inset-0 items-center justify-center bg-black/55">
+          <View className="absolute inset-0 items-center justify-center bg-black/35">
             <Text className="text-[25px] font-extrabold tracking-[-0.5px] text-white">
               +{remainingCount}
             </Text>
@@ -162,7 +161,7 @@ const ArenaJourneyCard = ({
        
 
         {/* {!isLastVisible && ( */}
-          <View className="absolute inset-x-1 bg-black/55 bottom-1 rounded-lg">
+          <View className="absolute inset-x-2 bg-black/55 bottom-2 rounded-lg">
             <View className="flex-row w-full items-center justify-between p-2 ">
 
               {/* Fires */}
@@ -170,11 +169,15 @@ const ArenaJourneyCard = ({
               <View className="mr-[7px] flex-row items-center">
                 <MaterialCommunityIcons
                   name="fire"
-                  size={10}
+                  size={15}
                   color="#EAB308"
                 />
 
-                <Text className="ml-[3px] text-[8px] font-semibold text-white/85">
+                <Text
+                style = {{
+                  fontSize : width/38
+                }}
+                 className="ml-[3px] t ext-[8px] font-semibold text-white/85">
                   {formatNumber(
                     performance?.fireCount
                   )}
@@ -186,11 +189,15 @@ const ArenaJourneyCard = ({
               <View className="mr-[7px] flex-row items-center">
                 <Ionicons
                   name="eye"
-                  size={10}
+                  size={15}
                   color="#EAB308"
                 />
 
-                <Text className="ml-[3px] text-[8px] font-semibold text-white/85">
+                <Text
+                style = {{
+                  fontSize : width/38
+                }}
+                 className="ml-[3px] text -[8px] font-semibold text-white/85">
                   {formatNumber(
                     performance?.viewCount
                   )}
@@ -199,7 +206,7 @@ const ArenaJourneyCard = ({
 
               {/* Comments */}
 
-              <View className="flex-row items-center">
+              {/* <View className="flex-row items-center">
                 <Ionicons
                   name="chatbubble"
                   size={9}
@@ -211,7 +218,7 @@ const ArenaJourneyCard = ({
                     performance?.commentCount
                   )}
                 </Text>
-              </View>
+              </View> */}
 
             </View>
           </View>
@@ -240,15 +247,68 @@ const ArenaJourneyCard = ({
       }
       style={{
         width,
-        // height,
+        
       }}
       className="self-center gap-1 overflow-hidden rounded-[5px] b g-[#181818] px- [14px] pb- [11px] pt- [13px]"
     >
 
-      <View className="h- [48px] p-3 flex-row items-center justify-between bg-[#181818] rounded-[5px]">
+      <View className="rounded-t-[5px] bg-[#000000] p-4 flex-row items-center border-t-[0.5px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40 justify-between">
 
         <View className="fle x-1 flex-row items-center">
           
+          <View className="h-[42px] w-[42px] overflow-hidden rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.08]">
+              <View className="flex-1 items-center justify-center">
+                <MaterialCommunityIcons
+                  name="stadium"
+                  size={22}
+                  color="#EAB308"
+                />
+              </View>
+          </View>
+
+          <View className="ml-[10px] flex-1">
+            <View className="flex-row items-center">
+              <Text
+                numberOfLines={1}
+                style ={{
+                  fontSize : width/28
+                }}
+                className="max-w-[85%] text-[17px] font-bold tracking-[0.1px] text-white"
+              >
+                {entry.arenaName}
+              </Text>
+              {/* {entry.verified && ( */}
+                <Ionicons
+                  name="checkmark-circle"
+                  size={19}
+                  color="#EAB308"
+                  style={{
+                    marginLeft: 5,
+                  }}
+                />
+              {/* )} */}
+            </View>
+            <View className="mt-[5px] flex-row items-center">
+              <Ionicons
+                name="location-outline"
+                size={11}
+                color="rgba(255,255,255,0.52)"
+              />
+              <Text className="ml-[3px] text-[11px] font-medium tracking-[0.3px] text-white/55">
+                {entry.talentType}
+              </Text>
+
+              <View className="mx-[5px] h-[3px] w-[3px] rounded-full bg-white/25" />
+              <Text
+                numberOfLines={1}
+                className="text-[11px] font-medium tracking-[0.3px] text-white/55"
+              >
+                {entry.region} {countries.find(c => c.code == entry.region)?.flag}
+              </Text>
+            </View>
+
+          </View>
+
           <View className="h-[42px] w-[42px] overflow-hidden rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.08]">
             {entry?.profileImage?.publicUrl ||
             entry?.profileImage?.cdnUrl ? (
@@ -260,7 +320,7 @@ const ArenaJourneyCard = ({
                     entry?.profileImage
                       ?.cdnUrl,
                 }}
-                className="h-full w-full"
+                className="h-full w-full rounded-md"
                 resizeMode="cover"
               />
             ) : (
@@ -274,51 +334,6 @@ const ArenaJourneyCard = ({
             )}
           </View>
 
-          <View className="ml-[10px] flex-1">
-            <View className="flex-row items-center">
-              <Text
-                numberOfLines={1}
-                className="max-w-[85%] text-[17px] font-bold tracking-[0.1px] text-white"
-              >
-                {entry.arenaName}
-              </Text>
-
-              {/* {entry.verified && ( */}
-                <Ionicons
-                  name="checkmark-circle"
-                  size={19}
-                  color="#EAB308"
-                  style={{
-                    marginLeft: 5,
-                  }}
-                />
-              {/* )} */}
-
-            </View>
-
-            <View className="mt-[5px] flex-row items-center">
-
-              <Ionicons
-                name="location-outline"
-                size={11}
-                color="rgba(255,255,255,0.52)"
-              />
-
-              <Text className="ml-[3px] text-[11px] font-medium tracking-[0.3px] text-white/55">
-                {entry.talentType}
-              </Text>
-
-              <View className="mx-[5px] h-[3px] w-[3px] rounded-full bg-white/25" />
-
-              <Text
-                numberOfLines={1}
-                className="text-[11px] font-medium tracking-[0.3px] text-white/55"
-              >
-                {entry.region} {countries.find(c => c.code == entry.region)?.flag}
-              </Text>
-
-            </View>
-          </View>
         </View>
       </View>
 
@@ -332,8 +347,7 @@ const ArenaJourneyCard = ({
       style ={{
         height
       }}
-       className="mt-[5px] mb-[5px] fl ex-1 flex-row gap-[7px] overflow-hidden bg-black">
-
+      className=" px-4 justify-center border-l-[0.5px] border-r-[0.5px] border-[gold]/40 flex -1 flex-row gap-[7px] overfl ow-hidden">
         {visiblePerformances.map(
           renderPerformance
         )}
@@ -343,15 +357,26 @@ const ArenaJourneyCard = ({
          */}
 
         {visiblePerformances.length === 0 && (
-          <View className="flex-1 items-center justify-center rounded-[13px] border border-white/[0.06] bg-[#171717]">
-
+          <View className="flex-1 items-center justify-center rounded-[13px] border-t border-b bor der-white/[0.76] bg -[#171717]">
+            
+            <Image
+            source={{
+              uri: entry?.coverImage?.publicUrl ,
+            }}
+            className="absolute opacity-50 inset-0 h-full w-full"
+            resizeMode="cover"
+          />
             <Ionicons
               name="videocam-outline"
-              size={28}
-              color="rgba(255,255,255,0.28)"
+              size={38}
+              color="rgba(255,255,255,0.98)"
             />
 
-            <Text className="mt-[5px] text-[10px] font-medium text-white/40">
+            <Text
+            style = {{
+              fontSize : width/28
+            }}
+             className="mt-[5px]  font-medium text-white/95">
               No performances yet
             </Text>
 
@@ -360,30 +385,11 @@ const ArenaJourneyCard = ({
 
       </View>
 
-      {/*
-       * =====================================================
-       * ARENA FOOTER
-       * =====================================================
-       *
-       * IMPORTANT:
-       *
-       * These statistics describe the ARENA,
-       * not individual performances.
-       *
-       * ⭐ Stars
-       * 👥 Followers
-       * ▤ Performances
-       */}
+    
 
-      <View className="p-3 bg-[#181818] rounded-[5px] flex-row items-center justify-between">
+      <View className="p-2  bg-[#000000] mt-2 rounded-b-[5px] border-b-[0.8px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40  flex-row items-end justify-between">
 
-        {/*
-         * ===================================================
-         * STARS
-         * ===================================================
-         */}
-
-        <View className="items-center p- 1">
+        <View className="items-center p-1 px-2">
 
           <View className="flex-row  items-center">
 
@@ -407,9 +413,9 @@ const ArenaJourneyCard = ({
 
           <Text 
            style = {{
-            fontSize : width/40
+            fontSize : width/44
           }}
-          className="mt-[5px] text -[9px] font-bold tracking-[0.7px] text-white/75">
+          className="mt-[5px] text -[9px] font-bold tracki ng-[0.7px] text-white/85">
             STARS
           </Text>
 
@@ -421,7 +427,7 @@ const ArenaJourneyCard = ({
          * ===================================================
          */}
 
-        <View className="items-center">
+        <View className="items-center p-1 px-2">
 
           <View className="flex-row items-center">
 
@@ -445,9 +451,9 @@ const ArenaJourneyCard = ({
 
           <Text 
            style = {{
-            fontSize : width/40
+            fontSize : width/44
           }}
-          className="mt-[5px] text -[9px] font-bold tracking-[0.7px] text-white/75">
+          className="mt-[5px] text -[9px] font-bold trac king-[0.7px] text-white/85">
             FOLLOWERS
           </Text>
 
@@ -459,19 +465,19 @@ const ArenaJourneyCard = ({
          * ===================================================
          */}
 
-        <View className="items-center">
+        <View className="items-center p-1 px-2">
 
           <View className="flex-row items-center">
 
             <Ionicons
-              name="layers-outline"
+              name="play"
               size={width/27}
               color="#EAB308"
             />
 
             <Text
              style = {{
-                fontSize : width/30
+                fontSize : width/34
               }}
              className="ml-[4px] text- [14px] font-bold text-white/85">
               {formatNumber(
@@ -483,9 +489,9 @@ const ArenaJourneyCard = ({
 
           <Text 
            style = {{
-            fontSize : width/40
+            fontSize : width/44
           }}
-          className="mt-[5px] text- [9px] font-semibold tracking-[0.7px] text-white/75">
+          className="mt-[5px] text- [9px] font-bold track ing-[0.7px] text-white/85">
             PERFORMANCES
           </Text>
 

@@ -5,8 +5,9 @@ import {
   Pressable,
   FlatList,
   useWindowDimensions,
+  TouchableOpacity,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import ArenaCard from "../viewArenas/displayArena/arenaCard";
 import StageDisplayer from "../talent/stageDisplayer";
@@ -16,13 +17,17 @@ import StageJourneyCard from "../myJourney/StageJourneyCard";
 import { extractStageEntries } from "../../helper";
 import ArenaJourneyCard from "../myJourney/ArenaJourneyCard";
 import { router } from "expo-router";
-
+import WelcomeToArena from "../arena/welcomeToArena";
+import StageDiscoveryFooter from "../footers/stageDiscoveryFooter";
+ 
 export default function MyJourney({ onScroll }) {
   const {
     user,
     userTalents,
     userArenas,
+    setActiveIndex
   } = useGlobalContext();
+
   const { width, height } = useWindowDimensions();
   const [section, setSection] = useState("arenas");
   const [performancesData , setPerformancesData] = useState([])
@@ -147,6 +152,10 @@ export default function MyJourney({ onScroll }) {
         ...item,
         type: "content",
       })),
+      {
+        _id: "journeyr-empty",
+        type: "empty",
+      }
     ],
     [content]
   );
@@ -198,7 +207,7 @@ export default function MyJourney({ onScroll }) {
             backgroundColor: "#000",
             paddingTop: 15,
             paddingHorizontal: 12,
-            paddingBottom: 20,
+            // paddingBottom: 20,
           }}
         >
           <Text
@@ -223,9 +232,8 @@ export default function MyJourney({ onScroll }) {
             backgroundColor: "#000",
             paddingTop: 15,
             // paddingHorizontal: 12,
-            paddingBottom: 15,
-          }}
-        >
+            paddingBottom: 25,
+          }}  >
             <View
             style={{
               flexDirection: "row",
@@ -234,26 +242,26 @@ export default function MyJourney({ onScroll }) {
               borderRadius: 5,
               backgroundColor: "#101010",
               borderWidth: 1,
-              borderColor: "rgba(255,255,255,0.06)",
+              // borderColor: "rgba(255,255,255,0.06)",
               width:width * 0.95,
               alignSelf : "center"
-            }} >
+            }} className = "border-[0.5px] border-[gold]/30" >
               <JourneyStat
-                icon="stadium-outline"
+                icon="stadium"
                 value={stats.arenas}
                 label="ARENAS"
                 width={width}
               />
 
               <JourneyStat
-                icon="trophy-outline"
+                icon="trophy"
                 value={stats.competitions}
                 label="STAGES"
                 width={width}
               />
 
               <JourneyStat
-                icon="movie-open-play-outline"
+                icon="movie-open-play"
                 value={stats.performances}
                 label="PERFORMANCES"
                 width={width}
@@ -271,7 +279,7 @@ export default function MyJourney({ onScroll }) {
           style={{
             width: "100%",
             alignItems: "center",
-            marginBottom: 14,
+            marginBottom: 24,
           }}
         >
           <ArenaJourneyCard
@@ -294,7 +302,7 @@ export default function MyJourney({ onScroll }) {
             style={{
             width: "100%",
             alignItems: "center",
-            marginBottom: 14,
+            marginBottom: 24,
             }}
         >
             <StageJourneyCard
@@ -310,14 +318,27 @@ export default function MyJourney({ onScroll }) {
         </View>
         );
     }
-
-    return(
-      <EmptyJourney
-      onCreateArena={handleCreateArena}
-      onExploreStages={handleExploreStages}
-    />
-     )
-   
+     
+    if (item.type === "empty" && !content.length) {
+      return(
+        <View
+        style={{
+          height : height * 0.63
+        }}
+        className = "flex-1 bo rder bor der-white py-4 justify-between">
+        <EmptyJourney
+          onCreateArena = {() => setActiveIndex(3)}
+          // onExploreStages={handleExploreStages}
+          // height={height * 0.3}
+          width = {width}
+        />
+        <View
+          className= "justify-center items-center  w- [85%] self-center p-6 rounded-xl border-2 border-[#d79f08]/30 fle x-1 mt-8">
+             <StageDiscoveryFooter onPress = {() => {}} height ={height/1.2} width={width/1.2}/>
+        </View>
+        </View>
+      )
+    }
   };
 
   return (
@@ -338,7 +359,7 @@ export default function MyJourney({ onScroll }) {
         // onScroll={onScroll}
         scrollEventThrottle={16}
         contentContainerStyle={{
-          paddingBottom: height * 0.04,
+          paddingBottom: height * 0.045,
         }}
         ListEmptyComponent={
           <EmptyJourney
@@ -450,78 +471,49 @@ function JourneyTab({
   );
 }
 
-// function EmptyJourney({
-//   section,
-//   width,
-// }) {
-//   const isCreations = section === "creations";
-
-//   return (
-//     <View
-//       style={{
-//         alignItems: "center",
-//         justifyContent: "center",
-//         paddingTop: width * 0.25,
-//       }}
-//     >
-//       <MaterialCommunityIcons
-//         name={
-//           isCreations
-//             ? "stadium-outline"
-//             : "trophy-outline"
-//         }
-//         size={46}
-//         color="rgba(234,179,8,0.55)"
-//       />
-
-//       <Text
-//         style={{
-//           marginTop: 14,
-//           color: "rgba(255,255,255,0.7)",
-//           fontSize: width / 29,
-//           fontWeight: "700",
-//         }}
-//       >
-//         {isCreations
-//           ? "No arenas yet"
-//           : "No competitions yet"}
-//       </Text>
-//     </View>
-//   );
-// }
 
 const EmptyJourney = ({
   onCreateArena,
   onExploreStages,
+  height = {height} ,
+  width  ={width}
 }) => {
   return (
-    <View className="flex-1 items-center justify-center px-8">
+    <View 
+    style ={{
+      // height,
+      // width
+    }}
+    className="flex-1 w-full items-center justify-center px-8">
 
-      {/* Icon */}
-      <View className="mb-6 h-[72px] w-[72px] items-center justify-center rounded-[24px] border border-yellow-500/20 bg-yellow-500/[0.07]">
-        <Ionicons
-          name="trophy-outline"
+      {/* <View className="p-2  h- [72px] w- [72px] flex-row items-center justify-center rounded-[24px] border border-yellow-500/20 bg-yellow-500/[0.07]">
+        <MaterialCommunityIcons
+          name="stadium"
           size={34}
           color="#EAB308"
         />
-      </View>
+      </View> */}
 
-      {/* Title */}
-      <Text className="text-center text-[22px] font-bold tracking-[-0.3px] text-white">
+  
+      <Text 
+      style ={{
+        fontSize : width/23
+      }}
+      className="text-center text- [22px] font-bold tracking-[-0.3px] text-white">
         Your journey starts here
       </Text>
 
-      {/* Description */}
+    
       <Text className="mt-3 max-w-[300px] text-center text-[13px] font-medium leading-[20px] text-white/45">
         Create your own arena or step onto a stage
         and make your first performance.
       </Text>
 
-      {/* Primary action */}
+   
       <TouchableOpacity
         activeOpacity={0.88}
         onPress={onCreateArena}
-        className="mt-7 h-[48px] w-full max-w-[260px] flex-row items-center justify-center rounded-[15px] bg-yellow-500"
+        className="mt-7 h-[48px] w-[100%] max-w- [260px] flex-row items-center justify-center rounded-[8px] bg-yellow-500"
       >
         <Ionicons
           name="add"
@@ -533,27 +525,7 @@ const EmptyJourney = ({
           Create an Arena
         </Text>
       </TouchableOpacity>
-
-      {/* Secondary action */}
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={onExploreStages}
-        className="mt-4 flex-row items-center"
-      >
-        <Text className="text-[12px] font-semibold text-white/60">
-          Explore Stages
-        </Text>
-
-        <Ionicons
-          name="arrow-forward"
-          size={14}
-          color="rgba(255,255,255,0.55)"
-          style={{
-            marginLeft: 5,
-          }}
-        />
-      </TouchableOpacity>
-
+      
     </View>
   );
 };

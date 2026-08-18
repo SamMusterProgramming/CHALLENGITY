@@ -161,7 +161,7 @@ if(performances.length == 0 ) return ;
             height: height,
             width,
             }}
-          className="flex-1 bg-black h- [100%] w -full items-start justify-center mb-4 bg- [#392a0e] /30">
+          className="flex-1 bg-black h- [100%] w -full items-start justify-center pb-2 pt-2 bg- [#392a0e] /30">
             <FlatList
                 style={{
                 width,

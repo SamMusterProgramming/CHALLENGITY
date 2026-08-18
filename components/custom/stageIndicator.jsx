@@ -126,9 +126,9 @@ export default function StageIndicator({
  
 
   return (
-    <View className="w-full px-4">
+    <View className="w-full px- 4">
 
-      <View className="flex-row items-center bg-black p-4 justify-between">
+      <View className="flex-row items-center bg-black py-4 px-2 mt- 1 justify-between">
 
         {/* LEFT */}
         <View

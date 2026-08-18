@@ -884,76 +884,14 @@ const alertContent =  {
                      />
                    )
 
-                case "performances":
+                case "performancess":
                   if(selectedTab !== "arenas" ) return ; 
                   if(!selectedArena) {
                     return (
                       <WelcomeToCreateArena  setOpenArenaAlertModal={setOpenArenaAlertModal} setArenaActionModal={setArenaActionModal} />
                     ); 
                   }
-                  // if( selectedArena?.posts.length == 0) 
-                  //   return (
-                  //   <>
-                  //   <TouchableOpacity
-                  //         activeOpacity={0.85}
-                  //         // onPress={onUploadPerformance}
-                    
-                  //         onPress={() => {
-                  //           setArenaActionModal("create_performance")
-                  //           setOpenArenaAlertModal(true)
-                  //         }}
-                  //         style={{
-                  //           marginHorizontal: 12,
-                  //           marginTop: 20,
-                  //           marginBottom: 30,
-                  //           // height: 62,
-                  //           borderRadius: 12,
-                  //           backgroundColor:
-                  //             "#eab308",
-                  //           justifyContent: "center",
-                  //           alignItems: "center",
-                  //         }}
-                  //         className = "py-4"   >
-                        
-                  //       {uploadPerformanceLoading ? (
-                  //         <View
-                  //         style={{
-                  //             flexDirection: "row",
-                  //             alignItems: "center",
-                  //         }}
-                  //         >
-                  //         <ActivityIndicator
-                  //             size="small"
-                  //             color="#000"
-                  //         />
-                  //         <Text
-                  //             style={{
-                  //             color: "#000",
-                  //             fontWeight: "800",
-                  //             marginLeft: 10,
-                  //             // letterSpacing: 1,
-                  //             fontSize: width / 32,
-                  //             }}
-                  //         >
-                  //             UPLOADING...
-                  //         </Text>
-                  //         </View>
-                  //         ) : (
-                  //         <Text
-                  //         style={{
-                  //           color: "#000",
-                  //           fontWeight: "800",
-                  //           fontSize: width / 32,
-                  //         }}
-                  //       >
-                  //         Add Performance
-                  //       </Text>
-                  //     )}
-                  //   </TouchableOpacity>
-                  //   <EmptyPostArena width ={width} />
-                  //   </>
-                  // )
-
+                  
                   return (
                     <>
                     <TouchableOpacity

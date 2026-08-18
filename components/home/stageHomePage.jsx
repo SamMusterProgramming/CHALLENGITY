@@ -12,13 +12,12 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 import { generateChallengeTalentGuinessData, getLocalArenas, getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
 import StageSelector from "../custom/StageSelector";
 import HotStage from "../talent/hotStages";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import StageSelectorFooter from "../custom/stageSelectorFooter";
 import RegionalStages from "../talent/regionalStages";
-import StageCard from "../talent/stageCard";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import StageDisplayer from "../talent/stageDisplayer";
-import ArenaCard from "../viewArenas/displayArena/arenaCard";
+
+import ArenaJourneyCard from "../myJourney/ArenaJourneyCard";
+import StageCard from "../stage/StageCard";
 
 export const homeState = {
   scrollY: 0,
@@ -111,6 +110,17 @@ useEffect(() => {
   }, [globalSelectedRegion , globalRefresh , selectedTab ]);
 
 
+  const openArena = (entry) =>{
+    router.push({
+      pathname:
+        "/arenaDisplayer",
+      params: {
+        arena_id:
+          entry._id,
+      },
+    });
+  }
+
 
   
   const [isFocused, setIsFocused] = useState(true);
@@ -138,17 +148,23 @@ useEffect(() => {
           style={{
             width: "100%",
             alignItems: "center",
-            // marginBottom: 10,
+            marginBottom: 20,
           }}
         >
-          <StageDisplayer
+          {/* <StageDisplayer
             userTalent={item}
             user={user}
             userProfile={user}
             activity={true}
             width={width * 0.95}
             height={height * 0.30}
-          />
+          /> */}
+            <StageCard
+              entry={item}
+              width={width * 0.95}
+              height={width / 2}
+              // onPress={openStage}
+            />
         </View>
       );
     }
@@ -158,16 +174,22 @@ useEffect(() => {
         style={{
           width: "100%",
           alignItems: "center",
-          marginBottom: 14,
+          marginBottom: 20,
           // height:height * 0.30
 
         }}
       >
-        <ArenaCard
+        {/* <ArenaCard
           arena={item}
           width={width * 0.95}
           height={height * 0.30}
-        />
+        /> */}
+            <ArenaJourneyCard
+                entry={item}
+                width={width * 0.95}
+                height={width / 2.36}
+                onPress={openArena}
+                />
       </View>
     );
   };
@@ -260,7 +282,7 @@ useEffect(() => {
                     scrollEventThrottle={16}
                     contentContainerStyle={{
                       paddingTop: 8,
-                      paddingBottom: height * 0.02,
+                      paddingBottom: height * 0.055,
                     }}
                   />
                  )

@@ -7,7 +7,7 @@ import { stageOrderMap } from './utilities/TypeData'
 const baseURL_DEVOLOPMENT = "http://localhost:8000"
 const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-export const BASE_URL =  baseURL_DEVOLOPMENT
+export const BASE_URL =  baseURL_PRODUCTION
 export const api = axios.create({
   baseURL: BASE_URL,
 });

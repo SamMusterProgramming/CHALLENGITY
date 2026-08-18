@@ -73,7 +73,7 @@ return (
                 paddingHorizontal: 12,
                 // paddingTop:20,
                 // flex:1
-            }} className ="bg-black-200-white mb-2" >
+            }} className ="bg-black-200-white mb-" >
 
             <TouchableOpacity
                 activeOpacity={0.9}
@@ -211,7 +211,7 @@ return (
                 // flex: 1,
                 marginHorizontal: 7,
                 alignSelf : "center"
-            }} className = "justify-between m t- auto mb-2 mt-2 6 gap-4 w-[95%] items-center flex-row "  >
+            }} className = "justify-between m t- auto mb-1 mt-2 6 gap-2 w-[95%] items-center flex-row "  >
                 {!isMe && (
                 <>
                 <TouchableOpacity
@@ -224,10 +224,10 @@ return (
                             arena.isFollower
                                 ? "rgba(255,255,255,.09)"
                                 : "rgba(255,255,255,.09)",
-                        borderRadius: 10,
+                        borderRadius: 5,
                         // paddingHorizontal: 18,
                         // paddingVertical: 10,
-                    }} className = "w-[47%] justify-center py-3"   >
+                    }} className = "w-[50%] justify-center py-3"   >
 
                     <MaterialCommunityIcons
                         name={
@@ -240,7 +240,7 @@ return (
                                 ? "#EAB308"
                                 : "#EAB308"
                         }
-                        size={18}
+                        size={width/22}
                     />
 
                     <Text
@@ -268,7 +268,7 @@ return (
                         style={{
                             // width: 46,
                             // height: 46,
-                            borderRadius: 10,
+                            borderRadius: 5,
                             backgroundColor:  "rgba(255,255,255,.09)",
                             // justifyContent: "center",
                             alignItems: "center",
@@ -284,7 +284,7 @@ return (
                                     : "star-outline"
                             }
                             color="#EAB308"
-                            size={18}
+                            size={width/22}
                         />
                         <Text
                         style={{
@@ -316,14 +316,14 @@ return (
                        setOpenArenaAlertModal(true);
                      }}
                      style={{
-                       borderRadius: 10,
+                       borderRadius: 5,
                        backgroundColor: uploadPerformanceLoading
                          ? "rgba(234,179,8,0.65)"
                          : "#EAB308",
                        alignItems: "center",
                        flexDirection: "row",
                      }}
-                     className="w-[98%] self-center justify-center py-3"
+                     className="w-[100%] self-center justify-center py-3"
                    >
                      {uploadPerformanceLoading ? (
                        <>
@@ -358,49 +358,7 @@ return (
                    </TouchableOpacity>
                 )}
 
-                {/* <TouchableOpacity
-                        activeOpacity={0.9}
-                        onPress={onPressStar}
-                        style={{
-                            // width: 46,
-                            // height: 46,
-                            borderRadius: 23,
-                            backgroundColor:
-                                "rgba(255,255,255,.06)",
-                 
-                            alignItems: "center",
-                            flexDirection : "row"
-                        }}
-                       className = "w-[31%] justify-start" 
-                    >
-
-                        <MaterialCommunityIcons
-                            name={
-                                arena.isStarred
-                                    ? "star"
-                                    : "star-outline"
-                            }
-                            color="#EAB308"
-                            size={24}
-                        />
-                        <Text
-                        style={{
-                            marginLeft: 8,
-
-                            color:
-                                arena.isStarred
-                                    ? "#000"
-                                    : "#FFF",
-
-                            fontWeight: "700",
-                            }}   >
-                            {arena.isStarred
-                                ? "Starred"
-                                : "Star"}
-                        </Text>
-
-                </TouchableOpacity> */}
-               
+        
         </View>
      
         <View
@@ -409,7 +367,7 @@ return (
             style = {{
                 alignSelf :"center"
             }}
-            className="flex-row w-[95%] pb-1 px-2 justify-evenly border rounded-xl border-white/30 mt -8 ">
+            className="flex-row w-[95%] pb-1 px-2 justify-evenly border rounded-md border-white/30 mt -8 ">
                             {statData.map((item, index) => (
                             <React.Fragment key={item.label}>
                                 <Stats
@@ -441,7 +399,7 @@ return (
                             alignItems: "center",
                             flexDirection : "row"
                         }}
-                        className = " absolute top-4 right-8 justify-center"  >
+                        className = " absolute top-4 right-4 justify-center"  >
 
                         <MaterialCommunityIcons
                             name= "close"

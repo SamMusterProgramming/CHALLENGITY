@@ -1,6 +1,6 @@
 
 
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo } from "react";
 import {
@@ -9,21 +9,31 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { countries, stageIcons } from "../../utilities/TypeData";
+import { countries, stageCenterImages, stageIcons } from "../../utilities/TypeData";
 
-const StageJourneyCard = ({
+const StageCard = ({
   entry,
   width,
   height,
   onPress,
-  onPerformancePress,
 }) => {
   if (!entry) {
     return null;
   }
 
-  const performances = entry.performances || [];
+  const performances = [...entry.contestants.map(c =>  {
+       return c.performances[0]
+  })]|| [];
+  
 
+  const totalPerformances = () => {
+    let total = 0 ;
+    entry.contestants.map(c => {
+     total = total + c.performances.length
+  }) 
+  return total
+} 
+ 
   /*
    * =========================================================
    * SORT PERFORMANCES
@@ -31,13 +41,13 @@ const StageJourneyCard = ({
    * =========================================================
    */
 
-  const sortedPerformances = useMemo(() => {
-    return [...performances].sort(
-      (a, b) =>
-        new Date(b?.date || b?.createdAt || 0).getTime() -
-        new Date(a?.date || a?.createdAt || 0).getTime()
-    );
-  }, [performances]);
+//   const sortedPerformances = useMemo(() => {
+//     return [...performances].sort(
+//       (a, b) =>
+//         new Date(b?.date || b?.createdAt || 0).getTime() -
+//         new Date(a?.date || a?.createdAt || 0).getTime()
+//     );
+//   }, [performances]);
 
   /*
    * =========================================================
@@ -46,10 +56,10 @@ const StageJourneyCard = ({
    */
 
   const visiblePerformances =
-    sortedPerformances.slice(0, 2);
+    performances.slice(0, 2);
 
   const remainingCount = Math.max(
-    sortedPerformances.length - 2,
+    performances.length - 2,
     0
   );
 
@@ -157,13 +167,13 @@ const StageJourneyCard = ({
         style ={{
           height
         }}
-        className="relative flex-1 overflow-hidden rounded-[5px] border border-white/[0.07] bg-[#131111]"
+        className="relative flex-1 overflow-hidden rounded-[5px] border border-white/[0.07] bg-[#000000]"
       >
         {imageUri ? (
           <Image
             source={{ uri: imageUri }}
             resizeMode="cover"
-            className="absolute inset-0 h-full w-full opaci ty-60"
+            className="absolute inset-0 h-full w-full opac ity-90"
           />
         ) : (
           <View className="flex-1 items-center justify-center bg-[#121111]">
@@ -228,7 +238,7 @@ const StageJourneyCard = ({
       onPress={() => onPress?.(entry)}
       style={{
         width,
-        // height,
+
       }}
       className="self-center gap-1 rounded-[5px] bg -[#202125] px- [14px] pb- [11px] pt- [13px] shadow-black/25"
     >
@@ -239,9 +249,7 @@ const StageJourneyCard = ({
        */}
 
       <View className="rounded-t-[5px] bg-[#000000] p-4 flex-row items-center border-t-[0.5px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40 justify-between">
-        {/*
-         * Identity
-         */}
+      
         <View className="flex-1 flex-row items-end">
       
           <View className="h-[42px] w-[42px] items-center justify-center rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.09]">
@@ -263,7 +271,7 @@ const StageJourneyCard = ({
               }}
               className="te xt-[17px] font-bold tracking-[0.1px] text-white"
             >
-              {entry.stageName}  {' '} 
+              {entry.name}  {' '} 
             </Text>
 
             <View className="mt-[6px] flex-row  items -end">
@@ -293,10 +301,8 @@ const StageJourneyCard = ({
          * ===================================================
          */}
 
-        <View className="items-end  ">
-          {/*
-           * Rank
-           */}
+        {/* <View className="items-end  ">
+       
           {hasRank && (
             <View className="mb-[4px]  flex-row items-center justify-between">
               <Text 
@@ -307,22 +313,9 @@ const StageJourneyCard = ({
                {entry.rank < 4 ? "TOP" : "Rank"}  {''} {entry.rank}
               </Text>
 
-              {/* {isWinner && (
-                <Ionicons
-                  name="trophy"
-                  size={11}
-                  color="#EAB308"
-                  style={{
-                    marginLeft: 3,
-                  }}
-                />
-              )} */}
             </View>
           )}
 
-          {/*
-           * Status badge
-           */}
           <View
             className={`h- [23px] p-1 mt-1 flex-row items-center rounded-md border  ${status.badgeClass}`}
           >
@@ -336,7 +329,8 @@ const StageJourneyCard = ({
               {status.label}
             </Text>
           </View>
-        </View>
+        </View> */}
+
       </View>
 
       {/*
@@ -354,14 +348,23 @@ const StageJourneyCard = ({
          * No performances
          */}
         {visiblePerformances.length === 0 && (
-          <View className="flex-1 items-center justify-center rounded-[13px] border border-white/[0.06] bg-[#171717]">
+          <View
+          style = {{
+            height :height
+          }}
+           className="flex-1 items-center justify-center rounded-[13px] border border-white/[0.06] bg-[#171717]">
+            <Image
+                source={stageCenterImages[entry.name]}
+                resizeMode="cover"
+                className="absolute opacity-30 inset-0 h-full w-full "
+            />
             <Ionicons
               name="videocam-outline"
               size={28}
-              color="rgba(255,255,255,0.35)"
+              color="rgba(255,255,255,0.95)"
             />
 
-            <Text className="mt-[5px] text-[10px] font-medium text-white/40">
+            <Text className="mt-[5px] text-[14px] font-medium text-white">
               No performances yet
             </Text>
           </View>
@@ -376,8 +379,6 @@ const StageJourneyCard = ({
 
       <View className="p-2 bg-[#000000] mt-1 rounded-b-[5px] border-b-[0.5px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40  flex-row items-end justify-between">
      
-        
-          {/* <View className="flex-row items-end"> */}
 
           <View className="items-center p-1">
               <View className="flex-row items-center">
@@ -391,7 +392,7 @@ const StageJourneyCard = ({
                   fontSize : width/30
                  }}
                  className="ml-[4px] text-[16px] font-bold text-white/85">
-                {performances.length}{"  "}
+                {totalPerformances()}{"  "}
                 </Text>
               </View>
 
@@ -400,24 +401,12 @@ const StageJourneyCard = ({
                 fontSize : width/44
               }}
               className="ml-[5px] mt-[4px] te xt-[9px] font-bold text-white/85">
-                {performances.length === 1
+                {totalPerformances === 1
                   ? "PERFORMANCE"
                   : "PERFORMANCES"}
               </Text>
           </View>
-            {/* <Ionicons
-              name="star-outline"
-              size={13}
-              color="#EAB308"
-            />
-
-            <Text 
-            style = {{
-              fontSize : width/34
-            }}
-            className="ml-[5px] tex t-[10px] font-bold text-gold/70">
-                round 1 . {entry.stage.attendeesNumber} Contestants
-            </Text> */}
+           
             <View className="items-center p-1">
               <View className="flex-row items-center">
                 <Ionicons
@@ -431,85 +420,74 @@ const StageJourneyCard = ({
                   fontSize : width/30
                 }}
                  className="ml-[4px] tex t-[16px] font-bold text-white/85">
-                  {entry.stage.contestantCount ?? 0}
+                  {entry.contestants.length ?? 0}
                 </Text>
               </View>
 
               <Text
-              style = {{
-                fontSize : width/44
-              }}
+              style = {{ fontSize : width/44 }}
                className="mt-[4px] tex t-[9px] font-bold tracki ng-[0.8px] text-white/85">
                 CONTESTANTS
               </Text>
             </View>
 
-          {/* </View> */}
-        {/* </View> */}
+   
+            <View className="items-center p-1">
+            <View className="flex-row items-center">
+                <Ionicons
+                    name="layers"
+                    size={width/27}
+                    color="#EAB308"
+                    />
 
-        {/*
-         * Stats
-         */}
-        {/* <View className="flex-row items-center gap-[18px]"> */}
+                <Text 
+                style = {{
+                fontSize : width/30
+                }}
+                className="ml-[4px] text- [16px] font-bold tracking-[0.1px] text-white/85">
+                {entry.likes ?? 0}
+                </Text>
+            </View>
 
-        {/* Likes */}
-        <View className="items-center p-1">
-          <View className="flex-row items-center">
-            <Ionicons
-              name="thumbs-up"
-              size={width/27}
-              color="lightblue"
-            />
-
-            <Text 
-             style = {{
-              fontSize : width/30
+            <Text
+            style = {{
+                fontSize : width/44
             }}
-            className="ml-[4px] text- [16px] font-bold tracking-[0.1px] text-white/85">
-              {entry.likes ?? 0}
+            className="mt-[4px] text- [9px] font-bold track ing-[0.8px] text-white/85">
+                EDITION
             </Text>
-          </View>
+            </View>
 
-          <Text
-           style = {{
-            fontSize : width/44
-          }}
-           className="mt-[4px] text- [9px] font-bold track ing-[0.8px] text-white/85">
-            LIKES
-          </Text>
-        </View>
+            <View className="items-center p-1">
+                <View className="flex-row items-center">
+                <Ionicons
+                    name="sync-circle"
+                    size={15}
+                    color="#EAB308"
+                    />
 
-        {/* Votes */}
-        <View className="items-center p-1">
-          <View className="flex-row items-center">
-            <Ionicons
-              name="trophy"
-              size={width/27}
-              color="#EAB308"
-            />
+                    <Text 
+                    style = {{
+                    fontSize : width/30
+                    }}
+                    className="ml-[4px] text- [16px] font-bold tracking-[0.1px] text-white/85">
+                    1
+                    </Text>
+                </View>
 
-            <Text 
-             style = {{
-              fontSize : width/30
-            }}
-            className="ml-[4px] text- [16px] font-bold tracking-[0.1px] text-white/85">
-              {entry.votes ?? 0}
-            </Text>
-          </View>
-
-          <Text 
-           style = {{
-            fontSize : width/44
-          }}
-          className="mt-[4px] text- [9px] font-bold trac king-[0.8px] text-white/85">
-            VOTES
-          </Text>
-        </View>
+                <Text 
+                style = {{
+                    fontSize : width/44
+                }}
+                className="mt-[4px] text- [9px] font-bold trac king-[0.8px] text-white/85">
+                    ELIMINATION
+                </Text>
+            </View>
 
         </View>
-      {/* </View> */}
+
     </TouchableOpacity>
   );
 };
 
-export default StageJourneyCard;
+export default StageCard;

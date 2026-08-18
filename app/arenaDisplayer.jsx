@@ -58,7 +58,7 @@ export default function arenaDisplayer() {
       loadArena()
     }, [])
 
-    const PERFORMANCE_HEIGHT = selectedArena?.postCount == 1 ? height * 0.67 :
+    const PERFORMANCE_HEIGHT = selectedArena?.postCount == 1 ? height * 0.65 :
     selectedArena?.postCount <= 4 ? height * 0.64 / 2 :
     height * 0.65 / 2.5
 

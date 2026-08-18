@@ -10,6 +10,7 @@ import { getStageByNameAndRegion } from "../../apiCalls";
 import CarouselIndicator from "../custom/carouselIndicator";
 import StageHero from "../custom/stageHero";
 import StageIndicator from "../custom/stageIndicator";
+import StageCard from "../stage/StageCard";
 
 const { width ,height } = Dimensions.get("window");
 
@@ -97,14 +98,20 @@ export default function HotStage({ user }) {
         }}
         className =""
       >
-        <StageDisplayer
+        {/* <StageDisplayer
           userTalent={item}
           user={user}
           userProfile={user}
           activity={true}
           width={MAIN_ITEM_WIDTH}
           height= {height * 0.32}
-        />
+        /> */}
+          <StageCard
+            entry={item}
+            width={width * 0.95}
+            height={width / 2}
+            // onPress={openStage}
+          />
       </Animated.View>
     );
   };
@@ -191,10 +198,10 @@ export default function HotStage({ user }) {
 
         <View
           style={{
-            height: 0.32 * height,
+            // height: 0.32 * height,
             width,
             }}
-          className="flex- 1 h-[100%] w-full items-start justify-center mb-4 bg-[#000000] /30">
+          className="flex-1 h-[100%] w-full items-start justify-center pb-2 pt-2 bg-[#000000] /30">
                 <LoadingActivity visible = {isLoading} />
                 <Animated.FlatList
                     ref={mainFlatListRef}

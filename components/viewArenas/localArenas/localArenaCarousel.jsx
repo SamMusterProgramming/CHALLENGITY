@@ -12,6 +12,7 @@ import StageIndicator from "../../custom/stageIndicator";
 import { router } from "expo-router";
 import { getUserById } from "../../../apiCalls";
 import { User } from "lucide-react-native";
+import ArenaJourneyCard from "../../myJourney/ArenaJourneyCard";
 
 
 export default function LocalArenaCarousel({
@@ -98,6 +99,18 @@ useEffect(() => {
   });
 }, [arenaPosts])
 
+const openArena = (entry) =>{
+  router.push({
+    pathname:
+      "/arenaDisplayer",
+    params: {
+      arena_id:
+        entry._id,
+    },
+  });
+}
+
+
   return (
 
     <View
@@ -138,10 +151,10 @@ useEffect(() => {
       {/* CAROUSEL */}
       <View
           style={{
-            height: height,
+            // height: height,
             width,
             }}
-            className="flex- 1 h-[100%] w-full items-start justify-center mb-4 bg-[#000000] /30">
+            className="flex-1 h-[100%] w-full items-start justify-center pt-2 pb-2 6 bg-[#000000] bord er-2 bo rder-white /30">
             <FlatList
                 style={{
                 width,
@@ -149,6 +162,7 @@ useEffect(() => {
                 horizontal
                 data={arenas}
                 keyExtractor={(item)=>item._id}
+               
                 showsHorizontalScrollIndicator={false}
                 pagingEnabled
                 decelerationRate="fast"
@@ -168,7 +182,13 @@ useEffect(() => {
                     justifyContent:"center",
                     }}
                 >
-                    <ArenaCard
+                   <ArenaJourneyCard
+                    entry={item}
+                    width={CARD_WIDTH}
+                    height={width/2.2}
+                    onPress={openArena}
+                    />
+                    {/* <ArenaCard
                     arena = {item}
                     width={CARD_WIDTH}
                     height={height * 0.95}
@@ -176,7 +196,7 @@ useEffect(() => {
                     playPerformance = {playPerformance}
                     setSelectedArena ={setSelectedArena}
                     setSelectedPost = {setSelectedPost}
-                    />
+                    /> */}
                 </View>
                 )}
             />
@@ -193,17 +213,6 @@ useEffect(() => {
             /> 
 
         )}
-
-        {/* <View
-            style={{
-                alignSelf: "start",
-                width: width ,
-                height: 8,
-                backgroundColor: "rgba(212,175,55,0.52)",
-                // marginVertical: 20,
-            }}
-            className="  [95%] px-2 h-[8] bg-gold/90 mb-6 mt-6"
-        /> */}
 
     </View>
 

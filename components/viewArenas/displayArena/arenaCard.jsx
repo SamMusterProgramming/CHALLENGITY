@@ -68,45 +68,7 @@ return (
                         resizeMode="cover"
                         className ="rounded-xl"
                     />
-                   {/* {active && ( */}
-                    {/* <LinearGradient
-                        colors={[
-                            "transparent",
-                            "rgba(0,0,0,.15)",
-                            "rgba(0,0,0,.45)",
-                            "rgba(0,0,0,.65)",
-                             "transparent"
-                        ]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            width: "100%",
-                            bottom:0,
-                            height:"100%",
-                        }}
-                    /> */}
-                    {/* )} */}
-                    {/* <LinearGradient
-                        colors={[
-                            "transparent",
-                            "rgba(0,0,0,.75)",
-                            "rgba(0,0,0,.75)",
-                            "transparent",
-                        ]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            right:width/4,
-                            bottom:110,
-                            height:"50%",
-                            borderTopRightRadius: 30,
-                            borderBottomRightRadius: 30,
-                        
-                            overflow: "hidden",
-                        }}
-                    /> */}
-
-                    {/* Header */}
+                   
 
                     <View
                         style={{
@@ -189,36 +151,7 @@ return (
                                 
                             </View>
                         </View>
-                        {/* <Text
-                            numberOfLines={2}
-                            style={{
-                                color:"rgba(255,255,255,.82)",
-                                marginTop:12,
-                                marginLeft:12,
-                                fontWeight : "800",
-                                fontSize : width/30,
-                                lineHeight:18,
-                            }} >
-                            {arena.biography}
-                         </Text> */}
-
                         
-
-                        {/* <Text 
-                            numberOfLines={2}
-                            style ={{
-                                paddingTop :18,
-                                paddingBottom :18,
-                                // marginLeft : 18,
-                                fontWeight : "600",
-                                fontSize : width/32,
-                                lineHeight : 18 ,
-                                width : width * 0.75
-                            }}
-                        className="text-white ml-6 text-xs tracking-wide">
-                        {arena.description} 
-                        </Text>  */}
-                        {/* Stats */}
                         <View
                             style={{
                                 flexDirection:"row",
@@ -245,32 +178,17 @@ return (
                                 width={width  }
 
                             />
-                             {/* <Stat
-                                icon=""
-                                value={""}
-                                width={width}
-
-                            /> */}
+                            
                         </View>
-                        {/* {arena.postCount.length >= 5 && ( */}
-                        {/* <View
-                        className ="flex-row w-full px-4 justify-start items-center gap-2">
-                              <FollowArenaButton width={width}
-                                                //  onPress = {toggleFollower} 
-                                                  isFollowed={arena.isFollower} />
-                        </View> */}
-                        {/* )} */}
                     
                     </View>
 
                     <View
-                        className = "absolute top-2 right-6" >
+                        className = "absolute top-4 right-6" >
                               <MaterialCommunityIcons
                                   name= "stadium"
                                   size={38}
                                   color = "#F4C542"
-                                     
-                                  
                               />
                     </View>
 

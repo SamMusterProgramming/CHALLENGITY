@@ -109,7 +109,7 @@ export default function HotStage({ user }) {
           <StageCard
             entry={item}
             width={width * 0.95}
-            height={width / 2}
+            height={width / 1.3}
             // onPress={openStage}
           />
       </Animated.View>

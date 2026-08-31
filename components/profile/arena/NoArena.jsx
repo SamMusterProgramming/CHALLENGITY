@@ -13,11 +13,9 @@ import {
 } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 
-export default function WelcomeToCreateArena({
-   setOpenArenaAlertModal , setArenaActionModal
-}) {
+export default function NoArena() {
   const { width, height } = useWindowDimensions();
-  const { user } = useGlobalContext()
+
 
   return (
  
@@ -36,13 +34,14 @@ export default function WelcomeToCreateArena({
           // marginBottom : 24,
           padding:24
         }}
-        className = "justify-between w-full"
+        className = "justify-center gap-6 w-full"
       >
         <View
           style={{
             backgroundColor: "#171717",
             justifyContent: "center",
             alignItems: "center",
+            marginTop :24
           }}
           className = "absolute top-2 left-2"
         >
@@ -74,12 +73,11 @@ export default function WelcomeToCreateArena({
             // backgroundColor: "#171717",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 24
           }}
         >
           <MaterialCommunityIcons
             name="stadium"
-            size={height/14}
+            size={height/18}
             color="#EAB308"
           />
         </View>
@@ -119,30 +117,30 @@ export default function WelcomeToCreateArena({
         <Text
           style={{
             // marginTop: 24,
-            marginBottom : 12,
+            marginBottom : 6,
             textAlign: "center",
             color: "#FFFFFF",
             fontWeight: "900",
             fontSize: width / 25,
           }}
-          className ="mt-auto"
+          className ="mt-20"
         >
-          Your Arena
+          No Arena
         </Text>
 
-        <Text
+        {/* <Text
           style={{
             color: "#fff",
             textAlign: "center",
             // marginTop: 8,
             fontSize: width / 29,
-            marginBottom : 12,
+            marginBottom : 6,
           }}  >
             Ready to welcome your first audience
-        </Text>
+        </Text> */}
 
         {/* Badge */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
            onPress={() =>{
             setOpenArenaAlertModal(true)
             setArenaActionModal("create_arena")
@@ -167,7 +165,7 @@ export default function WelcomeToCreateArena({
           >
             Create Arena
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         
 

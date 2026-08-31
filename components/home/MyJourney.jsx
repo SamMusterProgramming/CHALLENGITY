@@ -245,7 +245,7 @@ export default function MyJourney({ onScroll }) {
               // borderColor: "rgba(255,255,255,0.06)",
               width:width * 0.95,
               alignSelf : "center"
-            }} className = "border-[0.5px] border-[gold]/30" >
+            }} className = "border-[0.5px] bo rder-[gold]/30" >
               <JourneyStat
                 icon="stadium"
                 value={stats.arenas}
@@ -261,7 +261,7 @@ export default function MyJourney({ onScroll }) {
               />
 
               <JourneyStat
-                icon="movie-open-play"
+                icon="play"
                 value={stats.performances}
                 label="PERFORMANCES"
                 width={width}
@@ -285,11 +285,8 @@ export default function MyJourney({ onScroll }) {
           <ArenaJourneyCard
                 entry={item}
                 width={width * 0.95}
-                height={width / 2}
+                height={width / 1.2}
                 onPress={openArena}
-                onPerformancePress={(performance, entry) => {
-                
-                }}
                 />
         
         </View>
@@ -308,7 +305,7 @@ export default function MyJourney({ onScroll }) {
             <StageJourneyCard
                 entry={item}
                 width={width * 0.95}
-                height={width / 2}
+                height={width / 1.2}
                 onPress={openStage}
                 onPerformancePress={(performance, entry) => {
                     // Open individual performance
@@ -333,8 +330,12 @@ export default function MyJourney({ onScroll }) {
           width = {width}
         />
         <View
-          className= "justify-center items-center  w- [85%] self-center p-6 rounded-xl border-2 border-[#d79f08]/30 fle x-1 mt-8">
-             <StageDiscoveryFooter onPress = {() => {}} height ={height/1.2} width={width/1.2}/>
+         style ={{
+          width : width * 0.9,
+          height : width * 0.8
+         }}
+          className= "justify-center items-center  w- [85%] self-center p- roun ded-xl bor der-2 bor der-[#d79f08]/30 fle x-1 mt-8">
+             <StageDiscoveryFooter onPress = {() => {}} height ={height * 0.7} width={width* 0.9}/>
         </View>
         </View>
       )
@@ -521,7 +522,11 @@ const EmptyJourney = ({
           color="#111111"
         />
 
-        <Text className="ml-2 text-[13px] font-bold text-[#111111]">
+        <Text
+        style ={{
+          fontSize : width/30
+        }}
+         className="ml-2 text-[13px] font-bold text-[#111111]">
           Create an Arena
         </Text>
       </TouchableOpacity>

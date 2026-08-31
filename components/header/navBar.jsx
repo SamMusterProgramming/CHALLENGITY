@@ -175,8 +175,8 @@ const TABS = [
   },
   {
     name: "My Journey",
-    icon: "map-marker-path",
-    activeIcon: "map-marker-path",
+    icon: "star-four-points",
+    activeIcon: "star-four-points",
   },
   {
     name: "Arena",

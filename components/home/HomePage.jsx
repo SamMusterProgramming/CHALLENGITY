@@ -35,6 +35,8 @@ export default function HomePage({onScroll}) {
   const [isHotStageReady, setIsHotStageReady] = useState(false);
   const scrollY = useRef(homeState.scrollY || 0);
   const{width , height} = useWindowDimensions()
+
+
   useEffect(() => {
     if (!globalRefresh) return;
     const fetchData = async () => {
@@ -77,30 +79,23 @@ export default function HomePage({onScroll}) {
           });
   }, [regionStages])
 
-  const [isFocused, setIsFocused] = useState(true);
-  useFocusEffect(
-    useCallback(() => {
-      setIsFocused(true);
-      // const timeout = setTimeout(() => {
-      //   flatListRef.current?.scrollToOffset({
-      //     offset: homeState.scrollY || 0,
-      //     animated: false,
-      //   });
-      // }, 80); 
-      return () =>  {
-                setIsFocused(false);
-                // clearTimeout(timeout);
-              }
-    }, [])
-  );
+  // const [isFocused, setIsFocused] = useState(true);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     setIsFocused(true);
+    
+  //     return () =>  {
+  //               setIsFocused(false);
+            
+  //             }
+  //   }, [])
+  // );
   
-  const handleScroll = (e) => {
-    // const offset = e.nativeEvent.contentOffset.y;
-    // scrollY.current = offset;
-    // homeState.scrollY = offset; 
-  };
+  // const handleScroll = (e) => {
 
-  if (!isFocused) { return null; }
+  // };
+
+  // if (!isFocused) { return null; }
 
   return (
     

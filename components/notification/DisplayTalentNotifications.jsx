@@ -19,7 +19,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
   const [isRead, setIsRead] = useState(notification.is_read);
   const [showDelete, setShowDelete] = useState(false);
   const [not, setNot] = useState(null);
-
+ 
   // Animate layout changes
   const toggleDelete = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -47,8 +47,8 @@ export default function DisplayTalentNotification({ notification, setNotificatio
         router.push({
           pathname: '/TalentContestRoom',
           params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
+            region: notification.metadata.region,
+            selectedTalent: notification.metadata.name,
             // selectedIcon: icons.dance,
             // regionIcon: icons.africa,
             startIntroduction: 'true',
@@ -63,8 +63,8 @@ export default function DisplayTalentNotification({ notification, setNotificatio
         router.push({
           pathname: '/TalentContestRoom',
           params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
+            region: notification.metadata.region,
+            selectedTalent: notification.metadata.name,
             // selectedIcon: icons.dance,
             // regionIcon: icons.africa,
             startIntroduction: 'true',
@@ -95,8 +95,8 @@ export default function DisplayTalentNotification({ notification, setNotificatio
         router.push({
           pathname: '/TalentContestRoom',
           params: {
-            region: notification.metadata.stageRegion,
-            selectedTalent: notification.metadata.stageName,
+            region: notification.metadata.region,
+            selectedTalent: notification.metadata.name,
             // selectedIcon: icons.dance,
             // regionIcon: icons.africa,
             startIntroduction: 'true',
@@ -155,27 +155,25 @@ export default function DisplayTalentNotification({ notification, setNotificatio
       activeOpacity={0.9}
       onPress={handleAction}
       style ={{
+        zIndex: showDelete ? 9999 : 1,
         // zIndex: showDelete ? 9999 : 1,
         // elevation: showDelete ? 9999 : 1,
         // opacity :showDelete ? 0.3 :1
       }}
-      className={`mx-1 mb-4 rounded-xl z-50   border overflow-hidden
-         ${
+      className={`m x-1 mb-4 rounded-3xl items-center  py-2 px-4 border over flow-hidden ${
         isRead
-          ? "bg-[#121111] border-white/10"
-          : "bg-[#17120A] bo rder-[#F4C542]/25"
+          ? "bg-[#19 130a] borde r-l border-white/25"
+          : "bg-p rimary bord er-l-4 border-[gold]/35 "
       }`}
       >
-      {/* Gold Accent */}
-      {!isRead && (
-        <View className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#F4C542]" />
+  
+     {!isRead && (
+        <View className="absolute h-[9px] rounded-full items-center left-2  top-2  w-[9px] bg-[#F4C542]" />
       )}
-       {!isRead && (
-        <View className="absolute left -0 top-0 bott om-0 w-[100%] h-[3px] bg-[#F4C542]" />
-      )}
+    
       
-        <View className="flex-row items-center px-4 py-4">
-         {/* Thumbnail */}
+        {/* <View className="flex-row items-center px-4 py-4">
+     
          <View className="ml- 4">
           <Image
             source={{
@@ -187,8 +185,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
             className="w-20 h-20 rounded-full border border-[#F4C542]/20"
           />
         </View>
-       
-        {/* Content */}
+
         <View className="flex-1 h-20 ml-4">
   
           <View className="flex-row items-center">
@@ -250,15 +247,12 @@ export default function DisplayTalentNotification({ notification, setNotificatio
            <TouchableOpacity
                   onPress={toggleDelete}
                   style={{
-                    // width: width/18,
-                    // height: width/18,
-                    // borderRadius: 999,
+           
                     justifyContent:
                       "center",
                     alignItems:
                       "center",
-                    // backgroundColor:
-                    //   "#1d1d1d",
+             
                   }}
                   className ="p-4 absolute -top-4 -right-4"
                 >
@@ -269,14 +263,14 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                   />
             </TouchableOpacity>
   
-              {/* FLOATING MENU */}
+         
               {showDelete && (
                   <View
                     style={{
                       position: "absolute",
                       top: 0,
                       right: 32,
-                      // width: width -153,
+            
                       backgroundColor:
                         "#161616",
                       borderRadius: 5,
@@ -298,7 +292,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                     }}
                     className = "py-2"
                   >
-                    {/* MARK READ */}
+           
                     <TouchableOpacity
                       onPress={() => {
                         markAsRead();
@@ -336,7 +330,7 @@ export default function DisplayTalentNotification({ notification, setNotificatio
                       }}
                     />
   
-                    {/* DELETE */}
+       
                     <TouchableOpacity
                       onPress={() => {
                         setShowDelete(false);
@@ -362,12 +356,222 @@ export default function DisplayTalentNotification({ notification, setNotificatio
            
         </View>
        
-        {!isRead && (
-              <View className="absolute bottom-4 right-6 w-2 h-2 rounded-full bg-[#F4C542]" />
-            )}
+     
        
   
-      </View>
+      </View> */}
+
+      <View 
+        style ={{
+          height : width/4,
+          // width
+        }}
+        className="w-full fle x-1 h- 20 px- 4">
+          <View
+          style ={{
+            // height : width/5.2
+          }}
+           className="flex-row flex-1 items-center w-full gap-4">
+              <View className="">
+                <Image
+                  source={{
+                    uri:
+                      notification.presentation?.image ||
+                      user.profileImage.publicUrl,
+                  }}
+                  style = {{
+                    width:width/11,
+                    height : width/11
+                  }}
+                  resizeMode="cover"
+                  className="w- 20 h- 20 rounded-full border border-[#F4C542]/20"
+                />
+              </View>
+              <View>
+                  <View
+                  className = "flex-row " >
+                    <Text
+                      numberOfLines={1}
+                      className="text-white font-extrabold mr-4"
+                      style={{
+                        fontSize: width / 32,
+                      }}
+                    >
+                      {notification.metadata.name} Stage
+                    </Text>
+                  
+                      <View className="fle x-1 items-center justify-center">
+                          <MaterialCommunityIcons
+                            name="trophy"
+                            size={17}
+                            color="#EAB308"
+                          />
+                      </View>
+                  </View>
+                  <View className="flex-row mt-1 items-center">
+                    <Text
+                      className="text-[#AAA] font-bold mt-1"
+                      style={{
+                        fontSize: width / 34,
+                      }}
+                    >
+                      {notification.metadata.name} {' '}
+                      {stageIcons[notification.metadata.name]} {'  .  '}
+                    </Text>
+                    <Text
+                      className="text-[#AAA] font-bold mt-1"
+                      style={{
+                        fontSize: width / 34,
+                      }}  >
+                        {
+                          countries.find(
+                            c =>
+                              c.code ===
+                              notification.metadata.region
+                          )?.name 
+                        }
+                        {" "}
+                        {
+                          countries.find(
+                            c =>
+                              c.code ===
+                              notification.metadata.region
+                          )?.flag
+                        } 
+                    </Text>
+                  </View>
+             </View>
+          </View>
+         
+          <View
+            className ="mt-auto  fle x-1 py-2">
+            <Text
+              numberOfLines={2}
+              className="text-zinc-100 fon t-pbold sem ibold"
+              style={{
+                fontSize: width / 33,
+                lineHeight: 22,
+              }}
+            >
+              {notification.presentation.text}
+            </Text>
+          </View>
+
+        </View>
+
+
+        <TouchableOpacity
+                  onPress={toggleDelete}
+                  style={{
+                    // width: width/18,
+                    // height: width/18,
+                    // borderRadius: 999,
+                    justifyContent:
+                      "center",
+                    alignItems:
+                      "center",
+                    // backgroundColor:
+                    //   "#1d1d1d",
+                  }}
+                  className ="p-4 absolute - top-0 - right-0"
+                >
+                  <MaterialCommunityIcons
+                    name="menu"
+                    size={22}
+                    color="#F4C542"
+                  />
+      </TouchableOpacity>
+
+      {showDelete && (
+        <View
+          style={{
+            position: "absolute",
+            top: 32,
+            right: 10,
+            // width: width -153,
+            backgroundColor:
+              "#161616",
+            borderRadius: 5,
+            borderWidth: 1,
+            borderColor:
+              "#2d2d2d",
+            overflow: "hidden",
+            zIndex: 1,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.3,
+            shadowRadius: 10,
+            elevation: 12,
+          
+          }}
+          className = "py-2 z-10"
+        >
+          {/* MARK READ */}
+          <TouchableOpacity
+            onPress={() => {
+              markAsRead();
+              setShowDelete(false);
+            }}
+            style={{
+              paddingVertical: 7,
+              paddingHorizontal: 14,
+              zIndex: 1,
+            }}
+            className = "px-6"
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontWeight: "600",
+                fontSize:width/34
+              }}
+            >
+              ✓ Mark as Read
+            </Text>
+          </TouchableOpacity>
+          <View
+            style={{
+              height: 1,
+              backgroundColor:
+                "#2d2d2d",
+            }}
+          />
+          <View
+            style={{
+              height: 1,
+              backgroundColor:
+                "#2d2d2d",
+            }}
+          />
+
+          {/* DELETE */}
+          <TouchableOpacity
+            onPress={() => {
+              setShowDelete(false);
+              deleteNotification();
+            }}
+            style={{
+              paddingVertical: 7,
+              paddingHorizontal: 14,
+            }}
+          >
+            <Text
+              style={{
+                color: "#f87171",
+                fontWeight: "700",
+                fontSize:width/34
+              }}
+            >
+              🗑 Delete
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+
     </TouchableOpacity>
   );
 }

@@ -260,7 +260,7 @@ import SpotlightIcon from "../custom/spotlightIcon";
         )}
   
   
-        <ArenaPostData item={item} width={width} onPress = {loadComments} setOpenCommentDrawer = {setOpenCommentDrawer} 
+        <ArenaPostData item={item} width={width} onPress = {loadComments} setOpenCommentDrawer = {setOpenCommentDrawer} arena={selectedArena} post = {item}
                        hasFired = {hasFired} fireCount ={fireCount}  toggleFire={toggleFire} commentCount = {commentCount} />
         <LinearGradient
         colors={[

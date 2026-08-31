@@ -301,64 +301,13 @@ return (
       <View
        
         style ={{
-            marginBottom : height/16 + 13
+            // marginBottom : height/16 + 20
         }}
         className = " flex-1 flex-col justify-start item s-center"
          >
         {/* HEADER */}
 
-        <View
-          style={{
-            paddingTop: 20,
-            paddingHorizontal: 20,
-          }}
-        >
-          <Text
-            style={{
-              color: "#FFFFFF",
-              fontSize: width / 22,
-              fontWeight: "900",
-            }}
-            className ="text-center"
-          >
-            Create Performance
-          </Text>
 
-          <Text
-            style={{
-            //   color: "#9CA3AF",
-              marginTop: 8,
-              fontSize: width / 30,
-              fontFamily : "700"
-            }}
-            className ="text-center text-zinc-300"
-          >
-            Share your talent and build your Arena.
-          </Text>
-        </View>
-
-        <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => router.back()}
-            style={{
-            // width: 42,
-            // height: 42,
-            // borderRadius: 21,
-            backgroundColor: "#111214",
-            borderWidth: 1,
-            borderColor: "rgba(234,179,8,0.15)",
-            justifyContent: "center",
-            alignItems: "center",
-            }}
-            className = "absolute mt-[8] left-2 p-1 rounded-full" >
-            <MaterialCommunityIcons
-            name="arrow-left"
-            size={42}
-            color="#eab308"
-            />
-        </TouchableOpacity>
-
-        {/* ARENA CARD */}
 
         <View
           style={{
@@ -366,7 +315,7 @@ return (
             marginTop: 18,
             backgroundColor:
               "#111214",
-            borderRadius: 24,
+            borderRadius: 5,
             borderWidth: 1,
             borderColor:
               "rgba(234,179,8,0.15)",
@@ -399,7 +348,47 @@ return (
                         {stageIcons[arena.talentType]}
                     </Text>
               </Text>
-          {/* </View> */}
+              <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => router.back()}
+                  style={{
+                  // width: 42,
+                  // height: 42,
+                  // borderRadius: 21,
+                  backgroundColor: "#111214",
+                  borderWidth: 1,
+                  borderColor: "rgba(234,179,8,0.15)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  }}
+                  className = "absolute top-2 right-2 p-1 rounded-full" >
+                  <MaterialCommunityIcons
+                  name="close"
+                  size={32}
+                  color="#eab308"
+                  />
+              </TouchableOpacity>
+              <View
+                style={{
+                  // width: 42,
+                  // height: 42,
+                  borderRadius: 999,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  // backgroundColor:
+                  //   "rgba(234,179,8,0.09)",
+                  borderWidth: 1,
+                  borderColor:
+                    "rgba(234,179,8,0.28)",
+                }}
+                className = "absolute p-1 top-2 left-2"
+                 >
+                <MaterialCommunityIcons
+                  name="star-four-points"
+                  size={28}
+                  color="#EAB308"
+                />
+              </View>
        
 
         </View>
@@ -430,99 +419,6 @@ return (
                 contentFit="cover"
                 allowsFullscreen
                 allowsPictureInPicture  />
-
-            {/* ACTIONS */}
-
-            <View
-                style={{
-                flexDirection: "row",
-                padding: 8,
-                gap: 10,
-                }}  >
-                <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => {
-                    if (
-                    player.playing
-                    ) {
-                    player.pause();
-                    } else {
-                    player.play();
-                    }
-                }}
-                style={{
-                    width : "32%" ,
-                    // height: 48,
-                    borderRadius: 14,
-                    backgroundColor:
-                    "#1B1B1B",
-                    justifyContent:
-                    "center",
-                    alignItems:
-                    "center",
-                }}
-                className ="py-4"
-                >
-                <Text
-                    style={{
-                    color: "#fff",
-                    fontWeight: "700",
-                    fontSize : width/36
-                    }}>
-                    Play
-                </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => {
-                        uploadVideo();
-                    }}
-                    style={{
-                        width : "32%" ,
-                        // height: 48,
-                        borderRadius: 14,
-                        backgroundColor:
-                        "#1B1B1B",
-                        justifyContent:
-                        "center",
-                        alignItems:
-                        "center",
-                    }}
-                    >
-                    <Text
-                        style={{
-                        color: "#fff",
-                        fontWeight: "700",
-                        fontSize : width/36
-                        }} >
-                        Replace
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => { setVideoUrl(null); }}
-                    style={{
-                        flex: 1,
-                        width : "32%" ,
-                        // height: 48,
-                        borderRadius: 14,
-                        backgroundColor:
-                        "#3A1111",
-                        justifyContent:
-                        "center",
-                        alignItems:
-                        "center",
-                    }} >
-                    <Text
-                        style={{
-                        color: "#FF6B6B",
-                        fontWeight: "700",
-                        fontSize : width/36
-                        }} >
-                        Remove
-                    </Text>
-                </TouchableOpacity>
-            </View>
         </View>
         ) : (
         <View
@@ -537,26 +433,27 @@ return (
             // paddingVertical: 35,
             alignItems: "center",
           }}
-          className ="flex-1 " >
+          className ="flex-1 justify-evenly " >
             <View
             style ={{
                 marginTop: 18,
+                marginHorizontal: 10,
             }}
-            className ="flex-1 items-center"
+            className ="fl ex-1 items-center"
             >
                 <View
                     style={{
-                    width: height/15,
-                    height: height/15,
-                    borderRadius: 999,
-                    backgroundColor: "rgba(234,179,8,0.08)",
+                    // width: height/15,
+                    // height: height/15,
+                    // borderRadius: 999,
+                    // backgroundColor: "rgba(234,179,8,0.08)",
                     justifyContent: "center",
                     alignItems: "center",
                     }} 
                     >
                     <MaterialCommunityIcons
                     name="video-outline"
-                    size={32}
+                    size={38}
                     color="#eab308" />
                 </View>
 
@@ -565,7 +462,7 @@ return (
                     color: "#FFFFFF",
                     fontWeight: "800",
                     fontSize: width / 24,
-                    marginTop: 18,
+                    marginTop: 20,
                     }}    >
                     Share Your Talent
                 </Text>
@@ -583,159 +480,324 @@ return (
                     from your device.
                 </Text>
           </View>
+
+            {/* SPOTLIGHT */}
+
+          <View
+            style={{
+              // height : height /7,
+              marginHorizontal: 10,
+              // marginTop: "auto",
+              backgroundColor:
+                "#111214",
+              borderRadius: 24,
+              // borderWidth: 1,
+              // borderColor: "rgba(234,179,8,0.15)",
+              padding: 15,
+            }}
+            className ="mt- auto p -4 items-center justify-center"
+            >
+            <View
+              style={{
+                flexDirection: "col",
+                alignItems: "center",
+              }} >
+              <MaterialCommunityIcons
+                name="star-circle"
+                size={38}
+                color="#eab308"
+              />
+              <Text
+                style={{
+                  color: "#eab308",
+                  fontWeight: "800",
+                  fontSize: width / 22,
+                  marginTop: 12
+                }} >
+                Spotlight
+              </Text>
+            </View>
+
+            <Text
+              style={{
+                color: "#9CA3AF",
+                textAlign: "center",
+                marginTop: 10,
+                lineHeight: 22,
+              }}
+              className = "text-center"
+            >
+              Exceptional performances may earn a Spotlight feature and reach audiences across Itri.
+            </Text>
+          </View>
+
+     
+        </View>
+        )}
+
+        {!videoUrl ? (
           <View
             style={{
               width: "100%",
               paddingHorizontal: 10,
-              marginBottom: 18,
+              // marginBottom: 18,
             }}
-            className ="mt-auto" >
+            className="px-5 flex-row gap-4 justify-center items-center"
+          >
+            {/* UPLOAD VIDEO */}
             <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => 
-                 uploadVideo()
-              }
+              activeOpacity={0.85}
+              onPress={() => uploadVideo()}
               style={{
-                height: height/16,
-                borderRadius: 18,
-                backgroundColor:
-                  "#eab308",
-                justifyContent:
-                  "center",
+                borderRadius: 5,
+                // DARK GLASS
+                backgroundColor: "rgba(255,255,255,0.045)",
+
+                // subtle premium border
+                borderWidth: 1,
+                borderColor: "rgba(234,179,8,0.28)",
+
+                justifyContent: "center",
                 alignItems: "center",
-              }}  >
-              <Text
+
+              }}
+              className="p-4 w-[50%]"
+            >
+              <View
                 style={{
-                  color: "#000",
-                  fontWeight: "800",
-                  fontSize: width / 28,
-                }} >
-                Upload Video
-              </Text>
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {/* ICON */}
+                <View
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "rgba(234,179,8,0.10)",
+                    borderWidth: 1,
+                    borderColor: "rgba(234,179,8,0.20)",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="video-plus-outline"
+                    size={18}
+                    color="#EAB308"
+                  />
+                </View>
+
+                <Text
+                  style={{
+                    marginLeft: 9,
+                    color: "#F4C542",
+                    fontWeight: "800",
+                    fontSize: width / 32,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  Upload Video
+                </Text>
+              </View>
             </TouchableOpacity>
 
+            {/* RECORD PERFORMANCE */}
             <TouchableOpacity
-              activeOpacity={0.9}
+              activeOpacity={0.85}
               style={{
-                height: height/16,
-                borderRadius: 18,
-                marginTop: 12,
+                borderRadius: 5,
+                // SAME DARK GLASS
+                backgroundColor: "rgba(255,255,255,0.045)",
                 borderWidth: 1,
-                borderColor:
-                  "rgba(234,179,8,0.20)",
-                justifyContent:
-                  "center",
+                borderColor: "rgba(234,179,8,0.28)",
+                justifyContent: "center",
                 alignItems: "center",
+                
               }}
-              onPress={() => {setShowCamera(true)}}  >
-              <Text
+              className="p-4 w-[50%]"
+              onPress={() => {
+                setShowCamera(true);
+              }}
+            >
+              <View
                 style={{
-                  color: "#FFFFFF",
-                  fontWeight: "800",
-                  fontSize: width / 28,
-                }}  >
-                Record Performance
-              </Text>
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {/* ICON */}
+                <View
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "rgba(234,179,8,0.10)",
+                    borderWidth: 1,
+                    borderColor: "rgba(234,179,8,0.20)",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="record-circle-outline"
+                    size={18}
+                    color="#EAB308"
+                  />
+                </View>
+
+                <Text
+                  style={{
+                    marginLeft: 9,
+                    color: "#F4C542",
+                    fontWeight: "800",
+                    fontSize: width / 32,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  Record
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
-        </View>
+        ): (
+           <View
+           style={{
+           flexDirection: "row",
+           paddingHorizontal: 10,
+
+          //  padding: 8,
+          //  gap: 10,
+           }} 
+           className="p x-3 flex-row gap-2 justify-center items-center"
+            >
+           <TouchableOpacity
+           activeOpacity={0.9}
+           onPress={() => {
+               if (
+               player.playing
+               ) {
+               player.pause();
+               } else {
+               player.play();
+               }
+           }}
+           style={{
+               width : "32%" ,
+               // height: 48,
+               borderRadius: 5,
+               backgroundColor: "#1B1B1B",
+               justifyContent: "center",
+               alignItems: "center",
+           }}
+           className ="py-4"
+           >
+           <Text
+               style={{
+               color: "#fff",
+               fontWeight: "700",
+               fontSize : width/32
+               }}>
+               Play
+           </Text>
+           </TouchableOpacity>
+           <TouchableOpacity
+               activeOpacity={0.9}
+               onPress={() => {
+                   uploadVideo();
+               }}
+               style={{
+                   width : "32%" ,
+                   // height: 48,
+                   borderRadius: 5,
+                   backgroundColor:
+                   "#1B1B1B",
+                   justifyContent:
+                   "center",
+                   alignItems:
+                   "center",
+               }}
+               className ="py-4"
+               >
+               <Text
+                   style={{
+                   color: "#fff",
+                   fontWeight: "700",
+                   fontSize : width/32
+                   }} >
+                   Replace
+               </Text>
+           </TouchableOpacity>
+           <TouchableOpacity
+               activeOpacity={0.9}
+               onPress={() => { setVideoUrl(null); }}
+               style={{
+                   flex: 1,
+                   width : "32%" ,
+                   // height: 48,
+                   borderRadius: 5,
+                   backgroundColor:  "#3A1111",
+                   justifyContent:  "center",
+                   alignItems: "center",
+               }}
+               className ="py-4"
+                >
+               <Text
+                   style={{
+                   color: "#FF6B6B",
+                   fontWeight: "700",
+                   fontSize : width/36
+                   }} >
+                   Remove
+               </Text>
+           </TouchableOpacity>
+       </View>
         )}
-
-
-        {/* SPOTLIGHT */}
 
         <View
           style={{
-            // height : height /7,
-            marginHorizontal: 10,
-            marginTop: "auto",
-            backgroundColor:
-              "#111214",
-            borderRadius: 24,
-            borderWidth: 1,
-            borderColor:
-              "rgba(234,179,8,0.15)",
-            padding: 15,
-          }}
-          className ="mt-auto p -4 item s-center justify-center"
-           >
-          <View
+            backgroundColor: "#050505",
+            paddingHorizontal: 10,
+            marginTop: 18,
+            borderTopWidth: 1,
+            borderTopColor:
+              "rgba(234,179,8,0.08)",
+          }}  >
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() =>
+              setSubmitModal(true)
+            }
+            disabled = {!videoUrl ? true : false}
             style={{
-              flexDirection: "row",
+              height:height/16,
+              borderRadius: 5,
+              backgroundColor:
+              videoUrl ?  "#eab308" : "rgba(224, 179, 16 , 0.4)",
+              justifyContent:
+                "center",
               alignItems: "center",
-            }} >
-            <MaterialCommunityIcons
-              name="star-circle"
-              size={28}
-              color="#eab308"
-            />
+            }}
+          >
             <Text
               style={{
-                color: "#eab308",
+                color: videoUrl ?"#000" :"#232324",
                 fontWeight: "800",
-                fontSize: width / 22,
-                marginLeft: 10,
+                fontSize: width / 24,
               }}
             >
-              Spotlight
+              Continue
             </Text>
-          </View>
-
-          <Text
-            style={{
-              color: "#D1D5DB",
-              marginTop: 8,
-              lineHeight: 22,
-            }}
-          >
-            Exceptional performances may earn a Spotlight feature and reach audiences across Itri.
-          </Text>
+          </TouchableOpacity>
         </View>
+      
 
       </View>
 
-      {/* BOTTOM CTA */}
-
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: "#050505",
-          paddingHorizontal: 18,
-          paddingVertical: 20,
-          borderTopWidth: 1,
-          borderTopColor:
-            "rgba(234,179,8,0.08)",
-        }}  >
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() =>
-            setSubmitModal(true)
-          }
-          disabled = {!videoUrl ? true : false}
-          style={{
-            height:height/16,
-            borderRadius: 20,
-            backgroundColor:
-             videoUrl ?  "#eab308" : "rgba(224, 179, 16 , 0.4)",
-            justifyContent:
-              "center",
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: videoUrl ?"#000" :"#232324",
-              fontWeight: "800",
-              fontSize: width / 24,
-            }}
-          >
-            Continue
-          </Text>
-        </TouchableOpacity>
-      </View>
+      
 
       <CameraRecordingModal
         visible={showCamera}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -6,15 +6,19 @@ import {
     TouchableOpacity,
     useWindowDimensions,
     ActivityIndicator,
+    Share,
 } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stats } from "../profile/custom/stats";
 import { router } from "expo-router";
-import { toggleFollowerArena } from "../../apiCalls";
+import { shareWithFriends, toggleFollowerArena } from "../../apiCalls";
 import { countries, stageIcons } from "../../utilities/TypeData";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import { createShareMessage } from "../../utilities/shareLinks";
+import ShareOptionsModal from "../modal/ShareOptionsModal";
+import ShareFriendsModal from "../modal/ShareFriendsModal";
 
 const ArenaInfoPanel = ({
     arena,
@@ -25,13 +29,14 @@ const ArenaInfoPanel = ({
 }) => {
 
 const { width, height } = useWindowDimensions();
-const {setOpenArenaAlertModal,arenaActionModal,setArenaActionModal  ,uploadPerformanceLoading} = useGlobalContext()
+const {setOpenArenaAlertModal,arenaActionModal,setArenaActionModal ,sharing , openShare ,uploadPerformanceLoading, userFriendData} = useGlobalContext()
+
+
 
 const statData = [
-    
     {
-      icon: "video",
-      label: "videos",
+      icon: "play",
+      label: "Performances",
       value: arena?.postCount,
     },
   
@@ -41,7 +46,7 @@ const statData = [
       value: arena?.followerCount,
     },
     {
-      icon: "star",
+      icon: "star-four-points",
       label: "Stars",
       value: arena?.starCount,
     },
@@ -64,7 +69,7 @@ return (
         overflow: "hidden",
         zIndex :1,
         flex:1
-    }} className = "justify-end gap-3 mb-1" >
+    }} className = "justify-end gap-3 mb-1 px-3" >
 
         <View
             style={{
@@ -205,6 +210,29 @@ return (
             {arena.biography}
         </Text> */}
 
+        <View
+        clas ="fle x-1  justify-center items-center">
+            <View
+            style = {{
+                alignSelf :"center"
+            }}
+            className="flex-row w-[95%] pb-1 px-2 justify-evenly border-l border-r rounded-md border-white/30 mt -8 ">
+                            {statData.map((item, index) => (
+                            <React.Fragment key={item.label}>
+                                <Stats
+                                    {...item}
+                                    width={width}
+                                />
+                                {index !== statData.length - 1 && (
+                                    <View
+                                        className="h-8 w-px mt-4 bg-white/40"
+                                    />
+                                )}
+                            </React.Fragment>
+                            ))}
+            </View>
+        </View>
+
 
         <View
             style={{
@@ -227,7 +255,7 @@ return (
                         borderRadius: 5,
                         // paddingHorizontal: 18,
                         // paddingVertical: 10,
-                    }} className = "w-[50%] justify-center py-3"   >
+                    }} className = "w-[33%] justify-center py-3"   >
 
                     <MaterialCommunityIcons
                         name={
@@ -274,14 +302,14 @@ return (
                             alignItems: "center",
                             flexDirection : "row"
                         }}
-                        className = "w-[47%] justify-center py-3" 
+                        className = "w-[33%] justify-center py-3" 
                     >
 
                         <MaterialCommunityIcons
                             name={
                                 arena.isStarred
-                                    ? "star"
-                                    : "star-outline"
+                                    ? "star-four-points"
+                                    : "star-four-points-outline"
                             }
                             color="#EAB308"
                             size={width/22}
@@ -358,60 +386,79 @@ return (
                    </TouchableOpacity>
                 )}
 
+<TouchableOpacity
+      activeOpacity={0.8}
+    //   onPress={handleShare}
+      onPress={() => openShare({
+        category:"arena",
+        type: "shared_arena",
+        _id:arena._id,
+        name:arena.arenaName,
+        region:arena.region,
+        talent:arena.talentType,
+        ownerId:arena.owner_id
+      })}
+      disabled={sharing}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        height: 46,
+        paddingHorizontal: 18,
+        borderRadius: 12,
+        backgroundColor:
+          "rgba(255,255,255,0.045)",
+        borderWidth: 1,
+        borderColor:
+          "rgba(234,179,8,0.25)",
+      }}
+      className="w-[33%] self-center justify-center"
+
+    >
+
+      {sharing ? (
+
+        <ActivityIndicator
+          size="small"
+          color="#EAB308"
+        />
+
+      ) : (
+
+        <Ionicons
+          name="share-outline"
+          size={19}
+          color="#EAB308"
+        />
+
+      )}
+
+
+      {!sharing && (
+
+        <Text
+          style={{
+            marginLeft: 8,
+            color: "#EAB308",
+            fontSize: 13,
+            fontWeight: "800",
+            letterSpacing: 0.8,
+          }}
+        >
+          SHARE
+        </Text>
+
+      )}
+
+    </TouchableOpacity>
+
+
+
         
         </View>
      
-        <View
-        clas ="fle x-1  justify-center items-center">
-            <View
-            style = {{
-                alignSelf :"center"
-            }}
-            className="flex-row w-[95%] pb-1 px-2 justify-evenly border rounded-md border-white/30 mt -8 ">
-                            {statData.map((item, index) => (
-                            <React.Fragment key={item.label}>
-                                <Stats
-                                    {...item}
-                                    width={width}
-                                />
-                                {index !== statData.length - 1 && (
-                                    <View
-                                        className="h-8 w-px mt-4 bg-white/40"
-                                    />
-                                )}
-                            </React.Fragment>
-                            ))}
-            </View>
-        </View>
-
-        <TouchableOpacity
-                        activeOpacity={0.9}
-                        onPress={()=> 
-                            router.back()
-                        }
-                        style={{
-                            // width: 46,
-                            // height: 46,
-                            borderRadius: 23,
-                            // backgroundColor:
-                            //     "rgba(255,255,255,.06)",
-                            // justifyContent: "center",
-                            alignItems: "center",
-                            flexDirection : "row"
-                        }}
-                        className = " absolute top-4 right-4 justify-center"  >
-
-                        <MaterialCommunityIcons
-                            name= "close"
-                            color="#EAB308"
-                            size={width/14}
-                        />
-
-        </TouchableOpacity>
-
-
-
-    </View>
+       
+ </View>
 
 );
 

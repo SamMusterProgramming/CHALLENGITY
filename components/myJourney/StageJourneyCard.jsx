@@ -1,6 +1,6 @@
 
 
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo } from "react";
 import {
@@ -10,6 +10,8 @@ import {
   Image,
 } from "react-native";
 import { countries, stageIcons } from "../../utilities/TypeData";
+import { router } from "expo-router";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const StageJourneyCard = ({
   entry,
@@ -22,14 +24,10 @@ const StageJourneyCard = ({
     return null;
   }
 
+  const{user} = useGlobalContext()
+
   const performances = entry.performances || [];
 
-  /*
-   * =========================================================
-   * SORT PERFORMANCES
-   * Newest first
-   * =========================================================
-   */
 
   const sortedPerformances = useMemo(() => {
     return [...performances].sort(
@@ -137,9 +135,7 @@ const StageJourneyCard = ({
       getMediaUrl(performance?.thumbnail) ||
       getMediaUrl(performance?.video);
 
-    const isLastVisible =
-      index === 1 &&
-      remainingCount > 0;
+    const isLastVisible = index === 1 &&  remainingCount > 0;
 
     return (
       <View
@@ -155,16 +151,51 @@ const StageJourneyCard = ({
         //   )
         // }
         style ={{
-          height
+          // height
         }}
         className="relative flex-1 overflow-hidden rounded-[5px] border border-white/[0.07] bg-[#131111]"
       >
         {imageUri ? (
+          <>
           <Image
             source={{ uri: imageUri }}
             resizeMode="cover"
             className="absolute inset-0 h-full w-full opaci ty-60"
           />
+            {/* {(index == 0 || !isLastVisible) && (
+           <View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor:
+                  "rgba(0,0,0,0.18)",
+                justifyContent:
+                  "center",
+                alignItems:
+                  "center",
+              }}  >
+              <View
+                style={{
+                  width: width/11,
+                  height: width/11,
+                  borderRadius: 999,
+                  backgroundColor:  "rgba(255,255,255,0.6)",
+                  justifyContent: "center",
+                  alignItems:
+                    "center",
+                }}  >
+                <MaterialCommunityIcons
+                  name="play"
+                  size={20}
+                  color="#000"
+                />
+              </View>
+            </View>
+            )} */}
+          </>
         ) : (
           <View className="flex-1 items-center justify-center bg-[#121111]">
             <Ionicons
@@ -225,23 +256,33 @@ const StageJourneyCard = ({
   return (
     <TouchableOpacity
       activeOpacity={0.94}
-      onPress={() => onPress?.(entry)}
+      onPress={() => 
+          router.push({
+            pathname: "TalentContestRoom",
+            params: {
+              region: entry.stage.region,
+              selectedTalent: entry.stage.name,
+              // selectedIcon: getIcon(userTalent.name),
+              // regionIcon: getIcon(userTalent.region),
+              startIntroduction: "true",
+              showGo: "true",
+              location: "contest",
+              contestant_id: user?._id || entry.contestants[0]._id || null,
+              startPlayer : "true"
+            },
+          })
+        
+      }
       style={{
         width,
-        // height,
+        height,
       }}
       className="self-center gap-1 rounded-[5px] bg -[#202125] px- [14px] pb- [11px] pt- [13px] shadow-black/25"
     >
-      {/*
-       * =====================================================
-       * HEADER
-       * =====================================================
-       */}
+   
 
       <View className="rounded-t-[5px] bg-[#000000] p-4 flex-row items-center border-t-[0.5px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40 justify-between">
-        {/*
-         * Identity
-         */}
+     
         <View className="flex-1 flex-row items-end">
       
           <View className="h-[42px] w-[42px] items-center justify-center rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.09]">
@@ -259,26 +300,36 @@ const StageJourneyCard = ({
             <Text
               numberOfLines={1}
               style = {{
-                fontSize : width/25
+                fontSize : width/27
               }}
               className="te xt-[17px] font-bold tracking-[0.1px] text-white"
             >
-              {entry.stageName}  {' '} 
+              {entry.stageName} Stage {' '} 
             </Text>
 
             <View className="mt-[6px] flex-row  items -end">
             
-              <Ionicons
-                name="location-outline"
-                size={12}
-                color="rgba(255,255,255,0.78)"
-              />
+            <Text
+                style = {{
+                  fontSize : width/40
+                }}
+               className="ml- [3px] te xt-[11px] mt-[1px] uppercase font-medium tracking-[0.4px] text-white/95">
+                {entry.stageName} {''}
+                {/* {'(' + entry.region + ')'}  */}
+                
+                <Text
+                style = {{
+                  fontSize : width/40
+                }}>
+                  {stageIcons[entry.stageName]} {" -  "} 
+                </Text>
+              </Text>
 
               <Text
               style = {{
-                fontSize : width/38
+                fontSize : width/40
               }}
-               className="ml-[3px] te xt-[11px] mt-[1px] font-bold tracking-[0.4px] text-white/75">
+               className="ml- [3px] te xt-[11px] mt-[1px] uppercase font-medium tracking-[0.4px] text-white/95">
                 {countries.find(c => c.code == entry.region)?.name} {' '}
                 {/* {'(' + entry.region + ')'}  */}
                 {countries.find(c => c.code == entry.region)?.flag}
@@ -345,7 +396,7 @@ const StageJourneyCard = ({
        * =====================================================
        */}
 
-      <View className=" px-4 justify-center border-l-[0.5px] border-r-[0.5px] border-[gold]/40 flex- 1 flex-row gap-[7px] overfl ow-hidden">
+      <View className=" px-4 justify-center border-l-[0.5px] border-r-[0.5px] border-[gold]/40 flex-1 flex-row gap-[7px] overfl ow-hidden">
         {visiblePerformances.map(
           renderPerformance
         )}

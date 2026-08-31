@@ -82,7 +82,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import { getUserById } from "../../../apiCalls";
 
-export default function Friend({friend, w, index , isMe = true}) {
+export default function Friend({friend , w, index , isMe = true}) {
   const [profile , setProfile] = useState(null)
   const loadProfile = async()=> {
     await getUserById(friend._id , setProfile)
@@ -111,31 +111,32 @@ export default function Friend({friend, w, index , isMe = true}) {
       
   }, [profile])
   
-  const avatar = w / 5.9;
-  const ITEM_WIDTH = (w - 36) / 4
+  const avatar = w / 6.9;
+  // const ITEM_WIDTH = (w - 50) / 4
+
   return (
     <MotiView
-      from={{
-        opacity: 0,
-        scale: .92,
-        translateY: 20,
-      }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-        translateY: 0,
-      }}
-      transition={{
-        delay: index * 35,
-        duration: 350,
-        type: "timing",
-      }}
-      style={{
-        width: ITEM_WIDTH,
-        alignItems: "center",
-        marginBottom: 20,
-      }}
-    >
+    from={{
+      opacity: 0,
+      scale: 0.92,
+      translateY: 20,
+    }}
+    animate={{
+      opacity: 1,
+      scale: 1,
+      translateY: 0,
+    }}
+    transition={{
+      delay: index * 35,
+      duration: 350,
+      type: "timing",
+    }}
+    style={{
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+    }} >
+
       <Pressable
         onPress={ loadProfile}
         style={({ pressed }) => ({
@@ -194,15 +195,10 @@ export default function Friend({friend, w, index , isMe = true}) {
           numberOfLines={1}
           style={{
             color: "#F3F4F6",
-
             marginTop: 8,
-
-            fontSize: 11,
-
+            fontSize: w/38,
             fontWeight: "600",
-
             width: avatar + 12,
-
             textAlign: "center",
           }}
         >
@@ -213,13 +209,9 @@ export default function Friend({friend, w, index , isMe = true}) {
           numberOfLines={1}
           style={{
             marginTop: 2,
-
             color: "#7B8088",
-
-            fontSize: 10,
-
+            fontSize: 9,
             textAlign: "center",
-
             width: avatar + 10,
           }}
         >

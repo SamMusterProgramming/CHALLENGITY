@@ -7,6 +7,7 @@ import {
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import SpotlightIcon from "../../custom/spotlightIcon";
+import NonSpotlightIcon from "../../custom/nonSpotlightIcon";
 
 
 export default function ArenaPostHeader({
@@ -36,20 +37,15 @@ export default function ArenaPostHeader({
 
       {/* STATUS */}
       
-      {noSpotLight ? (
+    
         <View className="flex-row items-center gap-1 rounded-full b g-[#eab308]/10 px-1 py-1">
+             {noSpotLight ? (
             <SpotlightIcon size={15} />
+             ):(
+              <NonSpotlightIcon size={15} />
+            )}
         </View>
-        ):(
-        <View className="flex-row items-center p-2 rounded-full bg-[#eab308]/20 ">
       
-              <MaterialCommunityIcons
-                name="chart-line"
-                size={22}
-                color="#fff"
-              />
-        </View>
-      )}
    
 
       <View

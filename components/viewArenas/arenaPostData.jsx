@@ -5,9 +5,9 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useLoading } from '../../context/loadingContext'
 import { toggleArenaPostFire } from '../../apiCalls'
 
-export default function ArenaPostData({item,width , onPress , commentCount ,
+export default function ArenaPostData({item,width , onPress , commentCount , arena = null, 
                         setOpenCommentDrawer , toggleFire , hasFired , fireCount}) {
-    const {user , setGlobalArenaRefresh} = useGlobalContext()
+    const {user , setGlobalArenaRefresh , openShare} = useGlobalContext()
   const { showLoading, hideLoading } = useLoading();
 
   const fires = fireCount || 0;
@@ -121,7 +121,18 @@ export default function ArenaPostData({item,width , onPress , commentCount ,
             </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity
+             onPress={() => openShare({
+                category:"arena",
+                type: "shared_performance",
+                _id:arena._id,
+                name:   arena.arenaName,
+                region: arena.region,
+                talent: arena.talentType,
+                ownerId: arena.owner_id,
+                postId : item._id
+              })}
+        >
             <MaterialCommunityIcons
             name="share"
             size={28}

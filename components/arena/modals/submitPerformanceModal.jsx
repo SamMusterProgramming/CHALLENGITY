@@ -22,6 +22,7 @@ import React, {
     useVideoPlayer,
   } from "expo-video";
 import { useGlobalContext } from "../../../context/GlobalProvider";
+import { router } from "expo-router";
 
   export default function SubmitPerformanceModal({
     visible,
@@ -48,22 +49,6 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
         }
       );
   
-    const handleSubmit =
-      () => {
-  
-        onSubmit?.({
-          arena_id:
-            arena._id,
-  
-          description,
-  
-          spotlight,
-  
-          videoUrl,
-        });
-  
-        setVisible(false);
-      };
   
     return (
   
@@ -86,38 +71,6 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
                 flex:1,
                 marginBottom : height/16 + 10 ,
             }} >
-
-            {/* HEADER */}
-            {/* <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems:"center",
-                paddingHorizontal:10,
-              }}  >
-              <Text
-                style={{
-                  color: "#fff",
-                  fontWeight: "900",
-                  fontSize: width / 18,
-                }} >
-                Submit Performance
-              </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  setVisible(
-                    false
-                  )
-                }
-              >
-                <MaterialCommunityIcons
-                  name="close"
-                  size={28}
-                  color="#fff"
-                />
-              </TouchableOpacity>
-  
-            </View> */}
             
               <View
               style={{
@@ -160,6 +113,27 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
               >
                 {arena.talentType}
               </Text>
+
+              <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => setVisible(false)}
+                  style={{
+                  // width: 42,
+                  // height: 42,
+                  // borderRadius: 21,
+                  backgroundColor: "#111214",
+                  borderWidth: 1,
+                  borderColor: "rgba(234,179,8,0.15)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  }}
+                  className = "absolute top -2 right-4 p-1 rounded-full" >
+                  <MaterialCommunityIcons
+                  name="close"
+                  size={28}
+                  color="#eab308"
+                  />
+              </TouchableOpacity>
             </View>
         
 
@@ -198,8 +172,8 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
             >
               <Text
                 style={{
-                  color: "#fff",
-                  fontWeight:  "800",
+                  color: "#AAA",
+                  fontWeight:  "700",
                   marginBottom:10,
                   fontSize: width / 26,
                 }}
@@ -221,7 +195,7 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
                 //   fontFamily : 800,
                 //   fontSize: width / 29,
                   backgroundColor: "#111214",
-                  borderRadius:20,
+                  borderRadius:5,
                   borderWidth: 1,
                   borderColor:"rgba(234,179,8,0.08)",
                 }}  />
@@ -231,192 +205,9 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
             {/* ARENA */}
   
           
-        <View
-            style={{
-                marginHorizontal: 10,
-                marginTop: 20,
-                backgroundColor: "#111214",
-                borderRadius: 22,
-                padding: 18,
-                borderWidth: 1,
-                borderColor: "rgba(234,179,8,0.08)",
-                }} >
-                {/* ARENA */}
-
-                {/* SPOTLIGHT */}
-
-                <Text
-                    style={{
-                    color: "#eab308",
-                    fontWeight: "800",
-                    letterSpacing: 0.5,
-                    }}
-                >
-                    Spotlight Selection
-                </Text>
-
-                <Text
-                    style={{
-                    color: "#9CA3AF",
-                    marginTop: 8,
-                    lineHeight: 20,
-                    fontSize: width / 30,
-                    }}
-                >
-                    Exceptional performances may be featured in Spotlight and
-                    discovered across the Itri community.
-                </Text>
-
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() =>
-                     setSpotLight(!spotlight)
-                    }
-                    style={{
-                    marginTop: 18,
-                    borderRadius: 18,
-                    padding: 16,
-                    borderWidth: 1.5,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-
-                    backgroundColor: spotlight
-                        ? "rgba(234,179,8,0.12)"
-                        : "#0D0D0F",
-
-                    borderColor: spotlight
-                        ? "#eab308"
-                        : "rgba(255,255,255,0.08)",
-                    }}
-                >
-                    <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        flex: 1,
-                    }}
-                    >
-                    <MaterialCommunityIcons
-                        name={
-                        spotlight
-                            ? "star"
-                            : "star-outline"
-                        }
-                        size={28}
-                        color={
-                        spotlight
-                            ? "#eab308"
-                            : "#6B7280"
-                        }
-                    />
-
-                    <View
-                        style={{
-                        marginLeft: 12,
-                        flex: 1,
-                        }}
-                    >
-                        <Text
-                        style={{
-                            color: "#fff",
-                            fontWeight: "700",
-                            fontSize: width / 28,
-                        }}
-                        >
-                        Submit to Spotlight
-                        </Text>
-
-                        <Text
-                        style={{
-                            color: "#9CA3AF",
-                            marginTop: 3,
-                            fontSize: width / 34,
-                        }}
-                        >
-                        Increase visibility and reach
-                        more viewers.
-                        </Text>
-                    </View>
-                    </View>
-
-                    <View
-                    style={{
-                        width: 26,
-                        height: 26,
-                        borderRadius: 999,
-                        justifyContent: "center",
-                        alignItems: "center",
-
-                        backgroundColor: spotlight
-                        ? "#eab308"
-                        : "transparent",
-
-                        borderWidth: 1.5,
-                        borderColor: spotlight
-                        ? "#eab308"
-                        : "#4B5563",
-                    }}
-                    >
-                    {spotlight && (
-                        <MaterialCommunityIcons
-                        name="check"
-                        size={16}
-                        color="#000"
-                        />
-                    )}
-                    </View>
-                </TouchableOpacity>
-            </View>
+       
           
   
-            {/* SPOTLIGHT */}
-  
-            {/* <TouchableOpacity
-              activeOpacity={ 0.9 }
-              onPress={() =>
-                setSpotlight(
-                  !spotlight
-                )
-              }
-              style={{
-                marginHorizontal:10,
-                marginTop: "auto",
-                backgroundColor: "#111214",
-                borderRadius: 20,
-                padding: 18,
-                flexDirection: "row",
-                alignItems:"center",
-                justifyContent: "space-between",
-              }} >
-              <View>
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontWeight: "700",
-                  }}
-                >
-                  Submit to Spotlight
-                </Text>
-                <Text
-                  style={{
-                    color:"#9CA3AF",
-                    marginTop: 4,
-                  }}  >
-                  Reach more viewers across Itri.
-                </Text>
-              </View>
-              <MaterialCommunityIcons
-                name={
-                  spotlight
-                    ? "star"
-                    : "star-outline"
-                }
-                size={28}
-                color="#eab308"
-              />
-            </TouchableOpacity> */}
-
           </View>
   
           {/* SUBMIT */}
@@ -426,14 +217,16 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
               position: "absolute",
               left: 0,
               right: 0,
-              bottom: 0, // Platform.OS == "ios" ? insets.bottom : 30,
+              bottom: 5, // Platform.OS == "ios" ? insets.bottom : 30,
               paddingHorizontal:10,
             //   paddingTop: 15,
               paddingVertical:20,
               backgroundColor: "#050505",
               borderTopWidth:1,
               borderTopColor: "rgba(234,179,8,0.08)",
-            }} >
+            }} 
+            className = "px-3"
+            >
             <TouchableOpacity
               activeOpacity={0.9}
               disabled = {description.length <= 5 ? true : false}
@@ -446,7 +239,7 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
               }
               style={{
                 height: height/16,
-                borderRadius:18,
+                borderRadius:5,
                 backgroundColor: description.length > 5 ?  "#eab308" : "rgba(224, 179, 16 , 0.4)",
                 justifyContent:"center",
                 alignItems:"center",
@@ -454,7 +247,7 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
               <Text
                 style={{
                   color: description.length > 5 ?"#000" :"#232324",
-                  fontWeight:"900",
+                  fontWeight:"700",
                   fontSize: width / 24,
                 }}
               >

@@ -185,7 +185,7 @@ const openArena = (entry) =>{
                    <ArenaJourneyCard
                     entry={item}
                     width={CARD_WIDTH}
-                    height={width/2.2}
+                    height={width/1.3}
                     onPress={openArena}
                     />
                     {/* <ArenaCard

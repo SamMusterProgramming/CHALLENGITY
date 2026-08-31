@@ -23,7 +23,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGlobalContext } from "../../../context/GlobalProvider";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as ImagePicker from 'expo-image-picker';
 import EditProfileModal from "./editProfileModal";
@@ -94,7 +94,9 @@ export default function ProfileDrawer({ visible, onClose }) {
     uploadPerformanceLoading , 
     setUploadPerformanceLoading ,
     selectedArena, setSelectedArena,
-    userTalents
+    userTalents,
+    userFollowers , 
+    userFollowings
   } = useGlobalContext();
  
   const { width, height } = useWindowDimensions();
@@ -102,7 +104,9 @@ export default function ProfileDrawer({ visible, onClose }) {
   const translateX = useSharedValue(width);
   const EDGE_WIDTH = 40;
   const nativeGesture = Gesture.Native();
-  const [activeTab, setActiveTab] = useState("friends");
+  const [activeTab, setActiveTab] = useState("arenas");
+  const [selectedPeople, setSelectedPeople] = useState("friends");
+
   const [refresh, setRefresh] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -119,10 +123,12 @@ export default function ProfileDrawer({ visible, onClose }) {
   const [openEditArenaModal , setOpenEditArenaModal] = useState(false)
   const [postToDeleteId, setPostToDeleteId] = useState(null)
   const [hamburgerMenu , setHamburgerMenu] = useState(false)
-  
+  const [currentPage, setCurrentPage] = useState(0);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [headerBlack, setHeaderBlack] = useState(false);
+  const peopleListRef = useRef(null);
   const THRESHOLD = height/12;
+  const [peopleMenuOpen, setPeopleMenuOpen] = useState(false);
   
   const handleScroll = (e) => {
     const y = e.nativeEvent.contentOffset.y;
@@ -270,60 +276,40 @@ useEffect(() => {
   }, [profileImg]);
 
 
-  // ---------------- DRAWER ANIMATION ----------------
-//   useEffect(() => {
-//     translateX.value = visible
-//       ? withSpring(0)
-//       : withTiming(width);
-//   }, [visible]);
-
-// const panGesture = Gesture.Pan()
-//   .activeOffsetX([15, 999])     // must move right a bit
-//   .failOffsetY([-20, 20])       // vertical scroll wins
-//   .onStart((e) => {
-//     // store whether gesture started from edge
-//     panGesture.isEdge = e.absoluteX > width - EDGE_WIDTH;
-//   })
-//   .onUpdate((e) => {
-//     // ❌ ignore if NOT from edge
-//     if (!panGesture.isEdge) return;
-//     if (e.translationX > 0) {
-//       translateX.value = e.translationX * 0.85;
-//     }
-//   })
-//   .onEnd((e) => {
-//     if (!panGesture.isEdge) return;
-//     const shouldClose =
-//       e.velocityX > 1000 || translateX.value > width * 0.35;
-
-//     if (shouldClose) {
-//       translateX.value = withTiming(width, { duration: 200 });
-//       runOnJS(onClose)();
-//     } else {
-//       translateX.value = withSpring(0, {
-//         damping: 20,
-//         stiffness: 150,
-//       });
-//     }
-//   });
-
-//   const animatedStyle = useAnimatedStyle(() => ({
-//     transform: [{ translateX: translateX.value }],
-//   }));
 
   // ---------------- NOTIFICATIONS ----------------
   const friendRequestReceived = notifications
     ?.filter((n) => n.type === "friend_request" || n.type === "friends")
     ?.sort((a, b) => b.createdAt - a.createdAt);
 
+
+  const peopleTabs = [
+    {
+      id: "friends",
+      label: "Friends",
+      icon: "people-outline",
+    },
+    {
+      id: "followers",
+      label: "Followers",
+      icon: "person-add-outline",
+    },
+    {
+      id: "followings",
+      label: "Following",
+      icon: "person-outline",
+    },
+  ];
+
   // ---------------- DATA ----------------
   const getActiveData = () => {
-    if (activeTab === "friends") return userFriendData?.friends || [];
-    if (activeTab === "followers") return follow?.followers || [];
-    return follow?.followings || [];
+    if(activeTab !== "people") return [] ;
+    if (selectedPeople === "friends") return userFriendData?.friends || [];
+    if (selectedPeople === "followers") return userFollowers || [];
+    return userFollowings || [];
   };
 
-  const pagedData = chunkArray(getActiveData(), 20);
+  const pagedData = chunkArray(getActiveData(), 12);
 
   const sections = [
     { type: "header" },
@@ -334,7 +320,6 @@ useEffect(() => {
     { type: "arenas", data: []},
     { type: "stages", data: []},
     { type: "performances", data: []},
-
   ];
 
   // ---------------- ACTIONS ----------------
@@ -388,12 +373,12 @@ useEffect(() => {
     {
       icon: "heart",
       label: "Followers",
-      value: follow?.followers.length,
+      value: userFollowers.length,
     },
     {
       icon: "account-plus",
       label: "Following",
-      value: follow?.followings.length,
+      value: userFollowings.length,
     }
   ];
 
@@ -421,22 +406,7 @@ useEffect(() => {
     });
   }
 
-  const renderPerformance = ( {item , index } ) => {
-    
-    return  (
-      // <View>
-      <PerformanceCard 
-        item={item}
-        index={index}
-        CARD_WIDTH={CARD_WIDTH}
-        playPerformance = {playPerformance}
-        performanceCount={selectedArena.posts.length}
-        canEdit = {true}
-        setPostToDeleteId ={setPostToDeleteId}
-      />
-      // </View>
-      )
-  };
+
 
   const logout = async () => {
     { 
@@ -552,7 +522,17 @@ const alertContent =  {
   return () => clearTimeout(timer);
 }, [hamburgerMenu]);
 
+useEffect(() => {
+  setCurrentPage(0);
+}, [selectedPeople, activeTab]);
 
+useEffect(() => {
+  setCurrentPage(0);
+  peopleListRef.current?.scrollToOffset({
+    offset: 0,
+    animated: false,
+  });
+}, [selectedPeople]);
 
   if (!visible) return null;
 
@@ -739,8 +719,7 @@ const alertContent =  {
                                             marginTop: 14,
                                             width :"100%"
                                         }}
-                                        className = "px-2 gap-2"
-                                    >
+                                        className = "px-2 gap-2"  >
                                         {!item.isRead &&
                                             item.type !== "friends" && (
                                                 <TouchableOpacity
@@ -817,64 +796,381 @@ const alertContent =  {
               case "friends":
                 if(selectedTab === "arenas" || selectedTab === "stages") return ; 
                 return (
-                    <View
-                    className="b g-primary items-center justify-center"
-                    style={{
-                      width,
-                      // height: width * 1,
-                    //   flexDirection: "row",
-                    //   flexWrap: "col",
-                    //   justifyContent: "center",
-                    //   padding: 12,
-                    }}
-                  >
-                 {pagedData.length > 0 && (
-                 <FlatList
-                 horizontal
-                 pagingEnabled
-                 data={pagedData}
-                 keyExtractor={(_, index) => index.toString()}
-                 showsHorizontalScrollIndicator={false}
-                 snapToInterval={width}
-                 decelerationRate="fast"
-                 nestedScrollEnabled
-                 renderItem={({ item }) => (
-                   <View
-                     style={{
-                       width,
-                       paddingHorizontal: 18,
-                       paddingTop: 18,
-                       flexDirection: "row",
-                       flexWrap: "wrap",
-                       justifyContent: "flex-start",
+                  <View
+                  className="w-full self-center mt-4 rounded-[5px] p- 2  items-center  justify-center"
+                  >   
+                      <View
+                        style={{
+                          width: width * 0.95,
+                          height: (width / 6.9) * 5.9,
+                          // backgroundColor: "rgba(255,255,255,0.10)",
+                          borderRadius: 10,
+                          overflow: "hidden",
+                        }}
+                        className ="border border-gold/40"
+                      >
+                        {pagedData.length > 0 && (
+                          <FlatList
+                            horizontal
+                            pagingEnabled
+                            data={pagedData}
+                            ref={peopleListRef}
+                            keyExtractor={(_, index) => index.toString()}
+                            showsHorizontalScrollIndicator={false}
+                            decelerationRate="fast"
+                            nestedScrollEnabled
+                            onMomentumScrollEnd={(event) => {
+                              const pageWidth = width * 0.95;
+                              const page = Math.round(
+                                event.nativeEvent.contentOffset.x / pageWidth
+                              );
+                              setCurrentPage(page);
+                            }}
+                            renderItem={({ item }) => (
+                              <View
+                                style={{
+                                  width: width * 0.95,
+                                  height: width / 6.9 * 5.9,
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 10,
+                                  flexDirection: "row",
+                                  flexWrap: "wrap",
+                                  alignContent: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                {item.map((friend, index) => (
+                                  <View
+                                    key={friend._id}
+                                    style={{
+                                      width: "25%",
+                                      height: "33.333%",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    <Friend
+                                      friend={friend}
+                                      index={index}
+                                      w={width}
+                                      isMe={true}
+                                    />
+                                  </View>
+                                ))}
+                              </View>
+                            )}
+                          />
+                        )}
 
-                      //  alignContent: "space-between",
-                     }}
-                   >
-                     {item.map((friend, index) => (
-                       <Friend
-                         key={friend._id}
-                         friend={friend}
-                         index={index}
-                         w={width}
-                         isMe = {true}
-                       />
-                     ))}
-                   </View>
-                 )}
-               />
-                  )}
-                  {pagedData.length == 0 && (
-                    <>
-                    <Image
-                      className="w-12 h-12"
-                      source={icons.search}
-                     /> 
-                     <Text className="text-gray-400 text-xs">Empty List</Text>
-                    </>
-                  )}
+                        {pagedData.length === 0 && (
+                          <View
+                          style={{
+                            width: width * 0.95,
+                            height: width / 6.9 * 5.9,
+                            flexDirection: "row",
+                            alignContent: "center",
+                            justifyContent: "center",
+                          }} >
+                            <Image
+                              className="h-12 w-12"
+                              source={icons.search}
+                            />
+                            <Text className="text-lg text-gray-400">
+                              Empty List
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+
+                      <View
+                      className = "flex-row w-full justify-center gap- 2 pr-4 mt-2 ">
+
+                          <View
+                            style={{
+                              position: "relative",
+                              zIndex: 100,
+                            }}
+                            className = "flex-1"
+                          >
+                   
+                            {peopleMenuOpen && (
+                              <View
+                                style={{
+                                  position: "absolute",
+                                  bottom: 48,
+                                  left: 0,
+                                  right: "40%",
+                                  backgroundColor: "#111111",
+                                  borderWidth: 1,
+                                  borderColor: "rgba(234,179,8,0.18)",
+                                  borderRadius: 14,
+                                  paddingVertical: 6,
+                                  shadowColor: "#000",
+                                  shadowOffset: {
+                                    width: 0,
+                                    height: -5,
+                                  },
+                                  shadowOpacity: 0.35,
+                                  shadowRadius: 12,
+                                  elevation: 12,
+                                  zIndex: 200,
+                                }}
+                              >
+                                {peopleTabs.map((tab, index) => {
+                                  const selected =
+                                    selectedPeople === tab.id;
+
+                                  return (
+                                    <TouchableOpacity
+                                    key={tab.id}
+                                    activeOpacity={0.8}
+                                    onPress={() => {
+                                      setCurrentPage(0);
+                                      setSelectedPeople(tab.id);
+                                      setPeopleMenuOpen(false);
+                                    }}
+                                    style={{
+                                      minHeight: 48,
+                                      marginHorizontal: 6,
+                                      marginVertical: 2,
+                                      paddingHorizontal: 12,
+                                  
+                                      flexDirection: "row",
+                                      alignItems: "center",
+                                  
+                                      borderRadius: 10,
+                                  
+                                      backgroundColor: selected
+                                        ? "rgba(234,179,8,0.08)"
+                                        : "transparent",
+                                  
+                                      borderWidth: selected ? 1 : 1,
+                                      borderColor: selected
+                                        ? "rgba(234,179,8,0.18)"
+                                        : "transparent",
+                                    }}
+                                  >
+                                    {/* =====================================================
+                                        ICON COLUMN
+                                    ===================================================== */}
+                                    <View
+                                      style={{
+                                        width: 28,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }}
+                                    >
+                                      <Ionicons
+                                        name={
+                                          tab.id === "friends"
+                                            ? "people-outline"
+                                            : tab.id === "followers"
+                                            ? "person-add-outline"
+                                            : "person-outline"
+                                        }
+                                        size={18}
+                                        color={
+                                          selected
+                                            ? "#EAB308"
+                                            : "rgba(255,255,255,0.45)"
+                                        }
+                                      />
+                                    </View>
+                                  
+                                    {/* =====================================================
+                                        LABEL COLUMN
+                                    ===================================================== */}
+                                    <View
+                                      style={{
+                                        flex: 1,
+                                        justifyContent: "center",
+                                        paddingLeft: 10,
+                                      }}
+                                    >
+                                      <Text
+                                        numberOfLines={1}
+                                        style={{
+                                          fontSize: width / 34,
+                                          fontWeight: "800",
+                                          letterSpacing: 0.7,
+                                          color: selected
+                                            ? "#EAB308"
+                                            : "rgba(255,255,255,0.65)",
+                                        }}
+                                      >
+                                        {tab.label.toUpperCase()}
+                                      </Text>
+                                    </View>
+                                  
+                                    {/* =====================================================
+                                        CHECK COLUMN
+                                    ===================================================== */}
+                                    <View
+                                      style={{
+                                        width: 28,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }}
+                                    >
+                                      {selected && (
+                                        <Ionicons
+                                          name="checkmark-circle"
+                                          size={18}
+                                          color="#EAB308"
+                                        />
+                                      )}
+                                    </View>
+                                  </TouchableOpacity>
+                                  );
+                                })}
+
+                                {/* =================================================
+                                    ARROW INDICATOR
+                                ================================================= */}
+
+                                <View
+                                  style={{
+                                    position: "absolute",
+                                    bottom: -7,
+                                    right: 30,
+                                    width: 14,
+                                    height: 14,
+                                    backgroundColor: "#111111",
+                                    borderRightWidth: 1,
+                                    borderBottomWidth: 1,
+                                    borderColor: "rgba(234,179,8,0.18)",
+                                    transform: [
+                                      {
+                                        rotate: "45deg",
+                                      },
+                                    ],
+                                  }}
+                                />
+                              </View>
+                            )}
+
+                            {/* =====================================================
+                                SELECTED BUTTON
+                            ===================================================== */}
+
+                            <TouchableOpacity
+                              activeOpacity={0.8}
+                              onPress={() =>
+                                setPeopleMenuOpen((prev) => !prev)
+                              }
+                              style={{
+                                width: "50%",
+                                height: 42,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                paddingHorizontal: 12,
+                                borderRadius: 12,
+                                // backgroundColor: peopleMenuOpen
+                                //   ? "rgba(234,179,8,0.08)"
+                                //   : "rgba(255,255,255,0.025)",
+                                // borderWidth: 1,
+                                // borderColor: peopleMenuOpen
+                                //   ? "rgba(234,179,8,0.22)"
+                                //   : "rgba(255,255,255,0.07)",
+                              }}
+                            >
+                              {/* =====================================================
+                                  ICON
+                              ===================================================== */}
+                              <View
+                                style={{
+                                  width: 24,
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <Ionicons
+                                  name={
+                                    selectedPeople === "friends"
+                                      ? "people-outline"
+                                      : selectedPeople === "followers"
+                                      ? "person-add-outline"
+                                      : "person-outline"
+                                  }
+                                  size={15}
+                                  color="#EAB308"
+                                />
+                              </View>
+
+                              <View
+                                style={{
+                                  flex: 1,
+                                  justifyContent: "end",
+                                  paddingLeft: 7,
+                                }}  >
+                                <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    fontSize: width / 32,
+                                    fontWeight: "800",
+                                    letterSpacing: 0.8,
+                                    color: peopleMenuOpen
+                                      ? "#EAB308"
+                                      : "rgba(255,255,255,0.65)",
+                                   }}  >
+                                  {peopleTabs
+                                    .find(
+                                      (tab) =>
+                                        tab.id === selectedPeople
+                                    )
+                                    ?.label?.toUpperCase() || "PEOPLE"}
+                                </Text>
+                              </View>
+
+                              <View
+                                style={{
+                                  width: 26,
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <Ionicons
+                                  name={
+                                    peopleMenuOpen
+                                      ? "chevron-down"
+                                      : "chevron-up"
+                                  }
+                                  size={18}
+                                  color={
+                                    peopleMenuOpen
+                                      ? "#EAB308"
+                                      : "rgba(255,255,255,0.55)"
+                                  }
+                                />
+                              </View>
+                            </TouchableOpacity>
+                          </View>
+
+
+
+                          {pagedData.length > 1 && (
+                          <View className=" gap-2 flex-row items-center justify-center mt- 4  pb -2">
+                            {pagedData.map((_, index) => {
+                              const isActive = index === currentPage;
+                              return (
+                                <View
+                                  key={index}
+                                  className={` rounded-full ${
+                                    isActive
+                                      ? "h-[8px] w-[18px] bg-yellow-500"
+                                      : "h-[8px] w-[18px] bg-white/30"
+                                  }`}
+                                />
+                              );
+                            })}
+                          </View>
+                      )}
+                      </View>
+                   
+
                   </View>
                 );
+
                 case "arenas":
                   if(selectedTab !== "arenas") return ; 
                    return (
@@ -884,157 +1180,9 @@ const alertContent =  {
                      />
                    )
 
-                case "performancess":
-                  if(selectedTab !== "arenas" ) return ; 
-                  if(!selectedArena) {
-                    return (
-                      <WelcomeToCreateArena  setOpenArenaAlertModal={setOpenArenaAlertModal} setArenaActionModal={setArenaActionModal} />
-                    ); 
-                  }
-                  
-                  return (
-                    <>
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => {
-                        setArenaActionModal("create_performance")
-                        setOpenArenaAlertModal(true)
-                      }}
-                      style={{
-                        marginHorizontal: 12,
-                        marginTop: 12,
-                        marginBottom: 30,
-                        // height: 62,
-                        borderRadius: 12,
-                        backgroundColor:
-                          "#eab308",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      className = "py-4"   >
-                      {uploadPerformanceLoading ? (
-                          <View
-                          style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                          }}
-                          >
-                          <ActivityIndicator
-                              size="small"
-                              color="#000"
-                          />
-
-                          <Text
-                              style={{
-                              color: "#000",
-                              fontWeight: "800",
-                              marginLeft: 10,
-                              // letterSpacing: 1,
-                              fontSize: width / 32,
-                              }}
-                          >
-                              UPLOADING...
-                          </Text>
-                          </View>
-                          ) : (
-                          <Text
-                          style={{
-                            color: "#000",
-                            fontWeight: "800",
-                            fontSize: width / 32,
-                          }}
-                        >
-                          Add Performance
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                    <View
-                    style ={{
-                      width,
-                      // height:height/2
-                    }}>
-                    <FlatList
-                    data = {selectedArena.posts}
-                    keyExtractor = {(item) => item._id}
-                    nestedScrollEnabled = {true}
-                    numColumns = {2}
-                    renderItem = {renderPerformance}
-                    contentContainerStyle = {{
-                      // paddingBottom: 80,
-                      marginTop: 80,
-                    }}
-                    columnWrapperStyle={{
-                      justifyContent: "center",
-                      marginBottom: 8,
-                      gap :8
-                    }}
-                   
-                  />
-                  </View>
-                  {selectedArena.posts.length >= 5 && (
-                    <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setArenaActionModal("create_performance")
-                      setOpenArenaAlertModal(true)
-                    }}
-                    style={{
-                      marginHorizontal: 12,
-                      marginTop: 24,
-                      marginBottom: 30,
-                      // height: 62,
-                      borderRadius: 12,
-                      backgroundColor:
-                        "#eab308",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    className = "py-4"   >
-                    {uploadPerformanceLoading ? (
-                        <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                        }}
-                        >
-                        <ActivityIndicator
-                            size="small"
-                            color="#000"
-                        />
-
-                        <Text
-                            style={{
-                            color: "#000",
-                            fontWeight: "800",
-                            marginLeft: 10,
-                            // letterSpacing: 1,
-                            fontSize: width / 32,
-                            }}
-                        >
-                            UPLOADING...
-                        </Text>
-                        </View>
-                        ) : (
-                        <Text
-                        style={{
-                          color: "#000",
-                          fontWeight: "800",
-                          fontSize: width / 32,
-                        }}
-                      >
-                        Add Performance
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                  )}
-               
-                  </>
-                  )
-                 
               case "stages":
-            
-                if(selectedTab !== "stages" ) return ; 
-                 return  <StageCaroussel  onPress={() => { onClose() }} />
+                  if(selectedTab !== "stages" ) return ; 
+                  return  <StageCaroussel stages = {userTalents} user={user} onPress={() => { onClose() }} />
              }
           }}
         />
@@ -1200,7 +1348,7 @@ const alertContent =  {
              />
         )}
         {openEditArenaModal && (
-         <EditArenaModal
+        <EditArenaModal
          isVisible={openEditArenaModal}
          setIsVisible={
            setOpenEditArenaModal
@@ -1227,7 +1375,7 @@ const alertContent =  {
             message = {alertContent[arenaActionModal].text}
             type = {alertType[arenaActionModal]}
             onConfirm = {confirmAction[arenaActionModal]}
-            />
+        />
         )}
   
     </View>

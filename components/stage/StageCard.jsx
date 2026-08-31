@@ -1,6 +1,6 @@
 
 
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo } from "react";
 import {
@@ -10,17 +10,18 @@ import {
   Image,
 } from "react-native";
 import { countries, stageCenterImages, stageIcons } from "../../utilities/TypeData";
+import { router } from "expo-router";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const StageCard = ({
   entry,
   width,
   height,
-  onPress,
 }) => {
   if (!entry) {
     return null;
   }
-
+  const {user} = useGlobalContext()
   const performances = [...entry.contestants.map(c =>  {
        return c.performances[0]
   })]|| [];
@@ -34,26 +35,7 @@ const StageCard = ({
   return total
 } 
  
-  /*
-   * =========================================================
-   * SORT PERFORMANCES
-   * Newest first
-   * =========================================================
-   */
 
-//   const sortedPerformances = useMemo(() => {
-//     return [...performances].sort(
-//       (a, b) =>
-//         new Date(b?.date || b?.createdAt || 0).getTime() -
-//         new Date(a?.date || a?.createdAt || 0).getTime()
-//     );
-//   }, [performances]);
-
-  /*
-   * =========================================================
-   * PERFORMANCE DISPLAY
-   * =========================================================
-   */
 
   const visiblePerformances =
     performances.slice(0, 2);
@@ -133,6 +115,10 @@ const StageCard = ({
 
   const isWinner = entry.rank === 1;
 
+  const selectedContestant =  entry.contestants?.find(c => c.user_id === user?._id) ||
+                              entry.contestants[0] || null
+ 
+
   /*
    * =========================================================
    * PERFORMANCE TILE
@@ -165,16 +151,51 @@ const StageCard = ({
         //   )
         // }
         style ={{
-          height
+          // height
         }}
         className="relative flex-1 overflow-hidden rounded-[5px] border border-white/[0.07] bg-[#000000]"
       >
         {imageUri ? (
+          <>
           <Image
             source={{ uri: imageUri }}
             resizeMode="cover"
             className="absolute inset-0 h-full w-full opac ity-90"
           />
+            {/* {(index == 0 || !isLastVisible) && (
+           <View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor:
+                  "rgba(0,0,0,0.18)",
+                justifyContent:
+                  "center",
+                alignItems:
+                  "center",
+              }}  >
+              <View
+                style={{
+                  width: width/11,
+                  height: width/11,
+                  borderRadius: 999,
+                  backgroundColor:  "rgba(255,255,255,0.6)",
+                  justifyContent: "center",
+                  alignItems:
+                    "center",
+                }}  >
+                <MaterialCommunityIcons
+                  name="play"
+                  size={20}
+                  color="#000"
+                />
+              </View>
+            </View>
+            )} */}
+          </>
         ) : (
           <View className="flex-1 items-center justify-center bg-[#121111]">
             <Ionicons
@@ -235,10 +256,24 @@ const StageCard = ({
   return (
     <TouchableOpacity
       activeOpacity={0.94}
-      onPress={() => onPress?.(entry)}
+    //   onPress={() => onPress?.(entry)}
+      onPress={() => 
+        router.push({
+        pathname: "TalentContestRoom",
+        params: {
+            region: entry.region,
+            selectedTalent: entry.name,
+            startIntroduction: "false",
+            showGo: "true",
+            location: "contest",
+            contestant_id: selectedContestant?._id || null,
+            startPlayer : "true"
+        },
+        })
+      }
       style={{
         width,
-
+        height
       }}
       className="self-center gap-1 rounded-[5px] bg -[#202125] px- [14px] pb- [11px] pt- [13px] shadow-black/25"
     >
@@ -250,10 +285,10 @@ const StageCard = ({
 
       <View className="rounded-t-[5px] bg-[#000000] p-4 flex-row items-center border-t-[0.5px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40 justify-between">
       
-        <View className="flex-1 flex-row items-end">
+        <View className="flex-1 flex-row items-center">
       
           <View className="h-[42px] w-[42px] items-center justify-center rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.09]">
-            <Ionicons
+            <MaterialCommunityIcons
               name="trophy"
               size={width/15}
               color="#EAB308"
@@ -271,28 +306,46 @@ const StageCard = ({
               }}
               className="te xt-[17px] font-bold tracking-[0.1px] text-white"
             >
-              {entry.name}  {' '} 
+              {entry.name} Stage {' '} 
             </Text>
 
             <View className="mt-[6px] flex-row  items -end">
-            
-              <Ionicons
-                name="location-outline"
-                size={12}
-                color="rgba(255,255,255,0.78)"
-              />
+              <Text
+                style = {{
+                  fontSize : width/40
+                }}
+               className="ml-[3px]  mt-[1px] font-medium uppercase tracking-[0.4px] text-white/95">
+                {entry.name} {''}
+                {/* {'(' + entry.region + ')'}  */}
+                
+                <Text
+                style = {{
+                  fontSize : width/47
+                }}>
+                  {stageIcons[entry.name]} {" -  "} 
+                </Text>
+              </Text>
+
 
               <Text
               style = {{
-                fontSize : width/38
+                fontSize : width/40
               }}
-               className="ml-[3px] te xt-[11px] mt-[1px] font-bold tracking-[0.4px] text-white/75">
+               className="ml- [3px] te xt-[11px] mt-[1px] font-medium uppercase tracking-[0.4px] text-white/95">
                 {countries.find(c => c.code == entry.region)?.name} {' '}
                 {/* {'(' + entry.region + ')'}  */}
                 {countries.find(c => c.code == entry.region)?.flag}
               </Text>
             </View>
           </View>
+          <View className=" ml-auto b g-white/40 flex-row justify-center items-center">
+                <Text
+                style = {{
+                  fontSize : width/15
+                }}>
+                  {stageIcons[entry.name]}
+          </Text>
+         </View>
         </View>
 
         {/*
@@ -339,7 +392,7 @@ const StageCard = ({
        * =====================================================
        */}
 
-      <View className=" px-4 justify-center border-l-[0.5px] border-r-[0.5px] border-[gold]/40 flex- 1 flex-row gap-[7px] overfl ow-hidden">
+      <View className=" px-4 justify-center border-l-[0.5px] border-r-[0.5px] border-[gold]/40 flex-1 flex-row gap-[7px] overfl ow-hidden">
         {visiblePerformances.map(
           renderPerformance
         )}
@@ -350,7 +403,7 @@ const StageCard = ({
         {visiblePerformances.length === 0 && (
           <View
           style = {{
-            height :height
+            // height :height
           }}
            className="flex-1 items-center justify-center rounded-[13px] border border-white/[0.06] bg-[#171717]">
             <Image
@@ -358,7 +411,7 @@ const StageCard = ({
                 resizeMode="cover"
                 className="absolute opacity-30 inset-0 h-full w-full "
             />
-            <Ionicons
+            {/* <Ionicons
               name="videocam-outline"
               size={28}
               color="rgba(255,255,255,0.95)"
@@ -366,7 +419,7 @@ const StageCard = ({
 
             <Text className="mt-[5px] text-[14px] font-medium text-white">
               No performances yet
-            </Text>
+            </Text> */}
           </View>
         )}
       </View>

@@ -90,7 +90,7 @@ export const stageIcons = {
   Fitness: "🏋️",
   Magic: "🪄",
   Sport: "⚽",
-  Melody: "🎸",
+  Instrument: "🎸",
   Art: "🎨",
   Comedy: "🎭",
 };
@@ -101,7 +101,7 @@ export const STAGES = [
   "🎨 Art",
   "🎤 Singing",
   "🕺 Dancing",
-  "🎸 Melody",
+  "🎸 Instrument",
   "🎭 Comedy",
   "🪄 Magic"
 ];
@@ -410,120 +410,150 @@ export const stageImages = {
 
 export const COUNTRY_CONTINENTS= {
   // AFRICA
-  northAfrica: [
+  "North Africa": [
     "DZ","EG","LY","MA","SD","TN"
   ],
 
-  westAfrica: [
+  "West Africa": [
     "BJ","BF","CV","CI","GM","GH","GN","GW",
     "LR","ML","MR","NE","NG","SN","SL","TG"
   ],
 
-  centralAfrica: [
+  "Central Africa": [
     "AO","CM","CF","TD","CG","CD","GQ","GA"
   ],
 
-  eastAfrica: [
+  "East Africa": [
     "BI","DJ","ER","ET","KE","RW","SO",
     "SS","TZ","UG"
   ],
 
-  southernAfrica: [
+  "Southern Africa": [
     "BW","LS","MG","MW","MU","MZ","NA",
     "SC","SZ","ZA","ZM","ZW","KM"
   ],
 
   // NORTH AMERICA
-  northAmerica: [
+  "North America": [
     "CA",
     "US"
   ],
 
-  centralAmerica: [
+  "Central America": [
     "BZ","CR","SV","GT",
     "HN","MX","NI","PA"
   ],
 
-  caribbean: [
+  "Caribbean": [
     "AG","BS","BB","CU","DM","DO",
     "GD","HT","JM","KN","LC",
     "VC","TT"
   ],
 
-  southAmerica: [
+  "South America": [
     "AR","BO","BR","CL","CO",
     "EC","GY","PY","PE",
     "SR","UY","VE"
   ],
 
   // EUROPE
-  westernEurope: [
+  "Western Europe": [
     "AT","BE","FR","DE","IE",
     "LI","LU","MC","NL",
     "CH","GB"
   ],
 
-  northernEurope: [
+  "Northern Europe": [
     "DK","EE","FI","IS",
     "LV","LT","NO","SE"
   ],
 
-  southernEurope: [
+  "Southern Europe": [
     "AL","AD","BA","HR","CY",
     "GR","IT","MT","ME",
     "MK","PT","SM","RS",
     "SI","ES","VA"
   ],
 
-  easternEurope: [
+  "Eastern Europe": [
     "BY","BG","CZ","HU",
     "MD","PL","RO","RU",
     "SK","UA"
   ],
 
   // MIDDLE EAST
-  middleEast: [
+  "MiddleEast": [
     "BH","IR","IQ","IL","JO",
     "KW","LB","OM","QA",
     "SA","SY","AE","YE","TR"
   ],
 
   // SOUTH ASIA
-  southAsia: [
+  "South Asia": [
     "AF","BD","BT","IN",
     "MV","NP","PK","LK"
   ],
 
   // EAST ASIA
-  eastAsia: [
+  "East Asia": [
     "CN","JP","KP",
     "KR","MN","TW"
   ],
 
   // SOUTHEAST ASIA
-  southeastAsia: [
+  "Southeast Asia": [
     "BN","KH","ID","LA",
     "MY","MM","PH","SG",
     "TH","TL","VN"
   ],
 
   // CENTRAL ASIA
-  centralAsia: [
+  "Central Asia": [
     "AM","AZ","GE","KZ",
     "KG","TJ","TM","UZ"
   ],
 
   // OCEANIA
-  australiaNewZealand: [
+  "Australia NewZealand": [
     "AU","NZ"
   ],
 
-  pacificIslands: [
+  "Pacific Islands": [
     "FJ","KI","MH","FM",
     "NR","PW","PG","WS",
     "SB","TO","TV","VU"
   ]
 };
+
+export const regionIcons = {
+  "North Africa": "🕌",
+  "West Africa": "🥁",
+  "East Africa": "🦁",
+  "Central Africa": "🌿",
+  "Southern Africa": "🌍",
+
+  "North America": "🦬",
+  "Central America": "🌋",
+  "Caribbean": "🌴",
+  "South America": "🦙",
+
+  "Western Europe": "🏰",
+  "Northern Europe": "⚔️",
+  "Southern Europe": "🏛️",
+  "Eastern Europe": "⛪",
+
+  "Middle East": "🕌",
+  "Central Asia": "🐎",
+  "South Asia": "🪷",
+  "East Asia": "🏯",
+  "Southeast Asia": "🛕",
+
+  "Oceania": "🌊",
+  "Australia & New Zealand": "🦘",
+
+  "Global": "🌍",
+};
+
 
 
 export const REGION_TITLES = {

@@ -11,6 +11,7 @@ import StarArenaButton from '../viewArenas/custom/starArenaButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import FollowArenaButton from '../viewArenas/custom/followArenaButton';
 import ArenaCard from '../viewArenas/displayArena/arenaCard';
+import ArenaJourneyCard from '../myJourney/ArenaJourneyCard';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -57,11 +58,21 @@ export default function DisplayArenaNotification({ notification, setNotification
       case 'arena_created':
         if (selectedArena) return setShowArena(!showArena) ; 
         if(!notification.sender_id) {
-          await getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata.arena_id)
+          await getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata._id)
           setShowArena(!showArena)
            return ;
         }
         await getArenaByProfile(notification.sender_id ,{requesterId:user._id} , setSelectedArena , setArenas , notification.metadata.arena_id);
+        setShowArena(!showArena)
+      break;
+      case 'shared_arena':
+        if (selectedArena) return setShowArena(!showArena) ; 
+        if(!notification.sender_id) {
+          await getArenaByUser(notification.metadata.ownerId,setSelectedArena,setArenas,notification.metadata._id)
+          setShowArena(!showArena)
+           return ;
+        } 
+        await getArenaByProfile(notification.metadata.ownerId ,{requesterId:user._id} , setSelectedArena , setArenas , notification.metadata.arena_id);
         setShowArena(!showArena)
       break;
       case 'star_arena':
@@ -90,10 +101,19 @@ export default function DisplayArenaNotification({ notification, setNotification
         if (posts.length) return ; 
         if(!notification.is_read) markAsRead()
         if(!notification.sender_id) {
-           getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata.arena_id)
+           getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata._id)
            return ;
         }
         getArenaByProfile(notification.sender_id ,{requesterId:user._id} , setSelectedArena , setArenas , notification.metadata.arena_id);
+      break;
+      case 'shared_performance':
+        if (posts.length) return ; 
+        if(!notification.is_read) markAsRead()
+        if(!notification.sender_id) {
+           getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata._id)
+           return ;
+        }
+        getArenaByProfile(notification.metadata.ownerId,{requesterId:user._id} , setSelectedArena , setArenas , notification.metadata._id);
       break;
       case 'fire_received':
         if (posts.length) return ; 
@@ -108,7 +128,7 @@ export default function DisplayArenaNotification({ notification, setNotification
         if (posts.length) return ; 
         if(!notification.is_read) markAsRead()
         if(!notification.sender_id) {
-           getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata.arena_id)
+           getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata._id)
            return ;
         }
         getArenaByProfile(notification.sender_id ,{requesterId:user._id} , setSelectedArena , setArenas , notification.metadata.arena_id);
@@ -120,8 +140,9 @@ export default function DisplayArenaNotification({ notification, setNotification
            getArenaByUser(user._id,setSelectedArena,setArenas,notification.metadata.arena_id)
            return ;
         }
-        getArenaByProfile(notification.sender_id ,{requesterId:user._id} , setSelectedArena , setArenas , notification.metadata.arena_id);
+        getArenaByProfile(notification.sender_id ,{requesterId:user._id} , setSelectedArena , setArenas , notification.metadata._id);
       break;
+     
     
       default:
         break;
@@ -129,8 +150,8 @@ export default function DisplayArenaNotification({ notification, setNotification
   };
 
  useEffect(() => {
-   if(!selectedArena || notification.type == 'arena_created' || notification.type == 'star_arena' ||  notification.type === "follow_arena") return  ; 
-   if( !selectedArena.posts.find(p => p._id.toString() === notification.metadata.post_id.toString())){
+   if(!selectedArena || notification.type == 'arena_created' || notification.type == 'star_arena' ||  notification.type === "follow_arena" || notification.type === "shared_arena") return  ; 
+   if( !selectedArena.posts.find(p => p._id.toString() === notification.metadata.postId?.toString())){
       deleteNotification()
    }
     markAsRead()
@@ -148,8 +169,8 @@ export default function DisplayArenaNotification({ notification, setNotification
        // }
    })
    const updatedPosts = [
-       pts.find(p => p._id.toString() === notification.metadata.post_id.toString()),
-       ...pts.filter(p => p._id.toString() !== notification.metadata.post_id.toString()),
+       pts.find(p => p._id.toString() === notification.metadata.postId.toString()),
+       ...pts.filter(p => p._id.toString() !== notification.metadata.postId.toString()),
      ];
    let morePosts = []
    const remainingArena = arenas.filter(a => a._id !== selectedArena._id)
@@ -259,231 +280,7 @@ const toggleStar = async () => {
   
 };
 
- const displayArena = () =>{
-   return (
-    <TouchableOpacity
-    activeOpacity={0.9}
-    onPress={() => {
-        router.push({
-          pathname:
-            "/arenaDisplayer",
-          params: {
-            arena_id:
-              selectedArena._id,
-            // arena:
-            //   JSON.stringify(
-            //     arena
-            //   ),
-            // arena : JSON.stringify(
-            //   []
-            // )
-          },
-        });
-      
-    }}
-    style={{
-        width:width ,
-        height:height/3,
-        borderRadius:12,
-        overflow:"hidden",
-        padding: 1
-    }} 
-    className ="justify-center mt-4 items-center"
-     >
-    <Image
-        source={{uri:selectedArena.coverImage.publicUrl}}
-        style={{
-            width:"95%",
-            height:"100%",
-            position:"absolute",
-        }}
-        resizeMode="cover"
-        className ="rounded-lg"
-    />
-    <LinearGradient
-        colors={[
-            "transparent",
-            "rgba(0,0,0,.45)",
-            "rgba(0,0,0,.65)",
-            "rgba(0,0,0,.85)",
-            "#000",
-        ]}
-        style={{
-            position:"absolute",
-            left:5,
-            width: "100%",
-            bottom:0,
-            height:"80%",
-        }}
-    />
-    <LinearGradient
-        colors={[
-            "transparent",
-            "rgba(0,0,0,.75)",
-            "rgba(0,0,0,.75)",
-            "transparent",
-        ]}
-        style={{
-            position:"absolute",
-            left:5,
-            right:width/4,
-            bottom:110,
-            height:"50%",
-            borderTopRightRadius: 30,
-            borderBottomRightRadius: 30,
-            overflow: "hidden",
-        }}
-    />
-    {/* Header */}
-    <View
-        style={{
-            position:"absolute",
-            left:10,
-            right:10,
-            bottom:0,
-        }}  >
-        <View
-            style={{
-                flexDirection:"row",
-                alignItems:"center",
-            }}
-            className = "px-4"
-        >
-            <Image
-                source={{uri:selectedArena.profileImage.publicUrl}}
-                style={{
-                    width:width/6,
-                    height:width/6,
-                    borderRadius:50,
 
-                    borderWidth:2,
-                    borderColor:"#eab308",
-                }}
-            />
-            <View
-                style={{
-                    flex:1,
-                    marginLeft:12,
-                }}
-            >
-                <View
-                    style={{
-                        flexDirection:"row",
-                        alignItems:"center",
-                    }}
-                >
-                    <Text
-                        numberOfLines={1}
-                        style={{
-                            color:"#FFF",
-                            fontWeight:"700",
-                            fontSize:width/25,
-                            flex:1,
-                        }}
-                    >
-                        {selectedArena.arenaName}
-                    </Text>
-                    {selectedArena.verified && (
-
-                        <MaterialCommunityIcons
-                            name="check-decagram"
-                            size={18}
-                            color="#eab308"
-                        />
-
-                    )}
-
-                </View>
-                <Text
-                    style={{
-                        color:"#eab308",
-                        fontSize:width/32,
-                        marginTop:4,
-                        fontWeight:"700",
-                    }}
-                >
-                    {selectedArena.talentType} • {selectedArena.region}
-                </Text>
-                <Text
-                    numberOfLines={2}
-                    style={{
-                        color:"rgba(255,255,255,.82)",
-                        marginTop:4,
-                        fontWeight : "700",
-                        fontSize : width/38,
-                        lineHeight:18,
-                    }} >
-                    {selectedArena.biography}
-                </Text>
-            </View>
-        </View>
-        <Text 
-            numberOfLines={2}
-            style ={{
-                paddingTop :18,
-                paddingBottom :18,
-                // marginLeft : 18,
-                fontWeight : "600",
-                fontSize : width/38,
-                lineHeight : 18 ,
-                width : width * 0.75
-            }}
-        className="text-white ml-6 text-xs tracking-wide">
-        {selectedArena.description} 
-        </Text> 
-        {/* Stats */}
-        <View
-            style={{
-                flexDirection:"row",
-                marginTop:0,
-                justifyContent:"space-between",
-            }}
-            className = "px-4"
-        >
-            <Stat
-                icon="star"
-                value={selectedArena.starCount}
-                width={width}
-            />
-            <Stat
-                icon="play-box-multiple-outline"
-                value={selectedArena.postCount}
-                width={width}
-
-            />
-            <Stat
-                icon="account-group-outline"
-                value={selectedArena.followerCount}
-                width={width}
-
-            />
-        </View>
-
-        <View
-        className ="flex-row w-full justify-start items-center px-4">
-          {notification.sender_id && (
-             <FollowArenaButton width={width} onPress = {toggleFollower} isFollowed={selectedArena.isFollower} />
-          )}
-        </View>
-      
-    </View>
-
-    {notification.sender_id && (
-      <View
-        className = "absolute top-4 right-8 " >
-              <StarArenaButton
-                    width={width}
-                    isStarred={selectedArena.isStarred}
-                    onPress={toggleStar}
-                    />
-    </View>         
-   )}
-
-    
-
-   </TouchableOpacity>
-   )
- }
   
 
   return (
@@ -493,117 +290,137 @@ const toggleStar = async () => {
       // onPress={() => setShowPerformance(!showPerformance)}
       style ={{
         zIndex: showDelete ? 9999 : 1,
+        // width,
+        // minHeight : width/4.2
         // elevation: showDelete ? 9999 : 1,
       }}
-      className={`mx-1 mb-4 rounded-xl  py-4  border overflow-hidden ${
+      className={`m x-1 mb-4 rounded-3xl items-center  py-2 px-4 border over flow-hidden ${
         isRead
-          ? "bg-[#19130a] border-white/5"
-          : "bg-primary  bo rder-[#F4C542]/35"
-      }`}
-      >
-      {/* Gold Accent */}
-      {!isRead && (
-        <View className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#F4C542]" />
-      )}
-      {/* {!isRead && (
-        <View className="absolute left -0 top-0 bott om-0 w-[100%] h-[3px] bg-[#F4C542]" />
-      )} */}
-      {/* {!isRead && (
-        <View className="absolute left -0 top-0 bott om-0 w-[100%] h-[3px] bg-[#F4C542]" />
-      )} */}
+          ? "bg-[#19 130a] borde r-l border-white/15"
+          : "bg-p rimary bord er-l-4 border-[gold]/35 "
+      }`} >
       
-      <View className="flex-row items-center px-4 ">
-         {/* Thumbnail */}
-         <View className="ml- 4 mt-auto">
-          <Image
-            source={{
-              uri:
-                notification.presentation?.image ||
-                user.profileImage.publicUrl,
-            }}
-            resizeMode="cover"
-            className="w-20 h-20 rounded-full border border-[#F4C542]/20"
-          />
-        </View>
-       
-        {/* Content */}
-        <View className="flex-1 h- 20 ml-4">
-  
-          <View className="flex-row items-center">
+      {!isRead && (
+        <View className="absolute h-[9px] rounded-full items-center left-2  top-2  w-[9px] bg-[#F4C542]" />
+      )}
+   
+        
+        <View 
+        style ={{
+          height : width/4,
+          // width
+        }}
+        className="w-full fle x-1 h- 20 px- 4">
+      
+          <View
+          style ={{
+            // height : width/5.2
+          }}
+           className="flex-row flex-1 items-center w-full gap-4">
+
+              <View className="">
+                <Image
+                  source={{
+                    uri:
+                      notification.presentation?.image ||
+                      user.profileImage.publicUrl,
+                  }}
+                  style = {{
+                    width:width/11,
+                    height : width/11
+                  }}
+                  resizeMode="cover"
+                  className="w- 20 h- 20 rounded-full border border-[#F4C542]/20"
+                />
+              </View>
+              <View>
+                  <View
+                  className = "flex-row " >
+                    <Text
+                      numberOfLines={1}
+                      className="text-white font-extrabold mr-4"
+                      style={{
+                        fontSize: width / 32,
+                      }}
+                    >
+                      {notification.metadata.name} 
+                    </Text>
+                  
+                      <View className="fle x-1 items-center justify-center">
+                          <MaterialCommunityIcons
+                            name="stadium"
+                            size={17}
+                            color="#EAB308"
+                          />
+                      </View>
+                  </View>
+                  <View className="flex-row mt-1 items-center">
+                    <Text
+                      className="text-[#AAA] font-bold mt-1"
+                      style={{
+                        fontSize: width / 34,
+                      }}
+                    >
+                      {notification.metadata.talent} {' '}
+                      {stageIcons[notification.metadata.talent]} {'  .  '}
+                    </Text>
+                    <Text
+                      className="text-[#AAA] font-bold mt-1"
+                      style={{
+                        fontSize: width / 34,
+                      }}  >
+                        {
+                          countries.find(
+                            c =>
+                              c.code ===
+                              notification.metadata.region
+                          )?.name 
+                        }
+                        {" "}
+                        {
+                          countries.find(
+                            c =>
+                              c.code ===
+                              notification.metadata.region
+                          )?.flag
+                        } 
+                    </Text>
+                  </View>
+
+             </View>
+
+
+          </View>
+         
+          <View
+            className ="mt-auto  fle x-1 py-2">
             <Text
-              numberOfLines={1}
-              className="text-white font-extrabold mr-4"
+              numberOfLines={2}
+              className="text-zinc-100 fon t-pbold sem ibold"
               style={{
-                fontSize: width / 27,
+                fontSize: width / 33,
+                lineHeight: 22,
               }}
             >
-              {notification.metadata.arena_name} 
-            </Text>
-            {/* {!isRead && (
-              <View className="w-2 h-2 rounded-full bg-[#F4C542]" />
-            )} */}
-            <Text
-              style={{
-                fontSize: width / 32,
-              }}
-            >
-              {stageIcons[notification.metadata.stageName]}
+              {notification.presentation?.text}
             </Text>
           </View>
-  
-          <Text
-            className="text-[#F4C542] font-black mt-1"
-            style={{
-              fontSize: width / 30,
-            }}
-          >
-            {notification.metadata.talentName}
-            {
-              countries.find(
-                c =>
-                  c.code ===
-                  notification.metadata.arena_region
-              )?.name 
-            }
-           {" "}
-           {
-              countries.find(
-                c =>
-                  c.code ===
-                  notification.metadata.arena_region
-              )?.flag
-            }
-          </Text>
-         
-         <View
-           className ="mt-auto pt-2">
-          <Text
-            numberOfLines={2}
-            className="text-zinc-300 font-bold"
-            style={{
-              fontSize: width / 32,
-              lineHeight: 19,
-            }}
-          >
-            {notification.presentation.text}
-          </Text>
-         </View>
 
         </View>
   
-      </View>
+      {/* </View> */}
 
       {showPerformance && posts.length !== 0 &&  (
            <TouchableOpacity
            onPress={playPerformance}
-           className ="p-2 px-4 w-full mt-4 items-center opa ci ty-80">
+           className ="py-2 px- 4 w-full mt- 4 items-center opa ci ty-80">
               <Image
                 source={{
                   uri:
                     posts[0].media?.thumbnail. cdnUrl || user.profileImage.publicUrl
                 }}
                 style ={{
-                  height : height/3
+                  height : width * 0.7
                 }}
                 resizeMode="cover"
                 className="w-full h-[200] rounded-xl b order borde r-[#F4C542]/20"
@@ -632,7 +449,7 @@ const toggleStar = async () => {
                         bottom: 10,
                         // left: 2,
                         // right: 2,
-                        width : "98%",
+                        width : "95%",
                         padding : 10
                     }}
                     className = " rounded-3xl flex-row justify-between items-center bg-[#000]/40"
@@ -683,15 +500,13 @@ const toggleStar = async () => {
         {showArena && selectedArena &&  (
             <View
             style={{
-            }}  className ="mt-4 self-center px-4"  >
-                <ArenaCard
-                arena = {selectedArena}
-                user = {user}
-                userProfile = {user}
-                activity={true}
-                width={width * 0.95 }
+            }}  className ="mt- 4 self-center py-2 4"  >
+               
+              <ArenaJourneyCard
+                entry = {selectedArena}
+                width={width * 0.92 }
                 height={width * 0.7}
-              />
+               />
             </View>
           // displayArena()
       )}
@@ -807,9 +622,7 @@ const toggleStar = async () => {
             </TouchableOpacity>
           </View>
         )}
-           {/* {!isRead && (
-              <View className="absolute bottom-4 right-6 w-2 h-2 rounded-full bg-[#F4C542]" />
-            )} */}
+        
           
 
     </TouchableOpacity>

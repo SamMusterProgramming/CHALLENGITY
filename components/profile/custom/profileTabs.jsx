@@ -15,15 +15,15 @@ const tabs = [
   }
   ,
   {
-    key: "friends",
-    label: "Friends",
+    key: "people",
+    label: "People",
     icon: "account-group-outline",
   },
-  {
-    key: "followers",
-    label: "Followers",
-    icon: "heart-outline",
-  },
+  // {
+  //   key: "followers",
+  //   label: "Followers",
+  //   icon: "heart-outline",
+  // },
  
 ];
 
@@ -34,11 +34,12 @@ export default function ProfileTabs({selectedTab , setSelectedTab ,setActiveTab}
   return (
     <View
       style={{
-        marginHorizontal: 10,
-        marginTop: 12,
+        marginHorizontal: 13,
+        marginTop: 32,
+        marginBottom: 12,
         borderBottomWidth: 1,
         borderTopWidth: 1,
-        borderColor: "rgba(255,255,255,.08)",
+        // borderColor: "rgba(255,255,255,.08)",
       }}
     >
       <View
@@ -65,23 +66,29 @@ export default function ProfileTabs({selectedTab , setSelectedTab ,setActiveTab}
                 justifyContent: "center",
                 // paddingBottom: 14,
               }}
-              className = "flex-row py-3 gap-2"
+              className = {`flex-row w-[32%] items-center justify-center rounded-full py-3 gap-2
+                ${
+                  active
+                    ? "border-yellow-500/40 bg-yellow-500/[0.12]"
+                    : "border-white/[0.27] bg-white/[0.13]"
+                } `}
             >
               <MaterialCommunityIcons
                 name={tab.icon}
-                size={17}
+                size={15}
                 color={active ? "#eab308" : "rgba(255,255,255,.95)"}
+                
               />
 
               <Text
                 style={{
                 //   marginTop: 6,
                   color: active ? "#eab308" : "rgba(255,255,255,.95)",
-                  fontSize: width/30,
-                  fontWeight: active ? "1200" : "1200",
-                  letterSpacing: 1.4,
+                  fontSize: width/34,
+                  fontWeight: active ? "700" : "700",
+                  letterSpacing: 0.4,
                 }}
-                className ="font-bebas mt-1"
+                className ="font-black mt-1"
               >
                 {tab.label}
               </Text>

@@ -8,12 +8,14 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import { countries } from "../../../utilities/TypeData";
 import StarArenaButton from "../custom/starArenaButton";
 import FollowArenaButton from "../custom/followArenaButton";
 import { AnimatePresence, MotiView } from "moti";
+import ArenaJourneyCard from "../../myJourney/ArenaJourneyCard";
+import NoArena from "../../profile/arena/NoArena";
 
 export default function DisplayViewArena({
                                             userArenas,
@@ -38,7 +40,7 @@ export default function DisplayViewArena({
     }, [showSwipeHint]);
 
     const { width } = useWindowDimensions();
-    const CARD_WIDTH = width * 1;
+    const CARD_WIDTH = width * 0.95 ;
     const SPACING = 14;
     const SIDE_PADDING = (width - CARD_WIDTH) / 2;
     const ITEM_SIZE = CARD_WIDTH + SPACING;
@@ -47,9 +49,26 @@ export default function DisplayViewArena({
         ...userArenas
     ];
 
+    const currentArenaIndex = arenas.findIndex(
+        (arena) => arena._id === selectedArena?._id
+      );
+      
+    const hasMoreArenas = arenas.length > 1;
+
 
     return (
         <>
+         {!arenas.length ? (
+        <View
+        style ={{
+            marginTop : 14,
+            height : width,
+            width
+        }}
+        className = "px-4">
+             <NoArena />
+        </View>
+        ) : (
         <FlatList
         ref={flatListRef}
         horizontal
@@ -86,285 +105,133 @@ export default function DisplayViewArena({
             index,
           })}
         renderItem={({item})=>{
-            
              return (
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => onPressArena(item)}
+                <View
                     style={{
-                        width:CARD_WIDTH ,
-                        height:300,
-                        borderRadius:12,
-                        overflow:"hidden",
-                        // backgroundColor: selectedArena._id == item._id ? "#000" : "gold",
-                        // borderWidth:selectedArena._id == item._id ? 0 : 2,
-                        // borderTopColor:selectedArena._id == item._id ? "transparent" : "rgba(234,179,8,.15)",
-                        padding: selectedArena._id == item._id ? 1 : 1
-                    }} 
-                    className ="justify-center  items-center"
-                     >
-                    {/* Cover */}
-                    <Image
-                        source={{uri:item.coverImage.publicUrl}}
-                        style={{
-                            width:"95%",
-                            height:"100%",
-                            position:"absolute",
-                            // borderRadius:12,
-                        }}
-                        resizeMode="cover"
-                        className ="rounded-lg"
-                    />
-                   {/* {active && ( */}
-                    <LinearGradient
-                        colors={[
-                            "transparent",
-                            "rgba(0,0,0,.45)",
-                            "rgba(0,0,0,.65)",
-                            "rgba(0,0,0,.85)",
-                            "#000",
-                        ]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            width: "100%",
-                            bottom:0,
-                            height:"80%",
-                        }}
-                    />
-                    {/* )} */}
-                    <LinearGradient
-                        colors={[
-                            "transparent",
-                            "rgba(0,0,0,.75)",
-                            "rgba(0,0,0,.75)",
-                            "transparent",
-                        ]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            right:width/4,
-                            bottom:110,
-                            height:"50%",
-                            borderTopRightRadius: 30,
-                            borderBottomRightRadius: 30,
-                        
-                            overflow: "hidden",
-                        }}
-                    />
-
-                    {/* Header */}
-
-                    <View
-                        style={{
-                            position:"absolute",
-                            left:10,
-                            right:10,
-                            bottom:16,
-                        }}
-                       
-                    >
-                        <View
-                            style={{
-                                flexDirection:"row",
-                                alignItems:"center",
-                            }}
-                            className = "px-4"
-                        >
-                            <Image
-                                source={{uri:item.profileImage.publicUrl}}
-                                style={{
-                                    width:width/6,
-                                    height:width/6,
-                                    borderRadius:50,
-
-                                    borderWidth:2,
-                                    borderColor:"#eab308",
-                                }}
-                            />
-                            <View
-                                style={{
-                                    flex:1,
-                                    marginLeft:12,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flexDirection:"row",
-                                        alignItems:"center",
-                                    }}
-                                >
-                                    <Text
-                                        numberOfLines={1}
-                                        style={{
-                                            color:"#FFF",
-                                            fontWeight:"700",
-                                            fontSize:width/25,
-                                            flex:1,
-                                        }}
-                                    >
-                                        {item.arenaName}
-                                    </Text>
-                                    {item.verified && (
-
-                                        <MaterialCommunityIcons
-                                            name="check-decagram"
-                                            size={18}
-                                            color="#eab308"
-                                        />
-
-                                    )}
-
-                                </View>
-                                <Text
-                                    style={{
-                                        color:"#eab308",
-                                        fontSize:width/32,
-                                        marginTop:4,
-                                        fontWeight:"700",
-                                    }}
-                                >
-                                    {item.talentType} • {item.region}
-                                </Text>
-                                <Text
-                                    numberOfLines={2}
-                                    style={{
-                                        color:"rgba(255,255,255,.82)",
-                                        marginTop:4,
-                                        fontWeight : "700",
-                                        fontSize : width/35,
-                                        lineHeight:18,
-                                    }} >
-                                    {item.biography}
-                                </Text>
-                            </View>
-                        </View>
-
-                        
-
-                        <Text 
-                            numberOfLines={2}
-                            style ={{
-                                paddingTop :18,
-                                paddingBottom :18,
-                                // marginLeft : 18,
-                                fontWeight : "600",
-                                fontSize : width/32,
-                                lineHeight : 18 ,
-                                width : width * 0.75
-                            }}
-                        className="text-white ml-6 text-xs tracking-wide">
-                        {item.description} 
-                        </Text> 
-                        {/* Stats */}
-                        <View
-                            style={{
-                                flexDirection:"row",
-                                marginTop:0,
-                                justifyContent:"space-between",
-                            }}
-                            className = "px-4"
-                        >
-                            <Stat
-                                icon="star"
-                                value={item.starCount}
-                                width={width}
-                            />
-                            <Stat
-                                icon="play-box-multiple-outline"
-                                value={item.postCount}
-                                width={width}
-
-                            />
-                            <Stat
-                                icon="account-group-outline"
-                                value={item.followerCount}
-                                width={width}
-
-                            />
-                             {/* <Stat
-                                icon=""
-                                value={""}
-                                width={width}
-
-                            /> */}
-                        </View>
-                        {item.posts.length >= 5 && (
-                              <View
-                              className ="flex-row w-full justify-start items-center gap-2">
-                                    <FollowArenaButton width={width} onPress = {toggleFollower} isFollowed={item.isFollower} />
-                              </View>
-                        )}
-                    
-                    </View>
-
-                    <View
-                        className = "absolute top-4 right-8" >
-                              <StarArenaButton
-                                    width={CARD_WIDTH}
-                                    isStarred={item.isStarred}
-                                    onPress={toggleStar}
-                                    />
-                    </View>
-
-             
-
-                </TouchableOpacity>
+                    // width: "100%",
+                    alignItems: "center",
+                    // marginBottom: 24,
+                    // padding: selectedArena._id == item._id ? 1 : 1
+                    }} className ="justify-center" >
+                    <ArenaJourneyCard
+                        entry={item}
+                        width={CARD_WIDTH}
+                        height= {(width / 6.9) * 5.9}
+                        />
+                </View>
             )
         }}
         />
-          <AnimatePresence>
-                {showSwipeHint && (
-                    <MotiView
-                        from={{
-                            opacity: 0,
-                            translateY: 8,
-                        }}
-                        animate={{
-                            opacity: 1,
-                            translateY: 0,
-                        }}
-                        exit={{
-                            opacity: 0,
-                            translateY: -8,
-                        }}
-                        transition={{
-                            type: "timing",
-                            duration: 350,
-                        }}
-                        style={{
-                            alignSelf: "center",
-                            marginBottom: 12,
-                            marginTop :-12,
-                            backgroundColor: "rgba(17,18,20,.92)",
-                            borderRadius: 22,
-                            borderWidth: 1,
-                            borderColor: "rgba(234,179,8,.18)",
-                            paddingHorizontal: 18,
-                            height: 38,
-                            flexDirection: "row",
-                            alignItems: "center",
-                        }}
-                    >
-                        <MaterialCommunityIcons
-                            name="gesture-swipe-horizontal"
-                            size={18}
-                            color="#eab308"
-                        />
-                        <Text
-                            style={{
-                                marginLeft: 8,
-                                color: "#fff",
-                                fontSize: 13,
-                                fontWeight: "600",
-                                letterSpacing: .2,
-                            }}
-                        >
-                            Swipe to explore more arenas
-                        </Text>
-                    </MotiView>
-                )}
-            </AnimatePresence>
+       )}
+
+
+{arenas.length > 0 && (
+        <View
+            style={{
+            width: "100%",
+            paddingHorizontal: SIDE_PADDING,
+            // marginTop: 18,
+            marginBottom: 4,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            }} className = "mt-6"  >
+            <View
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flex: 1,
+            }}
+            >
+            <MaterialCommunityIcons
+                name="stadium-outline"
+                size={16}
+                color="#EAB308"
+            />
+
+            <Text
+                style={{
+                marginLeft: 5,
+                fontSize: width / 32,
+                fontWeight: "800",
+                letterSpacing: 0.8,
+                color: "rgba(255,255,255,0.55)",
+                }}
+            >
+                ARENAS
+            </Text>
+
+            {hasMoreArenas && currentArenaIndex === 0 && (
+                <View
+                style={{
+                    marginLeft: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+                >
+                <Ionicons
+                    name="swap-horizontal-outline"
+                    size={14}
+                    color="rgba(255,255,255,0.35)"
+                />
+
+                <Text
+                    style={{
+                    marginLeft: 3,
+                    fontSize: 12,
+                    fontWeight: "600",
+                    color: "rgba(255,255,255,0.3)",
+                    }}
+                >
+                    SWIPE
+                </Text>
+                </View>
+            )}
+            </View>
+
+            {/* RIGHT — DOTS */}
+            {hasMoreArenas && (
+            <View
+                style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                }}
+            >
+                {arenas.map((arena, index) => {
+                const active = index === currentArenaIndex;
+
+                return (
+                    <TouchableOpacity
+                    key={arena._id}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                        flatListRef.current?.scrollToIndex({
+                        index,
+                        animated: true,
+                        });
+
+                        setSelectedArena(arena);
+                    }}
+                    style={{
+                        marginLeft: index === 0 ? 0 : 5,
+                        width: active ? 18 : 18,
+                        height: 8,
+                        borderRadius: 10,
+                        backgroundColor: active
+                        ? "#EAB308"
+                        : "rgba(255,255,255,0.18)",
+                    }}
+                    />
+                );
+                })}
+            </View>
+            )}
+        </View>
+        )}
+
+
+
         </>
     );
 }

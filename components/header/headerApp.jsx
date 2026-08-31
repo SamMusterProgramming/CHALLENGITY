@@ -12,6 +12,8 @@ export default function HeaderApp({
   setShowNotifications,
   setShowProfile,
   setShowFavourite,
+  showSearch,
+  setShowSearch,
   width,
   height,
   headerHeight , 
@@ -49,6 +51,7 @@ export default function HeaderApp({
             </TouchableOpacity>
 
             <TouchableOpacity
+            onPress={() => setShowSearch(true)}
               className="
                 rounde d-xl
                 bg -[#2a1f08]
@@ -63,8 +66,8 @@ export default function HeaderApp({
             </TouchableOpacity>
       </View>
      
-       <View
-      //  style ={{width : headerHeight * 0.5 }}
+       <TouchableOpacity
+       
        className = " flex-row flex-1 h-[100%] pb- 4  justify-center items-center   ">
            <View
            className ="flex-1 borde r-b-4 bord er-goldSoft">
@@ -78,7 +81,7 @@ export default function HeaderApp({
                   className="mb-auto"
                 />
             </View>
-      </View>
+      </TouchableOpacity>
       
       <View 
       className="flex-row  w-[35%] h-[100%]  rounded-xl justify-end pt-3 pr-2  items-center  gap-4">

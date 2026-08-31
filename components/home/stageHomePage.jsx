@@ -162,7 +162,7 @@ useEffect(() => {
             <StageCard
               entry={item}
               width={width * 0.95}
-              height={width / 2}
+              height={width /1.3}
               // onPress={openStage}
             />
         </View>
@@ -187,7 +187,7 @@ useEffect(() => {
             <ArenaJourneyCard
                 entry={item}
                 width={width * 0.95}
-                height={width / 2.36}
+                height={width / 1.3}
                 onPress={openArena}
                 />
       </View>

@@ -8,9 +8,9 @@ export function Stats({ icon, label, value, width }) {
     
         borderRadius: 18,
         backgroundColor: "rgba(255,255,255,0.035)",
-        justifyContent: "center",
+        justifyContent: "end",
         alignItems: "center",
-        paddingVertical :8,
+        // paddingVertical :8,
       }}
     >
 
@@ -34,9 +34,9 @@ export function Stats({ icon, label, value, width }) {
       <Text
         style={{
           marginTop: 3,
-          color: "rgba(255,255,255,.85)",
+          color: "rgba(255,255,255,.75)",
           fontSize: width / 45,
-          fontWeight: "600",
+          fontWeight: "900",
           letterSpacing: 1,
         //   textTransform: "uppercase",
         }}

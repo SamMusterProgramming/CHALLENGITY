@@ -1,4 +1,4 @@
-import { View, Text, useWindowDimensions, Platform, FlatList } from 'react-native'
+import { View, Text, useWindowDimensions, Platform, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ArenaInfoPanel from '../components/arenaDisplayer/arenaInfosPanel';
@@ -9,11 +9,12 @@ import { useGlobalContext } from '../context/GlobalProvider';
 import ArenaAlertModal from '../components/arena/modals/AlertArenaModal';
 import { useLoading } from '../context/loadingContext';
 import EmptyPerformanceCard from '../components/viewArenas/performance/emptyPerformanceCard';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function arenaDisplayer() {
     const {width , height} = useWindowDimensions()
     const {user ,showProfile, setShowProfile , openArenaAlertModal, setUserArenas,setGlobalArenaRefresh,userFollowedArenas ,
-           setOpenArenaAlertModal,arenaActionModal, setArenaActionModal ,globalArenaRefresh} = useGlobalContext()
+           setOpenArenaAlertModal,arenaActionModal, setArenaActionModal ,globalArenaRefresh , userFriendData} = useGlobalContext()
            
     const insets = useSafeAreaInsets();
     const { arena_id } =  useLocalSearchParams(); 
@@ -58,8 +59,8 @@ export default function arenaDisplayer() {
       loadArena()
     }, [])
 
-    const PERFORMANCE_HEIGHT = selectedArena?.postCount == 1 ? height * 0.65 :
-    selectedArena?.postCount <= 4 ? height * 0.64 / 2 :
+    const PERFORMANCE_HEIGHT = selectedArena?.postCount == 1 ? height * 0.63 :
+    selectedArena?.postCount <= 4 ? height * 0.63 / 2 :
     height * 0.65 / 2.5
 
     useEffect(() => {
@@ -259,9 +260,70 @@ export default function arenaDisplayer() {
             paddingBottom : Platform.OS == "ios" ? insets.bottom   : 20
          }}
         className=" flex-1  min-w-[100vw] min-h-full flex-col justify-center items-center  bg-[#0d0d0d]" >
+           
             <View
             style ={{
-                height : height * 0.66,
+                width,
+            }}
+            className = "flex-row justify-start items-center px-3 py-2 2">
+                
+                <View className="h-[32px] w-[32px] overflow-hidden rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.08]">
+                    <View className="flex-1 items-center justify-center">
+                      <MaterialCommunityIcons
+                        name="stadium"
+                        size={15}
+                        color="#EAB308"
+                      />
+                    </View>
+                </View>
+
+                <View className="ml-[10px] flex-1">
+                    <View className="flex-row items-center">
+                      <Text
+                        numberOfLines={1}
+                        style ={{
+                          fontSize : width/32
+                        }}
+                        className="max-w-[85%] text-[17px] font-bold tracking-[0.1px] text-white"
+                      >
+                        {selectedArena.arenaName}
+                      </Text>
+                      {/* {entry.verified && ( */}
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={19}
+                          color="#EAB308"
+                          style={{
+                            marginLeft: 5,
+                          }}
+                        />
+                      {/* )} */}
+                    </View>
+                </View>
+
+                <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={()=> 
+                            router.back()
+                        }
+                        style={{
+                            borderRadius: 23,
+                            alignItems: "center",
+                            flexDirection : "row"
+                        }}
+                        className = " ml-auto justify-center"  >
+
+                        <MaterialCommunityIcons
+                            name= "close"
+                            color="#EAB308"
+                            size={width/14}
+                        />
+                </TouchableOpacity>
+            </View>
+    
+            <View
+            style ={{
+                height : height * 0.65,
                 width,
                 // paddingHorizontal :24
             }}

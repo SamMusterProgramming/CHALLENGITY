@@ -31,8 +31,53 @@ import StageDisplayer from "../talent/stageDisplayer";
 import ArenaCard from "../viewArenas/displayArena/arenaCard";
 import { LinearGradient } from "expo-linear-gradient";
 import FollowArenaButton from "../viewArenas/custom/followArenaButton";
+import StageCard from "../stage/StageCard";
+import ArenaJourneyCard from "../myJourney/ArenaJourneyCard";
+import UserProfileCard from "../profile/card/userProfileCard";
 
 const { width, height } = Dimensions.get("window");
+
+
+ function EmptyList  ({message ="Save stages to access them quickly later."})  {
+  return(
+    <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: width / 10,
+              }} className ="mt-[40%]" >
+              <MaterialCommunityIcons
+                name="star-outline"
+                size={width / 4}
+                color="rgba(234,179,8,0.35)"
+              />
+              <Text
+                style={{
+                  color: "#FFF",
+                  fontSize: width / 18,
+                  fontWeight: "700",
+                  marginTop:
+                    height / 40,
+                }}
+              >
+                No Followings yet
+              </Text>
+              <Text
+                style={{
+                  color:
+                    "rgba(255,255,255,0.45)",
+                  fontSize: width / 30,
+                  textAlign: "center",
+                  marginTop:
+                    height / 80,
+                }}
+              >
+                {message}
+              </Text>
+    </View>
+  )
+}
 
 export default function FavouriteStageDrawer({
   visible,
@@ -40,14 +85,12 @@ export default function FavouriteStageDrawer({
 }) {
   const insets = useSafeAreaInsets();
 
-  const { favouriteStages, user, userFollowedArenas } =
+  const { favouriteStages, user, userFollowedArenas , userFollowers } =
     useGlobalContext();
   const drawerWidth = width ;
   const translateX = useSharedValue(drawerWidth);
   const [selectedTab,setSelectedTab] = useState("arenas")
 
- 
- 
   useEffect(() => {
     translateX.value = visible
       ? withTiming(0, { duration: 250 })
@@ -101,7 +144,8 @@ export default function FavouriteStageDrawer({
 
         case "stages":
           return favouriteStages;
-
+        case  "people":
+          return  userFollowers 
         default:
           break;
       }
@@ -183,7 +227,7 @@ export default function FavouriteStageDrawer({
 
           {/* HEADER */}        
           <View
-            className="pl-2 pt-2 pb- 2 mb- 2 w-full  flex-row justify-between items-center borde r-b bo rder-[rgba(234,179,8,.50)]">
+            className="pl-2 pt-3 pb- 2 mb- 2 w-full  flex-row justify-between items-center borde r-b bo rder-[rgba(234,179,8,.50)]">
             <View
               className = "flex-1 px-2"
             >
@@ -194,7 +238,7 @@ export default function FavouriteStageDrawer({
                   fontWeight: "900",
                 }}
               >
-                FOLLOWINGS {'  '}
+                FOLLOWING {'  '}
               </Text>
               <Text
                 style={{
@@ -227,17 +271,23 @@ export default function FavouriteStageDrawer({
               marginTop: 12,
               marginBottom: 18,
             }}
+            className = "fle x-1"
           >
             {[
               {
                 key: "arenas",
                 label: "Arenas",
-                icon: "stadium",
+                icon: "stadium-outline",
               },
               {
                 key: "stages",
                 label: "Stages",
-                icon: "trophy",
+                icon: "trophy-outline",
+              },
+              {
+                key: "people",
+                label: "People",
+                icon: "account-group-outline",
               },
             ].map((item) => {
               const isActive = selectedTab === item.key;
@@ -249,23 +299,28 @@ export default function FavouriteStageDrawer({
                   key={item.key}
                   onPress={() => {
                     setSelectedTab(item.key);
-                    // indicator.value = withSpring(index);
                   }}
-                  style={{
-                    width: "48%",
-                    // height: height/10,
-                    borderRadius: 6,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: isActive
-                      ? "rgba(244,197,66,.10)"
-                      : "#0F0F10",           
-                  }}
-                  className ="py-4 flex-row gap-2"
+                  // style={{
+                  //   width: "48%",
+                  //   borderRadius: 6,
+                  //   justifyContent: "center",
+                  //   alignItems: "center",
+                  //   backgroundColor: isActive
+                  //     ? "rgba(244,197,66,.10)"
+                  //     : "#0F0F10",           
+                  // }}
+                  // className ="py-4 flex-row gap-2"
+                  className={`  mr-2 h-[38px] flex-1 flex-row items-center gap-2 justify-center rounded-full border
+                    ${
+                      isActive
+                        ? "border-yellow-500/40 bg-yellow-500/[0.12]"
+                        : "border-white/[0.27] bg-white/[0.03]"
+                    }
+                  `}
                 >
                   <MaterialCommunityIcons
                     name={item.icon}
-                    size={28}
+                    size={15}
                     color={
                       isActive
                         ? "#F4C542"
@@ -275,9 +330,9 @@ export default function FavouriteStageDrawer({
               
                   <Text
                     style={{
-                      marginTop: 6,
+                      marginTop: 2,
                       fontWeight: "700",
-                      fontSize:  width / 28,
+                      fontSize:  width / 34,
                       color: isActive
                         ? "#F4C542"
                         : "#8C8C8C",
@@ -306,50 +361,8 @@ export default function FavouriteStageDrawer({
 
           {/* CONTENT */}
 
-          {favouriteStages?.length === 0 ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent:
-                  "center",
-                alignItems: "center",
-                paddingHorizontal:
-                  width / 10,
-              }}
-            >
-              <MaterialCommunityIcons
-                name="star-outline"
-                size={width / 4}
-                color="rgba(234,179,8,0.35)"
-              />
-
-              <Text
-                style={{
-                  color: "#FFF",
-                  fontSize: width / 18,
-                  fontWeight: "700",
-                  marginTop:
-                    height / 40,
-                }}
-              >
-                No favourites yet
-              </Text>
-
-              <Text
-                style={{
-                  color:
-                    "rgba(255,255,255,0.45)",
-                  fontSize: width / 30,
-                  textAlign: "center",
-                  marginTop:
-                    height / 80,
-                }}
-              >
-                Save stages to access
-                them quickly later.
-              </Text>
-            </View>
-          ) : (
+          <View
+          className ="flex-1">
             <FlatList
               data={filteredData}
               renderItem={({item}) =>{
@@ -361,48 +374,98 @@ export default function FavouriteStageDrawer({
                           marginBottom: height / 45,
                           alignItems: "center",
                             }} >
-                            <StageDisplayer
-                              userTalent={item}
-                              user={user}
-                              userProfile={user}
-                              activity={true}
-                              width={drawerWidth * 0.95}
-                              height={width * 0.7}
+                          
+                              <StageCard
+                              entry={item}
+                              width={width * 0.95}
+                              height={width / 1.3}
+                              // onPress={openStage}
                             />
+                            
+                           
                       </View>
                     );
                   case "arenas":
-                    return (<View
+                    return (
+                      <View
                       style={{
                         marginBottom: height / 55,
                         alignItems: "center",
                           }} className ="mb-4" >
-                          <ArenaCard
+                          {/* <ArenaCard
                             arena={item}
                             user={user}
                             userProfile={user}
                             activity={true}
                             width={drawerWidth }
                             height={width * 0.7}
-                          />
-                    </View>)
+                          /> */}
+                           <ArenaJourneyCard
+                            entry={item}
+                            width={width * 0.95}
+                            height={width /1.3}
+                            />
+                      </View>)
+                  case "people":
+                    return (
+                      <View
+                      style={{
+                        marginBottom: height / 55,
+                        alignItems: "center",
+                          }} className ="mb-4" >
+                          <UserProfileCard
+                            entry={item}
+                            width={width * 0.95}
+                            height={width /3}
+                            />
+                      </View>)
                   default:
                     break;
                 }
                 // renderNotification
                }}
+
+              ListEmptyComponent={() => {
+                if (selectedTab === "stages") {
+                  return (
+                    <EmptyList
+                      message="Save stages to access them quickly later."
+                    />
+                  );
+                }
+            
+                if (selectedTab === "arenas") {
+                  return (
+                    <EmptyList
+                      message="Follow arenas to access them quickly later."
+                    />
+                  );
+                }
+            
+                if (selectedTab === "people") {
+                  return (
+                    <EmptyList
+                      message="Your people will appear here."
+                    />
+                  );
+                }
+            
+                return null;
+              }}
+
               keyExtractor={(item) => item._id.toString() }
               nestedScrollEnabled
               showsVerticalScrollIndicator={ false }
               contentContainerStyle={{
                 paddingBottom:
                   height / 28,
+                  paddingTop:
+                  height / 78,
               }}
               scrollEventThrottle={16}
               
             />
-          )}
-         
+           </View>
          </View>
         </Animated.View>
       </GestureDetector>

@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import { AnimatePresence, MotiView } from "moti";
 import StageDisplayer from "../../talent/stageDisplayer";
@@ -17,84 +17,27 @@ import StageJourneyCard from "../../myJourney/StageJourneyCard";
 import { extractStageEntries } from "../../../helper";
 import { router } from "expo-router";
 
-// function PerformanceDescription({stageData , user , width}) {
-//     const contestant = stageData.contestants?.find(
-//       c => c.user_id === user._id
-//     );
-    
-//     return (
-//       <>
-//         {contestant && (
-//           <Text 
-//           numberOfLines={3}
-//           style={{
-//             fontSize :width /28,
-//             color:"#fff",
-//             lineHeight:24
-//           }}
-//           className="text-zinc-300 text-start te xt-sm lead ing-6">
-//             You're currently{" "}
-//             <Text className="text-[#eab308] font-bold">
-//               {contestant.rank <= 4
-//                 ? `Top ${contestant.rank}`
-//                 : `Ranked #${contestant.rank}`}
-//             </Text>
-//             {" "}on this stage with{" "}
-//             <Text className="text-[#eab308] font-bold">
-//               {contestant.votes} votes .{"\n"}
-//             </Text>
-//               Perform. Earn votes. Rise higher. ✨
-//             </Text>
-//         )}
-    
-//         {stageData.queue?.find(
-//           c => c.user_id === user._id
-//         ) && (
-//           <Text 
-//           style={{
-//             fontSize :width /28,
-//             color:"#fff",
-//             lineHeight:24
-//           }}
-//           className="text-zinc-300 text-sm leading-6">
-//             Your performance is currently in the{" "}
-//             <Text className="text-[#eab308] font-semibold">
-//               queue
-//             </Text>
-//             . You'll be notified as soon as you secure a place on stage.
-//           </Text>
-//         )}
-    
-//         {stageData.eliminations?.find(
-//           c => c.user_id === user._id
-//         ) && (
-//           <Text 
-//           style={{
-//             fontSize :width /30,
-//             color:"#fff",
-//             lineHeight:24
-//           }}
-//           className="text-zinc-300 text-sm leading-6">
-//             You've been eliminated from this stage . Your journey isn't over. Rejoin with a stronger performance
-//           </Text>
-//         )}
-//       </>
-//     );
-//   }
 
 export default function StageCaroussel({
-    onPress,
+    onPress, stages , user
 }) {
-    const { userTalents, user} = useGlobalContext()
+    // const { user} = useGlobalContext()
     const { width ,height } = useWindowDimensions();
     const CARD_WIDTH = width * 0.95;
     const SPACING = 14;
     const SIDE_PADDING = (width - CARD_WIDTH) / 2;
     const ITEM_SIZE = CARD_WIDTH + SPACING;
     const flatListRef = useRef()
-   
-
     const [showSwipeHint, setShowSwipeHint] = useState(false);
+    const [selectedStage, setSelectedStage] = useState(stages[0])
+
+    const currentStageIndex = stages.findIndex(
+        (stage) => stage._id === selectedStage?._id
+      );
+    const hasMoreArenas = stages.length > 1;
+
+ 
+
     useEffect(() => {
         if (!showSwipeHint) return;
         const timer = setTimeout(() => {
@@ -104,20 +47,19 @@ export default function StageCaroussel({
     }, [showSwipeHint]);
 
     const content = useMemo(() => {
-      const stages = extractStageEntries(
-        userTalents || [],
+      const stgs = extractStageEntries(
+        stages || [],
         user?._id
       ).map((stage) => ({
         ...stage,
         src: "stage",
       }));
-    
-      return [...stages].sort(
+      return [...stgs].sort(
         (a, b) =>
           new Date(b.createdAt || 0).getTime() -
           new Date(a.createdAt || 0).getTime()
       );
-    }, [ userTalents, user?._id]);
+    }, [user?._id]);
 
     const openStage = (entry) =>{
 
@@ -145,28 +87,15 @@ export default function StageCaroussel({
             style={{
               width: CARD_WIDTH,
             //   alignSelf: "center",
-              marginBottom: 16,
+              // marginBottom: 16,
             }}
             className ="justify-center items-center"
           >
              <StageJourneyCard
                 entry={item}
                 width={width * 0.95}
-                height={width / 2}
-                onPress={openStage}
-          
+                height= {(width / 6.9) * 5.9}
                 />
-            {/* <StageDisplayer
-              userTalent={item}
-              user={user}
-              userProfile={user}
-              activity={true}
-              width={CARD_WIDTH}
-              height={height * 0.35}
-            /> */}
-           {/* <View className="w-full px-2 3 bg-[#000000]  items-ce nter py-2 mt-4 ">
-                   <PerformanceDescription  user={user} width={width}/>
-           </View> */}
         
           </View>
         );
@@ -175,10 +104,16 @@ export default function StageCaroussel({
 
     return (
         <>
-        {!userTalents.length ? (
-          <View
-          className= "justify-center items-center w-[95%] self-center p-8 rounded-xl border-2 border-[#d79f08]/30 flex-1 mt-6">
-             <StageDiscoveryFooter onPress = {onPress} height ={height/1.2} width={width/1.2}/>
+        {!stages.length ? (
+         <View
+         style ={{
+             marginTop : 14,
+             height : width,
+             width
+         }}
+         className = "px-4"
+         >
+             <StageDiscoveryFooter onPress = {onPress} height ={height} width={width}/>
           </View>
           ) : (
             <FlatList
@@ -195,7 +130,7 @@ export default function StageCaroussel({
             // initialScrollIndex={initialIndex || 0}
             contentContainerStyle={{
                 paddingHorizontal: SIDE_PADDING,
-                paddingTop: 24,
+                paddingTop: 14,
             }}
             ItemSeparatorComponent={() => (
                 <View style={{ width: SPACING }} />
@@ -206,60 +141,121 @@ export default function StageCaroussel({
                 index,
               })}
             renderItem={renderMainItem}
+            onMomentumScrollEnd={(e) => {
+                const offsetX = e.nativeEvent.contentOffset.x;
+                const index = Math.round(
+                    offsetX / (CARD_WIDTH + SPACING)
+                );
+                setSelectedStage(stages[index]);
+            }}
             />
         )}
        
-         <AnimatePresence>
-                {showSwipeHint && (
-                    <MotiView
-                        from={{
-                            opacity: 0,
-                            translateY: 8,
-                        }}
-                        animate={{
-                            opacity: 1,
-                            translateY: 0,
-                        }}
-                        exit={{
-                            opacity: 0,
-                            translateY: -8,
-                        }}
-                        transition={{
-                            type: "timing",
-                            duration: 350,
-                        }}
-                        style={{
-                            alignSelf: "center",
-                            marginTop: 12,
-                            backgroundColor: "rgba(17,18,20,.92)",
-                            borderRadius: 22,
-                            borderWidth: 1,
-                            borderColor: "rgba(234,179,8,.18)",
-                            paddingHorizontal: 18,
-                            height: 38,
-                            flexDirection: "row",
-                            alignItems: "center",
-                        }}
-                    >
-                        <MaterialCommunityIcons
-                            name="gesture-swipe-horizontal"
-                            size={18}
-                            color="#eab308"
-                        />
-                        <Text
-                            style={{
-                                marginLeft: 8,
-                                color: "#fff",
-                                fontSize: 13,
-                                fontWeight: "600",
-                                letterSpacing: .2,
-                            }}
-                        >
-                            Swipe to explore more stages
-                        </Text>
-                    </MotiView>
-                )}
-            </AnimatePresence>
+       {content.length > 0 && (
+        <View
+            style={{
+            width: "100%",
+            paddingHorizontal: SIDE_PADDING,
+            // marginTop: 18,
+            marginBottom: 4,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            }} className = "mt-6"  >
+            <View
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flex: 1,
+            }}
+            >
+            <MaterialCommunityIcons
+                name="trophy-outline"
+                size={16}
+                color="#EAB308"
+            />
+
+            <Text
+                style={{
+                marginLeft: 5,
+                fontSize: width / 32,
+                fontWeight: "800",
+                letterSpacing: 0.8,
+                color: "rgba(255,255,255,0.55)",
+                }}
+            >
+                STAGES
+            </Text>
+
+            {hasMoreArenas && currentStageIndex === 0 && (
+                <View
+                style={{
+                    marginLeft: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+                >
+                <Ionicons
+                    name="swap-horizontal-outline"
+                    size={14}
+                    color="rgba(255,255,255,0.35)"
+                />
+
+                <Text
+                    style={{
+                    marginLeft: 3,
+                    fontSize: 12,
+                    fontWeight: "600",
+                    color: "rgba(255,255,255,0.3)",
+                    }}
+                >
+                    SWIPE
+                </Text>
+                </View>
+            )}
+            </View>
+
+            {/* RIGHT — DOTS */}
+            {hasMoreArenas && (
+            <View
+                style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                }}  >
+                {stages.map((arena, index) => {
+                const active = index === currentStageIndex;
+
+                return (
+                    <TouchableOpacity
+                    key={arena._id}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                        flatListRef.current?.scrollToIndex({
+                        index,
+                        animated: true,
+                        });
+                    
+                        setSelectedStage(arena);
+                    }}
+                    style={{
+                        marginLeft: index === 0 ? 0 : 5,
+                        width: active ? 18 : 18,
+                        height: 8,
+                        borderRadius: 10,
+                        backgroundColor: active
+                        ? "#EAB308"
+                        : "rgba(255,255,255,0.18)",
+                    }}
+                    />
+                );
+                })}
+            </View>
+            )}
+        </View>
+        )}
+
+
         </>
     );
 }

@@ -45,11 +45,15 @@ export default function NotificationDrawer({
     useState(true);
   const [activeTab, setActiveTab] = useState("stage");
   const indicator = useSharedValue(0);
+  
+
+ 
 
   const competitionNotifications =
     notifications.filter(
       (n) => n.category === "competition"
     );
+   
 
   const friendNotifications =
     notifications.filter(
@@ -75,7 +79,7 @@ export default function NotificationDrawer({
       {
         key: "arena",
         label: "Arena",
-        icon: "stadium",
+        icon: "stadium-outline",
         badge: 1,
       },
       {
@@ -175,26 +179,32 @@ export default function NotificationDrawer({
             setActiveTab(item.key);
             indicator.value = withSpring(index);
           }}
-          style={{
-            width: "31%",
-            // height: height/10,
-            borderRadius: 12,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: isActive
-              ? "rgba(244,197,66,.10)"
-              : "#0F0F10",
-            borderWidth: 1,
-            borderColor: isActive
-              ? "rgba(244,197,66,.35)"
-              : "rgba(255,255,255,.15)",
+          // style={{
+          //   width: "31%",
+          //   borderRadius: 12,
+          //   justifyContent: "center",
+          //   alignItems: "center",
+          //   backgroundColor: isActive
+          //     ? "rgba(244,197,66,.10)"
+          //     : "#0F0F10",
+          //   borderWidth: 1,
+          //   borderColor: isActive
+          //     ? "rgba(244,197,66,.35)"
+          //     : "rgba(255,255,255,.15)",
            
-          }}
-          className ="py-4"
+          // }}
+          // className ="py-4"
+          className={`  mr-2 h-[38px] flex-1 flex-row items-center gap-2 justify-center rounded-full border
+            ${
+              isActive
+                ? "border-yellow-500/40 bg-yellow-500/[0.12]"
+                : "border-white/[0.27] bg-white/[0.03]"
+            }
+          `}
         >
           <MaterialCommunityIcons
             name={item.icon}
-            size={28}
+            size={20}
             color={
               isActive
                 ? "#F4C542"
@@ -204,7 +214,7 @@ export default function NotificationDrawer({
       
           <Text
             style={{
-              marginTop: 10,
+              marginTop: 2,
               fontWeight: "700",
               fontSize: 12,
               color: isActive
@@ -298,14 +308,14 @@ export default function NotificationDrawer({
             <View
               style={{
                 paddingHorizontal: 2,
-                borderBottomWidth: 1,
-                borderBottomColor: "rgba(234,179,8,.50)",
+                // borderBottomWidth: 1,
+                // borderBottomColor: "rgba(234,179,8,.50)",
                 backgroundColor: "#090909",
               }}
               className = "mb-4"
             >
                {/* HEADER */}
-              <View className="pl-2 pt-2  flex-row justify-between items-center border-b border-[rgba(234,179,8,.50)]">
+              <View className="pl-2 pt-3  flex-row justify-between items-center bord er-b bo rder-[rgba(234,179,8,.50)]">
                 <View>
                   <Text 
                     style ={{

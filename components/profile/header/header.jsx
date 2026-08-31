@@ -60,7 +60,7 @@ export default function Header({user , onPress, statData ,setModalVisible , logo
                 justifyContent: "center",
                 alignItems: "start",
                 // marginLeft: 18,
-                marginBottom :24,
+                marginBottom :14,
                 
               }}
               className = " rounded-t-full w-full mt -[-7] "
@@ -130,12 +130,12 @@ export default function Header({user , onPress, statData ,setModalVisible , logo
 
             <Text
                 style={{
-                  marginTop: 8,
-                  color: "#eab308",
+                  marginTop: 4,
+                  color: "#AAA",
                   fontWeight: "800",
                   fontSize: width / 30,
                   }}
-                  className = "ml-8"
+                  className = "ml-2"
                 >
                     Singer . professional Chabbi
             </Text>
@@ -161,9 +161,8 @@ export default function Header({user , onPress, statData ,setModalVisible , logo
           </View>
 
           <View
-            className = "w-full flex-row px-6">
-           
-                <View className="flex-row flex-1 px-2 justify-evenly border-t border-l border-r rounded-t-xl border-white/30 mt- 5 ">
+            className = "w-full flex-row px-3">
+                <View className="flex-row flex-1 px- 2 justify-evenly items-end border-l border-r rou nded-[5px] border-white/30 mt- 5 ">
                         {statData.map((item, index) => (
                         <React.Fragment key={item.label}>
                             <Stats
@@ -196,90 +195,7 @@ export default function Header({user , onPress, statData ,setModalVisible , logo
                 position :"absolute"
             }}
             >
-            {/* Edit */}
-            {/* <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-                activeOpacity={0.85}
-                style={{
-                justifyContent: "center",
-                alignItems: "center",
-                }} 
-                 >
-                <View
-                 style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(234,179,8,.58)",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    }}
-                    className = "p-2 rounded-full bg-black"
-                >
-                    <MaterialCommunityIcons
-                    name="account-edit"
-                    size={20}
-                    color="#eab308"
-                    />
-                </View>
-              
-            </TouchableOpacity> */}
-
-            {/* upload */}
-            {/* <TouchableOpacity
-                activeOpacity={0.85}
-                style={{
-                justifyContent: "center",
-                alignItems: "center",
-                }}
-                onPress={ () => {
-                    setUploadMenu(!uploadMenu)
-                    setHamburgerMenu(false)
-                }}
-              >
-                <View
-                 style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(234,179,8,.58)",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    }}
-                    className = "p-2 rounded-full bg-black"
-                >
-                    <MaterialCommunityIcons
-                    name="tray-arrow-up"
-                    size={20}
-                    color="#eab308"
-                    />
-                </View>
-                
-            </TouchableOpacity> */}
-
-            {/* <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={ () => {
-                setHamburgerMenu(!hamburgerMenu)
-                setUploadMenu(false)
-            }
-            }
-            style={{
-                // width: width/12,
-                // height: width/12,
-                borderRadius: 26,
-                backgroundColor: "rgba(0,0,0,.55)",
-                borderWidth: 1,
-                borderColor: "rgba(234,179,8,.58)",
-                justifyContent: "center",
-                alignItems: "center",
-            
-            }}
-            className = "p-2 rounded-full bg-black"
-            >
-                <MaterialCommunityIcons
-                    name="dots-horizontal"
-                    size={25}
-                    color="#f4d44d"
-                />
-            </TouchableOpacity> */}
-
+         
             
 
            {hamburgerMenu && (

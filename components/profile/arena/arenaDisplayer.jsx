@@ -8,10 +8,11 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import { AnimatePresence, MotiView } from "moti";
 import WelcomeToCreateArena from "./WelcomeToCreateArena";
+import ArenaJourneyCard from "../../myJourney/ArenaJourneyCard";
 
 export default function ArenaDisplayer({
     userArenas,
@@ -34,6 +35,13 @@ export default function ArenaDisplayer({
     const arenas = [
         ...userArenas
     ];
+
+    const currentArenaIndex = arenas.findIndex(
+        (arena) => arena._id === selectedArena?._id
+      );
+      
+    const hasMoreArenas = arenas.length > 1;
+    
 
     const [showSwipeHint, setShowSwipeHint] = useState(userArenas.length > 1);
     useEffect(() => {
@@ -59,6 +67,17 @@ export default function ArenaDisplayer({
 
     return (
         <>
+        {!userArenas.length ? (
+        <View
+        style ={{
+            marginTop : 14,
+            height : width,
+            width
+        }}
+        className = "px-4">
+             <WelcomeToCreateArena setOpenArenaAlertModal ={setOpenArenaAlertModal}  setArenaActionModal ={setArenaActionModal}/>
+        </View>
+        ) : (
         <FlatList
         ref={flatListRef}
         horizontal
@@ -77,7 +96,7 @@ export default function ArenaDisplayer({
             //     width -
             //     CARD_WIDTH -
             //     SIDE_PADDING,
-            paddingTop: 24,
+            paddingTop: 12,
         }}
         ItemSeparatorComponent={() => (
             <View style={{ width: SPACING }} />
@@ -101,371 +120,135 @@ export default function ArenaDisplayer({
         renderItem={({item})=>{
       
              return (
-              <>
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => onPressArena(item)}
+         
+                <View
                     style={{
-                        width:CARD_WIDTH,
-                        height:280,
-                        borderRadius:12,
-                        overflow:"hidden",
-                        padding: selectedArena._id == item._id ? 1 : 1
-                    }} 
-                    className ="justi fy-center mb-6 item s-center"
-                     >
-
-                    {/* Cover */}
-                    <Image
-                        source={{uri:item.coverImage.publicUrl}}
-                        style={{
-                            width:"100%",
-                            height:"100%",
-                            position:"absolute",
-                            // borderRadius:12,
-                        }}
-                        resizeMode="cover"
-                        className ="rounded-lg"
-                    />
-                   {/* {active && ( */}
-                    <LinearGradient
-                        colors={[
-                            "transparent",
-                            "rgba(0,0,0,.35)",
-                            "rgba(0,0,0,.55)",
-                            "rgba(0,0,0,.85)",
-                            "#000",
-                        ]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            width: "100%",
-                            bottom:0,
-                            height:"80%",
-                        }}
-                    />
-                    {/* )} */}
-                    <LinearGradient
-                        colors={[
-                            "transparent",
-                            "rgba(0,0,0,.15)",
-                            "rgba(0,0,0,.75)",
-                            "#111214",
-                        ]}
-                        style={{
-                            position:"absolute",
-                            left:0,
-                            right:width/2,
-                            bottom:50,
-                            height:"50%",
-                        }}
-                    />
-
-                    {/* Header */}
-
-                    <View
-                        style={{
-                            position:"absolute",
-                            left:16,
-                            right:16,
-                            bottom:0,
-                        }}
-                    >
-                        <View
-                            style={{
-                                flexDirection:"row",
-                                alignItems:"center",
-                            }}
-                        >
-                            <Image
-                                source={{uri:item.profileImage.publicUrl}}
-                                style={{
-                                    width:width/6,
-                                    height:width/6,
-                                    borderRadius:50,
-
-                                    borderWidth:2,
-                                    borderColor:"#eab308",
-                                }}
-                            />
-                            <View
-                                style={{
-                                    flex:1,
-                                    marginLeft:12,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flexDirection:"row",
-                                        alignItems:"center",
-                                    }}
-                                >
-                                    <Text
-                                        numberOfLines={1}
-                                        style={{
-                                            color:"#FFF",
-                                            fontWeight:"700",
-                                            fontSize:width/25,
-                                            flex:1,
-                                        }}
-                                    >
-                                        {item.arenaName}
-                                    </Text>
-                                    {item.verified && (
-
-                                        <MaterialCommunityIcons
-                                            name="check-decagram"
-                                            size={18}
-                                            color="#eab308"
-                                        />
-
-                                    )}
-
-                                </View>
-                                <Text
-                                    style={{
-                                        color:"#eab308",
-                                        fontSize:width/32,
-                                        marginTop:4,
-                                        fontWeight:"700",
-                                    }}
-                                >
-                                    {item.talentType} • {item.region}
-                                </Text>
-                                <Text
-                                    numberOfLines={2}
-                                    style={{
-                                        color:"rgba(255,255,255,.82)",
-                                        marginTop:4,
-                                        fontSize:13,
-                                        lineHeight:18,
-                                        fontWeight : "700",
-                                        fontSize : width/34
-                                    }}
-                                >
-                                    {item.biography}
-                                </Text>
-                            </View>
-                        </View>
-
-                       
-
-                        <Text 
-                            numberOfLines={2}
-                            style ={{
-                                paddingTop :14,
-                                paddingBottom :14,
-                                lineHeight:18,
-                                fontWeight : "600",
-                                fontSize : width/32,
-                                width:width * 0.75
-                            }}
-                            className="text-white  ">
-                                {item.description} 
-                        </Text> 
-                        {/* Stats */}
-                        <View
-                            style={{
-                                flexDirection:"row",
-                                marginTop:14,
-                                justifyContent:"space-between",
-                            }}
-                        >
-                            <Stat
-                                icon="star"
-                                value={item.starCount}
-                                width={width}
-                            />
-                            <Stat
-                                icon="play-box-multiple"
-                                value={item.postCount}
-                                width={width}
-
-                            />
-                            <Stat
-                                icon="heart"
-                                value={item.followerCount}
-                                width={width}
-
-                            />
-                            {/* <Stat
-                                icon="eye-outline"
-                                value={item.viewCount}
-                                width={width}
-
-                            /> */}
-                        </View>
-                    </View>
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        onPress={ () => {
-                            setHamburgerMenu(!hamburgerMenu)
-                        }
-                        }
-                        style={{
-                            // width: width/12,
-                            // height: width/12,
-                            position : "absolute",
-                            right:5,
-                            top:5,
-                            borderRadius: 26,
-                            backgroundColor: "rgba(0,0,0,.55)",
-                            borderWidth: 1,
-                            borderColor: "rgba(234,179,8,.58)",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                        className = "p-2 rounded-full bg-black"
-                        >
-                            <MaterialCommunityIcons
-                                name="dots-horizontal"
-                                size={20}
-                                color="#f4d44d"
-                            />
-                    </TouchableOpacity>
-                    {hamburgerMenu && (
-                    <View
-                        style={{
-                            position: "absolute",
-                            top: 45,
-                            right: 10,
-                            width: 215,
-                            backgroundColor: "rgba(17,18,20,.98)",
-                            borderRadius: 18,
-                            borderWidth: 1,
-                            borderColor: "rgba(234,179,8,.18)",
-                            paddingVertical: 8,
-                            zIndex : 999
-                        }}
-                    >
-                        <TouchableOpacity
-                            activeOpacity={0.85}
-                            onPress={() => {
-                                setOpenEditArenaModal(true);
-                                setHamburgerMenu(false)
-                            }}
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                paddingHorizontal: 18,
-                                paddingVertical: 14,
-                            }}
-                        >
-                            <MaterialCommunityIcons
-                                name="pencil-outline"
-                                size={width/25}
-                                color="#eab308"
-                            />
-                            <Text
-                                style={{
-                                    marginLeft: 14,
-                                    color: "#FFF",
-                                    fontSize: width/36,
-                                    fontWeight: "600",
-                                }}
-                            >
-                                Edit Arena
-                            </Text>
-                        </TouchableOpacity>
-                        <View
-                            style={{
-                                height: 1,
-                                backgroundColor: "rgba(255,255,255,.06)",
-                                marginHorizontal: 16,
-                            }}
+                    // width: "100%",
+                    alignItems: "center",
+                    // marginBottom: 24,
+                    // padding: selectedArena._id == item._id ? 1 : 1
+                    }} className ="justify-center" >
+                    <ArenaJourneyCard
+                        entry={item}
+                        width={CARD_WIDTH}
+                        height= {(width / 6.9) * 5.9}
                         />
-                        <TouchableOpacity
-                            activeOpacity={0.85}
-                            onPress={() => { 
-                                if(selectedArena.posts.length > 0) setArenaActionModal("delete_arena_deny")
-                                else setArenaActionModal("delete_arena")
-                                 setOpenArenaAlertModal(true)
-                            }}
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-
-                                paddingHorizontal: 18,
-                                paddingVertical: 14,
-                            }}
-                        >
-                            <MaterialCommunityIcons
-                                name="delete-outline"
-                                size={width/25}
-                                color="#eab308"
-                            />
-                            <Text
-                                style={{
-                                    marginLeft: 14,
-                                    color: "#FFF",
-                                    fontSize: width/36,
-                                    fontWeight: "600",
-                                }}
-                            >
-                                Delete Arena
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    )}
-
-
-                </TouchableOpacity>
-                </>
+                </View>
             )
         }}
 
         />
-         <AnimatePresence>
-                {showSwipeHint && (
-                    <MotiView
-                        from={{
-                            opacity: 0,
-                            translateY: 8,
-                        }}
-                        animate={{
-                            opacity: 1,
-                            translateY: 0,
-                        }}
-                        exit={{
-                            opacity: 0,
-                            translateY: -8,
-                        }}
-                        transition={{
-                            type: "timing",
-                            duration: 350,
-                        }}
-                        style={{
-                            alignSelf: "center",
-                            marginTop: 12,
-                            backgroundColor: "rgba(17,18,20,.92)",
-                            borderRadius: 22,
-                            borderWidth: 1,
-                            borderColor: "rgba(234,179,8,.18)",
-                            paddingHorizontal: 18,
-                            height: 38,
-                            flexDirection: "row",
-                            alignItems: "center",
-                        }}
-                    >
-                        <MaterialCommunityIcons
-                            name="gesture-swipe-horizontal"
-                            size={18}
-                            color="#eab308"
-                        />
-                        <Text
-                            style={{
-                                marginLeft: 8,
-                                color: "#fff",
-                                fontSize: 13,
-                                fontWeight: "600",
-                                letterSpacing: .2,
-                            }}
-                        >
-                            Swipe to explore more arenas
-                        </Text>
-                    </MotiView>
-                )}
-            </AnimatePresence>
+       )}
+
+       {/* =====================================================
+            ARENA SWIPE INDICATOR
+        ===================================================== */}
+
+        {arenas.length > 0 && (
+        <View
+            style={{
+            width: "100%",
+            paddingHorizontal: SIDE_PADDING,
+            // marginTop: 18,
+            marginBottom: 4,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            }} className = "mt-6"  >
+            <View
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                // flex: 1,
+            }}
+            >
+            <MaterialCommunityIcons
+                name="stadium-outline"
+                size={16}
+                color="#EAB308"
+            />
+
+            <Text
+                style={{
+                marginLeft: 5,
+                fontSize: width / 32,
+                fontWeight: "800",
+                letterSpacing: 0.8,
+                color: "rgba(255,255,255,0.55)",
+                }}
+            >
+                ARENAS
+            </Text>
+
+            {hasMoreArenas && currentArenaIndex === 0 && (
+                <View
+                style={{
+                    marginLeft: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+                >
+                <Ionicons
+                    name="swap-horizontal-outline"
+                    size={14}
+                    color="rgba(255,255,255,0.35)"
+                />
+
+                <Text
+                    style={{
+                    marginLeft: 3,
+                    fontSize: 12,
+                    fontWeight: "600",
+                    color: "rgba(255,255,255,0.3)",
+                    }}
+                >
+                    SWIPE
+                </Text>
+                </View>
+            )}
+            </View>
+
+            {/* RIGHT — DOTS */}
+            {hasMoreArenas && (
+            <View
+                style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                }}
+            >
+                {arenas.map((arena, index) => {
+                const active = index === currentArenaIndex;
+
+                return (
+                    <TouchableOpacity
+                    key={arena._id}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                        flatListRef.current?.scrollToIndex({
+                        index,
+                        animated: true,
+                        });
+
+                        setSelectedArena(arena);
+                    }}
+                    style={{
+                        marginLeft: index === 0 ? 0 : 5,
+                        width: active ? 18 : 18,
+                        height: 8,
+                        borderRadius: 10,
+                        backgroundColor: active
+                        ? "#EAB308"
+                        : "rgba(255,255,255,0.18)",
+                    }}
+                    />
+                );
+                })}
+            </View>
+            )}
+        </View>
+        )}
+         
         </>
     );
 }

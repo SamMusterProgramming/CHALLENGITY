@@ -48,80 +48,26 @@ export default function ProfileHeader({user , statData}) {
                 style={{
                   // position: "absolute",
                   width: "100%",
-                  height:  height / 4,
+                  height:  height / 5,
                 }}
                 className = "roun ded-t-3xl "
               />
-              {/* <TouchableOpacity 
-                  className ="absolute top-[45] left-[10]  b g-white justify-center items-center"
-                  onPress={() =>{
-                      router.back()
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                        name="chevron-left"
-                        size={55}
-                        color="#fff"
-                    />
-              </TouchableOpacity> */}
-         </View>
-       
-      
-        {/* Top fade (very light) */}
-        {/* <LinearGradient
-            colors={[
-              "rgba(17,18,20,0)",
-              "rgba(17,18,20,0)",
-              "rgba(17,18,20,.03)",
-              "rgba(17,18,20,.08)",
-            ]}
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,
-              height: height / 7,
+              <View
+                  style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    
+                  }}
+                  className = "absolute bottom-10 right-2 left-[25%] gap-2 px- pt-6 fle x-1 justify-center items-center rounded-xl"
+                  >   
+                  <FriendButton userProfile={user} />
+                  <FollowButton userProfile={user} />
+              
+              </View>
 
-            }}
-           
-          /> */}
-      
-          {/* Bottom fade */}
-          {/* <LinearGradient
-            colors={[
-              "transparent",
-              "rgba(0,0,0,.05)",
-              "rgba(0,0,0,.65)",
-              "rgba(0,0,0,1)",
-              "#000",
-            ]}
-            style={{
-              position: "absolute",
-              left: 0,
-              right:width/2,
-              bottom: 0,
-              height: height / 4.5,
-            }}
-           
-          /> */}
-           {/* <LinearGradient
-            colors={[
-              "transparent",
-              "rgba(0,0,0,.05)",
-              "rgba(0,0,0,.65)",
-              "rgba(0,0,0,1)",
-              "#000",
-            ]}
-            style={{
-              position: "absolute",
-              left: 0,
-              right:0,
-              bottom: 0,
-              height: height /3.2,
-            }}
-          /> */}
-      
-        
+             
+         </View>
       
           {/* Content */}
           <View
@@ -205,33 +151,20 @@ export default function ProfileHeader({user , statData}) {
                               </View>
                     </View>
               </View>
-           
       
-            {/* <Text
-              style={{
-                color: "#C8C8C8",
-                fontSize: width / 42,
-                marginLeft: 12,
-              }}
-            >
-              @{user.username}
-            </Text> */}
+              <Text
+                style={{
+                  marginTop: 8,
+                  color: "#fff",
+                  fontWeight: "600",
+                  fontSize: width / 32,
+                }}
+                className="ml-4"
+              >
+                Singer . professional Chabbi
+              </Text>
       
-               <Text
-                  style={{
-                    marginTop: 8,
-                    color: "#fff",
-                    fontWeight: "600",
-                    fontSize: width / 32,
-                  }}
-                  className="ml-4"
-                >
-                  Singer . professional Chabbi
-               </Text>
-      
-         
-      
-            {!!user.tellus && (
+              {!!user.tellus && (
               <Text
                 numberOfLines={2}
                 style={{
@@ -245,51 +178,21 @@ export default function ProfileHeader({user , statData}) {
               >
                 {user.tellus}
               </Text>
-            )}
+               )}
 
-
-          {/* absolute edit share setting */}
-
-          <View
-            style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                // right:30,
-                // top: 10,
-                // gap: 28,
-                zIndex : 999,
-                // position :"absolute"
-            }}
-            className = "b g-black/50 gap-4 px-4 mt-6 flex-1 justify-center items-center rounded-xl"
-            >
-            <FriendButton userProfile={user} />
-            <FollowButton userProfile={user} />
-         
-        </View>
-
-         {/* stats bar followers , friend */}
             
           </View>
 
 
           <View
             className = "w-full flex-row px-4 ite ms-end">
-                {/* <TouchableOpacity
-                            onPress={() => setModalVisible(true)}
-                            className="px-4 mr-4 py-1  border border-white/10 rounded-lg" >
-                           <MaterialCommunityIcons
-                                name="square-edit-outline"
-                                size={25}
-                                color="#fff"
-                            />
-                </TouchableOpacity> */}
-                <View className="flex-row flex-1 px-2 justify-evenly border-t border-l border-r rounded-t-xl border-white/30 mt- 5 ">
+               
+                <View className="flex-row flex-1 px-2 justify-evenly items-end border- border-l border-r rounde d-t-xl border-white/30 mt- 5 ">
                         {statData.map((item, index) => (
                         <React.Fragment key={item.label}>
                             <Stats
                                 {...item}
-                                width={width}
+                                width={width }
                             />
                             {index !== statData.length - 1 && (
                                 <View

@@ -1,4 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import ShareOptionsModal from "../components/modal/ShareOptionsModal";
+import ShareFriendsModal from "../components/modal/ShareFriendsModal";
+import { Share } from "react-native";
+import { shareWithFriends } from "../apiCalls";
+import { createShareMessage } from "../utilities/shareLinks";
 
 
 
@@ -21,6 +26,9 @@ export const GlobalProvider =({children}) => {
     const [followings,setFollowings] = useState ([])
     const [userFriendData,setUserFriendData] = useState(null)
     const [follow , setFollow ] = useState(null)
+    const [userFollowers , setUserFollowers ] = useState([])
+    const [userFollowings , setUserFollowings ] = useState([])
+
     const [favouriteList , setFavouriteList] = useState(null)
     const [smallScreen , setSmallScreen] = useState (false)
     const [userTalents, setUserTalents] = useState ([])
@@ -72,11 +80,133 @@ export const GlobalProvider =({children}) => {
   const [arenaActionModal, setArenaActionModal] = useState("")
   const [tempPerformance, setTempPerformance] = useState(null)
   const [showProfile, setShowProfile]  = useState(false)
+  const [openTalentPicker, setOpenTalentPicker]  = useState(false)
+  const [opneShareModal, setOpenShareModal] = useState(false);
+  const [opneShareFriendModal, setOpenShareFriendModal] = useState(false);
+  const [shareContent, setShareContent] = useState(null);
+  const [shareTarget, setShareTarget] = useState(null);
+  const [sharing, setSharing] = useState(false);
 
   const colorTheme = "#eab308"
 
+  const openShare = ({
+    category,
+    type,
+    _id,
+    name,
+    region,
+    talent,
+    ownerId,
+    postId
+  }) => {
 
-    return (
+    if (!_id) {
+      console.warn("openShare: missing ID");
+      return;
+    }
+    setShareTarget({
+        type,
+        _id,
+        name,
+        region,
+        talent,
+        ownerId,
+        category,
+        postId
+    });
+    setOpenShareModal(true);
+  };
+
+
+  const closeShare = () => {
+    setOpenShareModal(false);
+  };
+
+  const openShareFriends = () => {
+    setOpenShareModal(false);
+    setOpenShareFriendModal(true);
+  };
+
+  const closeShareFriends = () => {
+    setOpenShareFriendModal(false);
+  };
+
+  
+
+  const handleShare = async () => {
+    try {
+      if (!shareTarget?._id) {
+        console.warn("ShareButton: missing ID");
+        return;
+      }
+  
+      setSharing(true);
+  
+      const message = createShareMessage({
+        type: shareTarget.type,
+        name: shareTarget.name,
+        id: shareTarget._id,
+      });
+  
+      await Share.share({
+        message,
+      });
+  
+    } catch (error) {
+      console.error(
+        "Share error:",
+        error
+      );
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const shareToFriends = async (selectedFriendIds) => {
+    try {
+      if (!shareTarget?._id) {
+        console.warn("shareToFriends: missing share target");
+        return;
+      }
+  
+      if (!selectedFriendIds?.length) {
+        console.warn("shareToFriends: no friends selected");
+        return;
+      }
+      setSharing(true);
+    //   console.log("SHARING:", {
+    //     shareTarget,
+    //     selectedFriendIds,
+    //   });
+
+      const response = await shareWithFriends({
+        receiverIds:selectedFriendIds,
+        sharedType: shareTarget.type,
+        sharedId : shareTarget._id,
+        sharedCategory: shareTarget.category,
+        metadata: {
+            _id: shareTarget._id,
+            name: shareTarget.name,
+            region: shareTarget.region,
+            talent : shareTarget.talent,
+            type : shareTarget.type,
+            ownerId:shareTarget.ownerId,
+            postId:shareTarget.postId
+          },
+      })
+
+    
+    } catch (error) {
+      console.error(
+        "SHARE WITH FRIENDS ERROR:",
+        error
+      );
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  return (
         <GlobalContext.Provider
             value= { 
                 {
@@ -133,10 +263,34 @@ export const GlobalProvider =({children}) => {
             localSpotlightPerformances, setLocalSpotlightPerformances,
             tempPerformance, setTempPerformance,
             userFollowedArenas , setUserFollowedArenas,
-            showProfile, setShowProfile
+            showProfile, setShowProfile ,
+            openTalentPicker, setOpenTalentPicker,
+            userFollowers , setUserFollowers ,
+            userFollowings , setUserFollowings ,
+            opneShareModal, setOpenShareModal,
+            opneShareFriendModal, setOpenShareFriendModal,
+            shareContent, setShareContent,
+            shareTarget, setShareTarget,
+            sharing, setSharing,
+            openShare ,closeShareFriends,closeShare,handleShare,openShareFriends,shareToFriends
             }
             } >
             {children}
+
+            <ShareOptionsModal
+                visible={opneShareModal}
+                onClose={closeShare}
+                onShareExternal={handleShare}
+                onShareFriends={openShareFriends}
+                />
+
+                <ShareFriendsModal
+                visible={opneShareFriendModal}
+                onClose={closeShareFriends}
+                friends={userFriendData?.friends || []}
+                onShare={shareToFriends}
+                />
+
         </GlobalContext.Provider>
     )
 }

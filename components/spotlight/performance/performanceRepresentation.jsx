@@ -54,7 +54,7 @@ export default function PerformanceRepresentation({
         className = "rounded-xl"
       />
       {/* PLAY BUTTON */}
-      <View
+      {/* <View
               style={{
                 position: "absolute",
                 width: width/11,
@@ -69,7 +69,7 @@ export default function PerformanceRepresentation({
                 size={20}
                 color = "black"
               />
-      </View>
+      </View> */}
       {/* INFO OVERLAY */}
       <TouchableOpacity
           onPress = {() => {

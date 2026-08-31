@@ -12,7 +12,7 @@ import Favourite from '../components/home/Favourite';
 import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
 // import ProfileDrawer from '../components/profile/modal/profileDrawer';
-import {  getArenaByUser,  getFavouriteStages, getFollowData, getFollowedArenas, getGlobalSpotlightPerformances, getHotStages, getLocalArenas, getLocalSpotlightPerformances, getNotificationByUser, getRegionalSpotlightPerformances, getRegionTalentStages, getTrendingStages, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
+import {  getArenaByUser,  getFavouriteStages, getFollowData, getFollowedArenas, getGlobalSpotlightPerformances, getHotStages, getLocalArenas, getLocalSpotlightPerformances, getNotificationByUser, getRegionalSpotlightPerformances, getRegionTalentStages, getTrendingStages, getuserFollowers, getuserFollowings, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
 import { getUserCountry } from '../utilities/userGeoLocation';
 import { clearPendingNotification, getPendingNotification } from '../notifications/pendingNotification';
 import { routeNotification } from '../notifications/notificationRouter';
@@ -25,6 +25,10 @@ import PerformanceHomePage from '../components/home/performanceHomePage';
 import Arena from '../components/home/arena';
 import ProfileDrawer from '../components/profile/modal/profileDrawer';
 import MyJourney from '../components/home/MyJourney';
+import SearchDrawer from '../components/search/drawer/SearchDrawer';
+import TalentPickerModal from '../components/modal/TalentPickerModal';
+import ShareOptionsModal from '../components/modal/ShareOptionsModal';
+import ShareFriendsModal from '../components/modal/ShareFriendsModal';
 
 
 
@@ -34,11 +38,15 @@ export default function Home() {
          setRegionStages, allStages, setAllStages ,trendingStages, setTrendingStages,hotStages , setHotStages,favouriteStages, setFavouriteStages
         ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg , userArenas , setUserArenas , setLocalArenas,
         setGlobalSelectedRegion , setUserCountryCode , globalSpotlightPerformances, setGlobalSpotlightPerformances,globalSpotlightPage, setGlobalSpotlightPage,setUserFollowedArenas,
-        regionalSpotlightPerformances, setRegionalSpotlightPerformances  ,setLocalSpotlightPerformances} = useGlobalContext() 
+        regionalSpotlightPerformances, setRegionalSpotlightPerformances  ,setLocalSpotlightPerformances , userFollowers , setUserFollowers ,
+        userFollowings , setUserFollowings,
+        openTalentPicker, setOpenTalentPicker } = useGlobalContext() 
   const { width, height } = useWindowDimensions();
   const [selectedPage , setSelectedPage] = useState(null)
   const [displayNotificationsModal , setDisplayNotificationsModal] = useState(false)
   const [showFavourite , setShowFavourite] = useState(false)
+  const [showSearch , setShowSearch] = useState(false)
+
   const [isFetching, setIsFetching] = useState(false);
   // const [activeIndex, setActiveIndex] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -153,6 +161,9 @@ export default function Home() {
           getUserFriendsData(user._id, setUserFriendData),
           getFollowData(user._id, setFollow),
           getFavouriteStages(user._id, setFavouriteStages),
+          getuserFollowers(user._id , setUserFollowers),
+          getuserFollowings(user._id , setUserFollowings),
+
           // getTopTalents(user._id, setTopTalents),
           // getAllTalentStages(setAllStages),
           // getRegionTalentStages("US" , setRegionStages),
@@ -237,8 +248,10 @@ export default function Home() {
             <HeaderApp
               user={user && user || null}
               showNotifications = {showNotifications}
+              showSearch = {showSearch}
               showFavourite = {showFavourite}
               setShowNotifications={setShowNotifications}
+              setShowSearch={setShowSearch}
               setShowFavourite={setShowFavourite}
               setShowProfile={setShowProfile}
               width={width}
@@ -333,22 +346,34 @@ export default function Home() {
           {displayNotificationsModal && 
           <NotificationsModal user={user} displayNotificationsModal={displayNotificationsModal}
           setDisplayNotificationsModal={setDisplayNotificationsModal}/>}
-
           {showFavourite && 
           <FavouriteStageDrawer   visible={showFavourite}
           onClose={() => setShowFavourite(false)}/>}
-
           <NotificationDrawer
           visible={showNotifications}
           onClose={() => setShowNotifications(false)}
           />
           {showProfile && (
-             <ProfileDrawer
-             visible={showProfile}
-             onClose={() => setShowProfile(false)}
-             />
+          <ProfileDrawer
+          visible={showProfile}
+          onClose={() => setShowProfile(false)}
+          />
           )}
-         
+          {showSearch && (
+          <SearchDrawer
+          visible={showSearch}
+          onClose={() => setShowSearch(false)}
+          />
+          )}
+   
+        {openTalentPicker && (
+          <TalentPickerModal 
+            visible ={openTalentPicker}
+            onClose = { () => setOpenTalentPicker(false)}
+            // onSelectTalent 
+            // onSelectAll
+          />
+         )}
  
       </View>
        

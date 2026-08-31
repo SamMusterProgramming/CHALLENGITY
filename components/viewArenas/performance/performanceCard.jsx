@@ -3,6 +3,7 @@ import React from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import SpotlightIcon from '../../custom/spotlightIcon'
+import NonSpotlightIcon from '../../custom/nonSpotlightIcon'
 
 export default function PerformanceCard({item ,
     index ,
@@ -45,19 +46,14 @@ export default function PerformanceCard({item ,
       resizeMethod = "cover"
     />
 
-    {isSpotLight ? (
-      <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg-black/70  p-1">
+      <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg -black/70  p- 1">
+        {isSpotLight ? (
             <SpotlightIcon size ={12} />
+          ):(
+            <NonSpotlightIcon size ={12} />
+          )}
       </View>
-        ):(
-        <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg-black/70  p-2">
-            <MaterialCommunityIcons
-              name="chart-line"
-              size={22}
-              color="#fff"
-            />
-        </View>
-    )}
+      
 
     <View
           style={{
@@ -144,7 +140,7 @@ export default function PerformanceCard({item ,
                 </Text>
             </View>
     </View>
-     {canEdit && (
+     {/* {canEdit && (
       <TouchableOpacity
       activeOpacity={0.8}
       onPress={ () => {
@@ -175,7 +171,7 @@ export default function PerformanceCard({item ,
         color="#ef4444"
       />
     </TouchableOpacity>
-    )}
+    )} */}
   </TouchableOpacity>
   )
 }

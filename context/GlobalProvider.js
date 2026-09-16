@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import ShareOptionsModal from "../components/modal/ShareOptionsModal";
 import ShareFriendsModal from "../components/modal/ShareFriendsModal";
-import { Share } from "react-native";
+import { Share, useWindowDimensions } from "react-native";
 import { shareWithFriends } from "../apiCalls";
 import { createShareMessage } from "../utilities/shareLinks";
 
@@ -86,6 +86,8 @@ export const GlobalProvider =({children}) => {
   const [shareContent, setShareContent] = useState(null);
   const [shareTarget, setShareTarget] = useState(null);
   const [sharing, setSharing] = useState(false);
+  const { width, height } = useWindowDimensions();
+
 
   const colorTheme = "#eab308"
 
@@ -206,7 +208,37 @@ export const GlobalProvider =({children}) => {
     }
   };
 
-  return (
+
+
+const clamp = (value, min, max) => {
+  return Math.round(Math.min(Math.max(value, min), max));
+};
+
+const scale = (size, minScale = 0.9, maxScale = 1.65) => {
+  const numericSize = Number(size);
+  if (!Number.isFinite(numericSize)) {
+    return 0;
+  }
+  const baseWidth = 375;
+  return clamp(
+    size * (width / baseWidth),
+    size * minScale,
+    size * maxScale
+  );
+};
+
+const getPerformanceThumbnailHeight = () => {
+  const height = width * 0.82;
+
+  return Math.round(
+    Math.min(
+      Math.max(height, 270),
+      650
+    )
+  );
+};
+
+return (
         <GlobalContext.Provider
             value= { 
                 {
@@ -272,7 +304,8 @@ export const GlobalProvider =({children}) => {
             shareContent, setShareContent,
             shareTarget, setShareTarget,
             sharing, setSharing,
-            openShare ,closeShareFriends,closeShare,handleShare,openShareFriends,shareToFriends
+            openShare ,closeShareFriends,closeShare,handleShare,openShareFriends,shareToFriends , scale,
+            getPerformanceThumbnailHeight
             }
             } >
             {children}

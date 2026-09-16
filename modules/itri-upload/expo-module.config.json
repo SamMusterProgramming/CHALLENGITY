@@ -1,0 +1,9 @@
+{
+    "platforms": ["apple", "android"],
+    "apple": {
+      "modules": ["ItriUpload"]
+    },
+    "android": {
+      "modules": ["expo.modules.itriupload.ItriUploadModule"]
+    }
+  }

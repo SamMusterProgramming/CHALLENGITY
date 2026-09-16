@@ -3,12 +3,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import {  useSafeAreaInsets } from 'react-native-safe-area-context';
 import NotificationsModal from '../components/talent/modal/NotificationsModal';
 import HomePage from '../components/home/HomePage';
-import UserNotifications from '../components/home/UserNotifications';
 import { useGlobalContext } from '../context/GlobalProvider';
 
-import Challenge from '../components/home/Challenge';
-import UserProfile from '../components/home/UserProfile';
-import Favourite from '../components/home/Favourite';
 import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
 // import ProfileDrawer from '../components/profile/modal/profileDrawer';
@@ -18,17 +14,16 @@ import { clearPendingNotification, getPendingNotification } from '../notificatio
 import { routeNotification } from '../notifications/notificationRouter';
 import { useLoading } from '../context/loadingContext';
 import NavBar from '../components/header/navBar';
-import * as NavigationBar from "expo-navigation-bar";
-import StageHomePage from '../components/home/stageHomePage';
+// import * as NavigationBar from "expo-navigation-bar";
 import FavouriteStageDrawer from '../components/modal/favouriteStageDrawer';
-import PerformanceHomePage from '../components/home/performanceHomePage';
-import Arena from '../components/home/arena';
 import ProfileDrawer from '../components/profile/modal/profileDrawer';
-import MyJourney from '../components/home/MyJourney';
 import SearchDrawer from '../components/search/drawer/SearchDrawer';
 import TalentPickerModal from '../components/modal/TalentPickerModal';
-import ShareOptionsModal from '../components/modal/ShareOptionsModal';
-import ShareFriendsModal from '../components/modal/ShareFriendsModal';
+import ItriMissionModal from '../components/modal/ItriMissionModal';
+import DiscoveryPage from '../components/home/discoveryPage';
+import MyJourneyPage from '../components/home/MyJourneyPage';
+import ArenaPage from '../components/home/arenaPage';
+
 
 
 
@@ -54,6 +49,7 @@ export default function Home() {
   const headerHeight = height * 0.14;
   const [isReady ,setIsReady] = useState(false)
   const { showLoading, hideLoading } = useLoading();
+  const [missionVisible, setMissionVisible] = useState(false);
 
   const navTranslateY = useRef(
     new Animated.Value(0)
@@ -223,10 +219,10 @@ export default function Home() {
     fetchUserData();
   }, [user]);
 
-  useEffect(() => {
-    NavigationBar.setPositionAsync("absolute");
-    NavigationBar.setVisibilityAsync("hidden");
-  }, []);
+  // useEffect(() => {
+  //   NavigationBar.setPositionAsync("absolute");
+  //   NavigationBar.setVisibilityAsync("hidden");
+  // }, []);
 
   if(!user || !isReady) {
     return (
@@ -257,6 +253,7 @@ export default function Home() {
               width={width}
               height = {height}
               headerHeight={headerHeight}
+              setMissionVisible ={setMissionVisible}
             />
        
             {/* <NavBar
@@ -283,21 +280,17 @@ export default function Home() {
                           <HomePage onScroll = {handleScroll} />
                         )}
                         {activeIndex === 1 && ! isFetching && (
-                          <StageHomePage onScroll = {handleScroll} />
+                          <DiscoveryPage onScroll = {handleScroll} />
                         )}
                         {activeIndex === 2 && ! isFetching && (
                           // <Challenge setSelectedPage={setSelectedPage} />
-                          <MyJourney onScroll={handleScroll} setSelectedPage={setSelectedPage} />
+                          <MyJourneyPage onScroll={handleScroll} setSelectedPage={setSelectedPage} />
                         )}
                         {activeIndex === 3 && ! isFetching && ! isLoggingOut && (
-                          <Arena user={user}  onScroll={handleScroll}/>
+                          <ArenaPage user={user}  onScroll={handleScroll}/>
                         )}
-                        {selectedPage == "notification" && ! isFetching && (
-                          <UserNotifications user={user} />
-                        )}
-                        {selectedPage == "favourite" && ! isFetching && (
-                          <Favourite />
-                        )}
+                        
+                        
                         {isFetching && (
                               <View
                               className="w-[100%] h-[100%] justify-center items-center" >
@@ -353,12 +346,12 @@ export default function Home() {
           visible={showNotifications}
           onClose={() => setShowNotifications(false)}
           />
-          {showProfile && (
+      
           <ProfileDrawer
           visible={showProfile}
           onClose={() => setShowProfile(false)}
           />
-          )}
+          
           {showSearch && (
           <SearchDrawer
           visible={showSearch}
@@ -374,6 +367,10 @@ export default function Home() {
             // onSelectAll
           />
          )}
+         <ItriMissionModal
+            visible={missionVisible}
+            onClose={() => setMissionVisible(false)}
+          />
  
       </View>
        

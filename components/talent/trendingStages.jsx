@@ -64,7 +64,7 @@ export default function TrendingStages({ user }) {
   const mainScrollX = useRef(new Animated.Value(0)).current;
   const mainFlatListRef = useRef(null);
   const [currentStage, setCurrentStage] = useState(0);
-  const {colorTheme} = useGlobalContext()
+  const {colorTheme , scale} = useGlobalContext()
 
 //   useEffect(() => {
 //     mainFlatListRef.current?.scrollToOffset({ offset: hotStageScrolledIndex, animated: false });
@@ -74,29 +74,29 @@ export default function TrendingStages({ user }) {
 
   const renderMainItem = ({ item, index }) => {
 
-    const inputRange = [
-      (index - 1) * MAIN_SNAP_INTERVAL,
-      index * MAIN_SNAP_INTERVAL,
-      (index + 1) * MAIN_SNAP_INTERVAL,
-    ];
+    // const inputRange = [
+    //   (index - 1) * MAIN_SNAP_INTERVAL,
+    //   index * MAIN_SNAP_INTERVAL,
+    //   (index + 1) * MAIN_SNAP_INTERVAL,
+    // ];
 
-    const scale = mainScrollX.interpolate({
-      inputRange,
-      outputRange: [1, 1, 1],
-      extrapolate: "clamp",
-    });
-    const translateY = mainScrollX.interpolate({
-        inputRange,
-        outputRange: [40, 0, 40],
-        extrapolate: "clamp",
-      });
+    // const scale = mainScrollX.interpolate({
+    //   inputRange,
+    //   outputRange: [1, 1, 1],
+    //   extrapolate: "clamp",
+    // });
+    // const translateY = mainScrollX.interpolate({
+    //     inputRange,
+    //     outputRange: [40, 0, 40],
+    //     extrapolate: "clamp",
+    //   });
 
     return (
-      <Animated.View
+      <View
         style={{
           width: MAIN_ITEM_WIDTH ,
           marginHorizontal: MAIN_ITEM_MARGIN,
-          transform: [{ scale } ],
+          // transform: [{ scaleJob } ],
         }}
         className =""
       >
@@ -111,10 +111,10 @@ export default function TrendingStages({ user }) {
         <StageCard
           entry={item}
           width={width * 0.95}
-          height={width / 1.3}
+          height={width / 1.2}
           // onPress={openStage}
         />
-      </Animated.View>
+      </View>
     );
   };
 
@@ -159,7 +159,7 @@ export default function TrendingStages({ user }) {
 //     }, [])
 //   );
   
-  if(globalRefresh) return null ; 
+  if(globalRefresh || !trendingStages?.length) return null ; 
 
   return (
     <View
@@ -168,13 +168,13 @@ export default function TrendingStages({ user }) {
       alignItems:"center",
       // marginTop:16,
     }}
-    className ="mt-4 mb-4 pb-4 pt-4 px- 4 bg-[#18191e]  rounde d-3xl">
+    className ="mt-1 mb- 4 pb -4 pt- 4 px- 4 b g-[#18191e]  rounde d-3xl">
         
         <View className="px-6 w-[100%] text-center pb- 4 bg-[black] roun ded-t-full ">
             <Text
                 style={{
                     color: colorTheme,
-                    fontSize: width / 25,
+                    fontSize: scale(14),
                     fontWeight: "800",
                     // letterSpacing: 0.6,
                     textAlign: "center",
@@ -186,7 +186,7 @@ export default function TrendingStages({ user }) {
               style={{
                 marginTop:6,
                 color:"rgba(255,255,255,0.9)",
-                fontSize:width/32,
+                fontSize:scale(12),
                 // fontWeight:"500",
                 // letterSpacing:0.3,
               }}

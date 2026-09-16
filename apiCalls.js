@@ -444,6 +444,8 @@ export const updateChallengeMode = async(challenge_id , body ,setChallenges)=>{
       console.log(error)
   }
 }  
+
+
 export const updateThumbNail = async(challenge_id , body ,setThumb)=>{
  
   try {
@@ -1241,6 +1243,20 @@ export const addCommentContestant = async(post_id,body,setPostData) =>{
       await api.get( BASE_URL + `/talents/favouriteStages/${user_id}`)
       .then(res =>  {
            setFavourites(res.data)
+        } )
+        .finally(()=>{
+          // setIsLoading(false)
+        })
+    } catch (error) {
+      console.log(error)
+    }
+    }
+
+    export const getStageById = async( stage_id ,  setStage) =>{
+      try { 
+      await api.get( BASE_URL + `/talents/stage/${stage_id}`)
+      .then(res =>  {
+           setStage(res.data)
         } )
         .finally(()=>{
           // setIsLoading(false)

@@ -23,9 +23,7 @@ export default function ArenaSelector({
   const {openArenaAlertModal, setOpenArenaAlertModal , setArenaActionModal} = useGlobalContext()
 
   const renderArena = ({ item }) => {
-    const active =
-      item._id === selectedArena?._id;
-
+    const active = item._id === selectedArena?._id;
     return (
       <TouchableOpacity
         activeOpacity={0.9}
@@ -279,8 +277,9 @@ export default function ArenaSelector({
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress ={() => {
-                    setOpenArenaAlertModal(true)
-                    setArenaActionModal("create_arena")
+                    // setOpenArenaAlertModal(true)
+                    // setArenaActionModal("create_arena")
+                    onCreateArena()
                     setVisible(false)
                   }}
                   style={{

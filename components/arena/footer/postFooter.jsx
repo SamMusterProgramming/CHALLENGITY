@@ -38,7 +38,7 @@ export default function PostFooter({
         alignItems:"center",
         justifyContent:"space-between",
       }}
-      className = "w- [100%] absolute bottom-2 bg-black/60 left-2 right-2"
+      className = "w- [100%] w-full abs olute botto m-2 bg-black/60 le ft-2 righ t-2"
     >
 
 

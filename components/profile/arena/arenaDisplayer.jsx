@@ -12,7 +12,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import { AnimatePresence, MotiView } from "moti";
 import WelcomeToCreateArena from "./WelcomeToCreateArena";
-import ArenaJourneyCard from "../../myJourney/ArenaJourneyCard";
+import ArenaJourneyCard from "../../myJourney/card/ArenaJourneyCard";
 
 export default function ArenaDisplayer({
     userArenas,
@@ -75,7 +75,9 @@ export default function ArenaDisplayer({
             width
         }}
         className = "px-4">
-             <WelcomeToCreateArena setOpenArenaAlertModal ={setOpenArenaAlertModal}  setArenaActionModal ={setArenaActionModal}/>
+             <WelcomeToCreateArena 
+                   setOpenArenaAlertModal ={setOpenArenaAlertModal}  
+                   setArenaActionModal ={setArenaActionModal}  />
         </View>
         ) : (
         <FlatList

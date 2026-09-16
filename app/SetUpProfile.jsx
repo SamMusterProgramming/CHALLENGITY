@@ -9,7 +9,6 @@ import { router } from 'expo-router';
 import { BASE_URL, updateUser } from '../apiCalls';
 import CountryFlag from 'react-native-country-flag';
 import CountryPicker from '../components/custom/CountryPicker';
-import axios from 'axios';
 import { getUploadImageUrl, saveSignedUrlImageToDataBase,  uploadImageToBlackBlaze } from '../uploadFileToBlackBlaze';
 
 
@@ -40,7 +39,7 @@ export default function SetUpProfile() {
         return;
     }
     let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ["images"],
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,

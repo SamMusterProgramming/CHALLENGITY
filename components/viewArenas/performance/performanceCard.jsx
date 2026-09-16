@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import SpotlightIcon from '../../custom/spotlightIcon'
 import NonSpotlightIcon from '../../custom/nonSpotlightIcon'
+import { LinearGradient } from 'expo-linear-gradient'
 
 export default function PerformanceCard({item ,
     index ,
@@ -28,7 +29,7 @@ export default function PerformanceCard({item ,
     <TouchableOpacity
     style={{
       height : height,
-      width : index === performanceCount  -1 && index % 2 == 0 ? CARD_WIDTH * 2 : CARD_WIDTH ,
+      width : index === performanceCount  -1 && index % 2 == 0 ? CARD_WIDTH * 2 + 15 : CARD_WIDTH ,
       // aspectRatio: 1,
       // margin: 12,
       borderRadius: 5,
@@ -45,49 +46,50 @@ export default function PerformanceCard({item ,
       style={{ width: "100%", height: "100%" }}
       resizeMethod = "cover"
     />
+   
 
-      <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg -black/70  p- 1">
-        {isSpotLight ? (
-            <SpotlightIcon size ={12} />
-          ):(
-            <NonSpotlightIcon size ={12} />
-          )}
-      </View>
-      
-
-    <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor:
-              "rgba(0,0,0,0.18)",
-            justifyContent:
-              "center",
-            alignItems:
-              "center",
-          }}
-        >
-          <View
+      <LinearGradient
+            pointerEvents="none"
+            colors={[
+              
+              "rgba(0,0,0,0.85)",
+              "rgba(0,0,0,0.28)",
+              "rgba(0,0,0,0.16)",
+              "transparent",
+            ]}
+            locations={[0, 0.38, 0.62, 1]}
             style={{
-              width: CARD_WIDTH/7,
-              height: CARD_WIDTH/7,
-              borderRadius: 999,
-              backgroundColor:  "rgba(255,255,255,0.8)",
-              justifyContent: "center",
-              alignItems:
-                "center",
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              height: "58%",
             }}
-          >
-            <MaterialCommunityIcons
-              name="play"
-              size={20}
-              color="#000"
-            />
-          </View>
-    </View>
+          />
+     
+      <LinearGradient
+            pointerEvents="none"
+            colors={[
+              "transparent",
+              "rgba(0,0,0,0.05)",
+              "rgba(0,0,0,0.28)",
+              "rgba(0,0,0,0.86)",
+            ]}
+            locations={[0, 0.38, 0.62, 1]}
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: "58%",
+            }}
+          />
+      
+      {isSpotLight && (
+      <View className="absolute top-2 left-2 flex-row items-center gap-1 rounded-full bg -black/70  p- 1">
+            <SpotlightIcon size ={10} />
+      </View>
+    )}
 
     <View
         style={{
@@ -98,18 +100,18 @@ export default function PerformanceCard({item ,
             width : "98%",
             padding : 10
         }}
-        className = " rounded-lg flex-row justify-between items-center bg-[#000]/40"
+        className = " rounded-lg flex-row justif y-between gap-6 items-center b g-[#000]/40"
          > 
             <View
                 style={{
                 }}
                 className ="flex-row gap-1 items-center" >
                 <MaterialCommunityIcons
-                    name="eye"
-                    size={CARD_WIDTH/13}
-                    color="#eab308"
+                    name="eye-outline"
+                    size={CARD_WIDTH/11}
+                    color="#fff"
                 />
-                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/20 }}>
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
                      {item.viewCount || 0}
                 </Text>
             </View>
@@ -119,10 +121,10 @@ export default function PerformanceCard({item ,
                 }}  className ="flex-row gap-1 items-center"  >
                 <MaterialCommunityIcons
                     name="fire"
-                    size={CARD_WIDTH/12}
-                    color="#eab308"
+                    size={CARD_WIDTH/11}
+                    color="#fff"
                 />
-                <Text style={{ color: "#fff", fontWeight: "900", fontSize: CARD_WIDTH/20 }}>
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
                     {item.fireCount || 0}
                 </Text>
             </View>
@@ -131,47 +133,16 @@ export default function PerformanceCard({item ,
                 style={{
                 }}  className ="flex-row gap-1 items-center"  >
                 <MaterialCommunityIcons
-                    name="message"
-                    size={CARD_WIDTH/16}
-                    color="#eab308"
+                    name="message-outline"
+                    size={CARD_WIDTH/14}
+                    color="#fff"
                 />
                 <Text style={{ color: "#fff", fontWeight: "700", fontSize: CARD_WIDTH/20 }}>
                     {item.commentCount || 0}
                 </Text>
             </View>
     </View>
-     {/* {canEdit && (
-      <TouchableOpacity
-      activeOpacity={0.8}
-      onPress={ () => {
-        setArenaActionModal("delete_performance")
-        setOpenArenaAlertModal(true)
-        setPostToDeleteId(item._id)
-      }}
-      style={{
-        position :"absolute" , 
-        right: 5,
-        top: 5,
-        borderRadius: 22,
-        backgroundColor: "rgba(17,18,20,.96)",
-        borderWidth: 1,
-        borderColor: "rgba(255,70,70,.18)",
-        justifyContent: "center",
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOpacity: 0.35,
-        shadowRadius: 12,
-        elevation: 8,
-      }}
-      className = "p-2 rounded-full bg-black"
-    >
-      <MaterialCommunityIcons
-        name="trash-can-outline"
-        size={21}
-        color="#ef4444"
-      />
-    </TouchableOpacity>
-    )} */}
+
   </TouchableOpacity>
   )
 }

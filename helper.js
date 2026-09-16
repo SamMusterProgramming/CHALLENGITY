@@ -360,7 +360,6 @@ export const getRegionName = (countryCode) => {
             return region;
           }
         }
-      
         return null;
 };
 
@@ -534,3 +533,4 @@ export const extractStageEntries = (
       
         return stageEntries;
       };
+

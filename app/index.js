@@ -3,10 +3,8 @@ import { View} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
 import "../global.css";
-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGlobalContext } from '../context/GlobalProvider';
-
 import {  BASE_URL, getToken } from '../apiCalls';
 import { useFonts } from 'expo-font';
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
@@ -15,11 +13,14 @@ import {
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
 import { useLoading } from '../context/loadingContext';
-import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync } from '../utilities/registerForPushNotifications';
-import * as NavigationBar from "expo-navigation-bar";
+import { initializeUploadStorage, recoverUploadQueue } from '../services/uploads';
 
+
+import ItriUpload from "itri-upload";
+
+console.log("ItriUpload loaded:", !!ItriUpload);
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -29,6 +30,8 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
+
+
 // import { configureGoogle } from '../config/google';
 
 // import { configureGoogle } from '../services/googleLogin';
@@ -48,10 +51,10 @@ export default function App() {
     //  configureGoogle();
   }, []); 
 
-  useEffect(() => {
-    NavigationBar.setPositionAsync("absolute");
-    NavigationBar.setVisibilityAsync("hidden");
-  }, []);
+  // useEffect(() => {
+  //   NavigationBar.setPositionAsync("absolute");
+  //   NavigationBar.setVisibilityAsync("hidden");
+  // }, []);
 
 useEffect(() => {
   const autoLogin = async () => {
@@ -86,6 +89,45 @@ useEffect(() => {
     }
   };
   autoLogin();
+}, []);
+
+// useEffect(() => {
+//   const initializeUploads = async () => {
+//     try {
+//       await initializeUploadStorage();
+//       await initializeImageUploadStorage();
+//       // Recover unfinished uploads without blocking app startup
+//       recoverUploadQueue().catch((error) => {
+//         console.error(
+//           "❌ Failed to recover upload queue:",
+//           error
+//         );
+//       });
+//     } catch (error) {
+//       console.error(
+//         "❌ Failed to initialize upload queue:",
+//         error
+//       );
+//     }
+//   };
+//   initializeUploads();
+// }, []);
+
+useEffect(() => {
+  const initializeApp = async () => {
+    try {
+      await initializeUploadStorage();
+      await recoverUploadQueue();
+      // your existing initialization code...
+    } catch (error) {
+      console.error(
+        "❌ Failed to initialize upload storage:",
+        error
+      );
+    }
+  };
+
+  initializeApp();
 }, []);
 
 

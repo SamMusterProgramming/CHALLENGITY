@@ -10,11 +10,12 @@ import ArenaAlertModal from '../components/arena/modals/AlertArenaModal';
 import { useLoading } from '../context/loadingContext';
 import EmptyPerformanceCard from '../components/viewArenas/performance/emptyPerformanceCard';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { getCompletedUploads, isUploadQueueBusy, removeUploadJob, subscribeToUploadQueue, UPLOAD_TYPE } from '../services/uploads';
 
 export default function arenaDisplayer() {
     const {width , height} = useWindowDimensions()
-    const {user ,showProfile, setShowProfile , openArenaAlertModal, setUserArenas,setGlobalArenaRefresh,userFollowedArenas ,
-           setOpenArenaAlertModal,arenaActionModal, setArenaActionModal ,globalArenaRefresh , userFriendData} = useGlobalContext()
+    const {user , setShowProfile , openArenaAlertModal, setUserArenas,setGlobalArenaRefresh,userFollowedArenas ,setUploadPerformanceLoading,
+      uploadPerformanceLoading, setOpenArenaAlertModal,arenaActionModal, setArenaActionModal ,globalArenaRefresh , userFriendData} = useGlobalContext()
            
     const insets = useSafeAreaInsets();
     const { arena_id } =  useLocalSearchParams(); 
@@ -59,8 +60,8 @@ export default function arenaDisplayer() {
       loadArena()
     }, [])
 
-    const PERFORMANCE_HEIGHT = selectedArena?.postCount == 1 ? height * 0.63 :
-    selectedArena?.postCount <= 4 ? height * 0.63 / 2 :
+    const PERFORMANCE_HEIGHT = selectedArena?.postCount == 1 ? height * 0.65 :
+    selectedArena?.postCount <= 4 ? height * 0.65 / 2 :
     height * 0.65 / 2.5
 
     useEffect(() => {
@@ -123,7 +124,7 @@ export default function arenaDisplayer() {
         const response = await toggleFollowerArena({
         arenaId: selectedArena._id,
         userId: user._id,
-        userName: user.name
+        userName: user.name,
         });
         const updated = {
         ...response,
@@ -251,6 +252,160 @@ export default function arenaDisplayer() {
         setGlobalArenaRefresh(false)
     }, [globalArenaRefresh])
 
+
+    // upload refresh
+
+  useEffect(() => {
+    const unsubscribe = subscribeToUploadQueue(
+      ({ event, job, busy, result, error }) => {
+  
+        if (busy) {
+          setUploadPerformanceLoading(true);
+        }
+  
+        if (
+          event === "job_completed"
+        ) {
+          const performanceResult =
+            result ?? job?.result;
+  
+          console.log(
+            "📡 COMPLETED RESULT:",
+            performanceResult
+          );
+  
+          if (
+            job?.type ===
+            UPLOAD_TYPE.PERFORMANCE
+          ) {
+            setUploadPerformanceLoading(false);
+            if (performanceResult) {
+              setSelectedArena(
+                performanceResult.selectedArena
+              );
+  
+              setUserArenas(
+                performanceResult.arenas
+              );
+            }
+            setGlobalArenaRefresh(true);
+          }
+          return;
+        }
+  
+        if (
+          event === "job_failed" &&
+          job?.type ===
+            UPLOAD_TYPE.PERFORMANCE
+        ) {
+          console.error(
+            "❌ Performance upload failed:",
+            error ?? job?.error
+          );
+  
+          setUploadPerformanceLoading(false);
+          return;
+        }
+  
+        if (
+          event === "job_cancelled" &&
+          job?.type ===
+            UPLOAD_TYPE.PERFORMANCE
+        ) {
+          setUploadPerformanceLoading(false);
+        }
+      }
+    );
+  
+    return () => unsubscribe();
+  }, []);
+  
+  /*
+  |--------------------------------------------------------------------------
+  | Check queue when Arena mounts
+  |--------------------------------------------------------------------------
+  */
+  
+  useEffect(() => {
+    const checkUploadQueue = async () => {
+      try {
+        const busy =
+          await isUploadQueueBusy();
+  
+        setUploadPerformanceLoading(
+          busy
+        );
+      } catch (error) {
+        console.error(
+          "❌ Failed to check upload queue:",
+          error
+        );
+      }
+    };
+  
+    checkUploadQueue();
+  }, []);
+  
+ 
+  useEffect(() => {
+    const recoverCompletedUploads =
+      async () => {
+        try {
+          const completedUploads = await getCompletedUploads();
+          for (
+            const job of completedUploads
+          ) {
+
+            if (
+              job.type !==
+              UPLOAD_TYPE.PERFORMANCE
+            ) {
+              continue;
+            }
+  
+            const result =
+              job.result;
+  
+            if (!result) {
+              continue;
+            }
+  
+            console.log(
+              "🔄 Applying completed Performance upload:",
+              job.id
+            );
+            setSelectedArena(
+              result.selectedArena
+            );
+            setUserArenas(
+              result.arenas
+            );
+            setUploadPerformanceLoading(
+              false
+            );
+            setGlobalArenaRefresh(
+              true
+            );
+            /*
+            |--------------------------------------------------------------------------
+            | Remove the completed job after Arena has consumed its result.
+            |--------------------------------------------------------------------------
+            */
+            await removeUploadJob(
+              job.id
+            );
+          }
+        } catch (error) {
+          console.error(
+            "❌ Failed to recover completed upload:",
+            error
+          );
+        }
+      };
+  
+    recoverCompletedUploads();
+  }, []);
+
     if(!selectedArena) return null ;
 
     return (
@@ -259,9 +414,9 @@ export default function arenaDisplayer() {
             paddingTop:Platform.OS == "ios" ? insets.top : insets.top ,
             paddingBottom : Platform.OS == "ios" ? insets.bottom   : 20
          }}
-        className=" flex-1  min-w-[100vw] min-h-full flex-col justify-center items-center  bg-[#0d0d0d]" >
+        className=" flex-1  min-w-[100vw] min-h-full flex-col justify-center items-center  bg-[#010101]" >
            
-            <View
+            {/* <View
             style ={{
                 width,
             }}
@@ -271,7 +426,7 @@ export default function arenaDisplayer() {
                     <View className="flex-1 items-center justify-center">
                       <MaterialCommunityIcons
                         name="stadium"
-                        size={15}
+                        size={18}
                         color="#EAB308"
                       />
                     </View>
@@ -288,7 +443,7 @@ export default function arenaDisplayer() {
                       >
                         {selectedArena.arenaName}
                       </Text>
-                      {/* {entry.verified && ( */}
+               
                         <Ionicons
                           name="checkmark-circle"
                           size={19}
@@ -297,7 +452,7 @@ export default function arenaDisplayer() {
                             marginLeft: 5,
                           }}
                         />
-                      {/* )} */}
+               
                     </View>
                 </View>
 
@@ -319,15 +474,15 @@ export default function arenaDisplayer() {
                             size={width/14}
                         />
                 </TouchableOpacity>
-            </View>
+            </View> */}
     
             <View
             style ={{
-                height : height * 0.65,
+                height : height * 0.67,
                 width,
                 // paddingHorizontal :24
             }}
-            className = "bor der-t-2 bo rder-l-2 bord er-r-2 flex -1  round ed-t-3xl bo rder-[#e3dfd4]/40">
+            className = "bor der-t-2 b g-primary bor der-l-2 bord er-r-2 flex -1  round ed-t-3xl bor der-[#e3dfd4]/90">
                {arenaPosts.length == 0 ? (
                         <EmptyPerformanceCard width={width} />
                ):(
@@ -339,14 +494,14 @@ export default function arenaDisplayer() {
                     numColumns={2}
                     renderItem={renderPerformance}
                     contentContainerStyle={{
-                    //   paddingHorizontal: 16,
+                      paddingHorizontal: 16,
                     //   paddingBottom: 40,
                       marginTop: 10,
                     }}
                     columnWrapperStyle={{
                       justifyContent: "center",
-                      marginBottom: 8,
-                      gap :8
+                      marginBottom: 12,
+                      gap :12
                     }}
                     showsVerticalScrollIndicator = {false}
                   />

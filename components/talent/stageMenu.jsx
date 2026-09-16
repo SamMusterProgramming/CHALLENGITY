@@ -22,6 +22,7 @@ import {
   countries,
   stageIcons,
 } from '../../utilities/TypeData'
+import { useGlobalContext } from '../../context/GlobalProvider'
 
 const talentStages = [
   { id: "1", name: "Singing", icon: "🎤" },
@@ -53,7 +54,7 @@ export default function StageMenu({
   setShowIntroduction ,
   showResult , setShowResult
 }) {
-
+  const {openShare} = useGlobalContext()
   const [menuOpen, setMenuOpen] = useState(false)
   const [openStagesMenu, setOpenStagesMenu] = useState(false);
   const [selected, setSelected] = useState("stage");
@@ -560,6 +561,53 @@ export default function StageMenu({
                           ? "Remove Favorite"
                           : "Add Favorite"
                       }
+                    </Text>
+
+                  </TouchableOpacity>
+                  {/*favourites*/}
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => openShare({
+                      category:"competition",
+                      type: 'shared_competition',
+                      _id:talentRoom._id,
+                      name:   talentRoom.name,
+                      region: talentRoom.region,
+                      talent: talentRoom.name,
+                      // ownerId: arena.owner_id,
+                      // postId : item._id
+                    })}
+                    className="
+                      flex-row
+                      items-center
+                      px-4
+                      py-4
+                      border-b
+                      border-white/5
+                    "
+                  >
+
+                    <MaterialCommunityIcons
+                      name={
+                        isFavourite
+                          ? "share"
+                          : "share-outline"
+                      }
+                      size={ICON_SIZE * 1.1}
+                      color="gold"
+                    />
+
+                    <Text
+                      style={{
+                        fontSize: LABEL_SIZE,
+                      }}
+                      className="
+                        text-white
+                        ml-3
+                        font-semibold
+                      "
+                    >
+                       Share
                     </Text>
 
                   </TouchableOpacity>

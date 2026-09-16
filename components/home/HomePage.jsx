@@ -1,20 +1,15 @@
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
-  Dimensions,
   FlatList,
   useWindowDimensions
 } from "react-native";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { generateChallengeTalentGuinessData, getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
-import StageSelector from "../custom/StageSelector";
-import HotStage from "../talent/hotStages";
-import { router, useFocusEffect } from "expo-router";
-import TrendingStages from "../talent/trendingStages";
-import Favourites from "../talent/favourites";
-import LocalArenaCarousel from "../viewArenas/localArenas/localArenaCarousel";
-import SpotlightPerformances from "../spotlight/spotlightPerformances";
+import {  getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
+import FeaturedCarousel from "../discovery/carousels/FeaturedCarousel";
+import ArenaCarousel from "../discovery/carousels/ArenaCarousel";
+import StageCarousel from "../discovery/carousels/StageCarousel";
 export const homeState = {
   scrollY: 0,
 };
@@ -28,8 +23,8 @@ export default function HomePage({onScroll}) {
     {id:"spotlightPerformancesG"},
     { id: "trendingStage" },
     { id: "hotStage" },
-    // { id: "favourite" },
-    {id: "LocalArenas"}
+    {id: "localArenas"},
+    {id: "regionalArenas"}
   ];
   const flatListRef = useRef(null);
   const [isHotStageReady, setIsHotStageReady] = useState(false);
@@ -103,7 +98,7 @@ export default function HomePage({onScroll}) {
     style ={{
       // paddingBottom : height * 0.059 ,
     }}
-    className="flex-1 w-[100%] mb- 4 px-2 bg-black">
+    className="flex-1 w-[100%]  px- 1 bg-[#15171e] [#161515] gap-1">
       <FlatList
             ref={flatListRef}
             onScroll={onScroll}
@@ -118,48 +113,57 @@ export default function HomePage({onScroll}) {
               {switch (item.id) {
                 case  "spotlightPerformancesL" :
                   return (
-                    <SpotlightPerformances  
-                    height = {height * 0.31} 
-                    type = "local"
-                       />
+                    <FeaturedCarousel
+                      height = {height * 0.31} 
+                      type = "local"
+                     />
                   )
                 case  "spotlightPerformancesR" :
                    return (
-                     <SpotlightPerformances  
-                     height = {height * 0.31} 
-                     type = "regional"
-                        />
+                    <FeaturedCarousel
+                      height = {height * 0.31} 
+                      type = "regional"
+                     />
                    )
                 case  "spotlightPerformancesG" :
                    return (
-                     <SpotlightPerformances  
-                     height = {height * 0.31} 
-                     type = "global"
-                        />
+                    <FeaturedCarousel
+                        height = {height * 0.31} 
+                        type = "global"
+                     />
                    )
                 case "trendingStage":
                     return (
-                      <TrendingStages user={user} onReady={() => setIsHotStageReady(true)}  />
+                      <StageCarousel type = "local"   />
                     )
                   break;
                 case "hotStage":
                   return (
-                     <HotStage user={user} />
+                      <StageCarousel type = "global"  />
                   )
                 break;
-                case "favourite":
+                // case "favourite":
+                //   return (
+                //      <Favourites user={user} />
+                //   )
+                // break;
+                case "localArenas" : 
                   return (
-                     <Favourites user={user} />
-                  )
-                break;
-                case "LocalArenas" : 
-                  return (
-                    <LocalArenaCarousel
-                      arenas={localArenas}
+                    <ArenaCarousel
+                      type ="local"
                       height={height * 0.31}
-                      
                     />
                   )
+                  break;
+                // case "regionalArenas" : 
+                //   return (
+                //     <ArenaCarousel
+                //       // arenas={localArenas}
+                //       type ="local"
+                //       height={height * 0.31}
+                //     />
+                //   )
+                //   break;
                 default:
                   break;
               }}
@@ -168,8 +172,8 @@ export default function HomePage({onScroll}) {
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}  
             contentContainerStyle={{
-              backgroundColor: "black",  
-              paddingBottom: 40,
+              // backgroundColor: "black",  
+              // paddingBottom: 20,
             }}
             keyboardShouldPersistTaps="handled"
             // ListFooterComponent={()=>{

@@ -67,8 +67,7 @@ import { useLoading } from "../../../context/loadingContext";
           const result =
             await ImagePicker.launchImageLibraryAsync(
               {
-                mediaTypes:
-                  ImagePicker.MediaTypeOptions.Images,
+                mediaTypes: ["images"],
                 allowsEditing: true,
                 quality: 0.8,
                 aspect: [1, 1],
@@ -93,8 +92,7 @@ import { useLoading } from "../../../context/loadingContext";
           const result =
             await ImagePicker.launchImageLibraryAsync(
               {
-                mediaTypes:
-                  ImagePicker.MediaTypeOptions.Images,
+                mediaTypes: ["images"],
                 allowsEditing: true,
                 quality: 0.8,
                 aspect: [16, 9],

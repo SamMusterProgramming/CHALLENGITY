@@ -18,10 +18,10 @@ const StageCard = ({
   width,
   height,
 }) => {
-  if (!entry) {
-    return null;
-  }
-  const {user} = useGlobalContext()
+  // if (!entry) {
+  //   return null;
+  // }
+  const {user , scale} = useGlobalContext()
   const performances = [...entry.contestants.map(c =>  {
        return c.performances[0]
   })]|| [];
@@ -153,14 +153,14 @@ const StageCard = ({
         style ={{
           // height
         }}
-        className="relative flex-1 overflow-hidden rounded-[5px] border border-white/[0.07] bg-[#000000]"
+        className="relative flex-1 overflow-hidden rounded-xl border border-white/[0.07] bg-[#000000]"
       >
         {imageUri ? (
           <>
           <Image
             source={{ uri: imageUri }}
             resizeMode="cover"
-            className="absolute inset-0 h-full w-full opac ity-90"
+            className="absolute inset-0 h-full w-full opacity-80"
           />
             {/* {(index == 0 || !isLastVisible) && (
            <View
@@ -206,21 +206,7 @@ const StageCard = ({
           </View>
         )}
 
-        {/*
-         * Cinematic gradient
-         */}
-        {/* <LinearGradient
-          pointerEvents="none"
-          colors={[
-            "transparent",
-            "rgba(0,0,0,0.65)",
-          ]}
-          className="absolute inset-0"
-        /> */}
-
-        {/*
-         * +N MORE
-         */}
+   
         {isLastVisible && (
           <View className="absolute inset-0 items-center justify-center bg-black/55">
             <Text className="text-[25px] font-extrabold tracking-[-0.5px] text-white">
@@ -233,26 +219,12 @@ const StageCard = ({
           </View>
         )}
 
-        {/*
-         * Performance number
-         */}
-        {!isLastVisible && (
-          <View className="absolute bottom-[7px] left-[7px] h-[22px] w-[22px] items-center justify-center rounded-full bg-black/55">
-            <Text className="text-[9px] font-bold text-white/90">
-              {index + 1}
-            </Text>
-          </View>
-        )}
+      
       </View>
     );
   };
 
-  /*
-   * =========================================================
-   * CARD
-   * =========================================================
-   */
-
+  
   return (
     <TouchableOpacity
       activeOpacity={0.94}
@@ -283,14 +255,19 @@ const StageCard = ({
        * =====================================================
        */}
 
-      <View className="rounded-t-[5px] bg-[#000000] p-4 flex-row items-center border-t-[0.5px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40 justify-between">
+     <View className=" bg-[#1c1a1a] rounded-xl p-4 flex-row items-center borde r-t-[0.5px] bord er-l-[0.5px] bord er-r-[0.5px] bord er-[gold]/40 justify-between">
       
         <View className="flex-1 flex-row items-center">
       
-          <View className="h-[42px] w-[42px] items-center justify-center rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.09]">
+          <View 
+           style ={{
+            // width : width /10 ,
+            // height :width/10
+         }}
+          className="p-2 items-center justify-center rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.09]">
             <MaterialCommunityIcons
               name="trophy"
-              size={width/15}
+              size={scale(24)}
               color="#EAB308"
             />
           </View>
@@ -302,17 +279,17 @@ const StageCard = ({
             <Text
               numberOfLines={1}
               style = {{
-                fontSize : width/25
+                fontSize : scale(14)
               }}
               className="te xt-[17px] font-bold tracking-[0.1px] text-white"
             >
               {entry.name} Stage {' '} 
             </Text>
 
-            <View className="mt-[6px] flex-row  items -end">
+            <View className="mt-[7px] flex-row  items -end">
               <Text
                 style = {{
-                  fontSize : width/40
+                  fontSize : scale(10)
                 }}
                className="ml-[3px]  mt-[1px] font-medium uppercase tracking-[0.4px] text-white/95">
                 {entry.name} {''}
@@ -320,7 +297,7 @@ const StageCard = ({
                 
                 <Text
                 style = {{
-                  fontSize : width/47
+                  fontSize : scale(10)
                 }}>
                   {stageIcons[entry.name]} {" -  "} 
                 </Text>
@@ -329,7 +306,7 @@ const StageCard = ({
 
               <Text
               style = {{
-                fontSize : width/40
+                fontSize : scale(10)
               }}
                className="ml- [3px] te xt-[11px] mt-[1px] font-medium uppercase tracking-[0.4px] text-white/95">
                 {countries.find(c => c.code == entry.region)?.name} {' '}
@@ -341,7 +318,7 @@ const StageCard = ({
           <View className=" ml-auto b g-white/40 flex-row justify-center items-center">
                 <Text
                 style = {{
-                  fontSize : width/15
+                  fontSize : scale(18)
                 }}>
                   {stageIcons[entry.name]}
           </Text>
@@ -392,7 +369,7 @@ const StageCard = ({
        * =====================================================
        */}
 
-      <View className=" px-4 justify-center border-l-[0.5px] border-r-[0.5px] border-[gold]/40 flex-1 flex-row gap-[7px] overfl ow-hidden">
+      <View className=" mt-1 justify-center border- l-[0.5px] bor der-r-[0.5px] borde r-[gold]/40 flex-1 flex-row gap-[4] overfl ow-hidden">
         {visiblePerformances.map(
           renderPerformance
         )}
@@ -430,19 +407,18 @@ const StageCard = ({
        * =====================================================
        */}
 
-      <View className="p-2 bg-[#000000] mt-1 rounded-b-[5px] border-b-[0.5px] border-l-[0.5px] border-r-[0.5px] border-[gold]/40  flex-row items-end justify-between">
+       <View className="p-4 bg-[#1c1a1a] rounded-xl mt-1    flex-row ite ms-end justify-between">
      
-
           <View className="items-center p-1">
               <View className="flex-row items-center">
                 <Ionicons
                   name="play"
-                  size={width/27}
+                  size={scale(12)}
                   color="#EAB308"
                 />
                 <Text
                  style ={{
-                  fontSize : width/30
+                  fontSize : scale(10)
                  }}
                  className="ml-[4px] text-[16px] font-bold text-white/85">
                 {totalPerformances()}{"  "}
@@ -451,7 +427,7 @@ const StageCard = ({
 
               <Text 
               style = {{
-                fontSize : width/44
+                fontSize : scale(8)
               }}
               className="ml-[5px] mt-[4px] te xt-[9px] font-bold text-white/85">
                 {totalPerformances === 1
@@ -464,13 +440,13 @@ const StageCard = ({
               <View className="flex-row items-center">
                 <Ionicons
                   name="people"
-                  size={width/27}
+                  size={scale(12)}
                   color="gold"
                 />
 
                 <Text
                  style = {{
-                  fontSize : width/30
+                  fontSize : scale(10)
                 }}
                  className="ml-[4px] tex t-[16px] font-bold text-white/85">
                   {entry.contestants.length ?? 0}
@@ -478,7 +454,7 @@ const StageCard = ({
               </View>
 
               <Text
-              style = {{ fontSize : width/44 }}
+              style = {{ fontSize : scale(8) }}
                className="mt-[4px] tex t-[9px] font-bold tracki ng-[0.8px] text-white/85">
                 CONTESTANTS
               </Text>
@@ -489,13 +465,13 @@ const StageCard = ({
             <View className="flex-row items-center">
                 <Ionicons
                     name="layers"
-                    size={width/27}
+                    size={scale(12)}
                     color="#EAB308"
                     />
 
                 <Text 
                 style = {{
-                fontSize : width/30
+                fontSize : scale(10)
                 }}
                 className="ml-[4px] text- [16px] font-bold tracking-[0.1px] text-white/85">
                 {entry.likes ?? 0}
@@ -504,7 +480,7 @@ const StageCard = ({
 
             <Text
             style = {{
-                fontSize : width/44
+                fontSize : scale(8)
             }}
             className="mt-[4px] text- [9px] font-bold track ing-[0.8px] text-white/85">
                 EDITION
@@ -515,13 +491,13 @@ const StageCard = ({
                 <View className="flex-row items-center">
                 <Ionicons
                     name="sync-circle"
-                    size={15}
+                    size={scale(12)}
                     color="#EAB308"
                     />
 
                     <Text 
                     style = {{
-                    fontSize : width/30
+                    fontSize : scale(10)
                     }}
                     className="ml-[4px] text- [16px] font-bold tracking-[0.1px] text-white/85">
                     1
@@ -530,7 +506,7 @@ const StageCard = ({
 
                 <Text 
                 style = {{
-                    fontSize : width/44
+                    fontSize : scale(8)
                 }}
                 className="mt-[4px] text- [9px] font-bold trac king-[0.8px] text-white/85">
                     ELIMINATION

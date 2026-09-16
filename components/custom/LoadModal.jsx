@@ -1,11 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { View,  ActivityIndicator, Text, Button, StyleSheet, Modal, Platform } from 'react-native';
-// import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as NavigationBar from 'expo-navigation-bar';
 
-// import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -27,9 +24,9 @@ export default function LoadModel({visible,setVisible}) {
 
  useEffect(() => {
   if(Platform.OS == "android"){
-  NavigationBar.setPositionAsync("absolute");
-  NavigationBar.setBackgroundColorAsync("#00000000");
-  NavigationBar.setVisibilityAsync('sticky-immersive');
+  // NavigationBar.setPositionAsync("absolute");
+  // NavigationBar.setBackgroundColorAsync("#00000000");
+  // NavigationBar.setVisibilityAsync('sticky-immersive');
   }
   setIsLoaded(true)
  }, []);

@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  View, Text, Image, TouchableOpacity, useWindowDimensions, LayoutAnimation, Platform, UIManager 
+  View, Text, Image, TouchableOpacity, useWindowDimensions
 } from 'react-native';
 import { router } from 'expo-router';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { deleteUserNotification, getArenaByProfile, getArenaByUser, getNotificationByUser, toggleFollowerArena, toggleStarArena, updateNotificationByUser } from '../../apiCalls';
 import { countries, stageIcons } from '../../utilities/TypeData';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import StarArenaButton from '../viewArenas/custom/starArenaButton';
-import { LinearGradient } from 'expo-linear-gradient';
-import FollowArenaButton from '../viewArenas/custom/followArenaButton';
-import ArenaCard from '../viewArenas/displayArena/arenaCard';
-import ArenaJourneyCard from '../myJourney/ArenaJourneyCard';
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import ArenaJourneyCard from '../myJourney/card/ArenaJourneyCard';
+
+
 
 export default function DisplayArenaNotification({ notification, setNotifications, user }) {
 
@@ -34,7 +29,7 @@ export default function DisplayArenaNotification({ notification, setNotification
 
   // Animate layout changes
   const toggleDelete = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
     setShowDelete(!showDelete);
   };
 
@@ -192,7 +187,6 @@ export default function DisplayArenaNotification({ notification, setNotification
  
  
   const deleteNotification = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     deleteUserNotification(notification._id, setNot);
     setNotifications(prev => prev.filter(n => n._id !== notification._id));
   };

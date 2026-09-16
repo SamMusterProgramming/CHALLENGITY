@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'
 import React from 'react'
-import { MotiView, ScrollView } from 'moti'
+import { MotiView } from 'moti'
 import ShuffleLetters from '../custom/ShuffleLetters'
 import { router } from 'expo-router'
 import BlinkingHeader from '../custom/BlinkingHeader'

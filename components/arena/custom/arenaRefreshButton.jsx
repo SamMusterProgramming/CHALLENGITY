@@ -9,9 +9,9 @@ export default function ArenaRefreshButton({onRefresh , refreshing , size}) {
         onPress={onRefresh}
         disabled={refreshing}
         style={{
-            position: "absolute",
-            bottom: 0,
-            left: 10,
+            // position: "absolute",
+            // bottom: 0,
+            // left: 10,
             width: size,
             height: size,
             borderRadius: 21,

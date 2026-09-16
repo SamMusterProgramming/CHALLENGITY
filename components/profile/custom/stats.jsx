@@ -5,13 +5,13 @@ export function Stats({ icon, label, value, width }) {
   return (
     <View
       style={{
-    
         borderRadius: 18,
         backgroundColor: "rgba(255,255,255,0.035)",
         justifyContent: "end",
         alignItems: "center",
         // paddingVertical :8,
       }}
+      className = "w-[33%]"
     >
 
 

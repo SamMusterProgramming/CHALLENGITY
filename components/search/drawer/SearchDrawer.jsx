@@ -27,7 +27,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { getSearchSuggestions } from "../../../apiCalls";
-import ArenaJourneyCard from "../../myJourney/ArenaJourneyCard";
+import ArenaJourneyCard from "../../myJourney/card/ArenaJourneyCard";
 import StageCard from "../../stage/StageCard";
 import UserProfileCard from "../../profile/card/userProfileCard";
 import DeepSearchModal from "../../modal/DeepSearchModal";
@@ -301,7 +301,7 @@ const searchSuggestions = async (query) => {
               <View className="mb-2 5 flex-row items-center justify-between">
 
                 <View
-                   className = "flex-1 px-2"
+                   className = "fl ex-1 px- 2"
                    >
                     <Text
                         style={{
@@ -324,7 +324,7 @@ const searchSuggestions = async (query) => {
                 </View>  
 
                 <TouchableOpacity 
-                className ="p-2 px-4 b g-white justify-center items-center"
+                className ="py-2  b g-white justify-center items-center"
                 onPress={closeDrawer}>
                     <MaterialCommunityIcons
                         name="chevron-right"
@@ -477,7 +477,7 @@ const searchSuggestions = async (query) => {
                                     <ArenaJourneyCard
                                     entry={item}
                                     width={width * 0.95}
-                                    height={width/1.3}
+                                    height={width/1.1}
                                     />
                                   </View>
                                 );
@@ -489,7 +489,7 @@ const searchSuggestions = async (query) => {
                                     <StageCard
                                         entry={item}
                                         width={width * 0.95}
-                                        height={width/1.3}
+                                        height={width/1.1}
                                     />
                                  </View>
                                 );

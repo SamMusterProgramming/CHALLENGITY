@@ -74,15 +74,6 @@ export default function StageSelectorFooter({selectedTab , setSelectedTab}) {
 
              <View className="ml-4 ">
 
-               {/* <Text
-                 className="
-                   text-gray-200
-                   font-montserrat
-                 "
-                 style={{ fontSize: width/45 }}
-               >
-                 Region Stages
-               </Text> */}
 
                <Text
                  className="

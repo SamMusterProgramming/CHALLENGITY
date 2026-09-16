@@ -2,18 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { saveToken } from '../apiCalls';
 import {
   View,
-  Text,
-  TextInput,
-  TouchableOpacity,
   Image,
   Alert,
   Vibration,
   useWindowDimensions,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  ScrollView,
 } from 'react-native';
 import { useGlobalContext } from '../context/GlobalProvider';
 import {  images } from '../constants';

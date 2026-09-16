@@ -1,166 +1,10 @@
 
-// import React, { useEffect, useRef } from "react";
-// import { View, Text, TouchableOpacity, Animated } from "react-native";
-// import {
-//   Home,
-//   Play,
-//   Trophy,
-//   Building2
-// } from "lucide-react-native";
-// import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-// const TABS = [
-//   { name: "Home", Icon:"home" },
-//   { name: "Discover", Icon: "compass" },
-//   { name: "My Journey", Icon: "map-marker-path" },
-//   { name: "Arena", Icon: "stadium"},
-// ];
-
-// export default function NavBar({
-//   activeIndex,
-//   setActiveIndex,
-//   width,
-//   headerHeight,
-// }) {
-//   const animValues = useRef(
-//     TABS.map(() => new Animated.Value(0))
-//   ).current;
-
-//   useEffect(() => {
-//     const animations = animValues.map((anim, i) =>
-//       Animated.spring(anim, {
-//         toValue: i === activeIndex ? 1 : 0,
-//         useNativeDriver: true,
-//         friction: 7,
-//         tension: 80,
-//       })
-//     );
-//     Animated.parallel(animations).start();
-//   }, [activeIndex]);
-
-//   return (
-//     <View
-//       style={{
-//         height: headerHeight * 0.48,
-//         // backgroundColor: "#16110A",
-//         borderTopLeftRadius: 28,
-//         borderTopRightRadius: 28,
-//         borderTopWidth: 1,
-//         borderColor: "rgba(244,197,66,.18)",
-//         paddingBottom: 10,
-//         shadowColor: "#000",
-//         shadowOpacity: 0.45,
-//         shadowRadius: 22,
-//         shadowOffset: {
-//           width: 0,
-//           height: -8,
-//         },
-//         elevation: 25,
-//         justifyContent: "center",
-//       }}
-//       className = "px-4"
-//     >
-//       <View
-//         style={{
-//           flexDirection: "row",
-//           justifyContent: "space-between",
-//           alignItems: "center",
-//           paddingHorizontal: 12,
-//         }}
-//       >
-//         {TABS.map((tab, index) => {
-//           const scale = animValues[index].interpolate({
-//             inputRange: [0, 1],
-//             outputRange: [0.99, 1],
-//           });
-  
-//           const opacity = animValues[index].interpolate({
-//             inputRange: [0, 1],
-//             outputRange: [0.75, 1],
-//           });
-  
-//           const translateY = animValues[index].interpolate({
-//             inputRange: [0, 1],
-//             outputRange: [6, 6],
-//           });
-  
-//           let Icon = tab.Icon;
-//           if(activeIndex !== index && index !== 2) Icon = tab.Icon + "-outline"
-//           else Icon = tab.Icon
-        
-  
-//           const isActive = activeIndex === index;
-  
-//           return (
-//             <TouchableOpacity
-//               key={tab.name}
-//               activeOpacity={0.85}
-//               onPress={() => setActiveIndex(index)}
-//               style={{
-//                 // flex: 1,
-//                 alignItems: "center",
-//               }}
-//             >
-//               <Animated.View
-//                 style={{
-//                   // width: 78,
-//                   height: 40,
-//                   borderRadius: 5,
-//                   alignItems: "center",
-//                   justifyContent: "center",
-//                   transform: [
-//                     { scale },
-//                     { translateY },
-//                   ],
-//                   opacity,
-//                   // backgroundColor: isActive
-//                   //   ? "rgba(244,197,66,.12)"
-//                   //   : "transparent",
-//                   // borderWidth: isActive ? 1 : 0,
-//                   // borderColor: "rgba(244,197,66,.28)",
-//                 }}
-//               >
-//                 {/* <Icon
-//                   size={20}
-//                   strokeWidth={2.6}
-//                   color={
-//                     isActive
-//                       ? "#F4C542"
-//                       : "rgba(255,255,255,.95)"
-//                   }
-//                 /> */}
-//                 <MaterialCommunityIcons
-//                   name= {Icon}
-//                   size={20}
-//                   color="#EAB308"
-//                 />
-                  
-//                 <Text
-//                   style={{
-//                     marginTop: 6,
-//                     fontSize: 9,
-//                     fontWeight: "900",
-//                     letterSpacing: 0.5,
-//                     color: isActive
-//                       ? "#F4C542"
-//                       : "rgba(255,255,255,.95)",
-//                   }}
-//                 >
-//                   {tab.name.toUpperCase()}
-//                 </Text>
-//               </Animated.View>
-//             </TouchableOpacity>
-//           );
-//         })}
-//       </View>
-//   </View>
-//   );
-// }
 
 
 import React, { useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const TABS = [
   {
@@ -174,7 +18,7 @@ const TABS = [
     activeIcon: "compass",
   },
   {
-    name: "My Journey",
+    name: "Journey",
     icon: "star-four-points",
     activeIcon: "star-four-points",
   },
@@ -191,6 +35,7 @@ export default function NavBar({
   width,
   headerHeight,
 }) {
+  const { scale } = useGlobalContext();
   const animValues = useRef(
     TABS.map(() => new Animated.Value(0))
   ).current;
@@ -228,7 +73,7 @@ export default function NavBar({
         },
         elevation: 25,
       }}
-      className = "py-2  b g-black"
+      className = "py-4  b g-black"
     >
       <View
         style={{
@@ -237,14 +82,15 @@ export default function NavBar({
           justifyContent: "space-between",
           width: "100%",
         }}
+        
       >
         {TABS.map((tab, index) => {
           const isActive = activeIndex === index;
 
-          const scale = animValues[index].interpolate({
-            inputRange: [0, 1],
-            outputRange: [1, 1.03],
-          });
+          // const scale = animValues[index].interpolate({
+          //   inputRange: [0, 1],
+          //   outputRange: [1, 1.03],
+          // });
 
           const opacity = animValues[index].interpolate({
             inputRange: [0, 1],
@@ -261,21 +107,20 @@ export default function NavBar({
                 alignItems: "center",
                 justifyContent: "center",
               }}
-              className = ""
             >
               <Animated.View
                 style={{
                   alignItems: "center",
                   justifyContent: "center",
                   opacity,
-                  transform: [{ scale }],
+                  // transform: [{ scale }],
                 }}
-                className = "gap-1"
+                className = "gap-1 flex-col-reverse"
               >
 
                   {/* SELECTED LABEL */}
 
-                  {/* <View
+                  <View
                   style={{
           
                     alignItems: "center",
@@ -286,7 +131,7 @@ export default function NavBar({
                     <Text
                       numberOfLines={1}
                       style={{
-                        color: isActive ?"#EAB308": "#000",
+                        color: isActive ?"#EAB303": "#aaa",
                         fontSize: width/42,
                         fontWeight: "900",
                         // letterSpacing: 0.5,
@@ -295,7 +140,7 @@ export default function NavBar({
                       {tab.name.toUpperCase()}
                     </Text>
         
-                </View> */}
+                </View>
 
                 {/* ICON */}
 
@@ -317,7 +162,7 @@ export default function NavBar({
                         ? tab.activeIcon
                         : tab.icon
                     }
-                    size={width/12}
+                    size={scale(20)}
                     color={
                       isActive
                         ? "#EAB308"

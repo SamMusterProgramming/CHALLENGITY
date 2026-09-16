@@ -1,4 +1,3 @@
-
 {
   "expo": {
     "name": "itri",
@@ -28,16 +27,16 @@
       "package": "com.challengify.app",
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
-          "foregroundImage": "./assets/images/ithri-logo.png",
-          "backgroundColor": "#000000"
-        }
+        "foregroundImage": "./assets/images/ithri-logo.png",
+        "backgroundColor": "#000000"
+      }
     },
     "web": {
       "output": "static"
     },
-
     "plugins": [
       "expo-router",
+      "expo-sqlite",
       "expo-font",
       "expo-web-browser",
       "expo-notifications",
@@ -48,7 +47,6 @@
           "imagePickerPermission": "Allow $(PRODUCT_NAME) to access your photos."
         }
       ],
-
       [
         "expo-camera",
         {
@@ -57,7 +55,6 @@
           "recordAudioAndroid": true
         }
       ],
-
       [
         "expo-navigation-bar",
         {
@@ -67,7 +64,6 @@
           "backgroundColor": "#00000080"
         }
       ],
-
       [
         "expo-splash-screen",
         {
@@ -77,14 +73,12 @@
           "backgroundColor": "#000000"
         }
       ],
-
       [
         "@react-native-google-signin/google-signin",
         {
           "iosUrlScheme": "com.googleusercontent.apps.373653845536-a02tl7vqrhe3ac4k96uu8pkgf3g8tt94"
         }
       ],
-
       [
         "expo-build-properties",
         {
@@ -110,15 +104,13 @@
           "behavior": "overlay-swipe",
           "backgroundColor": "#00000080"
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
-
     "experiments": {
       "typedRoutes": true
     },
-
     "owner": "samirhaddadi2025",
-
     "extra": {
       "router": {
         "origin": false
@@ -127,10 +119,8 @@
         "projectId": "cae0cce5-9b26-41f9-a1b3-66ca72625219"
       }
     },
-
     "updates": {
       "url": "https://u.expo.dev/cae0cce5-9b26-41f9-a1b3-66ca72625219"
     }
   }
 }
-

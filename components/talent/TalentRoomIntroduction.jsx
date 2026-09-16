@@ -1,9 +1,8 @@
 
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, useWindowDimensions, Platform } from 'react-native';
-import { MotiView, ScrollView } from 'moti';
+import { View, Text, TouchableOpacity, Image, useWindowDimensions, Platform, ScrollView } from 'react-native';
+import { MotiView } from 'moti';
 import ShuffleLetters from '../custom/ShuffleLetters';
-import BlinkingHeader from '../custom/BlinkingHeader';
 import { icons } from '../../constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';

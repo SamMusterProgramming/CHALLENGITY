@@ -32,7 +32,7 @@ import ArenaCard from "../viewArenas/displayArena/arenaCard";
 import { LinearGradient } from "expo-linear-gradient";
 import FollowArenaButton from "../viewArenas/custom/followArenaButton";
 import StageCard from "../stage/StageCard";
-import ArenaJourneyCard from "../myJourney/ArenaJourneyCard";
+import ArenaJourneyCard from "../myJourney/card/ArenaJourneyCard";
 import UserProfileCard from "../profile/card/userProfileCard";
 
 const { width, height } = Dimensions.get("window");
@@ -227,7 +227,7 @@ export default function FavouriteStageDrawer({
 
           {/* HEADER */}        
           <View
-            className="pl-2 pt-3 pb- 2 mb- 2 w-full  flex-row justify-between items-center borde r-b bo rder-[rgba(234,179,8,.50)]">
+            className="pl- 2 pt-3 pb- 2 mb- 2 w-full  flex-row justify-between items-center borde r-b bo rder-[rgba(234,179,8,.50)]">
             <View
               className = "flex-1 px-2"
             >
@@ -251,7 +251,7 @@ export default function FavouriteStageDrawer({
               </Text>
             </View>
             <TouchableOpacity 
-              className ="p-2 px-4 b g-white justify-center items-center"
+              className ="py-2 px -4 b g-white justify-center items-center"
               onPress={closeDrawer}>
                 <MaterialCommunityIcons
                     name="chevron-right"
@@ -310,7 +310,7 @@ export default function FavouriteStageDrawer({
                   //     : "#0F0F10",           
                   // }}
                   // className ="py-4 flex-row gap-2"
-                  className={`  mr-2 h-[38px] flex-1 flex-row items-center gap-2 justify-center rounded-full border
+                  className={`  mr-2 h-[38px] flex-1 flex-row items-center gap-2 justify-center rounded-3xl border
                     ${
                       isActive
                         ? "border-yellow-500/40 bg-yellow-500/[0.12]"
@@ -378,7 +378,7 @@ export default function FavouriteStageDrawer({
                               <StageCard
                               entry={item}
                               width={width * 0.95}
-                              height={width / 1.3}
+                              height={width / 1.1}
                               // onPress={openStage}
                             />
                             
@@ -403,7 +403,7 @@ export default function FavouriteStageDrawer({
                            <ArenaJourneyCard
                             entry={item}
                             width={width * 0.95}
-                            height={width /1.3}
+                            height={width /1.1}
                             />
                       </View>)
                   case "people":

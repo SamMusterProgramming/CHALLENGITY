@@ -49,22 +49,17 @@ export default function NotificationDrawer({
 
  
 
-  const competitionNotifications =
-    notifications.filter(
-      (n) => n.category === "competition"
-    );
-   
+  const competitionNotifications = notifications
+  .filter((n) => n.category === "competition")
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  const friendNotifications =
-    notifications.filter(
-      (n) => n.category === "friends"
-    );
+const friendNotifications = notifications
+  .filter((n) => n.category === "friends")
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  const arenaNotifications =
-  notifications.filter(
-    (n) => n.category === "arena"
-  );
-   
+const arenaNotifications = notifications
+  .filter((n) => n.category === "arena")
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   const competitionBadgeNumber = competitionNotifications.length;
   const friendBadgeNumber = friendNotifications.length;
 
@@ -194,7 +189,7 @@ export default function NotificationDrawer({
            
           // }}
           // className ="py-4"
-          className={`  mr-2 h-[38px] flex-1 flex-row items-center gap-2 justify-center rounded-full border
+          className={`  mr-2 h-[38px] flex-1 flex-row items-center gap-2 justify-center rounded-3xl full border
             ${
               isActive
                 ? "border-yellow-500/40 bg-yellow-500/[0.12]"
@@ -315,7 +310,7 @@ export default function NotificationDrawer({
               className = "mb-4"
             >
                {/* HEADER */}
-              <View className="pl-2 pt-3  flex-row justify-between items-center bord er-b bo rder-[rgba(234,179,8,.50)]">
+              <View className="pl- 2 pt-3  flex-row justify-between items-center bord er-b bo rder-[rgba(234,179,8,.50)]">
                 <View>
                   <Text 
                     style ={{
@@ -337,7 +332,7 @@ export default function NotificationDrawer({
                   </Text>
                 </View>
                 <TouchableOpacity 
-                className ="p-2 px-4 b g-white justify-center items-center"
+                className ="py-2 px- 4 b g-white justify-center items-center"
                 onPress={onClose}>
                   <MaterialCommunityIcons
                       name="chevron-right"
@@ -353,8 +348,7 @@ export default function NotificationDrawer({
                   justifyContent: "space-between",
                   // marginTop: 24,
                 }}
-                className = "items-center py-4"
-              >
+                className = "items-center  py-4"  >
                 {TABS.map((item, index) => (
                   <TabButton
                     key={item.key}

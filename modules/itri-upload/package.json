@@ -1,0 +1,12 @@
+{
+    "name": "itri-upload",
+    "version": "1.0.0",
+    "description": "Native background upload support for Itri",
+    "main": "src/index.js",
+    "license": "MIT",
+    "peerDependencies": {
+      "expo": "*",
+      "react": "*",
+      "react-native": "*"
+    }
+  }

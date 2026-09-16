@@ -1,90 +1,3 @@
-// import React from "react";
-// import {
-//   View,
-//   Text,
-//   Modal,
-//   TouchableOpacity,
-//   FlatList,
-//   Pressable,
-// } from "react-native";
-// import { LinearGradient } from "expo-linear-gradient";
-// import { countries } from "../../utilities/TypeData";
-// import { Ionicons } from "@expo/vector-icons";
-
-// export default function CountrySelectorModal({
-//   visible,
-//   onClose,
-//   onSelect,
-// }) {
-//   const renderItem = ({ item }) => (
-//     <TouchableOpacity
-//       onPress={() => {
-//         onSelect(item.code);
-//         onClose();
-//       }}
-//       className="flex-1 m-2 p-2 rounded-sm bg-[#111] border border-white/10 items-center justify-center"
-//     >
-//       <Text className="text-lg">{item.flag}</Text>
-//       <Text
-//         numberOfLines={1}
-//         className="text-gray-300 text-xs mt-1 font-bebas tracking-wider text-center"
-//       >
-//         {item.name}
-//       </Text>
-//     </TouchableOpacity>
-//   );
-
-//   return (
-//     <Modal
-//       visible={visible}
-//       animationType="fade"
-//       transparent
-//     >
-//       {/* 🎬 Cinematic Background */}
-//       <Pressable
-//         onPress={onClose}
-//         className="flex-1 bg-black/80 justify-center items-center"
-//       >
-//         {/* ✨ Modal Container */}
-//         <Pressable
-//           onPress={() => {}}
-//           className="w-[95%] max-h-[75%] rounded-2xl overflow-hidden border border-yellow-500/20"
-//         >
-//           {/* 🔥 Subtle Gold Glow */}
-//           <LinearGradient
-//             colors={["rgba(255,215,0,0.2)", "transparent"]}
-//             style={{ height: 30, width: "100%", position: "absolute", top: 0 }}
-//           />
-
-//           <View className="bg-[#0b0b0f] p-1">
-
-//             {/* 🎬 Header */}
-//             {/* <Text className="text-white text-lg font-extrabold tracking-widest text-center mb-3">
-//               SELECT REGION
-//             </Text> */}
-
-//             {/* 🌍 Countries Grid */}
-//             <FlatList
-//               data={countries}
-//               keyExtractor={(item) => item.code}
-//               numColumns={5}
-//               renderItem={renderItem}
-//               showsVerticalScrollIndicator={false}
-//             />
-
-//           </View>
-//         </Pressable>
-
-//       <TouchableOpacity
-//             onPress={() => onClose()}
-//             className="absolute bg-slate-100 rounded-full  bottom-[30] p-1">
-//                 <Ionicons name="close"  size={30}  color={"while"} />
-//       </TouchableOpacity>   
-//       </Pressable>
-    
-//     </Modal>
-//   );
-// }
 
 
 import React, { useMemo, useState, useEffect } from "react";
@@ -100,39 +13,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
-// const REGIONS = [
-//   {
-//     id: "local",
-//     title: "Local Region",
-//     icon: "📍",
-//     description: "Use your detected location",
-//   },
-//   {
-//     id: "africa",
-//     title: "Africa",
-//     icon: "🌍",
-//   },
-//   {
-//     id: "america",
-//     title: "Americas",
-//     icon: "🌎",
-//   },
-//   {
-//     id: "asia",
-//     title: "Asia",
-//     icon: "🌏",
-//   },
-//   {
-//     id: "europe",
-//     title: "Europe",
-//     icon: "🇪🇺",
-//   },
-//   {
-//     id: "oceania",
-//     title: "Oceania",
-//     icon: "🌊",
-//   },
-// ];
+
 const REGIONS = [
   {
     id: "local",
@@ -215,7 +96,7 @@ const REGIONS = [
   // ASIA
   {
     id: "middleEast",
-    title: "Middle East",
+    title: "MiddleEast",
     icon: "🕌",
   },
   {
@@ -242,7 +123,7 @@ const REGIONS = [
   // OCEANIA
   {
     id: "australiaNewZealand",
-    title: "Australia & New Zealand",
+    title: "Australia NewZealand",
     icon: "🦘",
   },
   {
@@ -272,7 +153,6 @@ export default function CountrySelectorModal({
   }, [visible]);
 
   const regionCountries = useMemo(() => {
-
     if (!selectedRegion) return [];
 
     const codes =
@@ -299,7 +179,7 @@ export default function CountrySelectorModal({
             closeModal();
             return;
           }
-          setSelectedRegion(item.id);
+          setSelectedRegion(item.title);
         }}
         style={{
           width: "31%",
@@ -407,8 +287,7 @@ export default function CountrySelectorModal({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
-    >
+      animationType="fade"  >
       <Pressable
         onPress={closeModal}
         className="
@@ -416,9 +295,7 @@ export default function CountrySelectorModal({
           bg-black/85
           justify-center
           items-center
-        "
-      >
-
+        "   >
         <Pressable
           onPress={() => {}}
           className="
@@ -540,41 +417,6 @@ export default function CountrySelectorModal({
               </TouchableOpacity>
             </View>
             )}
-
-            {/* CONTENT */}
-
-            {/* <FlatList
-              key={selectedRegion ? "countries-grid" : "regions-list"}
-              data={
-                selectedRegion
-                  ? regionCountries
-                  : REGIONS
-              }
-              keyExtractor={(item) =>
-                item.code || item.id
-              }
-              renderItem={
-                selectedRegion
-                  ? renderCountry
-                  : renderRegion
-              }
-              numColumns={
-                selectedRegion
-                  ? 4
-                  : 3
-              }
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{
-                paddingBottom: 30,
-              }}
-              columnWrapperStyle={
-                selectedRegion
-                  ? {
-                      justifyContent: "space-between",
-                    }
-                  : undefined
-              }
-            /> */}
 
           <FlatList
             key={selectedRegion ? "countries-grid" : "regions-grid"}

@@ -7,15 +7,10 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../context/GlobalProvider";
-import { countries } from "../../../utilities/TypeData";
-import StarArenaButton from "../custom/starArenaButton";
-import FollowArenaButton from "../custom/followArenaButton";
-import { AnimatePresence, MotiView } from "moti";
-import ArenaJourneyCard from "../../myJourney/ArenaJourneyCard";
 import NoArena from "../../profile/arena/NoArena";
+import ArenaCard from "../../discovery/cards/ArenaCard";
 
 export default function DisplayViewArena({
                                             userArenas,
@@ -113,7 +108,7 @@ export default function DisplayViewArena({
                     // marginBottom: 24,
                     // padding: selectedArena._id == item._id ? 1 : 1
                     }} className ="justify-center" >
-                    <ArenaJourneyCard
+                    <ArenaCard
                         entry={item}
                         width={CARD_WIDTH}
                         height= {(width / 6.9) * 5.9}

@@ -32,13 +32,9 @@ export default function rootLayout() {
         <Stack.Screen name='index' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='Home' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='arenaDisplayer' options={{ headerShown:false,unmountOnBlur: true}} />
+        <Stack.Screen name='arenaProfile' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='ProfileScreen' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='SetUpProfile' options={{ headerShown:false,unmountOnBlur: true}} />
-        {/* <Stack.Screen name='favouriteChallenges' options={{ headerShown:false,unmountOnBlur: true}} /> */}
-        {/* <Stack.Screen name='CoverNewChallenge' options={{ headerShown:false,unmountOnBlur: true}} /> */}
-        {/* <Stack.Screen name='SearchFriend' options={{ headerShown:false,unmountOnBlur: true}} /> */}
-        {/* <Stack.Screen name='WatchList' options={{ headerShown:false,unmountOnBlur: true}} /> */}
-        {/* <Stack.Screen name='FSinstantChallengeDisplayer' options={{ headerShown:false,unmountOnBlur: true}} /> */}
         <Stack.Screen name='TalentContestRoom' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='CreatePerformance' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='arenaPerformancePlayer' options={{ headerShown:false,unmountOnBlur: true}} />

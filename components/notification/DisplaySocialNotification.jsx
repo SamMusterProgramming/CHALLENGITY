@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  View, Text, Image, TouchableOpacity, useWindowDimensions, LayoutAnimation, Platform, UIManager 
+  View, Text, Image, TouchableOpacity, useWindowDimensions 
 } from 'react-native';
 import { router } from 'expo-router';
 import { useGlobalContext } from '../../context/GlobalProvider';
@@ -8,9 +8,7 @@ import { acceptFriendRequest, deleteUserNotification, getNotificationByUser, get
 import { countries, stageIcons } from '../../utilities/TypeData';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+
 
 export default function DisplaySocialNotification({ notification, setNotifications, user }) {
 
@@ -23,7 +21,6 @@ export default function DisplaySocialNotification({ notification, setNotificatio
 
   // Animate layout changes
   const toggleDelete = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowDelete(!showDelete);
     
   };
@@ -79,7 +76,6 @@ export default function DisplaySocialNotification({ notification, setNotificatio
   
 
   const deleteNotification = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     deleteUserNotification(notification._id, setNot);
     setNotifications(prev => prev.filter(n => n._id !== notification._id));
   };

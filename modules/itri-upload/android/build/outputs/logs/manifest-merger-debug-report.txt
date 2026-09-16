@@ -1,0 +1,30 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:1:1-14:12
+INJECTED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:1:1-14:12
+	package
+		INJECTED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.RUN_USER_INITIATED_JOBS
+ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:3:5-82
+	android:name
+		ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:3:22-79
+application
+ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:5:5-12:19
+service#expo.modules.itriupload.ItriUploadJobService
+ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:7:9-10:40
+	android:exported
+		ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:10:13-37
+	android:permission
+		ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:9:13-69
+	android:name
+		ADDED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml:8:13-49
+uses-sdk
+INJECTED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml
+INJECTED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/samirhaddadi/Desktop/Challengify/modules/itri-upload/android/src/main/AndroidManifest.xml

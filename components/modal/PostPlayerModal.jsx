@@ -4,7 +4,7 @@ import {  Animated,  Image,  Platform, StatusBar, TouchableOpacity } from 'react
 import { View, Text, Button, StyleSheet, useWindowDimensions } from 'react-native';
 // import Modal from 'react-native-modal';
 // import { SafeAreaView } from 'react-native-safe-area-context';
-import * as NavigationBar from 'expo-navigation-bar';
+// import * as NavigationBar from 'expo-navigation-bar';
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useVideoPlayer, VideoView } from 'expo-video';
@@ -73,9 +73,9 @@ export default function PostPlayerModal
 
     useEffect(() => {
       if(Platform.OS == "android"){
-      NavigationBar.setPositionAsync("absolute");
+      // NavigationBar.setPositionAsync("absolute");
       // NavigationBar.setBackgroundColorAsync("#00000000");
-      NavigationBar.setVisibilityAsync('sticky-immersive');
+      // NavigationBar.setVisibilityAsync('sticky-immersive');
       }
       setIsLoaded(true)
      }, []);

@@ -82,37 +82,6 @@ export default function NoArena() {
           />
         </View>
 
-        {/* Avatar */}
-
-        {/* <View
-          style={{
-            alignItems: "center",
-            marginTop: 12,
-          }}   >
-          <View
-            style={{
-              width: height/10,
-              height:height/10,
-              borderRadius: 999,
-              backgroundColor: "#050505",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 3,
-              borderColor: "#EAB308",
-            }}
-          >
-            <Image
-             source={{uri:user.profileImage.publicUrl}}
-             resizeMethod="cover"
-             style = {{
-              height:height/10.5,
-              width:height/10.5,
-              borderRadius : 999
-             }}
-            />
-          </View>
-        </View> */}
-
         {/* Arena Name */}
         <Text
           style={{

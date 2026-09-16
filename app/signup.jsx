@@ -1,13 +1,11 @@
 import { View, Text, useWindowDimensions, TouchableOpacity, Vibration, Image, ImageBackground, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, ScrollView, Keyboard, TextInput, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator } from 'react-native-web';
 import { useGlobalContext } from '../context/GlobalProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { images } from '../constants';
 import { signUp } from '../services/userServices';
 import { useLoading } from '../context/loadingContext';
 import GoogleButton from '../components/custom/googleButton';
-import ErrorMessage from '../components/custom/errorMessage';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BASE_URL } from '../apiCalls';

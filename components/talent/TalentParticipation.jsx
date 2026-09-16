@@ -165,7 +165,7 @@ const toggleVideoPlaying = () =>{
       const permissionGranted = await requestMediaPermissions();
       if (!permissionGranted || loading) return;
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        mediaTypes: ["videos"],
         allowsEditing: true,
         aspect: [16, 9],
         quality: 1,

@@ -62,6 +62,8 @@ import { useLoading } from "../../../context/loadingContext";
 import CreateArenaModal from "../../modal/createArenaModal";
 import EditArenaModal from "../../arena/modals/editArenaModal";
 import StageCaroussel from "../stage/stageCaroussel";
+import { enqueueCoverUpload, enqueueProfileUpload, subscribeToUploadQueue, UPLOAD_TYPE } from "../../../services/uploads";
+// import { processProfileImageUpload } from "../../../services/upload/images";
 // import { googleLogout } from "../../services/googleLogin";
 
 const chunkArray = (arr = [], size = 6) => {
@@ -153,15 +155,6 @@ export default function ProfileDrawer({ visible, onClose }) {
   });
   const CARD_WIDTH = (width - 30) / 2;
   
-
-  // useEffect(() => {
-  //  if(userArenas.length)  setSelectedArena(userArenas[0]) 
-  //   else setSelectedArena({
-  //     _id: "create-arena",
-  //     isCreateCard: true,
-  //   })
-  // }, [])
-  
   // ---------------- FETCH ----------------
   useEffect(() => {
     if (!refresh) return;
@@ -176,7 +169,6 @@ export default function ProfileDrawer({ visible, onClose }) {
     setTimeout(() => setRefresh(false), 1500);
   }, [refresh]);
 
-
   /************************* MEDIA PICKER *************************/
 
   const pickImage = async (setProfile_img) => {
@@ -188,7 +180,7 @@ export default function ProfileDrawer({ visible, onClose }) {
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4,3],
       quality: 1,
@@ -201,80 +193,127 @@ export default function ProfileDrawer({ visible, onClose }) {
 /************************* COVER IMAGE UPLOAD *************************/
 
 useEffect(() => {
-    const uploadImage = async () => {
+  console.log("👤 PROFILE SCREEN: subscribing to upload queue");
+
+  const unsubscribe = subscribeToUploadQueue(
+    ({ event, job, result, error }) => {
+     
+      if (
+        event === "job_failed" &&
+        (
+          job?.type === UPLOAD_TYPE.PROFILE ||
+          job?.type === UPLOAD_TYPE.COVER
+        )
+      ) {
+        console.error(
+          "❌ Image upload failed:",
+          error ?? job?.error
+        );
+
+        return;
+      }
+
+      if (
+        event === "job_completed" &&
+        job?.type === UPLOAD_TYPE.PROFILE
+      ) {
+        const updatedUser =
+          result ?? job?.result;
+
+        if (updatedUser) {
+          setUser(updatedUser);
+
+        }
+
+        return;
+      }
+
+      if (
+        event === "job_completed" &&
+        job?.type === UPLOAD_TYPE.COVER
+      ) {
+        const updatedUser =
+          result ?? job?.result;
+
+        if (updatedUser) {
+          setUser(updatedUser);
+
+        }
+        return;
+      }
+    }
+  );
+  return () => {
+    console.log("👤 PROFILE SCREEN: unsubscribing");
+    unsubscribe();
+  };
+  }, []);
+
+
+  useEffect(() => {
+    const uploadCoverImage = async () => {
       if (!coverImg) return;
       try {
-        // 1. Get upload URL
-        const data = await getUploadImageUrl(
-          user._id,
-          user.email,
-          "cover"
-        );
-        const compressed = await compressImage(coverImg)
-        // 2. Upload to BlackBlaze
-        const uploadResult = await uploadImageToBlackBlaze(
-          data,
-          compressed
-        );
-  
-        // 3. Save to DB
-        const res = await saveCoverImageToDataBase({
+        const compressedUri = await compressImage(coverImg);
+        await enqueueCoverUpload({
           userId: user._id,
-          fileId: uploadResult.fileId,
-          fileName: uploadResult.fileName,
-          deleteFileId: user.coverImage?.fileId,
-          deleteFileName: user.coverImage?.fileName,
+          userEmail: user.email,
+          imageUri: compressedUri,
+          deleteFileId:
+            user.coverImage?.fileId || null,
+          deleteFileName:
+            user.coverImage?.fileName || null,
         });
   
-        setUser(res.data);
+        console.log(
+          "📦 Profile image added to upload queue"
+        );
       } catch (err) {
-        console.log("Cover upload error:", err);
+        console.error(
+          "❌ Failed to queue profile image:",
+          err
+        );
       } finally {
         setCoverImg(null);
       }
     };
-  
-    uploadImage();
+    uploadCoverImage();
   }, [coverImg]);
 
   /************************* PROFILE IMAGE UPLOAD *************************/
 
-useEffect(() => {
-    const uploadProfileImage = async () => {
-      if (!profileImg) return;
-      try {
-        // 1. Get upload URL
-        const data = await getUploadImageUrl(
-          user._id,
-          user.email,
-          "profile"
-        );
-        const compressed = await compressImage(profileImg)
-        // 2. Upload to BlackBlaze
-        const uploadResult = await uploadImageToBlackBlaze(
-          data,
-          compressed
-        );
-  
-        // 3. Save to DB
-        const res = await saveProfileImageToDataBase({
-          userId: user._id,
-          fileId: uploadResult.fileId,
-          fileName: uploadResult.fileName,
-          deleteFileId: user.profileImage?.fileId,
-          deleteFileName: user.profileImage?.fileName,
-        });
-  
-        setUser(res.data);
-      } catch (err) {
-        console.log("Profile upload error:", err);
-      } finally {
-        setProfileImg(null);
-      }
-    };
-    uploadProfileImage();
-  }, [profileImg]);
 
+useEffect(() => {
+  const uploadProfileImage = async () => {
+    if (!profileImg) return;
+
+    try {
+
+      const compressedUri = await compressImage(profileImg);
+      await enqueueProfileUpload({
+        userId: user._id,
+        userEmail: user.email,
+        imageUri: compressedUri,
+        deleteFileId:
+          user.profileImage?.fileId || null,
+        deleteFileName:
+          user.profileImage?.fileName || null,
+      });
+
+      console.log(
+        "📦 Profile image added to upload queue"
+      );
+    } catch (err) {
+      console.error(
+        "❌ Failed to queue profile image:",
+        err
+      );
+    } finally {
+      setProfileImg(null);
+    }
+  };
+  uploadProfileImage();
+}, [profileImg]);
 
 
   // ---------------- NOTIFICATIONS ----------------

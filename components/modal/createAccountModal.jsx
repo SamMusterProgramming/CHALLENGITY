@@ -17,7 +17,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 
-import { MotiView, ScrollView } from "moti";
+import { MotiView } from "moti";
 
 export default function CreateAccountModal({
   setIsVisible,

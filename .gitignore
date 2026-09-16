@@ -9,6 +9,8 @@ dist/
 web-build/
 expo-env.d.ts
 android/
+!modules/itri-upload/android/
+!modules/itri-upload/android/**
 ios/
 
 note.doc

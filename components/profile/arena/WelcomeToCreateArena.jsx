@@ -1,176 +1,130 @@
+
 import React from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   useWindowDimensions,
-  Image,
 } from "react-native";
-
-import {
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 
 export default function WelcomeToCreateArena({
-   setOpenArenaAlertModal , setArenaActionModal
+  setOpenArenaAlertModal,
+  setArenaActionModal,
 }) {
   const { width, height } = useWindowDimensions();
-  const { user } = useGlobalContext()
+  const { user, setShowProfile, setActiveIndex } = useGlobalContext();
 
   return (
- 
-  <View  
-       
+    <View
+      className="w-full flex-1 justify-center items-center overflow-hidden rounded-2xl bg-[#080808]"
+      style={{
+        alignSelf: "center",
+        padding: 24,
+      }}
+    >
+      {/* Ambient glow */}
+      <View
+        className="absolute inse t-0 rounded-full bg-yellow-500/5"
         style={{
-          // marginTop: 16,
-          flex:1,
-          // width : width * 0.95 ,
-          alignSelf : "center",
-          backgroundColor: "#101010",
-          borderRadius: 8,
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "rgba(234,179,8,0.15)",
-          // marginBottom : 24,
-          padding:24
+          width: width * 0.85,
+          height: width * 0.85,
+          bottom :20
         }}
-        className = "justify-between w-full"
-      >
-        <View
-          style={{
-            backgroundColor: "#171717",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          className = "absolute top-2 left-2"
-        >
-          <MaterialCommunityIcons
-            name="star-four-points"
-            size={18}
-            color="#EAB308"
-          />
-        </View>
+      />
 
-        <View
-          style={{
-            backgroundColor: "#171717",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          className = "absolute top-2 right-2"
-        >
-          <MaterialCommunityIcons
-            name="star-four-points"
-            size={18}
-            color="#EAB308"
-          />
-        </View>
+      {/* Subtle corner sparks */}
+      <View className="absolute left-5 top-5">
+        <MaterialCommunityIcons
+          name="star-four-points"
+          size={22}
+          color="#EAB308"
+        />
+      </View>
 
-        {/* Banner */}
-        <View
-          style={{
-            // backgroundColor: "#171717",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 24
-          }}
-        >
-          <MaterialCommunityIcons
-            name="stadium"
-            size={height/14}
-            color="#EAB308"
-          />
-        </View>
+      <View className="absolute right-5 top-5">
+        <MaterialCommunityIcons
+          name="star-four-points"
+          size={22}
+          color="#EAB308"
+        />
+      </View>
 
-        {/* Avatar */}
+      {/* CENTER CONTENT */}
+      <View className="flex-1 items-center gap-4 justify-end">
+        {/* Icon */}
+        <View className="self-center mb-7">
+       
 
-        {/* <View
-          style={{
-            alignItems: "center",
-            marginTop: 12,
-          }}   >
           <View
-            style={{
-              width: height/10,
-              height:height/10,
-              borderRadius: 999,
-              backgroundColor: "#050505",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 3,
-              borderColor: "#EAB308",
-            }}
+           
+            className="h-[82px] w-[82px] items-center justify-center rounded-full bor der bor der-yellow-500/25"
           >
-            <Image
-             source={{uri:user.profileImage.publicUrl}}
-             resizeMethod="cover"
-             style = {{
-              height:height/10.5,
-              width:height/10.5,
-              borderRadius : 999
-             }}
+            <MaterialCommunityIcons
+              name="stadium-outline"
+              size={width / 8}
+              color="#EAB308"
             />
           </View>
-        </View> */}
 
-        {/* Arena Name */}
+        </View>
+
+        {/* Main message */}
         <Text
+          className="text-center font-black text-white"
           style={{
-            // marginTop: 24,
-            marginBottom : 12,
-            textAlign: "center",
-            color: "#FFFFFF",
-            fontWeight: "900",
-            fontSize: width / 25,
+            fontSize: width / 16,
+            letterSpacing: -0.5,
           }}
-          className ="mt-auto"
         >
-          Your Arena
+          Create your Arena
         </Text>
 
         <Text
+          className="mt-3 max-w-[290px] text-center font-medium text-neutral-500"
           style={{
-            color: "#fff",
-            textAlign: "center",
-            // marginTop: 8,
-            fontSize: width / 29,
-            marginBottom : 12,
-          }}  >
-            Ready to welcome your first audience
+            fontSize: width / 30,
+            lineHeight: width / 22,
+          }}
+        >
+          Your space for building your talent identity.
         </Text>
 
-        {/* Badge */}
+        {/* CTA */}
         <TouchableOpacity
-           onPress={() =>{
-            setOpenArenaAlertModal(true)
-            setArenaActionModal("create_arena")
-            // setVisible(false)
+          activeOpacity={0.85}
+          onPress={() => {
+            setShowProfile(false);
+            setActiveIndex(3);
           }}
           style={{
-            alignSelf: "center",
-            marginTop: 12,
-            backgroundColor: "rgba(234,179,8,0.9)",
-            borderRadius: 9,
-            paddingHorizontal: 24,
-            paddingVertical: 14,
+           width : width * 0.85
           }}
-          className = "mt-auto w-full items-center"
+          className="mt-8 h-[54px] w-full flex-row items-center justify-center rounded-xl bg-yellow-500"
         >
+          <MaterialCommunityIcons
+            name="plus"
+            size={21}
+            color="#080808"
+          />
+
           <Text
+            className="ml-2 font-black text-[#080808]"
             style={{
-              color: "#000",
-              fontWeight: "700",
-              fontSize: width / 28,
+              fontSize: width / 27,
             }}
           >
             Create Arena
           </Text>
         </TouchableOpacity>
-
-        
-
       </View>
-  )
+
+      {/* Bottom accent */}
+      <View className="items-center pb-1">
+        <View className="h-[2px] w-10 rounded-full bg-yellow-500/40" />
+      </View>
+    </View>
+  );
 }

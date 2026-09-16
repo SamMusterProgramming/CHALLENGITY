@@ -7,7 +7,6 @@ import React, {
     Text,
     TouchableOpacity,
     TextInput,
-    ScrollView,
     useWindowDimensions,
     Platform,
   } from "react-native";
@@ -22,7 +21,6 @@ import React, {
     useVideoPlayer,
   } from "expo-video";
 import { useGlobalContext } from "../../../context/GlobalProvider";
-import { router } from "expo-router";
 
   export default function SubmitPerformanceModal({
     visible,
@@ -158,7 +156,7 @@ import { router } from "expo-router";
                  flex:1 ,
                 }}
                 contentFit="cover"
-                allowsFullscreen
+                // allowsFullscreen
               />
   
             </View>

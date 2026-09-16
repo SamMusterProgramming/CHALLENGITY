@@ -7,15 +7,11 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalContext } from "../../../context/GlobalProvider";
-import { AnimatePresence, MotiView } from "moti";
-import StageDisplayer from "../../talent/stageDisplayer";
 import StageDiscoveryFooter from "../../footers/stageDiscoveryFooter";
-import StageJourneyCard from "../../myJourney/StageJourneyCard";
 import { extractStageEntries } from "../../../helper";
 import { router } from "expo-router";
+import StageJourneyCard from "../../myJourney/card/StageJourneyCard";
 
 
 export default function StageCaroussel({

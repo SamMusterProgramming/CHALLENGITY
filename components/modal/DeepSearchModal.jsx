@@ -12,7 +12,7 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { deepSearch } from "../../apiCalls";
 import StageCard from "../stage/StageCard";
-import ArenaJourneyCard from "../myJourney/ArenaJourneyCard";
+import ArenaJourneyCard from "../myJourney/card/ArenaJourneyCard";
 import UserProfileCard from "../profile/card/userProfileCard";
 
 const { width, height } = Dimensions.get("window");
@@ -191,7 +191,7 @@ const loadMore = () => {
           <ArenaJourneyCard
             entry={item}
             width={width * 0.95}
-            height={width/1.3}
+            height={width/1.1}
           />
 
         </View>
@@ -205,7 +205,7 @@ const loadMore = () => {
           <StageCard
              entry={item}
              width={width * 0.95}
-             height={width/1.3}
+             height={width/1.1}
           />
         </View>
       );

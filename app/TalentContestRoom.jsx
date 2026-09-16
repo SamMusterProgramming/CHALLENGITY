@@ -875,7 +875,7 @@ return (
                               )}
                           
               {!isPlaying  && !replayRecording &&  (
-              <StageMenu  height={MENU_HEIGHT} width ={width} setParticipationType={setParticipationType} isFavourite={isFavourite}
+              <StageMenu   height={MENU_HEIGHT} width ={width} setParticipationType={setParticipationType} isFavourite={isFavourite}
                           stage={stage} setStage = {setStage} handleRefresh ={handleRefresh} talentRoom ={talentRoom}
                           globalRefresh ={globalRefresh} edition ={edition}  isRefreshing ={isRefreshing} setNewChallenge={setNewChallenge}
                           stageName={stageName} setStageName={setStageName} setTalentRoom={setTalentRoom}

@@ -17,7 +17,7 @@ export default function HeaderApp({
   width,
   height,
   headerHeight , 
-  title = "Challengify"
+  setMissionVisible
 }) {
 
   const { notifications } = useGlobalContext();
@@ -67,7 +67,7 @@ export default function HeaderApp({
       </View>
      
        <TouchableOpacity
-       
+       onPress={() => setMissionVisible(true)}
        className = " flex-row flex-1 h-[100%] pb- 4  justify-center items-center   ">
            <View
            className ="flex-1 borde r-b-4 bord er-goldSoft">

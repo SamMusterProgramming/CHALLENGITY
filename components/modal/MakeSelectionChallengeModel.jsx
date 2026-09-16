@@ -2,19 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {  Animated,  Image,  Platform, StatusBar, TouchableOpacity } from 'react-native';
 import { View, Text, Button, StyleSheet, useWindowDimensions } from 'react-native';
-// import Modal from 'react-native-modal';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-import * as NavigationBar from 'expo-navigation-bar';
 import Modal from 'react-native-modal';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useVideoPlayer, VideoView } from 'expo-video';
-import { useEvent } from 'expo';
 import { icons } from '../../constants';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { getCommentsByPost, liked, loadLikeVoteData, voted } from '../../apiCalls';
-import { Ionicons } from '@expo/vector-icons';
-import { getInition } from '../../helper';
-import CommentDisplayer from '../comments/CommentDisplayer';
+
 
 
 
@@ -113,9 +104,9 @@ const getIcon = (type) => {
 
     useEffect(() => {
       if(Platform.OS == "android"){
-      NavigationBar.setPositionAsync("absolute");
+      // NavigationBar.setPositionAsync("absolute");
       // NavigationBar.setBackgroundColorAsync("#00000000");
-      NavigationBar.setVisibilityAsync('sticky-immersive');
+      // NavigationBar.setVisibilityAsync('sticky-immersive');
       }
       setIsLoaded(true)
      }, []);

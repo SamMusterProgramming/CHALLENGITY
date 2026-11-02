@@ -7,64 +7,38 @@ import {
   FlatList,
   useWindowDimensions,
   Image,
-  ActivityIndicator,
   Animated
 } from "react-native";
 
 import {
   useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  runOnJS
+
 } from "react-native-reanimated";
 
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Gesture } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGlobalContext } from "../../../context/GlobalProvider";
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as ImagePicker from 'expo-image-picker';
 import EditProfileModal from "./editProfileModal";
 
-import {
-  acceptFriendRequest,
-  createArenaByUser,
-  deleteArenaByUser,
-  deleteArenaPost,
-  deleteUserNotification,
-  getArenaByUser,
-  getFollowData,
-  getNotificationByUser,
-  getUserFriendsData,
-  removeFriendRequest,
-  updateArenaByUser,
-  updateUserInfo
-} from "../../../apiCalls";
-
 import { logoutUser } from "../../../services/userServices";
-import CountryFlag from "react-native-country-flag";
-import { countryCodes } from "../../../helper";
 import { icons } from "../../../constants";
-import { getUploadImageUrl, saveCoverImageToDataBase, saveProfileImageToDataBase, uploadImageToBlackBlaze } from "../../../uploadFileToBlackBlaze";
 import { compressImage } from "../../../utilities/fileCompressor";
 import Friend from "../friends/Friend";
-import { LinearGradient } from "expo-linear-gradient";
 import Header from "../header/header";
 import ProfileTabs from "../custom/profileTabs";
 import ArenaDisplayer from "../arena/arenaDisplayer";
-import PerformanceCard from "../../viewArenas/performance/performanceCard";
-import EmptyPostArena from "../arena/emptyPostArena";
-import WelcomeToCreateArena from "../arena/WelcomeToCreateArena";
 import ArenaAlertModal from "../../arena/modals/AlertArenaModal";
 import { useLoading } from "../../../context/loadingContext";
 import CreateArenaModal from "../../modal/createArenaModal";
 import EditArenaModal from "../../arena/modals/editArenaModal";
 import StageCaroussel from "../stage/stageCaroussel";
 import { enqueueCoverUpload, enqueueProfileUpload, subscribeToUploadQueue, UPLOAD_TYPE } from "../../../services/uploads";
-// import { processProfileImageUpload } from "../../../services/upload/images";
-// import { googleLogout } from "../../services/googleLogin";
+import { getNotificationByUser } from "../../../apiCalls/notifications";
+
 
 const chunkArray = (arr = [], size = 6) => {
   const result = [];
@@ -79,8 +53,8 @@ export default function ProfileDrawer({ visible, onClose }) {
   const {
     user,
     setUser,
-    userFriendData,
-    setUserFriendData,
+    userFriends,
+    setUserFriends,
     notifications,
     setNotifications,
     follow,
@@ -100,6 +74,8 @@ export default function ProfileDrawer({ visible, onClose }) {
     userFollowers , 
     userFollowings
   } = useGlobalContext();
+
+  
  
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -160,8 +136,8 @@ export default function ProfileDrawer({ visible, onClose }) {
     if (!refresh) return;
     const load = async () => {
       await Promise.all([
-        getUserFriendsData(user._id, setUserFriendData),
-        getFollowData(user._id, setFollow),
+        // getUserFriendsData(user._id, setUserFriends),
+        // getFollowData(user._id, setFollow),
         getNotificationByUser(user._id, setNotifications),
       ]);
     };
@@ -343,7 +319,7 @@ useEffect(() => {
   // ---------------- DATA ----------------
   const getActiveData = () => {
     if(activeTab !== "people") return [] ;
-    if (selectedPeople === "friends") return userFriendData?.friends || [];
+    if (selectedPeople === "friends") return userFriends?.friends || [];
     if (selectedPeople === "followers") return userFollowers || [];
     return userFollowings || [];
   };
@@ -363,7 +339,6 @@ useEffect(() => {
 
   // ---------------- ACTIONS ----------------
   const acceptFRequest = (not) => {
-    console.log(not.sender_id)
     const rawBody = {
       _id: not._id,
       user_id : user._id
@@ -371,7 +346,7 @@ useEffect(() => {
     acceptFriendRequest(
       not.sender_id,
       rawBody,
-      setUserFriendData,
+      setUserFriends,
       setIsExpired
     );
   };
@@ -380,7 +355,7 @@ useEffect(() => {
     const rawBody = {
       _id: not.content.sender_id,
     };
-    removeFriendRequest(user._id, rawBody, setUserFriendData);
+    removeFriendRequest(user._id, rawBody, setUserFriends);
   };
 
   const deleteNotification = (not) => {
@@ -390,7 +365,7 @@ useEffect(() => {
   useEffect(() => {
     getNotificationByUser(user._id, setNotifications);
     if (!deletedNot) setDeletedNot(null);
-  }, [deletedNot, userFriendData]);
+  }, [deletedNot, userFriends]);
 
   const handleSave = () => {
     updateUserInfo(user._id, userInfo, setUser);
@@ -407,7 +382,7 @@ useEffect(() => {
     {
       icon: "account-group",
       label: "Friends",
-      value: userFriendData?.friends.length,
+      value: userFriends?.length,
     },
     {
       icon: "heart",

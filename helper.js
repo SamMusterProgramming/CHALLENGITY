@@ -534,3 +534,43 @@ export const extractStageEntries = (
         return stageEntries;
       };
 
+
+  export  const formatCount = (value = 0) => {
+    const number = Number(value) || 0;
+    if (number >= 1000000) return `${(number / 1000000).toFixed(1)}M`;
+    if (number >= 1000) return `${(number / 1000).toFixed(1)}K`;
+    return `${number}`;
+  };
+
+
+  export const talentAvatar = {
+    singing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/singingAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f115d68120db925e6_d20261023_m032508_c005_v0501050_t0013_u01792725908900",
+      fileName: "singingAvatar.jpg",
+    },
+  
+    magic: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/magicAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f10786fa5a6a80b54_d20261023_m034803_c005_v0501036_t0019_u01792727283574",
+      fileName: "magicAvatar.jpg",
+    },
+  
+    comedy: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/comedyAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+  
+    fitness: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fitnessAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f10112dfad7f433b3_d20261023_m040019_c005_v0501045_t0015_u01792728019183",
+      fileName: "fitnessAvatar.webp",
+    },
+  
+    dancing: {
+      publicUrl: "https://f005.backblazeb2.com/file/challengify-Images/avatar/dancingAvatar.avif",
+      fileId: "4_z416b61472e3f671f90c50018_f103c79a1285a8513_d20261023_m040640_c005_v0501012_t0036_u01792728400007",
+      fileName: "dancingAvatar.avif",
+    },
+  };

@@ -4,20 +4,26 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { countries, stageIcons } from "../../../utilities/TypeData";
 import { router } from "expo-router";
 import { useGlobalContext } from "../../../context/GlobalProvider";
+import ArenaIcon from "../../svgIcons/tab/ArenaIcon";
+import ArenaPortalIcon from "../../svgIcons/ArenaPortalIcon";
+import CountryFlag from "../../common/CountryFlag";
+import MagicIcon from "../../svgIcons/talent/MagicIcon";
+import TalentIcon from "../../custom/TalentIcon";
 
 const ArenaCard = ({
   entry,
-  width,
-  height,
+  width = null,
 }) => {
 
-  const {scale} = useGlobalContext()
+
+  const {scale , getArenaPerformanceThumbnailHeight , spacing} = useGlobalContext()
   const performances = entry.posts || [];
   const sortedPerformances = useMemo(() => {
     return [...performances].sort(
@@ -78,10 +84,10 @@ const ArenaCard = ({
           `${entry._id}_${index}`
         }
         activeOpacity={0.9}
-        
         style ={{
+          height :"95%"
         }}
-        className="rela tive flex-1 overflow-hidden rounded-xl border border-white/[0.07] bg-[#000000]"
+        className=" flex-1 "
       >
   
         {imageUri ? (
@@ -90,7 +96,7 @@ const ArenaCard = ({
             source={{
               uri: imageUri,
             }}
-            className="absolute inset-0 h- full w- full"
+            className="absolute rounded-3xl inset-0 "
             resizeMode="cover"
           />
        
@@ -105,13 +111,6 @@ const ArenaCard = ({
           </View>
         )}
 
-        {!isLastVisible && (
-          <View className="absolute left-[7px] top-[7px] h-[22px] w-[22px] items-center justify-center rounded-full bg-black/55">
-            <Text className="text-[9px] font-bold text-white/90">
-              {index + 1}
-            </Text>
-          </View>
-        )}
 
         {isLastVisible && (
           <View className="absolute  inset-0 items-center justify-center bg-black/35">
@@ -127,10 +126,10 @@ const ArenaCard = ({
          <LinearGradient
             pointerEvents="none"
             colors={[
-              "transparent",
               "rgba(0,0,0,0.05)",
+              "rgba(0,0,0,0.15)",
               "rgba(0,0,0,0.28)",
-              "rgba(0,0,0,0.86)",
+              "rgba(0,0,0,0.76)",
             ]}
             locations={[0, 0.38, 0.62, 1]}
             style={{
@@ -138,25 +137,31 @@ const ArenaCard = ({
               left: 0,
               right: 0,
               bottom: 0,
-              height: "58%",
+              height: "98%",
             }}
           />
 
 
           <View className="absolute inset-x-4 bg -black/55  bottom-4 rounded-lg">
-            <View className="flex-row w-full  items-center justi fy-between p-1 gap-4 ">
+            <View
+             style= {{
+              justifyContent : index == 0 ? "flex-start" : "flex-end"
+            }}
+             className="flex-row w-full  items-center justi fy-between p-1 gap-4 ">
              
-              <View className="mr-[7px] flex-row items-center">
+              <View 
+             
+              className="mr-[7px] flex-row  items-center">
                 <Ionicons
-                  name="eye-outline"
-                  size={scale(18)}
+                  name="eye"
+                  size={scale(14)}
                   color="#FFFFFF"
                 />
                 <Text
                 style = {{
-                  fontSize : scale(10)
+                  fontSize : scale(11)
                 }}
-                 className="ml-[3px] text -[8px] font-semibold text-white/85">
+                 className="ml-[3px] text -[8px] font-bold text-white/85">
                   {formatNumber(
                     performance?.viewCount
                   )}
@@ -166,7 +171,7 @@ const ArenaCard = ({
               <View className="mr- [7px] flex-row items-center">
                 <MaterialCommunityIcons
                   name="fire"
-                  size={scale(18)}
+                  size={scale(14)}
                   color="#fff"
                 />
                 <Text
@@ -174,7 +179,7 @@ const ArenaCard = ({
                   fontSize : scale(10) ,
                   color : "#fff"
                 }}
-                 className="ml-[3px] t ext-[8px] font-semibold text-white/85">
+                 className="ml-[3px] t ext-[8px] font-bold text-white/85">
                   {formatNumber(
                     performance?.fireCount
                   )}
@@ -182,11 +187,9 @@ const ArenaCard = ({
               </View>
               
             
-              
-
             </View>
           </View>
-        {/* )} */}
+
       </View>
     );
   };
@@ -217,116 +220,14 @@ const ArenaCard = ({
           },
         })
       }
-      
       style={{
         width,
-        height,
+        // height,
       }}
-      className="self-center bg- [#1c1a1a] gap-1 overflow-hidden rounded-[5px] b g-[#181818] px- [14px] pb- [11px] pt- [13px]"
+      className="self-center  "
     >
 
-      <View className="rounded-xl bg-[#1c1a1a] p-4 flex-row items-center border-t-[0.5px] border-l-[0.5px] border-r-[0.5px] bor der-[gold]/40 justify-between">
-
-        <View className="fle x-1  flex-row items-center">
-          
-          <View
-           style ={{
-            // width : width /10 ,
-            // height :width/10
-         }}
-           className=" p-2 overflow-hidden rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.08]">
-              <View className="fl ex-1 items-center justify-center">
-                <MaterialCommunityIcons
-                  name="stadium"
-                  size={scale(24)}
-                  color="#EAB308"
-                />
-              </View>
-          </View>
-
-          <View className="ml-[10px] flex-1">
-            <View className="flex-row items-center">
-              <Text
-                numberOfLines={1}
-                style ={{
-                  fontSize :  scale(14)
-                }}
-                className="max-w-[85%] text-[17px] font-bold tracking-[0.1px] text-white"
-              >
-                {entry.arenaName}
-              </Text>
-              {/* {entry.verified && ( */}
-                <Ionicons
-                  name="checkmark-circle"
-                  size={15}
-                  color="#EAB308"
-                  style={{
-                    marginLeft: 5,
-                  }}
-                />
-              {/* )} */}
-            </View>
-            <View className="mt-[10px] flex-row items-center">
-             
-              <Text 
-              style = {{
-                fontSize : scale(10)
-              }}
-              className="ml- [3px]  font-medium uppercase tracking-[0.3px] text-white/95">
-                {entry.talentType}{' '}
-                <Text
-                  style = {{
-                    fontSize : scale(10)
-                  }}>
-                  {stageIcons[entry.talentType]} {" - "} 
-                </Text>
-              </Text>
-
-              <View className=" h-[3px] w-[3px] rounded-full bg-white/25" />
-              <Text
-               style = {{
-                fontSize : scale(10)
-              }}
-                numberOfLines={1}
-                className="text- [11px] font-medium uppercase tracking-[0.3px] text-white/95"  >
-                {countries.find(c => c.code == entry.region)?.name} {countries.find(c => c.code == entry.region)?.flag}
-              </Text>
-            </View>
-
-          </View>
-
-          <View 
-          style ={{
-             width :  scale(35) ,
-             height : scale(35)
-          }}
-          className="h-[42px] w-[42px] overflow-hidden self-center">
-            {entry?.profileImage?.publicUrl ||
-            entry?.profileImage?.cdnUrl ? (
-              <Image
-                source={{
-                  uri:
-                    entry?.profileImage
-                      ?.publicUrl ||
-                    entry?.profileImage
-                      ?.cdnUrl,
-                }}
-                className="h-full w-full rounded-full"
-                resizeMode="cover"
-              />
-            ) : (
-              <View className="flex-1 items-center justify-center">
-                <Ionicons
-                  name="business-outline"
-                  size={22}
-                  color="#EAB308"
-                />
-              </View>
-            )}
-          </View>
-
-        </View>
-      </View>
+    
 
       {/*
        * =====================================================
@@ -336,27 +237,19 @@ const ArenaCard = ({
 
       <View
       style ={{
-        // height
+        height : getArenaPerformanceThumbnailHeight(),
+        gap: spacing(6),
+        paddingBottom: spacing(6),
+
       }}
-      className=" mt-1 justify-center  bg-[black] border-l-[0.5px] border-r-[0.5px] bo rder-[gold]/40 flex-1 flex-row gap-[5px] overfl ow-hidden">
+      className=" p-1 rounded-t-3xl bg-black border-l-2 border-r-2 border-t-2 border-[#252424] justify-center    flex-row ">
         {visiblePerformances.map(
           renderPerformance
         )}
 
-        {/*
-         * No performances
-         */}
-
         {visiblePerformances.length === 0 && (
           <View className="flex-1 items-center justify-center rounded-[13px] border-t border-b bor der-white/[0.76] bg-[#171717]">
             
-            {/* <Image
-            source={{
-              uri: entry?.coverImage?.publicUrl ,
-            }}
-            className="absolute opacity-50 inset-0 h-full w-full"
-            resizeMode="cover"
-          /> */}
             <Ionicons
               name="videocam-outline"
               size={38}
@@ -374,119 +267,237 @@ const ArenaCard = ({
           </View>
         )}
 
-      </View>
+            <View
+                className="bg-[gold]/60 items-center rounded-full absolute bot tom-0  justify-center"
+                style={{
+                  bottom :-scale(5) ,
+                  padding : scale(3),
+                  zIndex :1002,
+                }} 
+             
+                 >
+                {/* <ArenaPortalIcon size={scale(30)} /> */}
+                <Image
+                source={{ uri: entry.profileImage.publicUrl }}
+                resizeMode="cover"
+                style={{
+                  width: scale(70),
+                  height: scale(70),
+                }}
+                className ="rounded-full"
+              />
+            </View>
 
-     
+           
 
-      <View className="p-4  rounded-xl bg-[#1c1a1a] mt-1   flex-row items-end justify-between">
-        <View className="items-center p-1 px-2">
-          <View className="flex-row  items-center">
+       </View>
 
-            <MaterialCommunityIcons
-              name="star-four-points"
-              size={scale(12)}
-              color="#EAB308"
-            />
+       {/* footer */}
 
-            <Text
+       
+       <View
+            className="flex-row bg- [#161a20] rounded- b-[30px]  justify-between w-full"
+            style={{
+                // marginTop: spacing(6),
+                height : scale(110)
+            }}  >
+
+         
+             <View 
              style = {{
-                fontSize : scale(10)
-              }}
-             className="ml-[4px] text -[14px] font-bold text-white/85">
-              {formatNumber(
-                starCount
-              )}
-            </Text>
+              paddingVertical: spacing(16),
+              paddingHorizontal: spacing(12),
+             }}
+             className = "flex-row justify-center items-center bg-[#202021] rounded-bl-[10px] rounded-tr-full  gap -4" >
+           
+                <View
+                className="items-center justify-center"
+                style={{
+                   }}  >
+                    <View
+                    className="items-center  gap-4 justify-center"
+                    style={{
 
-          </View>
+                    }}  >
+                      <TalentIcon talent={entry.talentType} size={scale(29)} color={"white"}/>
+                      <Text
+                          style={{
+                          // marginTop: spacing(3),
+                          color: "white",
+                          fontSize: scale(9),
+                          fontWeight: "800",
+                          letterSpacing: scale(0.3),
+                          }}  >
+                          {entry.talentType.toUpperCase()}
+                      </Text>
+                    </View>
+              </View>
+            </View>
 
-          <Text 
-           style = {{
-            fontSize : scale(8)
-          }}
-          className="mt-[5px] text -[9px] font-bold tracki ng-[0.7px] text-white/85">
-            STARS
-          </Text>
 
-        </View>
+            {/* METRICS */}
+             <View
+             className = "flex-1  justify-center bg-[#202021] items-center">
+                   
+                <Pressable
+                    android_ripple={{
+                      color: "rgba(232,185,90,0.06)",
+                    }}
+                    style={{
+                        // paddingBottom: spacing(16),
+                        paddingHorizontal: spacing(12),
+                        paddingTop : scale(28)
+                    }}
+                    className = "justify-start mb-4  flex-1 rounded-b-[50px] bg-black items-center"
+                  >
+                    <View className="flex-row items-center  ">
 
-        {/*
-         * ===================================================
-         * FOLLOWERS
-         * ===================================================
-         */}
+                        <View
+                          className="flex-1 items-center justify-center"
+                          style={{
+                            paddingRight: spacing(8),
+                          }}   >
+                          <Text
+                            numberOfLines={1}
+                            style={{
+                              color: "#F4F4F2",
+                              fontSize: scale(14),
+                              lineHeight: spacing(16),
+                              fontWeight: "800",
+                              letterSpacing: scale(0.25),
+                            }}  >
+                            {entry.arenaName}
+                        </Text>
 
-        <View className="items-center p-1 px-2">
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            marginTop: spacing(14),
+                            color: "#c0c0c0",
+                            fontSize: scale(11),
+                            lineHeight: spacing(12),
+                            fontWeight: "600",
+                          }}
+                        >
+                          {entry.biography}
+                        </Text>
 
-          <View className="flex-row items-center">
+                      </View>
 
-            <Ionicons
-              name="people"
-              size={scale(12)}
-              color="#EAB308"
-            />
+                    
+                    </View>
+                  </Pressable>
+             
+           
+                    {/* <View
+                          className=" items-center gap-2 absolute top-2 left-0 justify-center">
+                           
+                            <Text
+                              style={{
+                              // marginTop: spacing(3),
+                              color: "#c0c0c0",
+                              fontSize: scale(8),
+                              fontWeight: "700",
+                              letterSpacing: scale(0.3),
+                              }} >
+                              FOLLOWERS
+                            </Text>
+                            <Text
+                                style={{
+                                // marginLeft: spacing(4),
+                                fontSize: scale(10),
+                                color: "gold",
+                                fontWeight: "700",
+                                }}     >
+                                {entry.followerCount}
+                            </Text>
+                     </View>
+                     <View
+                        className="fle x-row items-center absolute top-2 right-2 gap-2 justify-center">
+                        
+                            <Text
+                                  style={{
+                                    color: "#c0c0c0",
+                                    fontSize: scale(8),
+                                    fontWeight: "700",
+                                    letterSpacing: scale(0.3),
+                                  }} >
+                                  STARS
+                            </Text>
+                            <Text
+                                style={{
+                                // marginLeft: spacing(4),
+                                fontSize: scale(10),
+                                color: "#E8B95A",
+                                fontWeight: "700",
+                                }}
+                            >
+                                {entry.starCount}
+                            </Text>
+                      </View> */}
 
-            <Text
+                      <View
+                          className="bg- [black]/80 border-b-2 border-b-goldSoft/50 items-center  absolute   justify-center"
+                          style={{
+                            top : 0 ,
+                            left:  -scale(0),
+                            paddingVertical : scale(3),
+                            zIndex :1002,
+                          }}   >
+                            <Text
+                                    className = "text-goldSoft/90"
+                                    style={{
+                                    // color: "gold",
+                                    fontSize: scale(10),
+                                    fontWeight: "800",
+                                    letterSpacing: scale(0.3),
+                                    }}  >
+                                  ARENA
+                            </Text>
+                      </View>
+
+              </View>
+
+              <View 
              style = {{
-                fontSize : scale(10)
-              }}
-             className="ml-[4px] text- [14px] font-bold text-white/85">
-              {formatNumber(
-                followerCount
-              )}
-            </Text>
+              paddingVertical: spacing(16),
+              paddingHorizontal: spacing(16),
+             }}
+             className = "flex-row bg-[#202021] rounded-br-[10px] rounded-tl-full  gap -4" >
+                <View
+                    className="items-center justify-center"
+                    style={{
+                    //   width: spacing(60),
+                    }}  >
+                    <View
+                      className="items-center gap-4 justify-center"
+                      style={{
+                          // width: spacing(55),
+                          // height: spacing(70),
+                      }}
+                      >
+                        <CountryFlag
+                            code={entry.region}
+                            size={scale(27)}
+                        />
+                        <Text
+                            style={{
+                            // marginTop: spacing(3),
+                             color: "white",
+                              fontSize: scale(10),
+                              fontWeight: "700",
+                              letterSpacing: scale(0.3),
+                            }}  >
+                            {entry.region}
+                        </Text>
+                    </View>
+                </View>
 
-          </View>
-
-          <Text 
-           style = {{
-            fontSize : scale(8)
-          }}
-          className="mt-[5px] text -[9px] font-bold trac king-[0.7px] text-white/85">
-            FOLLOWERS
-          </Text>
-
+            </View>
+         
         </View>
+      
 
-        {/*
-         * ===================================================
-         * PERFORMANCES
-         * ===================================================
-         */}
-
-        <View className="items-center p-1 px-2">
-
-          <View className="flex-row items-center">
-
-            <Ionicons
-              name="play"
-              size={scale(12)}
-              color="#EAB308"
-            />
-
-            <Text
-             style = {{
-                fontSize : scale(10)
-              }}
-             className="ml-[4px] text- [14px] font-bold text-white/85">
-              {formatNumber(
-                performanceCount
-              )}
-            </Text>
-
-          </View>
-
-          <Text 
-           style = {{
-            fontSize : scale(8)
-          }}
-          className="mt-[5px] text- [9px] font-bold track ing-[0.7px] text-white/85">
-            PERFORMANCES
-          </Text>
-
-        </View>
-
-      </View>
 
     </TouchableOpacity>
   );

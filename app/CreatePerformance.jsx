@@ -26,11 +26,11 @@ import { useEffect } from "react";
 import CameraRecordingModal from "../components/arena/modals/cameraRecordingModal";
 import { stageIcons } from "../utilities/TypeData";
 import SubmitPerformanceModal from "../components/arena/modals/submitPerformanceModal";
-import { addPerformanceToArena } from "../apiCalls";
+// import { addPerformanceToArena } from "../apiCalls";
 import { generateThumbnail, validateVideo } from "../videoFiles";
 import { compressImage, compressVideo } from "../utilities/fileCompressor";
 import { useLoading } from "../context/loadingContext";
-import { getUploadImageUrl, getUploadVideoUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from "../uploadFileToBlackBlaze";
+// import { getUploadImageUrl, getUploadVideoUrl, uploadImageToBlackBlaze, uploadVideoToBackblaze } from "../uploadFileToBlackBlaze";
 import ArenaAlertModal from "../components/arena/modals/AlertArenaModal";
 // import { enqueuePerformanceUpload, subscribeToUploadQueue } from "../services/upload";
 import * as FileSystem from "expo-file-system/legacy";
@@ -41,7 +41,7 @@ export default function CreatePerformance() {
 const {userArenas , user ,selectedArena , setSelectedArena , setUserArenas, uploadPerformanceLoading , setGlobalArenaRefresh,
    setUploadPerformanceLoading , arenaActionModal , setArenaActionModal ,tempPerformance, setTempPerformance} = useGlobalContext()
 const { width , height} =  useWindowDimensions();
-const { arena_id } = useLocalSearchParams();
+const { arena_id , region } = useLocalSearchParams();
 const insets = useSafeAreaInsets();
 const [videoUrl, setVideoUrl] = useState(null);
 const [cameraPermission, setCameraPermission] = useState(false);
@@ -182,15 +182,14 @@ const submitPerformance = async () => {
     await enqueuePerformanceUpload({
       videoUri: videoUrl,
       thumbnailUri: thumbNailURL,
-      arenaId: selectedArena._id,
+      arenaId: arena_id,
       ownerId: user._id,
       ownerEmail: user.email,
       description,
-      region: selectedArena.region,
+      region: region,
     });
 
     await deleteOriginalFiles();
-
     hideLoading();
     router.back();
   } catch (error) {

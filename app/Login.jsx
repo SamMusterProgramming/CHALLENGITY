@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { saveToken } from '../apiCalls';
 import {
   View,
   Image,
@@ -9,7 +8,7 @@ import {
 } from 'react-native';
 import { useGlobalContext } from '../context/GlobalProvider';
 import {  images } from '../constants';
-import {  authLogin, BASE_URL } from '../apiCalls';
+// import {  authLogin, BASE_URL } from '../apiCalls';
 import { router } from 'expo-router';
 import {  loadLoginHint, login,  loginAnonymouslyUser,  resendVerification, saveLoginHint, signUp,  waitForUser } from '../services/userServices';
 import { getFirebaseErrorMessage } from '../utilities/firebaseEroors';
@@ -19,7 +18,7 @@ import { auth } from '../firebase/client';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLoading } from '../context/loadingContext';
 import { useFonts } from 'expo-font';
-// import { signInWithGoogle } from '../services/googleLogin';
+import { signInWithGoogle } from '../services/googleLogin';
 
 import {
   BebasNeue_400Regular,
@@ -38,12 +37,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import LoginSection from '../components/auth/loginSection';
 import RegisterSection from '../components/auth/registerSection';
+import { BASE_URL, saveToken } from '../apiCalls/config';
 
 
 
 export default function Login() {
   // const { user, setUser } = useGlobalContext();
-  const {user,setUser ,colorTheme ,form, setForm } = useGlobalContext()  
+  const {user,setUser ,colorTheme ,form, setForm , scale , spacing } = useGlobalContext()  
   const [message, setMessage] = useState("")
   const [isPasswordWrong, setIsPasswordWrong] = useState(false); 
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false); 
@@ -181,51 +181,128 @@ export default function Login() {
 
   //*****************handle sign in with google  */
 
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     setError("");
+
+  //     // 🔥 Step 1: Google → Firebase
+  //     await signInWithGoogle();
+  //     // 🔥 Step 2: Firebase token
+  //     const user = await waitForUser();
+  //     if (!user) {
+  //       setError("user not found");
+  //       throw new Error("User not found after Google login");
+  //     }
+  //     const token = await user.getIdToken(true);
+  //     // 🔥 Step 3: Backend
+  //     const res = await fetch(`${BASE_URL}/users/auth/google`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify( { token }),
+  //     });
+  //     const data = await res.json();
+  //     // 🔥 Step 4: Store JWT
+  //     // setError(data.message);
+  //     // if (!data.token) {
+  //     //   return setError("token is null")
+  //     // }
+  //     if(data.token) await saveToken(data.token);
+  //     if(data.token)  await saveLoginHint("google", data.user.email)
+  
+  //     // 🔥 Step 5: Global state
+  //     setUser(data.user);
+  
+  //   } catch (e) {
+  //     console.log("GOOGLE LOGIN ERROR:", e);
+  //     if (e.message === "Google sign-in cancelled") return;
+  //     setError(e.message || "Google login failllled");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleGoogleLogin = async () => {
     try {
+      // setLoading(true);
+      showLoading("Logging in with Google...");
       setError("");
-
-      // 🔥 Step 1: Google → Firebase
-      await signInWithGoogle();
-      // 🔥 Step 2: Firebase token
-      const user = await waitForUser();
+      // 1. Google → Firebase
+      const user = await signInWithGoogle();
+  
       if (!user) {
-        setError("user not found");
         throw new Error("User not found after Google login");
       }
+  
+      console.log("Firebase user immediately available:", user.uid);
+  
+      // 2. Get Firebase ID token
       const token = await user.getIdToken(true);
-      // 🔥 Step 3: Backend
+  
+      console.log("Firebase ID token:", token ? "EXISTS" : "MISSING");
+  
+      // 3. Authenticate with backend
       const res = await fetch(`${BASE_URL}/users/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify( { token }),
+        body: JSON.stringify({
+          token,
+        }),
       });
-      const data = await res.json();
-      // 🔥 Step 4: Store JWT
-      // setError(data.message);
-      // if (!data.token) {
-      //   return setError("token is null")
-      // }
-      if(data.token) await saveToken(data.token);
-      if(data.token)  await saveLoginHint("google", data.user.email)
   
-      // 🔥 Step 5: Global state
-      setUser(data.user);
+      const data = await res.json();
+  
+      console.log("Google backend response:", data);
+  
+      if (!res.ok) {
+        throw new Error(data?.message || "Google authentication failed");
+      }
+  
+      if (!data?.token) {
+        throw new Error("Backend did not return an authentication token");
+      }
+  
+      // 4. Store your backend JWT
+      await saveToken(data.token);
+  
+      // 5. Store login hint
+      if (data?.user?.email) {
+        await saveLoginHint("google", data.user.email);
+      }
+  
+      // 6. Update global user state immediately
+      if (data?.user) {
+        setUser(data.user);
+        router.replace("/Home");
+      }
+  
+      console.log("GOOGLE LOGIN COMPLETE:", {
+        firebaseUid: user.uid,
+        backendUid: data?.user?.uid,
+        email: data?.user?.email,
+      });
   
     } catch (e) {
       console.log("GOOGLE LOGIN ERROR:", e);
-      if (e.message === "Google sign-in cancelled") return;
-      setError(e.message || "Google login failllled");
+  
+      if (e?.message === "Google sign-in cancelled") {
+        return;
+      }
+  
+      setError(e?.message || "Google login failed");
     } finally {
-      setLoading(false);
+      // setLoading(false);
+      hideLoading();
     }
   };
   //***********************sign up and login  with email */
 
   const handleLogin = async () => {
     try {
+      showLoading("Logging in...");
       const user = await login(form.email,form.password);
       if (!user.emailVerified) {
         setError("Please verify you email to continue")
@@ -258,8 +335,8 @@ export default function Login() {
       setError(getFirebaseErrorMessage(error));
       setMessageColor("pink")
       setVerification(false)
-    } finally {
-       
+    }  finally {
+      hideLoading();
     }
   };
 
@@ -302,6 +379,7 @@ export default function Login() {
       });
       const data = await res.json();
       // 4. Save JWT
+
       await saveToken(data.token);
       // 5. Optional: save hint
       await saveLoginHint("guest");
@@ -318,7 +396,7 @@ export default function Login() {
 
   const handleSignUp = async () => {
     try {
-      // 1. Create user in Firebase
+      showLoading("Registering ...");
       const user = await signUp(form.email, form.password);
       // 2. Get Firebase ID token
       const token = await user.getIdToken();
@@ -351,29 +429,131 @@ export default function Login() {
   }, [selectedSection])
   
 
-return (
-  <SafeAreaView className="flex-1 justify-start w-full bg-[#050505]">
+// return (
+//   <SafeAreaView className="flex-1 justify-start w-full bg-[#050505]">
 
-    <View className="h-[260px] w-full">
-      <Image
-        source={images.hero}
-        resizeMode="cover"
-        className="abso lute w-full h-full"
-      />  
-    </View>
-    {selectedSection == "login" && (
-       <LoginSection
-       form={form} setForm = {setForm} showPassword ={showPassword} setShowPassword ={setShowPassword} height={height} sendVerification={sendVerification}
-       handleLogin = {handleLogin} handleAnonymousLogin = {handleAnonymousLogin} handleGoogleLogin ={handleGoogleLogin}
-       error={error} messageColor = {messageColor} width={width} verification={verification} setSelectedSection={setSelectedSection}/>
-    )}
-     {selectedSection == "register" && (
-       <RegisterSection   
-       form={form} setForm = {setForm} showPassword ={showPassword} setShowPassword ={setShowPassword} height ={height}
-       handleSignUp= {handleSignUp} handleAnonymousLogin = {handleAnonymousLogin} handleGoogleLogin ={handleGoogleLogin}
-       error={error} messageColor = {messageColor} width={width} verification={verification} setSelectedSection={setSelectedSection}/>
-    )}
+//     <View className="h-[260px] w-full">
+//       <Image
+//         source={images.hero}
+//         resizeMode="cover"
+//         className="abso lute w-full h-full"
+//       />  
+//     </View>
+//     {selectedSection == "login" && (
+//        <LoginSection
+//        form={form} setForm = {setForm} showPassword ={showPassword} setShowPassword ={setShowPassword} height={height} sendVerification={sendVerification}
+//        handleLogin = {handleLogin} handleAnonymousLogin = {handleAnonymousLogin} handleGoogleLogin ={handleGoogleLogin}
+//        error={error} messageColor = {messageColor} width={width} verification={verification} setSelectedSection={setSelectedSection}/>
+//     )}
+//      {selectedSection == "register" && (
+//        <RegisterSection   
+//        form={form} setForm = {setForm} showPassword ={showPassword} setShowPassword ={setShowPassword} height ={height}
+//        handleSignUp= {handleSignUp} handleAnonymousLogin = {handleAnonymousLogin} handleGoogleLogin ={handleGoogleLogin}
+//        error={error} messageColor = {messageColor} width={width} verification={verification} setSelectedSection={setSelectedSection}/>
+//     )}
       
+//   </SafeAreaView>
+// );
+
+return (
+  <SafeAreaView
+    style={{
+      flex: 1,
+      backgroundColor: "#050505",
+    }}
+  >
+    {/* CINEMATIC BACKGROUND */}
+    <View
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      }}
+    >
+      <Image
+        source={images.login_background}
+        resizeMode="cover"
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      />
+
+      {/* Dark cinematic overlay */}
+      <LinearGradient
+        colors={[
+          "rgba(0,0,0,0.28)",
+          "rgba(0,0,0,0.68)",
+          "rgba(0,0,0,0.82)",
+          "rgba(0,0,0,0.96)",
+        ]}
+        locations={[0, 0.28, 0.62, 1]}
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      />
+
+      {/* Subtle gold atmosphere */}
+      <LinearGradient
+        colors={[
+          "rgba(212,175,55,0.08)",
+          "transparent",
+          "rgba(212,175,55,0.025)",
+        ]}
+        locations={[0, 0.45, 1]}
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      />
+    </View>
+
+    {/* CONTENT */}
+    {selectedSection === "login" && (
+      <LoginSection
+        form={form}
+        setForm={setForm}
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
+        height={height}
+        sendVerification={sendVerification}
+        handleLogin={handleLogin}
+        handleAnonymousLogin={handleAnonymousLogin}
+        handleGoogleLogin={handleGoogleLogin}
+        error={error}
+        messageColor={messageColor}
+        width={width}
+        verification={verification}
+        setSelectedSection={setSelectedSection}
+      />
+    )}
+
+    {selectedSection === "register" && (
+      <RegisterSection
+        form={form}
+        setForm={setForm}
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
+        height={height}
+        handleSignUp={handleSignUp}
+        handleAnonymousLogin={handleAnonymousLogin}
+        handleGoogleLogin={handleGoogleLogin}
+        error={error}
+        messageColor={messageColor}
+        width={width}
+        verification={verification}
+        setSelectedSection={setSelectedSection}
+      />
+    )}
   </SafeAreaView>
 );
 

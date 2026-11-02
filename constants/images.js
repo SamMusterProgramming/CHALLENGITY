@@ -21,10 +21,16 @@ import artist from  "../assets/images/artist.webp";
 import guitarist from  "../assets/images/guitarist.jpg";
 import applogo from  "../assets/images/ithri.png";
 import hero from  "../assets/images/hero.png";
+import login_background from "../assets/images/login-background.jpeg";
+import earth from "../assets/images/earth.webp";
+import header from "../assets/images/header.png";
 
 
 export default {    
-      hero,
+     header,
+     earth,
+     login_background,
+     hero,
      logo, 
      empty , applogo,
      art, singing, 

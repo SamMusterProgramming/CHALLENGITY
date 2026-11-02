@@ -28,16 +28,15 @@ export default function rootLayout() {
       screenOptions={{ 
       }}>
         <Stack.Screen name='Login' options={{ headerShown:false,unmountOnBlur: true}} />
-        <Stack.Screen name='signup' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='index' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='Home' options={{ headerShown:false,unmountOnBlur: true}} />
-        <Stack.Screen name='arenaDisplayer' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='arenaProfile' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='ProfileScreen' options={{ headerShown:false,unmountOnBlur: true}} />
-        <Stack.Screen name='SetUpProfile' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='TalentContestRoom' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='CreatePerformance' options={{ headerShown:false,unmountOnBlur: true}} />
         <Stack.Screen name='arenaPerformancePlayer' options={{ headerShown:false,unmountOnBlur: true}} />
+        {/* <Stack.Screen name='profile' options={{ headerShown:false,unmountOnBlur: true}} /> */}
+
       </Stack>
          {/* 🚀 GLOBAL FOREGROUND BANNER */}
      <InAppNotification />
@@ -50,4 +49,3 @@ export default function rootLayout() {
   )
 }
 
-const styles = StyleSheet.create({})

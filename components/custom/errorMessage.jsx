@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 import { MotiView } from "moti";
 
-const ErrorMessage = ({ message , color ,width}) => {
+const ErrorMessage = ({ message , color , size}) => {
   if (!message) return null;
 
   return (
@@ -12,7 +12,7 @@ const ErrorMessage = ({ message , color ,width}) => {
       className=" w-[50%]  mb- 8 text-center items-center justify-center px -3 py -2 border bor der-red-500/30 bg -red-500/10 rounded-md"
     >
       <Text 
-      style= {{ color : color , textAlign:"center" , fontSize : width /32 ,lineHeight : 25}}
+      style= {{ color : color , textAlign:"center" , fontSize : size ,lineHeight : 25}}
       numberOfLines={2}
       className="text-red-400 text-md">
         • {message}

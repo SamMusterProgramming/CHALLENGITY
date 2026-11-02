@@ -17,7 +17,8 @@ import { router } from 'expo-router';
 import { useLoading } from '../../context/loadingContext';
 import ArenaAlertModal from '../arena/modals/AlertArenaModal';
 import EditArenaModal from '../arena/modals/editArenaModal';
-import { getCompletedUploads, isUploadQueueBusy, removeUploadJob, subscribeToUploadQueue, UPLOAD_TYPE } from '../../services/uploads';
+import { getCompletedUploads, isUploadQueueBusy, removeUploadJob, subscribeToUploadQueue, subscribeToUploadWorker, UPLOAD_STATUS, UPLOAD_TYPE } from '../../services/uploads';
+import { enqueueArenaUpload } from '../../services/uploads/uploadQueue';
 
 
 
@@ -34,7 +35,7 @@ export default function ArenaPage({ user, onScroll }) {
     globalArenaRefresh,
     setGlobalArenaRefresh,
   } = useGlobalContext();
-
+  console.log("[ArenaDebug] Arena screen rendered");
   const { showLoading, hideLoading } = useLoading();
 
   const [openModal, setOpenModal] = useState(false);
@@ -49,23 +50,78 @@ export default function ArenaPage({ user, onScroll }) {
   const [showArenaSelector, setShowArenaSelector] = useState(false);
 
 
-  const createArena = async (d) => {
-    const data = await createArenaByUser(user._id, d);
+  // const createArena = async (d) => {
+  //   // console.log(d)
+  //   // return null ; 
+  //   const data = await createArenaByUser(user._id, d);
+  //   if (data.message) return;
+  //   setUserArenas(data.arenas);
+  //   setSelectedArena(data.selectedArena);
+  // };
 
-    if (data.message) return;
+  const createArena = async (arenaData) => {
+    if (!user?._id || !user?.email) {
+      throw new Error("User information is missing.");
+    }
+    console.log(arenaData)
+    const job = await enqueueArenaUpload({
+      userId: user._id,
+      userEmail: user.email,
+      arenaData,
+    });
 
-    setUserArenas(data.arenas);
-    setSelectedArena(data.selectedArena);
+    console.log("✅ Arena job queued:", job.id);
+
+    return job;
   };
+
+
+
+  useEffect(() => {
+    console.log("[ArenaDebug] Arena listener effect started");
+    const userId = user?._id;
+    if (!userId) return;
+    let active = true;
+    console.log("[ArenaListener] Subscribing to upload queue");
+    const unsubscribe = subscribeToUploadQueue(async ({ event, job }) => {
+      if (!active) return;
+      if (event !== "job_completed") return;
+      if (job?.type !== UPLOAD_TYPE.ARENA) return;
+      try {
+        console.log("[ArenaListener] Arena upload completed; refreshing arenas");
+  
+        await getArenaByUser(userId, setUserArenas);
+  
+        if (!active) return;
+  
+        console.log("[ArenaListener] Arenas refreshed successfully");
+  
+        if (job?.id) {
+          await removeUploadJob(job.id);
+        }
+      } catch (error) {
+        console.error("[ArenaListener] Failed to refresh arenas:", error);
+      }
+    });
+  
+    return () => {
+      active = false;
+      console.log("[ArenaListener] Unsubscribing from upload queue");
+      unsubscribe?.();
+    };
+  }, []);
+  
+
 
   useEffect(() => {
     const getData = async () => {
       if (!selectedArena) return;
       setArenaPosts(selectedArena.posts);
     };
-
     getData();
   }, [selectedArena]);
+
+
 
   useEffect(() => {
     if (!selectedPost || !selectedArena) return;
@@ -245,8 +301,7 @@ export default function ArenaPage({ user, onScroll }) {
           for (
             const job of completedUploads
           ) {
-         
-  
+        
             if (
               job.type !==
               UPLOAD_TYPE.PERFORMANCE

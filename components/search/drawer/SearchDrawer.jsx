@@ -8,6 +8,7 @@ import {
   TextInput,
   Dimensions,
   FlatList,
+  useWindowDimensions,
 } from "react-native";
 
 import Animated, {
@@ -28,9 +29,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { getSearchSuggestions } from "../../../apiCalls";
 import ArenaJourneyCard from "../../myJourney/card/ArenaJourneyCard";
-import StageCard from "../../stage/StageCard";
 import UserProfileCard from "../../profile/card/userProfileCard";
-import DeepSearchModal from "../../modal/DeepSearchModal";
+import { useGlobalContext } from "../../../context/GlobalProvider";
+import DeepSearchModal from "../modal/DeepSearchModal";
+import StageCard from "../../discovery/cards/StageCard";
 
 
 const SearchFooter = ({ onPress }) => {
@@ -77,7 +79,7 @@ const SearchFooter = ({ onPress }) => {
     );
   };
 
-const { width } = Dimensions.get("window");
+const { width , height} = Dimensions.get("window");
 
 export default function SearchDrawer({
   visible,
@@ -98,7 +100,7 @@ const [suggestions, setSuggestions] = useState({
 const [results, setResults] = useState(null);
 const [searching, setSearching] = useState(false);
 const [deepSearchVisible, setDeepSearchVisible] = useState(false);
-
+const { scale , spacing } = useGlobalContext();
 
 useEffect(() => {
 if (visible) {
@@ -275,16 +277,12 @@ const searchSuggestions = async (query) => {
               top: insets.top,
               bottom: 10,
               width: drawerWidth,
-
               backgroundColor: "#090909",
-
               borderTopLeftRadius: 28,
               borderBottomLeftRadius: 28,
-
               borderLeftWidth: 1,
               borderLeftColor:
                 "rgba(255,255,255,0.06)",
-
               overflow: "hidden",
             },
           ]}
@@ -295,7 +293,7 @@ const searchSuggestions = async (query) => {
                 HEADER
             ================================================= */}
 
-            <View className="px-2 pt-3 pb-2">
+            <View className="px-3 pt-3 pb-2">
 
               {/* TOP */}
               <View className="mb-2 5 flex-row items-center justify-between">
@@ -304,11 +302,12 @@ const searchSuggestions = async (query) => {
                    className = "fl ex-1 px- 2"
                    >
                     <Text
-                        style={{
-                        color: "#EAB308",
-                        fontSize: width / 20,
-                        fontWeight: "900",
-                        }}
+                       style={{
+                        color: "#eab308",
+                        fontSize: scale(16),
+                        fontWeight: "500",
+                      }}
+                      className = "tracking-wide"
                     >
                         SEARCH
                     </Text>
@@ -316,7 +315,7 @@ const searchSuggestions = async (query) => {
                         style={{
                         color:
                             "rgba(255,255,255,0.45)",
-                        fontSize: width / 34,
+                        fontSize: scale(9),
                         marginTop: 4,
                         }} >
                         Find people, arenas & stages
@@ -328,7 +327,7 @@ const searchSuggestions = async (query) => {
                 onPress={closeDrawer}>
                     <MaterialCommunityIcons
                         name="chevron-right"
-                        size={55}
+                        size={scale(45)}
                         color="#eab308"
                     />
                 </TouchableOpacity>
@@ -340,10 +339,10 @@ const searchSuggestions = async (query) => {
               ================================================= */}
 
               <View
-                className={`h-[54px] flex-row items-center rounded-[10px] border mb-4 px-4 ${
+                className={`h-[54px] flex-row items-center rounded-[10px] border mb- 4 px-4 ${
                   focused
-                    ? "border-[#EAB308]/40 bg-[#14120A]"
-                    : "border-white/[0.07] bg-[#111111]"
+                    ? "border-[#EAB308]/20 b g-[#14120A]"
+                    : "border-white/[0.07] b g-[#111111]"
                 }`}
               >
 
@@ -356,12 +355,11 @@ const searchSuggestions = async (query) => {
                 <TextInput
                   value={query}
                   onChangeText={setQuery}
-                  placeholder="Search Challengify"
+                  placeholder="Search Itri "
                   placeholderTextColor="rgba(255,255,255,0.35)"
                   autoCorrect={false}
                   autoCapitalize="none"
                   returnKeyType="search"
-
                   onFocus={() =>
                     setFocused(true)
                   }
@@ -379,11 +377,10 @@ const searchSuggestions = async (query) => {
                     onPress={() =>
                       setQuery("")
                     }
-                    className="ml-2 h-7 w-7 items-center justify-center rounded-full bg-white/[0.07]"
-                  >
+                    className="ml-2 h-7 w-7 items-center justify-center rounded-full bg-white/[0.07]"  >
                     <Ionicons
                       name="close"
-                      size={14}
+                      size={scale(18)}
                       color="rgba(255,255,255,0.55)"
                     />
                   </TouchableOpacity>
@@ -401,10 +398,10 @@ const searchSuggestions = async (query) => {
 
               {query.length === 0 ? (
                 <View>
-                  <Text className="mb-4 text-[11px] font-bold uppercase tracking-[1.2px] text-white/30">
+                  {/* <Text className="mb-4 text-[11px] font-bold uppercase tracking-[1.2px] text-white/30">
                     Explore
-                  </Text>
-
+                  </Text> */}
+{/* 
                   <View className="rounded-2xl border border-white/[0.06] bg-[#101010] p-4">
 
                     <View className="flex-row items-center">
@@ -427,14 +424,24 @@ const searchSuggestions = async (query) => {
                       </View>
                     </View>
 
-                  </View>
+                  </View> */}
                 </View>
               ) : (
                 <View
                 className ="w-full flex-1">
 
-                  <View className="mb-3 px-4 flex-row items-center justify-between">
-                    <Text className="text-[11px] font-bold uppercase tracking-[1.2px] text-white/30">
+                  <View 
+                   style = {{
+                    paddingHorizontal : spacing(10),
+                    paddingVertical : spacing(16)
+                  }}
+                  className=" flex-row items-center justify-between">
+                    <Text 
+                     style = {{
+                      fontSize :  scale(10),
+                   
+                    }}
+                    className="text-[11px] fon t-bold uppercase trac king-[1.2px] text-white/80">
                     Suggestions
                     </Text>
                     {searching && (
@@ -501,14 +508,21 @@ const searchSuggestions = async (query) => {
                       
                         ListEmptyComponent={
                             !searching ? (
-                            <View className="items-center py-10">
+                            <View 
+                            style = {{
+                              height : height /1.8
+                            }}
+                            className="items-center justify-center  flex- 1 py-10">
                                 <Ionicons
                                 name="search-outline"
-                                size={26}
+                                size={scale(45)}
                                 color="rgba(255,255,255,0.2)"
                                 />
-
-                                <Text className="mt-3 text-[12px] text-white/30">
+                                <Text 
+                                style = {{
+                                  fontSize :  scale(14)
+                                }}
+                                className="mt-3 text-[12px] text-white/30">
                                 No suggestions found
                                 </Text>
                             </View>
@@ -534,7 +548,7 @@ const searchSuggestions = async (query) => {
         visible={deepSearchVisible}
         query={query}
         onClose={() => setDeepSearchVisible(false)}
-       />
+        />
       )}
     </View>
   );

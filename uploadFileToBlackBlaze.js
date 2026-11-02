@@ -1,6 +1,7 @@
 import axios from "axios";
-import { api, BASE_URL } from "./apiCalls";
+// import { api, BASE_URL } from "./apiCalls";
 import * as FileSystem from 'expo-file-system/legacy';
+import { api } from "./apiCalls/config";
 
 
 

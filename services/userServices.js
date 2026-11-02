@@ -1,7 +1,10 @@
 import { createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged, sendEmailVerification, signInAnonymously, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../firebase/client";
-import { deletePushToken, removeToken } from "../apiCalls";
+// import { deletePushToken, removeToken } from "../apiCalls";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { deletePushToken } from "../apiCalls/user";
+import { removeToken } from "../apiCalls/config";
 // import app from "../firebase/client";
 
 
@@ -19,16 +22,47 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
     return userCredential.user;
   };
   
-  export const logoutUser = async (setUser, router , user) => {
+  // export const logoutUser = async (setUser, router , user) => {
+  //   try {
+  //     // 1. Firebase logout
+  //     await signOut(auth);
+  //     await deletePushToken(user._id);
+  //     await removeToken();
+  //     // 3. Clear global state
+  //     setUser(null);
+  //     // 4. Redirect to login
+  //     router.replace("/Login");
+  //   } catch (error) {
+  //     console.log("Logout error:", error);
+  //   }
+  // };
+
+  export const logoutUser = async (setUser, router, user) => {
     try {
-      // 1. Firebase logout
+      // 1. Sign out of Firebase
       await signOut(auth);
-      await deletePushToken(user._id);
-      await removeToken();
-      // 3. Clear global state
+  
+      // 2. Sign out of Google
+      try {
+        await GoogleSignin.signOut();
+      } catch (googleError) {
+        console.log("Google sign-out error:", googleError);
+      }
+      
+      // 4. Remove push token
+      if (user?._id) {
+        await deletePushToken(user._id);
+      }
+
+       // 5. Remove backend JWT
+       await removeToken();
+  
+      // 6. Clear global state
       setUser(null);
-      // 4. Redirect to login
+  
+      // 7. Return to login
       router.replace("/Login");
+  
     } catch (error) {
       console.log("Logout error:", error);
     }

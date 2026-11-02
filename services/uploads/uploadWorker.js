@@ -21,6 +21,8 @@ import {
   import {
     processCoverUpload,
   } from "./handlers/cover";
+
+  import { processArenaUpload } from "./handlers/arena";
   
   /*
   |--------------------------------------------------------------------------
@@ -328,199 +330,162 @@ import {
   
 
 
-export const processUploadJob =
-  async (jobId) => {
-    const job =
-      await getUploadJob(
-        jobId
-      );
-
+  export const processUploadJob = async (jobId) => {
+    const job = await getUploadJob(jobId);
+  
     if (!job) {
-      console.log(
-        `ℹ️ Upload job ${jobId} no longer exists`
-      );
-
+      console.log(`ℹ️ Upload job ${jobId} no longer exists`);
       return null;
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cancelled jobs are skipped.
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-      job.status ===
-      UPLOAD_STATUS.CANCELLED
-    ) {
+  
+    if (job.status === UPLOAD_STATUS.CANCELLED) {
       notifyWorker({
-        event:
-          "job_cancelled",
+        event: "job_cancelled",
         job,
       });
-
+  
       return null;
     }
-
+  
     try {
       let result = null;
-
-      /*
-      |--------------------------------------------------------------------------
-      | Run the correct handler.
-      |--------------------------------------------------------------------------
-      */
-
+  
+      // Preserve the existing handlers for all existing upload types.
       switch (job.type) {
         case UPLOAD_TYPE.PERFORMANCE:
-          result =
-            await processPerformanceUpload(
-              jobId
-            );
+          result = await processPerformanceUpload(jobId);
           break;
-
+  
         case UPLOAD_TYPE.PROFILE:
-          result =
-            await processProfileUpload(
-              jobId
-            );
+          result = await processProfileUpload(jobId);
           break;
-
+  
         case UPLOAD_TYPE.COVER:
-          result =
-            await processCoverUpload(
-              jobId
-            );
+          result = await processCoverUpload(jobId);
           break;
-
+  
+        case UPLOAD_TYPE.ARENA:
+          result = await processArenaUpload(jobId);
+          break;
+  
         default:
-          throw new Error(
-            `Unsupported upload type: ${job.type}`
-          );
+          throw new Error(`Unsupported upload type: ${job.type}`);
       }
-
-      /*
-      |--------------------------------------------------------------------------
-      | Get the final persisted job.
-      |--------------------------------------------------------------------------
-      */
-
-      const completedJob =
-        await getUploadJob(
-          jobId
-        );
-
-      /*
-      |--------------------------------------------------------------------------
-      | PROFILE / COVER
-      |--------------------------------------------------------------------------
-      
-      */
-
+  
+      const finalJob = await getUploadJob(jobId);
+  
+      // Only announce success when the persisted job is actually completed.
       if (
-        completedJob &&
-        completedJob.status ===
-          UPLOAD_STATUS.COMPLETED &&
-        (
-          completedJob.type ===
-            UPLOAD_TYPE.PROFILE ||
-          completedJob.type ===
-            UPLOAD_TYPE.COVER
-        )
+        finalJob &&
+        finalJob.status === UPLOAD_STATUS.COMPLETED
       ) {
         notifyWorker({
-          event:
-            "job_completed",
-          job:
-            completedJob,
-          result,
+          event: "job_completed",
+          job: finalJob,
+          result: result ?? finalJob.result ?? null,
         });
-
-        await removeCompletedUploadJob(
-          jobId
-        );
-
-        console.log(
-          `🧹 Completed image upload job removed: ${jobId}`
-        );
-
+  
+        // Keep existing Profile/Cover cleanup behavior.
+        if (
+          finalJob.type === UPLOAD_TYPE.PROFILE ||
+          finalJob.type === UPLOAD_TYPE.COVER
+        ) {
+          await removeCompletedUploadJob(jobId);
+  
+          console.log(
+            `🧹 Completed image upload job removed: ${jobId}`
+          );
+        }
+  
+        // Performance and Arena jobs remain stored for consumption.
         return result;
       }
-
-      /*
-      |--------------------------------------------------------------------------
-      | PERFORMANCE
-      |--------------------------------------------------------------------------
-      */
-
+  
+      if (
+        finalJob?.status === UPLOAD_STATUS.PENDING
+      ) {
+        notifyWorker({
+          event: "job_waiting_for_recovery",
+          job: finalJob,
+          result,
+        });
+  
+        return result;
+      }
+  
+      if (
+        finalJob?.status === UPLOAD_STATUS.CANCELLED
+      ) {
+        notifyWorker({
+          event: "job_cancelled",
+          job: finalJob,
+        });
+  
+        return result;
+      }
+  
+      if (
+        finalJob?.status === UPLOAD_STATUS.FAILED
+      ) {
+        notifyWorker({
+          event: "job_failed",
+          job: finalJob,
+          result,
+        });
+  
+        return result;
+      }
+  
+      // Do not label an unexpected status as completed.
+      console.warn(
+        `⚠️ Job ${jobId} returned without completing.`,
+        {
+          type: finalJob?.type,
+          status: finalJob?.status,
+          error: finalJob?.error,
+        }
+      );
+  
       notifyWorker({
-        event:
-          "job_completed",
-        job:
-          completedJob,
+        event: "job_waiting",
+        job: finalJob,
         result,
       });
-
+  
       return result;
     } catch (error) {
-      console.error(
-        `❌ Upload job ${jobId} failed:`,
-        error
-      );
-
-      /*
-      |--------------------------------------------------------------------------
-      | The handler decides the persisted state.
-      |--------------------------------------------------------------------------
-      */
-
-      const currentJob =
-        await getUploadJob(
-          jobId
-        );
-
+      console.error(`❌ Upload job ${jobId} failed:`, error);
+  
+      const currentJob = await getUploadJob(jobId);
+  
+      // The handler may deliberately leave retryable jobs PENDING.
+      // Do not overwrite that decision.
       if (
         currentJob &&
-        currentJob.status !==
-          UPLOAD_STATUS.PENDING &&
-        currentJob.status !==
-          UPLOAD_STATUS.FAILED &&
-        currentJob.status !==
-          UPLOAD_STATUS.CANCELLED &&
-        currentJob.status !==
-          UPLOAD_STATUS.COMPLETED
+        currentJob.status !== UPLOAD_STATUS.PENDING &&
+        currentJob.status !== UPLOAD_STATUS.FAILED &&
+        currentJob.status !== UPLOAD_STATUS.CANCELLED &&
+        currentJob.status !== UPLOAD_STATUS.COMPLETED
       ) {
-        await updateUploadJob(
-          jobId,
-          {
-            status:
-              UPLOAD_STATUS.FAILED,
-
-            error:
-              error?.message ||
-              "Upload failed",
-          }
-        );
+        await updateUploadJob(jobId, {
+          status: UPLOAD_STATUS.FAILED,
+          error: error?.message || "Upload failed",
+        });
       }
-
-      const finalJob =
-        await getUploadJob(
-          jobId
-        );
-
+  
+      const finalJob = await getUploadJob(jobId);
+  
       notifyWorker({
         event:
-          finalJob?.status ===
-          UPLOAD_STATUS.PENDING
+          finalJob?.status === UPLOAD_STATUS.PENDING
             ? "job_waiting_for_recovery"
-            : "job_failed",
-
-        job:
-          finalJob,
-
+            : finalJob?.status === UPLOAD_STATUS.CANCELLED
+              ? "job_cancelled"
+              : "job_failed",
+        job: finalJob,
         error,
       });
-
+  
       return null;
     }
   };

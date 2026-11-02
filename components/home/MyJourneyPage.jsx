@@ -6,6 +6,7 @@ import {
   FlatList,
   useWindowDimensions,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -13,6 +14,8 @@ import { extractStageEntries } from "../../helper";
 import { router } from "expo-router";
 import ArenaJourneyCard from "../myJourney/card/ArenaJourneyCard";
 import StageJourneyCard from "../myJourney/card/StageJourneyCard";
+import DiamandSeperator from "../custom/diamandSeperator";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
  
 export default function MyJourneyPage({ onScroll }) {
@@ -20,12 +23,14 @@ export default function MyJourneyPage({ onScroll }) {
     user,
     userTalents,
     userArenas,
-    setActiveIndex
+    setActiveIndex , 
+    scale , spacing
   } = useGlobalContext();
 
   const { width, height } = useWindowDimensions();
   const [section, setSection] = useState("arenas");
   const [performancesData , setPerformancesData] = useState([])
+  const insets = useSafeAreaInsets();
 
   const stats = useMemo(() => {
     const arenas = userArenas?.length || 0;
@@ -225,7 +230,7 @@ export default function MyJourneyPage({ onScroll }) {
             backgroundColor: "#000",
             paddingTop: 15,
             // paddingHorizontal: 12,
-            paddingBottom: 25,
+            paddingBottom: spacing(16),
           }}  >
             <View
             style={{
@@ -272,7 +277,7 @@ export default function MyJourneyPage({ onScroll }) {
           style={{
             width: "100%",
             alignItems: "center",
-            marginBottom: 24,
+            // marginBottom: 24,
           }}
         >
           <ArenaJourneyCard
@@ -281,7 +286,11 @@ export default function MyJourneyPage({ onScroll }) {
                 height={width / 1.1}
                 onPress={openArena}
                 />
-        
+          <View style={{ 
+                  paddingVertical: spacing(16) 
+                }}className = "justify-center items-center self-center w-full" >
+              <DiamandSeperator />
+          </View>
         </View>
       );
     }
@@ -292,7 +301,7 @@ export default function MyJourneyPage({ onScroll }) {
             style={{
             width: "100%",
             alignItems: "center",
-            marginBottom: 24,
+            // marginBottom: 24,
             }}
         >
             <StageJourneyCard
@@ -305,6 +314,11 @@ export default function MyJourneyPage({ onScroll }) {
             
                 }}
                 />
+            <View style={{ 
+                  paddingVertical: spacing(16) 
+                }}className = "justify-center items-center self-center w-full" >
+              <DiamandSeperator />
+           </View>
         </View>
         );
     }
@@ -349,6 +363,8 @@ export default function MyJourneyPage({ onScroll }) {
         flex: 1,
         width: "100%",
         backgroundColor: "#000",
+        paddingTop:Platform.OS == "ios" ? insets.top : insets.top
+
       }}
     >
       <FlatList
@@ -369,6 +385,13 @@ export default function MyJourneyPage({ onScroll }) {
             width={width}
           />
         }
+        // ItemSeparatorComponent={() => (
+        //   <View style={{ 
+        //     paddingVertical: spacing(16) 
+        //     }} >
+        //   <DiamandSeperator />
+        //   </View>
+        // )}
       />
     </View>
   );

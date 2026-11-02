@@ -5,7 +5,7 @@ import { router } from 'expo-router'
 import "../global.css";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGlobalContext } from '../context/GlobalProvider';
-import {  BASE_URL, getToken } from '../apiCalls';
+// import {  BASE_URL, getToken } from '../apiCalls';
 import { useFonts } from 'expo-font';
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
 import {
@@ -32,7 +32,8 @@ Notifications.setNotificationHandler({
 });
 
 
-// import { configureGoogle } from '../config/google';
+import { configureGoogle } from '../config/google';
+import { BASE_URL, getToken } from '../apiCalls/config';
 
 // import { configureGoogle } from '../services/googleLogin';
 
@@ -48,13 +49,10 @@ export default function App() {
   });
   
   useEffect(() => {
-    //  configureGoogle();
+     configureGoogle();
   }, []); 
 
-  // useEffect(() => {
-  //   NavigationBar.setPositionAsync("absolute");
-  //   NavigationBar.setVisibilityAsync("hidden");
-  // }, []);
+
 
 useEffect(() => {
   const autoLogin = async () => {
@@ -91,27 +89,6 @@ useEffect(() => {
   autoLogin();
 }, []);
 
-// useEffect(() => {
-//   const initializeUploads = async () => {
-//     try {
-//       await initializeUploadStorage();
-//       await initializeImageUploadStorage();
-//       // Recover unfinished uploads without blocking app startup
-//       recoverUploadQueue().catch((error) => {
-//         console.error(
-//           "❌ Failed to recover upload queue:",
-//           error
-//         );
-//       });
-//     } catch (error) {
-//       console.error(
-//         "❌ Failed to initialize upload queue:",
-//         error
-//       );
-//     }
-//   };
-//   initializeUploads();
-// }, []);
 
 useEffect(() => {
   const initializeApp = async () => {

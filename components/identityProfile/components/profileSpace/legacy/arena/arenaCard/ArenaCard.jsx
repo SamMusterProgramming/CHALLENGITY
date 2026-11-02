@@ -1,0 +1,523 @@
+import React, { useCallback, useState } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  Image,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from "react-native";
+
+import {
+  useGlobalContext,
+} from "../../../../../../../context/GlobalProvider";
+
+import ArenaPortalIcon
+  from "../../../../../../svgIcons/ArenaPortalIcon";
+
+import CountryFlag
+  from "../../../../../../common/CountryFlag";
+
+import TalentIcon
+  from "../../../../../../custom/TalentIcon";
+import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import PerformanceIcon from "../../../../../../svgIcons/others/PerformanceIcon";
+import FollowersIcon from "../../../../../../svgIcons/others/followersIcon";
+import { LinearGradient } from "expo-linear-gradient";
+import { countries } from "../../../../../../../utilities/TypeData";
+
+// Enable LayoutAnimation on Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+const ANIMATION_CONFIG = {
+  duration: 280,
+  update: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+  },
+  create: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+    property: LayoutAnimation.Properties.opacity,
+  },
+  delete: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+    property: LayoutAnimation.Properties.opacity,
+  },
+};
+
+export default function ArenaCard({
+  arena,
+  isLast = false,
+  onOpenArena,
+  width
+}) {
+  const {
+    spacing,
+    scale,
+  } = useGlobalContext();
+
+  const [expanded, setExpanded] = useState(true);
+
+  const name =
+    arena?.name ||
+    arena?.arenaName ||
+    "Unnamed Arena";
+
+  const biography =
+    arena?.biography ||
+    arena?.bio ||
+    arena?.description ||
+    "A space created for talent, competition, and discovery.";
+
+  const talent =
+    arena?.talentType ||
+    arena?.profession ||
+    "Talent";
+
+  const country =
+    arena?.country ||
+    arena?.region ||
+    "DZ";
+
+  const score = arena?.score ?? 0;
+
+  const posts = Array.isArray(arena?.posts)
+    ? arena.posts
+    : [];
+
+  const performances =
+    arena?.postCount ??
+    arena?.performanceCount ??
+    posts.length;
+
+  const followers = arena?.followerCount ?? 0;
+
+  const stars =  arena.starCount ?? 0; 
+
+  const visiblePosts = posts.slice(0, 2);
+  const remainingPosts = Math.max(posts.length - 2, 0);
+
+  const toggleExpanded = useCallback(() => {
+    LayoutAnimation.configureNext(ANIMATION_CONFIG);
+    setExpanded((previous) => !previous);
+  }, []);
+
+  const handleOpenArena = useCallback(() => {
+    onOpenArena?.(arena);
+  }, [arena, onOpenArena]);
+
+  const getThumbnail = (post) =>
+    post?.media?.thumbnail?.cdnUrl || null;
+
+  return (
+    <View
+      style={{
+        // paddingHorizontal: spacing(16),
+        height: spacing(420),
+        width :  width * 0.99,
+        borderRadius : scale(7)
+      }}
+      className="justify-start  items-center  "
+     >
+      
+
+
+      {/* =====================================
+          EXPANDABLE PERFORMANCE GALLERY
+          ===================================== */}
+
+      {expanded && (
+      <View
+          style={{
+            paddingBottom: spacing(6),
+          }}
+          className = "w-full p-2 flex-1 rounded-t-3xl bg-black border-l-2 border-r-2 border-t-2 border-[#252424] justify-center items-center "  >
+
+          {visiblePosts.length > 0 ? (
+            <View
+              className="flex-row flex-1"
+              style={{
+                gap: spacing(6),
+                // paddingVertical: spacing(6),
+
+              }}
+            >
+              {visiblePosts.map((post, index) => {
+                const thumbnail = getThumbnail(post);
+                const isLastVisible = index === 1;
+                const showMore =
+                  isLastVisible && remainingPosts > 0;
+                return (
+                  <Pressable
+                    key={
+                      post?._id ||
+                      post?.id ||
+                      `performance-${index}`
+                    }
+                    onPress={() => router.push({
+                        pathname:
+                          "/arenaProfile",
+                        params: {
+                          arena_id:
+                            arena._id,
+                        },
+                      })}
+                    android_ripple={{
+                      color: "rgba(232,185,90,0.12)",
+                    }}
+                    style={{
+                      flex: visiblePosts.length === 1 ? 1 : 1,
+                    //   height: spacing(200),
+                      borderRadius: scale(5),
+                      overflow: "hidden",
+                      // backgroundColor: "rgba(0,0,0,0.68)",
+                      width
+                    }}
+                    className = "flex-1"
+                  >
+                    {thumbnail ? (
+                      <Image
+                        source={{ uri: thumbnail }}
+                        resizeMode="cover"
+                        style={{
+                          height : "95%"
+                        }}
+                        className="h- full w-full rounded-xl"
+                      />
+                    ) : (
+                      <View
+                        className="flex-1 items-center justify-center"
+                        style={{
+                          backgroundColor: "#151515",
+                        }}
+                      >
+                        <ArenaPortalIcon
+                          size={scale(25)}
+                          color="rgba(232,185,90,0.35)"
+                        />
+                      </View>
+                    )}
+                   
+                    {!showMore && (
+                      <View
+                          className="absolute inset-0 items-center justify-center"
+                          style={{
+                            backgroundColor: "rgba(0,0,0,0.18)",
+                          }}
+                        />
+                    )}
+
+                    {/* MORE OVERLAY */}
+
+                    {showMore && (
+                      <View
+                        className="absolute inset-0 items-center justify-center"
+                        style={{
+                          backgroundColor: "rgba(0,0,0,0.28)",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "#F4C542",
+                            fontSize: scale(17),
+                            lineHeight: spacing(22),
+                            fontWeight: "900",
+                            letterSpacing: scale(0.3),
+                          }}
+                        >
+                          + {remainingPosts}
+                        </Text>
+
+                        <Text
+                          style={{
+                            marginTop: spacing(1),
+                            color: "rgba(255,255,255,0.8)",
+                            fontSize: scale(7),
+                            fontWeight: "800",
+                            letterSpacing: scale(1),
+                          }}
+                        >
+                          MORE
+                        </Text>
+                      </View>
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : (
+            <Pressable
+              className="items-center justify-center"
+              onPress={() => router.push({
+                pathname:
+                  "/arenaProfile",
+                params: {
+                  arena_id:
+                    arena._id,
+                },
+              })}
+              style={{
+                flex:1,
+                borderRadius: scale(10),
+                borderWidth: scale(1),
+                borderColor: "rgba(255,255,255,0.06)",
+                backgroundColor: "rgba(255,255,255,0.02)",
+              }}
+            >
+              <Text
+                style={{
+                  color: "rgba(255,255,255,0.65)",
+                  fontSize: scale(10),
+                  fontWeight: "600",
+                }}
+              >
+                No performances yet
+              </Text>
+            </Pressable>
+          )}
+
+            <View
+                className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
+                style={{
+                  bottom :-spacing(5) ,
+                  padding : spacing(4),
+                  zIndex :1002,
+                }}  >
+                {/* <ArenaPortalIcon size={scale(30)} /> */}
+                <Image
+                source={{ uri: arena.profileImage.publicUrl }}
+                resizeMode="cover"
+                style={{
+                  width: scale(70),
+                  height: scale(70),
+                }}
+                className ="rounded-full"
+              />
+            </View>
+       
+
+     </View>
+     )}
+
+      <View
+          className="flex-row bg- [#161a20] rounded- b-[30px]  justify-between w-full"
+          style={{
+              // marginTop: spacing(6),
+              height : scale(110)
+          }}  >
+
+             <View 
+             style = {{
+              paddingVertical: spacing(16),
+              paddingHorizontal: spacing(12),
+             }}
+             className = "flex-row justify-center items-center bg-[#202021] rounded-bl-[10px] rounded-tr-full  gap -4" >
+
+                <View
+                className="items-center justify-center"
+                style={{
+                   }}  >
+                    <View
+                    className="items-center  gap-4 justify-center"
+                    style={{
+
+                    }}  >
+                      <TalentIcon talent={talent} size={scale(29)} color={"white"}/>
+                      <Text
+                          style={{
+                          // marginTop: spacing(3),
+                          color: "white",
+                          fontSize: scale(9),
+                          fontWeight: "800",
+                          letterSpacing: scale(0.3),
+                          }}  >
+                          {talent.toUpperCase()}
+                      </Text>
+                    </View>
+              </View>
+            </View>
+
+
+            {/* METRICS */}
+             <View
+             className = "flex-1  justify-center bg-[#202021] items-center">
+                   
+                <Pressable
+                    android_ripple={{
+                      color: "rgba(232,185,90,0.06)",
+                    }}
+                    style={{
+                        paddingHorizontal: spacing(12),
+                        paddingTop : scale(28)
+                    }}
+                    className = "justify-start mb-4  flex-1 rounded-b-[50px] bg-black items-center"
+                  >
+                    <View className="flex-row items-center  ">
+
+                        <View
+                          className="flex-1 items-center justify-center"
+                          style={{
+                            paddingRight: spacing(8),
+                          }}   >
+                          <Text
+                            numberOfLines={1}
+                            style={{
+                              color: "#F4F4F2",
+                              fontSize: scale(14),
+                              lineHeight: spacing(16),
+                              fontWeight: "800",
+                              letterSpacing: scale(0.25),
+                            }}  >
+                            {name}
+                        </Text>
+
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            marginTop: spacing(14),
+                            color: "rgba(255,255,255,0.92)",
+                            fontSize: scale(11),
+                            lineHeight: spacing(12),
+                            fontWeight: "500",
+                          }}
+                        >
+                          {biography}
+                        </Text>
+
+                      </View>
+
+                    
+                    </View>
+                  </Pressable>
+             
+           
+                    {/* <View
+                          className=" items-center gap-2 absolute top-2 left-0 justify-center">
+                           
+                            <Text
+                              style={{
+                              // marginTop: spacing(3),
+                              color: "#c0c0c0",
+                              fontSize: scale(8),
+                              fontWeight: "700",
+                              letterSpacing: scale(0.3),
+                              }} >
+                              FOLLOWERS
+                            </Text>
+                            <Text
+                                style={{
+                                // marginLeft: spacing(4),
+                                fontSize: scale(10),
+                                color: "gold",
+                                fontWeight: "700",
+                                }}     >
+                                {followers}
+                            </Text>
+                     </View>
+                     <View
+                        className="fle x-row items-center absolute top-2 right-2 gap-2 justify-center">
+                        
+                            <Text
+                                  style={{
+                                    color: "#c0c0c0",
+                                    fontSize: scale(8),
+                                    fontWeight: "700",
+                                    letterSpacing: scale(0.3),
+                                  }} >
+                                  STARS
+                            </Text>
+                            <Text
+                                style={{
+                                // marginLeft: spacing(4),
+                                fontSize: scale(10),
+                                color: "#E8B95A",
+                                fontWeight: "700",
+                                }}
+                            >
+                                {stars}
+                            </Text>
+                      </View> */}
+
+                      <View
+                          className="bg- [black]/70 border-b-2 border-b-goldSoft/50 items-center  absolute   justify-center"
+                          style={{
+                            top : -scale(4) ,
+                            left:  -scale(8),
+                            paddingVertical : scale(3),
+                            zIndex :1002,
+                          }}   >
+                            <Text
+                                    className = "text-goldSoft/90"
+                                    style={{
+                                    fontSize: scale(8),
+                                    fontWeight: "800",
+                                    letterSpacing: scale(0.3),
+                                    }}  >
+                                  ARENA
+                            </Text>
+                      </View>
+
+              </View>
+
+              <View 
+             style = {{
+              paddingVertical: spacing(16),
+              paddingHorizontal: spacing(16),
+             }}
+             className = "flex-row bg-[#202021] rounded-br-[10px] rounded-tl-full  gap -4" >
+                <View
+                    className="items-center justify-center"
+                    style={{
+                    //   width: spacing(60),
+                    }}  >
+                    <View
+                      className="items-center gap-4 justify-center"
+                      style={{
+                          // width: spacing(55),
+                          // height: spacing(70),
+                      }}
+                      >
+                        <CountryFlag
+                            code={country}
+                            size={scale(27)}
+                        />
+                        <Text
+                            style={{
+                            // marginTop: spacing(3),
+                             color: "white",
+                              fontSize: scale(10),
+                              fontWeight: "700",
+                              letterSpacing: scale(0.3),
+                            }}  >
+                            {country}
+                        </Text>
+                    </View>
+                </View>
+
+            </View>
+         
+        </View>
+
+
+       {!isLast && (
+        <View
+          style={{
+            position: "absolute",
+            left: spacing(7),
+            right: spacing(7),
+            bottom: 0,
+            height: scale(1),
+            backgroundColor: "rgba(255,255,255,0.045)",
+          }}
+        />
+       )}
+
+    </View>
+  );
+}

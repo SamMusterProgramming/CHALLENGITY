@@ -11,6 +11,8 @@ import {
     deleteUploadFile,
     deleteJobFiles,
   } from "./uploadStorage";
+
+
   
   import {
     UPLOAD_STATUS,
@@ -648,6 +650,135 @@ import {
   
       return preparedJob;
     };
+
+
+    export const enqueueArenaUpload = async ({
+      userId,
+      userEmail,
+      arenaData,
+    }) => {
+      if (!userId || !userEmail) {
+        throw new Error("User ID and email are required to create an Arena.");
+      }
+    
+      if (!arenaData || typeof arenaData !== "object") {
+        throw new Error("Arena data is required.");
+      }
+    
+      const jobId = generateUploadJobId();
+    
+      let savedProfileUri = null;
+      let savedCoverUri = null;
+    
+      const customProfileImage =
+        arenaData.customProfileImage === true;
+    
+      const customCoverImage =
+        arenaData.customCoverImage === true;
+    
+      // Custom image state is a URI string, not an image object.
+      const profileSourceUri = customProfileImage
+        ? typeof arenaData.profileImage === "string"
+          ? arenaData.profileImage
+          : null
+        : null;
+    
+      const coverSourceUri = customCoverImage
+        ? typeof arenaData.coverImage === "string"
+          ? arenaData.coverImage
+          : null
+        : null;
+    
+      if (customProfileImage && !profileSourceUri) {
+        throw new Error("The custom profile image URI is missing.");
+      }
+    
+      if (customCoverImage && !coverSourceUri) {
+        throw new Error("The custom cover image URI is missing.");
+      }
+    
+      try {
+        const jobDirectory = await getJobDirectory(jobId);
+    
+        // Copy selected images to persistent storage before queueing.
+        if (profileSourceUri) {
+          const extension = getFileExtension(
+            profileSourceUri,
+            ".jpg"
+          );
+    
+          savedProfileUri = `${jobDirectory}profile${extension}`;
+    
+          await copyFileToUploadStorage(
+            profileSourceUri,
+            savedProfileUri
+          );
+        }
+    
+        if (coverSourceUri) {
+          const extension = getFileExtension(
+            coverSourceUri,
+            ".jpg"
+          );
+    
+          savedCoverUri = `${jobDirectory}cover${extension}`;
+    
+          await copyFileToUploadStorage(
+            coverSourceUri,
+            savedCoverUri
+          );
+        }
+    
+        const job = await createUploadJob({
+          id: jobId,
+          type: UPLOAD_TYPE.ARENA,
+          status: UPLOAD_STATUS.PENDING,
+          payload: {
+            userId,
+            userEmail,
+    
+            // Keep the form data, including the custom-image flags.
+            arenaData,
+    
+            // The handler uploads these persistent copies.
+            profileImageUri: savedProfileUri,
+            coverImageUri: savedCoverUri,
+    
+            profileUploadResult: null,
+            coverUploadResult: null,
+          },
+        });
+    
+    
+        notifyQueueListeners({
+          event: "enqueued",
+          job,
+          busy: true,
+        });
+    
+        // Start in the background; don't wait for the API creation to finish.
+        void processUploadQueue().catch((error) => {
+          console.error("❌ Failed to start upload queue:", error);
+        });
+    
+        return job;
+      } catch (error) {
+        if (savedProfileUri) {
+          await deleteUploadFile(savedProfileUri).catch(() => {});
+        }
+    
+        if (savedCoverUri) {
+          await deleteUploadFile(savedCoverUri).catch(() => {});
+        }
+    
+        await deleteJobFiles(jobId).catch(() => {});
+    
+        console.error("❌ Failed to enqueue Arena:", error);
+        throw error;
+      }
+    };
+
+
   
   /*
   |--------------------------------------------------------------------------

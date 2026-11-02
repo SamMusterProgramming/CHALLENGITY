@@ -29,12 +29,15 @@ import {
 } from "@expo/vector-icons";
 
 import { useGlobalContext } from "../context/GlobalProvider";
-import {
-  getGlobalSpotlightPerformances,
-  getLocalSpotlightPerformances,
-  getRegionalSpotlightPerformances,
-} from "../apiCalls";
+// import {
+//   getGlobalSpotlightPerformances,
+//   getLocalSpotlightPerformances,
+//   getRegionalSpotlightPerformances,
+// } from "../apiCalls";
 import PerformancePost from "../components/arenaPerformancePlayer/performancePost";
+import { getGlobalSpotlightPerformances,
+         getLocalSpotlightPerformances,
+          getRegionalSpotlightPerformances } from "../apiCalls/arenas";
 
 export default function ArenaPerformancePlayer() {
   const { width, height } = useWindowDimensions();

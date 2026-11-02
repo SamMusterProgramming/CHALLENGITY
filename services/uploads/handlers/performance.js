@@ -1,8 +1,9 @@
-import {
-    addPerformanceToArena,
-  } from "../../../apiCalls";
+// import {
+//     addPerformanceToArena,
+//   } from "../../../apiCalls";
   
-  import {
+  import { addPerformanceToArena } from "../../../apiCalls/arenas";
+import {
     getUploadImageUrl,
     getUploadVideoUrl,
   } from "../../../uploadFileToBlackBlaze";

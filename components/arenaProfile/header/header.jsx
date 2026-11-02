@@ -23,11 +23,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { countries, stageIcons } from "../../../utilities/TypeData";
 import CountryFlag from "../../common/CountryFlag";
 import { router } from "expo-router";
+import TalentIcon from "../../custom/TalentIcon";
+import ArenaPortalIcon from "../../svgIcons/ArenaPortalIcon";
 
 
 export default function Header({
   arena,
-  setSelectedArena,
   setOpenEditArenaModal,
   setShowArenaSelector,
   setShownMenuPostId,
@@ -42,7 +43,7 @@ export default function Header({
     uploadPerformanceLoading,
     setArenaActionModal,
     setOpenArenaAlertModal,
-    scale,
+    scale, spacing ,
     sharing , openShare ,
     arenaActionModal
   } = useGlobalContext();
@@ -73,8 +74,7 @@ export default function Header({
   const starsCount = arena?.starCount || 0;
 
   const coverImage =
-    arena?.coverImage?.publicUrl ||
-    "https://images.unsplash.com/photo-1516280440614-37939bbacd81";
+    arena?.coverImage?.publicUrl 
 
   const profileImage =
     arena?.profileImage?.publicUrl ||
@@ -93,11 +93,11 @@ export default function Header({
         backgroundColor: "#05080A",
         width,
         flex:1
-      }}   >
+      }}  >
 
       <View
         style={{
-          height: height * 0.3,
+          height: scale(280),
           width: "100%",
           backgroundColor: "#080B0D",
         }}
@@ -132,39 +132,6 @@ export default function Header({
         }}
         />
 
-        {/* <LinearGradient
-          colors={[
-            "rgba(0,0,0,0.12)",
-            "rgba(0,0,0,0.24)",
-            "rgba(3,6,7,0.30)",
-            "rgba(3,6,7,0.58)",
-            "rgba(3,6,7,0.88)",
-          ]}
-          locations={[0, 0.28, 0.52, 0.78, 1]}
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-          }}
-        /> */}
-
-
-        <View
-          style={{
-            position: "absolute",
-            bottom: 0,
-            right: 4,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap:10
-          }} 
-           >
-       
-        </View>
-
         
       </View>
 
@@ -174,11 +141,10 @@ export default function Header({
 
       <View
         style={{
-          paddingHorizontal: 8,
-          paddingBottom: 16,
+          paddingHorizontal: spacing(8),
+          paddingBottom: scale(16),
         }}
-        className = "mt-[-50px] bg-black justify-center items-center rounded-[60px]"
-      >   
+        className = "px -2 mt-[-50px] bg-black justify-center items-center rounded-[60px]"  >   
 
           {/* share */}
           <TouchableOpacity
@@ -198,12 +164,11 @@ export default function Header({
                           alignItems: "center",
                           justifyContent: "center",
                           // height: 46,
-                          paddingHorizontal: 18,
+                          // paddingHorizontal: 18,
                           borderRadius: 12,
                           borderWidth: 1,
                       }}
-                      className="flex-1 absolute top-2 right-8 b g-[#1c1c1d] py-4 self-center justify-center"
-
+                      className="flex -1 absolute top-2 right-12 b g-[#1c1c1d] py-4 self-center justify-center"
                       >
 
                       {sharing ? (
@@ -225,18 +190,24 @@ export default function Header({
 
            </TouchableOpacity>
 
+           {/* <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                className = " absolute self-center justify-cente top-2 left-12 py-4" >
+                <ArenaPortalIcon size={scale(30)} />
+           </View> */}
 
            <View
               style={{
-                marginTop :-scale(72)/2,
-                width: scale(102),
-                height: scale(102),
-                padding: 6,
-                backgroundColor: "#000",
+                marginTop :-scale(122)/2,
+                width: scale(122),
+                height: scale(122),
+                padding: 3,
+                backgroundColor: "gold",
               }}
-              className ="rounded-full"
-            >
-          
+              className ="rounded-full"  >
                 <Image
                   source={{ uri: profileImage }}
                   resizeMode="cover"
@@ -255,9 +226,9 @@ export default function Header({
                   position: "absolute",
                   right: 6,
                   bottom: 10,
-                  width: 22,
-                  height: 22,
-                  borderRadius: 11,
+                  // width: 22,
+                  // height: 22,
+                  borderRadius: 99,
                   alignItems: "center",
                   justifyContent: "center",
                   backgroundColor: "#E4B936",
@@ -267,7 +238,7 @@ export default function Header({
               >
                 <Ionicons
                   name="checkmark"
-                  size={13}
+                  size={23}
                   color="#111"
                 />
               </View>
@@ -275,13 +246,14 @@ export default function Header({
         
           <View
             style={{
-              marginTop: 10,
+              marginTop: scale(34),
               // minHeight: height/10,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
+              flexDirection: "col",
+              // alignItems: "center",
+              // justifyContent: "space-between",
             }}
-          >
+            className = "justify-center items-center w-full"
+          > 
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => setShowArenaSelector?.(true)}
@@ -296,7 +268,7 @@ export default function Header({
                 style={{
                   // fontFamily:"italic",
                   color: "#F5F5F5",
-                  fontSize: scale(18),
+                  fontSize: scale(17),
                   fontWeight: "700",
                   letterSpacing: 0.55,
                   flexShrink: 0.5,
@@ -304,68 +276,82 @@ export default function Header({
               >
                 {arena.arenaName}
               </Text>
-
-              {/* Verification */}
-
-              <View
-                style={{
-                  marginLeft: 7,
-                  padding : 2,
-                  borderRadius: 9,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#E7BC35",
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="stadium"
-                  size={scale(14)}
-                  color="#111"
-                />
-              </View>
+             
             </TouchableOpacity>
-          </View>
 
+            {/* <CountryFlag code={arena.region} size={scale(20)} /> */}
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: 4,
-            }}
-            className ="gap-2  " >
-
-            <InfoPill
-              text={arena.talentType}
-              flag = {null}
-              size={scale(12)}
-            />
             <View
-                  style={{
-                    width: 3,
-                    height: 3,
-                    borderRadius: 2,
-                    marginHorizontal: 6,
-                    backgroundColor: "#aaa",
-                  }}
-            />
-            <InfoCountry
-              countryCode={arena.region}
-              text={countries.find(c => c.code == arena.region ).name }
-              size= {scale(12)}
-            />
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: scale(12),
+              }}
+              className ="gap-2  " >
+
+              <InfoPill
+                text={arena.talentType}
+                flag = {null}
+                size={scale(12)}
+              />
+              <View
+                    style={{
+                      width: 3,
+                      height: 3,
+                      borderRadius: 2,
+                      marginHorizontal: 6,
+                      backgroundColor: "#aaa",
+                    }}
+              />
+              <InfoCountry
+                countryCode={arena.region}
+                text={countries.find(c => c.code == arena.region ).name }
+                size= {scale(12)}
+              />
+            </View>
+
+            <View
+            className = "absolute items-center bottom-4 gap-2 right-2">
+               <CountryFlag code={arena.region} size={scale(40)} />
+               {/* <Text
+                numberOfLines={1}
+                style={{
+                  // fontFamily:"italic",
+                  color: "#F5F5F5",
+                  fontSize: scale(9),
+                  fontWeight: "800",
+                  letterSpacing: 0.55,
+                  flexShrink: 0.5,
+                }}  >
+                {arena.region}
+               </Text> */}
+            </View>
+            <View
+            className = "absolute items-center gap-2 bottom-4 left-2">
+               <TalentIcon talent={arena.talentType} size={scale(40)} />
+               {/* <Text
+                // numberOfLines={1}
+                style={{
+                  // fontFamily:"italic",
+                  color: "#F5F5F5",
+                  fontSize: scale(9),
+                  fontWeight: "800",
+                  letterSpacing: 0.55,
+                  // flexShrink: 0.5,
+                }}  >
+                {arena.talentType}
+               </Text> */}
+            </View>
           </View>
 
-     
-         {/* stats and more */}
 
+         {/* stats and more */}
           <View
             style={{
-              marginTop: 15,
+              marginTop: spacing(24),
               width: "90%",
               alignSelf: "center",
-            }}
-          >
+              }}  >
             {/* Stats */}
             <View
               className="px-6 justify-evenly gap-4"
@@ -375,49 +361,53 @@ export default function Header({
               }}
             >
               <StatItem
-                icon="star-four-points"
+                icon="star"
                 value={formatCount(starsCount)}
                 label=""
-                textSize={scale(15)}
-                iconSize={scale(22)}
-                color="#fff"
+                textSize={scale(13)}
+                iconSize={scale(17)}
+                color="gold"
               />
 
               <StatItem
                 icon="account-multiple"
                 value={formatCount(followersCount)}
                 label=""
-                textSize={scale(15)}
-                iconSize={scale(22)}
+                textSize={scale(13)}
+                iconSize={scale(17)}
                 color="#fff"
               />
 
               <StatItem
-                icon="play"
+                icon="waveform"
                 value={formatCount(performancesCount)}
                 label=""
-                textSize={scale(15)}
-                iconSize={scale(24)}
+                textSize={scale(13)}
+                iconSize={scale(17)}
                 color="#fff"
               />
             </View>
+          </View>
 
             {/* More / Less */}
-            <Pressable
+          <Pressable
               onPress={toggleOwner}
               style={{
                 alignSelf: "center",
-                marginTop: 8,
+                marginTop: spacing(30),
                 paddingHorizontal: 14,
-                paddingVertical: 5,
+                // paddingVertical: 5,
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 4,
+                width
               }}
+              className = "justify-center"
             >
+              <View className = "flex-1 h-[1px] bg-white/30 mr-2" />
               <Text
                 style={{
-                  color: "rgba(255,255,255,0.65)",
+                  color: "#c0c0c0",
                   fontSize: scale(12),
                   fontWeight: "600",
                 }}
@@ -443,11 +433,15 @@ export default function Header({
                   color="rgba(255,255,255,0.65)"
                 />
               </Animated.View>
-            </Pressable>
+              <View className = "flex-1 h-[1px] bg-white/30" />
+
+          </Pressable>
 
             {/* Expandable Owner Section */}
-            <Animated.View
+          <Animated.View
               style={{
+                width,
+                paddingHorizontal: 24,
                 maxHeight: ownerAnimation.interpolate({
                   inputRange: [0, 1],
                   outputRange: [0, 180],
@@ -455,18 +449,19 @@ export default function Header({
                 opacity: ownerAnimation,
                 overflow: "hidden",
               }}
-              className = "w-full"
+              className = "w-full py-4 justify-start"
             >
               <View
                 style={{
-                  marginTop: 8,
+                  // marginTop: 8,
                   marginBottom: 4,
-                  paddingHorizontal: 14,
-                  paddingVertical: 12,
+                  // paddingHorizontal: 14,
+                  paddingBottom: 12,
+                  width ,
                   borderRadius: 14,
                   backgroundColor: "rgba(255,255,255,0.0)",
-                  borderWidth: 1,
-                  borderColor: "rgba(255,255,255,0.2)",
+                  // borderWidth: 1,
+                  // borderColor: "rgba(255,255,255,0.2)",
                 }}
               >
                 {/* Owner Header */}
@@ -594,8 +589,9 @@ export default function Header({
                   </View>
                 )}
               </View>
+
+              <View className = "w-full h-[1px] my-4 bg-white/30" />
             </Animated.View>
-          </View>
          
           {/* action buttons */}
           <View
@@ -699,7 +695,6 @@ export default function Header({
                       activeOpacity={0.86}
                       disabled={uploadPerformanceLoading}
                       onPress={() => {
-                  
                           setArenaActionModal("create_performance");
                           setOpenArenaAlertModal(true);
                       }}
@@ -711,8 +706,9 @@ export default function Header({
                           justifyContent: "center",
                           alignItems: "center",
                           flexDirection: "row",
+                          marginBottom: scale(12)
                       }}
-                      className="w-[100%] self-center py-4 px-8"
+                      className="w-[100%] self-center py-4 p x-8"
                       >
                       {uploadPerformanceLoading ? (
                           <>
@@ -825,7 +821,7 @@ function InfoPill({
       </View> */}
       <Text
         style={{
-          color: "#aaa",
+          color: "#c0c0c0",
           fontSize: size,
           fontWeight: "500",
         }} 
@@ -860,16 +856,16 @@ function InfoCountry({
         className = "px- 3 py-2 gap-2 bor der-[0.5px] bor der-white/30 rounded-full "
       >
        
-       <CountryFlag code={countryCode} size={size+4} />
+       
         <Text
           style={{
-            color: "#aaa",
+            color: "#c0c0c0",
             fontSize: size,
             fontWeight: "500",
           }} 
           className = ""
            >
-          {text}
+         # {text}
         </Text>
        
       </View>
@@ -914,7 +910,7 @@ function StatItem({
           style={{
             color: "#F1F1F2",
             fontSize: textSize,
-            fontWeight: "800",
+            fontWeight: "700",
             letterSpacing: -0.2,
           }}
         >

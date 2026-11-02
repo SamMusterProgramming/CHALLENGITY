@@ -10,6 +10,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { countries, stageIcons } from "../../../utilities/TypeData";
 import { router } from "expo-router";
 import { useGlobalContext } from "../../../context/GlobalProvider";
+import ArenaPortalIcon from "../../svgIcons/ArenaPortalIcon";
+import CountryFlag from "../../common/CountryFlag";
+import TalentIcon from "../../custom/TalentIcon";
 
 const ArenaJourneyCard = ({
   entry,
@@ -19,7 +22,7 @@ const ArenaJourneyCard = ({
 }) => {
 
 
-  const {scale} = useGlobalContext()
+  const {scale ,getArenaPerformanceThumbnailHeight , spacing} = useGlobalContext()
   const performances = entry.posts || [];
   
   const sortedPerformances = useMemo(() => {
@@ -85,7 +88,7 @@ const ArenaJourneyCard = ({
         
         style ={{
         }}
-        className="rela tive flex-1 overflow-hidden rounded-xl border border-white/[0.07] bg-[#000000]"
+        className=" flex-1 overflow-hidden rounded-t-xl border border-white/[0.07] bg-[#000000]"
       >
   
         {imageUri ? (
@@ -106,14 +109,6 @@ const ArenaJourneyCard = ({
               size={27}
               color="rgba(255,255,255,0.28)"
             />
-          </View>
-        )}
-
-        {!isLastVisible && (
-          <View className="absolute left-[7px] top-[7px] h-[22px] w-[22px] items-center justify-center rounded-full bg-black/55">
-            <Text className="text-[9px] font-bold text-white/90">
-              {index + 1}
-            </Text>
           </View>
         )}
 
@@ -152,7 +147,7 @@ const ArenaJourneyCard = ({
              
               <View className="mr-[7px] flex-row items-center">
                 <Ionicons
-                  name="eye-outline"
+                  name="eye"
                   size={scale(18)}
                   color="#FFFFFF"
                 />
@@ -178,7 +173,7 @@ const ArenaJourneyCard = ({
                   fontSize : scale(10) ,
                   color : "#fff"
                 }}
-                 className="ml-[3px] t ext-[8px] font-semibold text-white/85">
+                 className="ml-[3px] t ext-[8px] font-bold text-white/85">
                   {formatNumber(
                     performance?.fireCount
                   )}
@@ -224,125 +219,21 @@ const ArenaJourneyCard = ({
       
       style={{
         width,
-        height,
       }}
       className="self-center bg- [#1c1a1a] gap-1 overflow-hidden rounded-[5px] b g-[#181818] px- [14px] pb- [11px] pt- [13px]"
     >
 
-      <View className="rounded-xl bg-[#1c1a1a] p-4 flex-row items-center border-t-[0.5px] border-l-[0.5px] border-r-[0.5px] bor der-[gold]/40 justify-between">
-
-        <View className="fle x-1  flex-row items-center">
-          
-          <View
-           style ={{
-            // width : width /10 ,
-            // height :width/10
-         }}
-           className=" p-2 overflow-hidden rounded-[5px] border border-yellow-500/20 bg-yellow-500/[0.08]">
-              <View className="fl ex-1 items-center justify-center">
-                <MaterialCommunityIcons
-                  name="stadium"
-                  size={scale(24)}
-                  color="#EAB308"
-                />
-              </View>
-          </View>
-
-          <View className="ml-[10px] flex-1">
-            <View className="flex-row items-center">
-              <Text
-                numberOfLines={1}
-                style ={{
-                  fontSize :  scale(14)
-                }}
-                className="max-w-[85%] text-[17px] font-bold tracking-[0.1px] text-white"
-              >
-                {entry.arenaName}
-              </Text>
-              {/* {entry.verified && ( */}
-                <Ionicons
-                  name="checkmark-circle"
-                  size={15}
-                  color="#EAB308"
-                  style={{
-                    marginLeft: 5,
-                  }}
-                />
-              {/* )} */}
-            </View>
-            <View className="mt-[10px] flex-row items-center">
-             
-              <Text 
-              style = {{
-                fontSize : scale(10)
-              }}
-              className="ml- [3px]  font-medium uppercase tracking-[0.3px] text-white/95">
-                {entry.talentType}{' '}
-                <Text
-                  style = {{
-                    fontSize : scale(10)
-                  }}>
-                  {stageIcons[entry.talentType]} {" - "} 
-                </Text>
-              </Text>
-
-              <View className=" h-[3px] w-[3px] rounded-full bg-white/25" />
-              <Text
-               style = {{
-                fontSize : scale(10)
-              }}
-                numberOfLines={1}
-                className="text- [11px] font-medium uppercase tracking-[0.3px] text-white/95"  >
-                {countries.find(c => c.code == entry.region)?.name} {countries.find(c => c.code == entry.region)?.flag}
-              </Text>
-            </View>
-
-          </View>
-
-          <View 
-          style ={{
-             width :  scale(35) ,
-             height : scale(35)
-          }}
-          className="h-[42px] w-[42px] overflow-hidden self-center">
-            {entry?.profileImage?.publicUrl ||
-            entry?.profileImage?.cdnUrl ? (
-              <Image
-                source={{
-                  uri:
-                    entry?.profileImage
-                      ?.publicUrl ||
-                    entry?.profileImage
-                      ?.cdnUrl,
-                }}
-                className="h-full w-full rounded-full"
-                resizeMode="cover"
-              />
-            ) : (
-              <View className="flex-1 items-center justify-center">
-                <Ionicons
-                  name="business-outline"
-                  size={22}
-                  color="#EAB308"
-                />
-              </View>
-            )}
-          </View>
-
-        </View>
-      </View>
+     
 
    
       <View
       style ={{
-        // height
+        height :getArenaPerformanceThumbnailHeight()
       }}
       className=" mt-1 justify-center  bg-[black] border-l-[0.5px] border-r-[0.5px] bo rder-[gold]/40 flex-1 flex-row gap-[5px] overfl ow-hidden">
         {visiblePerformances.map(
           renderPerformance
         )}
-
-      
 
         {visiblePerformances.length === 0 && (
           <View className="flex-1 items-center justify-center rounded-[13px] border-t border-b bor der-white/[0.76] bg-[#171717]">
@@ -367,113 +258,135 @@ const ArenaJourneyCard = ({
 
       </View>
 
+      <View
+       style = {{
+        paddingVertical : spacing(10) ,
+        paddingHorizontal : spacing(10) 
+      }}
+        className="rounde d-b-xl bg-[#121212] w-full  flex-row items-center bor der-b-2 bo rder-l-2 bord er-r-2 bor der-[gold]/15 justify-between">
+          <View className="flex-1  flex-row items-center">
+            <View
+            style ={{
+              // width : width /10 ,
+              // height :width/10
+            }}
+            className=" p- 2 ">
+                <View className="fl ex-1 items-center rounded-lg justify-center">
+                  <ArenaPortalIcon  size={scale(40)}  color = "#EAB308" />
+                  <View
+                  className = "absolute top-0 left-0">
+                          <CountryFlag code  = {entry.region} size={scale(15)} />
+                  </View>
+                </View>
+            </View>
+
+            <View className="ml-[10px] flex- 1">
+              <View className="flex-row flex- 1  items-center">
+                <View className = "flex-row flex -1">
+                  <Text
+                    numberOfLines={1}
+                    style ={{
+                      fontSize :  scale(14)
+                    }}
+                    className="max-w -[85%]  font-bold tracking-[0.1px] text-white" >
+                    {entry.arenaName}
+                  </Text>
+                  {/* {entry.verified && ( */}
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={15}
+                    color="#EAB308"
+                    style={{
+                      marginLeft: 5,
+                    }}
+                  />
+                </View>
+
+                <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginLeft: 25,
+                    }}
+                    className ="gap-1 "   >
+                    <MaterialCommunityIcons
+                      name= "star"
+                      size= {scale(13)}
+                      color= "#fff"
+                    />
+                    
+                     <Text
+                      style={{
+                        color: "#F1F1F2",
+                        fontSize: scale(11),
+                        fontWeight: "700",
+                        letterSpacing: -0.2,
+                      }}  >
+                      {entry.starCount} 
+                     </Text>
+                 </View>
+
+
+                 <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginLeft: 20,
+                    }}
+                    className ="gap-1"   >
+                    <MaterialCommunityIcons
+                      name="account-group"
+                      size={scale(13)}
+                      color="#fff"
+                    />
+                     <Text
+                      style={{
+                        color: "#F1F1F2",
+                        fontSize: scale(11),
+                        fontWeight: "700",
+                        letterSpacing: -0.2,
+                      }}  >
+                      {entry.followerCount} 
+                     </Text>
+                 </View>
+
+              </View>
+
+              <View className="mt-[4px] flex-row items-center">
+            
+                <Text 
+                style = {{
+                  fontSize : scale(10)
+                }}
+                className="ml- [3px]  font-bold uppercase tracking-[0.3px] text-[#c0c0c0]">
+                  # {entry.talentType}{' '}
+                </Text>
+
+                <View
+                className = "justify-center items-center">
+                      <View className = "h-1 w-1 rounded-full self-center  bg-white m-3" />
+                </View>
+
+                <View className=" h-[3px] w-[3px] rounded-full bg-white/25" />
+                  <Text
+                  style = {{
+                    fontSize : scale(10)
+                  }}
+                    numberOfLines={1}
+                    className="text- [11px] font-bold uppercase tracking-[0.3px] text-[#c0c0c0]"  >
+                    # {countries.find(c => c.code == entry.region)?.name} 
+                  </Text>
+                </View>
+
+            </View>
+
+            <View className=" ml-auto flex-row justify-center items-center">
+               <TalentIcon talent= {entry.talentType} size={scale(35)} />
+            </View>
+
+          </View>
+          </View>
      
-
-      <View className="p-4  rounded-xl bg-[#1c1a1a] mt-1   flex-row items-end justify-between">
-        <View className="items-center p-1 px-2">
-          <View className="flex-row  items-center">
-
-            <MaterialCommunityIcons
-              name="star-four-points"
-              size={scale(12)}
-              color="#EAB308"
-            />
-
-            <Text
-             style = {{
-                fontSize : scale(10)
-              }}
-             className="ml-[4px] text -[14px] font-bold text-white/85">
-              {formatNumber(
-                starCount
-              )}
-            </Text>
-
-          </View>
-
-          <Text 
-           style = {{
-            fontSize : scale(8)
-          }}
-          className="mt-[5px] text -[9px] font-bold tracki ng-[0.7px] text-white/85">
-            STARS
-          </Text>
-
-        </View>
-
-      
-
-        <View className="items-center p-1 px-2">
-
-          <View className="flex-row items-center">
-
-            <Ionicons
-              name="people"
-              size={scale(12)}
-              color="#EAB308"
-            />
-
-            <Text
-             style = {{
-                fontSize : scale(10)
-              }}
-             className="ml-[4px] text- [14px] font-bold text-white/85">
-              {formatNumber(
-                followerCount
-              )}
-            </Text>
-
-          </View>
-
-          <Text 
-           style = {{
-            fontSize : scale(8)
-          }}
-          className="mt-[5px] text -[9px] font-bold trac king-[0.7px] text-white/85">
-            FOLLOWERS
-          </Text>
-
-        </View>
-
-        {/*
-         * ===================================================
-         * PERFORMANCES
-         * ===================================================
-         */}
-
-        <View className="items-center p-1 px-2">
-
-          <View className="flex-row items-center">
-
-            <Ionicons
-              name="play"
-              size={scale(12)}
-              color="#EAB308"
-            />
-
-            <Text
-             style = {{
-                fontSize : scale(10)
-              }}
-             className="ml-[4px] text- [14px] font-bold text-white/85">
-              {formatNumber(
-                performanceCount
-              )}
-            </Text>
-
-          </View>
-
-          <Text 
-           style = {{
-            fontSize : scale(8)
-          }}
-          className="mt-[5px] text- [9px] font-bold track ing-[0.7px] text-white/85">
-            PERFORMANCES
-          </Text>
-
-        </View>
-
-      </View>
 
     </TouchableOpacity>
   );

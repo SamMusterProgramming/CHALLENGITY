@@ -1,21 +1,22 @@
 import { ActivityIndicator,Animated,Platform,  useWindowDimensions, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import {  useSafeAreaInsets } from 'react-native-safe-area-context';
-import NotificationsModal from '../components/talent/modal/NotificationsModal';
 import HomePage from '../components/home/HomePage';
 import { useGlobalContext } from '../context/GlobalProvider';
 
-import NotificationDrawer from '../components/modal/NotificationDrawer';
+// import NotificationDrawer from '../components/modal/NotificationDrawer';
 import HeaderApp from '../components/header/headerApp';
 // import ProfileDrawer from '../components/profile/modal/profileDrawer';
-import {  getArenaByUser,  getFavouriteStages, getFollowData, getFollowedArenas, getGlobalSpotlightPerformances, getHotStages, getLocalArenas, getLocalSpotlightPerformances, getNotificationByUser, getRegionalSpotlightPerformances, getRegionTalentStages, getTrendingStages, getuserFollowers, getuserFollowings, getUserFriendsData, getUserTalent, markNotificationRead } from '../apiCalls';
+// import {  getArenaByUser,  getFavouriteStages, getFollowData, getFollowedArenas, getGlobalSpotlightPerformances, getHotStages,
+//     getLocalArenas, getLocalSpotlightPerformances, getNotificationByUser, getRegionalSpotlightPerformances,
+//     getRegionTalentStages, getTrendingStages,  getUserFriendRequestReceived, 
+//     getUserFriendsData, getUserSpotlights, getUserTalent, markNotificationRead } from '../apiCalls';
 import { getUserCountry } from '../utilities/userGeoLocation';
 import { clearPendingNotification, getPendingNotification } from '../notifications/pendingNotification';
 import { routeNotification } from '../notifications/notificationRouter';
 import { useLoading } from '../context/loadingContext';
 import NavBar from '../components/header/navBar';
-// import * as NavigationBar from "expo-navigation-bar";
-import FavouriteStageDrawer from '../components/modal/favouriteStageDrawer';
+
 import ProfileDrawer from '../components/profile/modal/profileDrawer';
 import SearchDrawer from '../components/search/drawer/SearchDrawer';
 import TalentPickerModal from '../components/modal/TalentPickerModal';
@@ -23,6 +24,19 @@ import ItriMissionModal from '../components/modal/ItriMissionModal';
 import DiscoveryPage from '../components/home/discoveryPage';
 import MyJourneyPage from '../components/home/MyJourneyPage';
 import ArenaPage from '../components/home/arenaPage';
+import FollowingDrawer from '../components/following/followingDrawer';
+import NotificationDrawer from '../components/notification/drawer/NotificationDrawer';
+import IdentityPage from '../components/home/identityPage';
+import { getUserTalent, getUserTalentPerformances } from '../apiCalls/talents';
+import { getNotificationByUser, markNotificationRead } from '../apiCalls/notifications';
+import { getFollowData, getuserFollowers,
+         getuserFollowings, getUserFriendRequestReceived,
+         getUserFriends } from '../apiCalls/user';
+// import {getUserTalent} from '../apiCalls/talents'
+import {getFavouriteStages, getHotStages, getRegionTalentStages, getTrendingStages} from '../apiCalls/stages'
+import {getArenaByUser, getFollowedArenas, getGlobalSpotlightPerformances, getLocalArenas, getLocalSpotlightPerformances, getRegionalSpotlightPerformances, getUserSpotlights} from '../apiCalls/arenas'
+// import {  } from '../apiCalls/user';
+
 
 
 
@@ -31,9 +45,10 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const {user,setUser ,activeIndex,setActiveIndex , isLoggingOut , setSelectedArena , setFavouriteList,setUserTalents,setTopTalents ,showProfile, setShowProfile,
          setRegionStages, allStages, setAllStages ,trendingStages, setTrendingStages,hotStages , setHotStages,favouriteStages, setFavouriteStages
-        ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriendData ,setUserProfileImg , userArenas , setUserArenas , setLocalArenas,
+        ,setFollow ,notifications ,setNotifications,followings,setFollowings,userFriendData,setUserFriends ,setUserProfileImg , userArenas , setUserArenas , setLocalArenas,
         setGlobalSelectedRegion , setUserCountryCode , globalSpotlightPerformances, setGlobalSpotlightPerformances,globalSpotlightPage, setGlobalSpotlightPage,setUserFollowedArenas,
-        regionalSpotlightPerformances, setRegionalSpotlightPerformances  ,setLocalSpotlightPerformances , userFollowers , setUserFollowers ,
+        regionalSpotlightPerformances, setRegionalSpotlightPerformances  ,setLocalSpotlightPerformances , userFollowers , setUserFollowers , setUserSpotlights,
+        userFriendRequestsReceived,setUserFriendRequestsReceived,
         userFollowings , setUserFollowings,
         openTalentPicker, setOpenTalentPicker } = useGlobalContext() 
   const { width, height } = useWindowDimensions();
@@ -50,6 +65,8 @@ export default function Home() {
   const [isReady ,setIsReady] = useState(false)
   const { showLoading, hideLoading } = useLoading();
   const [missionVisible, setMissionVisible] = useState(false);
+  const [settingsVisible, setSettingsVisible] = useState(false);
+
 
   const navTranslateY = useRef(
     new Animated.Value(0)
@@ -60,7 +77,7 @@ export default function Home() {
   const isDrawerOpen =
   showNotifications ||
   showProfile ||
-  showFavourite ;
+  showFavourite || settingsVisible ;
 
   useEffect(() => {
     if(activeIndex === 1) {
@@ -83,7 +100,7 @@ export default function Home() {
         duration: 180,
         useNativeDriver: true,
       }).start();
-    } else {
+      } else {
       navVisible.current = true;
   
       Animated.timing(navTranslateY, {
@@ -144,6 +161,7 @@ export default function Home() {
   
     lastOffset.current = currentOffset;
   };
+
   
   useEffect(() => {
     if (!user || isReady) return;
@@ -154,17 +172,18 @@ export default function Home() {
           getUserTalent(user._id, setUserTalents),
           getNotificationByUser(user._id, setNotifications),
           // getFollowings(user._id, setFollowings),
-          getUserFriendsData(user._id, setUserFriendData),
-          getFollowData(user._id, setFollow),
+          getUserFriends(user._id, setUserFriends),
+          getUserFriendRequestReceived(user._id , setUserFriendRequestsReceived),
+          // getFollowData(user._id, setFollow),
           getFavouriteStages(user._id, setFavouriteStages),
           getuserFollowers(user._id , setUserFollowers),
           getuserFollowings(user._id , setUserFollowings),
-
+          getUserSpotlights(user._id, setUserSpotlights),
           // getTopTalents(user._id, setTopTalents),
           // getAllTalentStages(setAllStages),
           // getRegionTalentStages("US" , setRegionStages),
           getHotStages(user._id, setHotStages),
-          getArenaByUser(user._id ,setSelectedArena, setUserArenas),
+          getArenaByUser(user._id , setUserArenas),
           getFollowedArenas(user._id,1,setUserFollowedArenas)
           // getUserCountryFromGPS(setGpsLocation),
         ]);
@@ -234,12 +253,12 @@ export default function Home() {
   return (
 
        <View
-           style={{ 
-            paddingTop:Platform.OS == "ios" ? insets.top : insets.top
-          }}
+          //  style={{ 
+          //   paddingTop:Platform.OS == "ios" ? insets.top : insets.top
+          // }}
            className=" flex-1  flex-col justify-start items-center py- bg-black primary [#0f1010]">
          
-          <View
+          {/* <View
             className="w-full bg-black justify-center items-center " >
             <HeaderApp
               user={user && user || null}
@@ -256,18 +275,12 @@ export default function Home() {
               setMissionVisible ={setMissionVisible}
             />
        
-            {/* <NavBar
-              width={width}
-              activeIndex={activeIndex}
-              setActiveIndex={setActiveIndex}
-              headerHeight={headerHeight}
-            /> */}
-          </View>
+          </View> */}
  
 
             { !user ? (
             <View     
-            className="w-[100%] h-[79%] flex-1 py- px- bg-black  rounde-xl borde-[#272d31]  g-[#3b4348] ">
+            className="w-[100%] h- [79%] flex-1 py- px- bg-black  rounde-xl borde-[#272d31]  g-[#3b4348] ">
             
 
             </View>
@@ -277,7 +290,20 @@ export default function Home() {
                     className="w-[100%] h- [79%] flex-1  mt- 2 bg-black [#3b4348]  rounde-xl borde-[#272d31]  g-[#3b4348] 
                        flex-col justify-center items-center">
                         {activeIndex === 0 && ! isFetching && (
-                          <HomePage onScroll = {handleScroll} />
+                          <HomePage onScroll = {handleScroll}
+                          user={user && user || null}
+                          showNotifications = {showNotifications}
+                          showSearch = {showSearch}
+                          showFavourite = {showFavourite}
+                          setShowNotifications={setShowNotifications}
+                          setShowSearch={setShowSearch}
+                          setShowFavourite={setShowFavourite}
+                          setShowProfile={setShowProfile}
+                          width={width}
+                          height = {height}
+                          headerHeight={headerHeight}
+                          setMissionVisible={setMissionVisible}
+                           />
                         )}
                         {activeIndex === 1 && ! isFetching && (
                           <DiscoveryPage onScroll = {handleScroll} />
@@ -287,7 +313,8 @@ export default function Home() {
                           <MyJourneyPage onScroll={handleScroll} setSelectedPage={setSelectedPage} />
                         )}
                         {activeIndex === 3 && ! isFetching && ! isLoggingOut && (
-                          <ArenaPage user={user}  onScroll={handleScroll}/>
+                          <IdentityPage user = {user} settingsVisible ={settingsVisible} 
+                          setSettingsVisible = {setSettingsVisible} onScroll = {handleScroll}/>
                         )}
                         
                         
@@ -306,6 +333,8 @@ export default function Home() {
             </View>
             
             )}
+
+
             <Animated.View
               style={{
                 position: "absolute",
@@ -336,12 +365,11 @@ export default function Home() {
              width:"100%",
              }}/>
 
-          {displayNotificationsModal && 
-          <NotificationsModal user={user} displayNotificationsModal={displayNotificationsModal}
-          setDisplayNotificationsModal={setDisplayNotificationsModal}/>}
+         
           {showFavourite && 
-          <FavouriteStageDrawer   visible={showFavourite}
+          <FollowingDrawer   visible={showFavourite}
           onClose={() => setShowFavourite(false)}/>}
+
           <NotificationDrawer
           visible={showNotifications}
           onClose={() => setShowNotifications(false)}

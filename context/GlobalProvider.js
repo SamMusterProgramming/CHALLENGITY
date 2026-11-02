@@ -24,7 +24,9 @@ export const GlobalProvider =({children}) => {
     const [isViewed ,setIsViewed] = useState(true)
     const [notifications ,setNotifications] = useState([])
     const [followings,setFollowings] = useState ([])
-    const [userFriendData,setUserFriendData] = useState(null)
+    const [userFriends,setUserFriends] = useState(null)
+    const [userFriendRequestsReceived,setUserFriendRequestsReceived] = useState(null)
+    const [userFriendRequestsSent, setUserFriendRequestsSent] = useState(null)
     const [follow , setFollow ] = useState(null)
     const [userFollowers , setUserFollowers ] = useState([])
     const [userFollowings , setUserFollowings ] = useState([])
@@ -65,6 +67,7 @@ export const GlobalProvider =({children}) => {
    const [regionalSpotlightPerformances, setRegionalSpotlightPerformances] = useState([])
    const [localSpotlightPerformances, setLocalSpotlightPerformances] = useState([])
    const [globalSpotlightPage, setGlobalSpotlightPage] = useState(1);
+   const [userSpotlights , setUserSpotlights] = useState([])
    const [form, setForm] = useState({
     name : "",
     email : "",
@@ -214,17 +217,35 @@ const clamp = (value, min, max) => {
   return Math.round(Math.min(Math.max(value, min), max));
 };
 
-const scale = (size, minScale = 0.9, maxScale = 1.65) => {
+// const scale = (size, minScale = 0.9, maxScale = 1.65) => {
+//   const numericSize = Number(size);
+//   if (!Number.isFinite(numericSize)) {
+//     return 0;
+//   }
+//   const baseWidth = 375;
+//   return clamp(
+//     size * (width / baseWidth),
+//     size * minScale,
+//     size * maxScale
+//   );
+// };
+
+const scale = (size, minScale = 0.9, maxScale = 1.75) => {
   const numericSize = Number(size);
+
   if (!Number.isFinite(numericSize)) {
     return 0;
   }
-  const baseWidth = 375;
-  return clamp(
-    size * (width / baseWidth),
-    size * minScale,
-    size * maxScale
+
+  const BASE_WIDTH = 375;
+  const widthScale = width / BASE_WIDTH;
+
+  const factor = Math.min(
+    Math.max(widthScale, minScale),
+    maxScale
   );
+
+  return Math.round(numericSize * factor);
 };
 
 const getPerformanceThumbnailHeight = () => {
@@ -238,6 +259,52 @@ const getPerformanceThumbnailHeight = () => {
   );
 };
 
+const getFeaturedThumbnailHeight = () => {
+  const height = width * 0.79;
+  return Math.round(
+    Math.min(
+      Math.max(height, 280),
+      650
+    )
+  );
+};
+
+const getArenaPerformanceThumbnailHeight = () => {
+  const height = width * 0.7;
+
+  return Math.round(
+    Math.min(
+      Math.max(height, 280),
+      650
+    )
+  );
+};
+
+// const spacing = (value) => {
+//   const BASE_WIDTH = 390;
+//   const MIN_SCALE = 0.95;
+//   const MAX_SCALE = 1.08;
+//   const factor = Math.min(
+//     Math.max(width / BASE_WIDTH, MIN_SCALE),
+//     MAX_SCALE
+//   );
+//   return Math.round(value * factor);
+// };
+const spacing = (value) => {
+  const BASE_WIDTH = 390;
+
+  const isTablet = width >= 600;
+
+  const MIN_SCALE = isTablet ? 1.0 : 0.95;
+  const MAX_SCALE = isTablet ? 1.22 : 1.08;
+
+  const factor = Math.min(
+    Math.max(width / BASE_WIDTH, MIN_SCALE),
+    MAX_SCALE
+  );
+
+  return Math.round(value * factor);
+};
 return (
         <GlobalContext.Provider
             value= { 
@@ -256,7 +323,9 @@ return (
             isViewed ,setIsViewed,
             notifications ,setNotifications,
             followings,setFollowings,
-            userFriendData,setUserFriendData,
+            userFriends,setUserFriends,
+            userFriendRequestsReceived,setUserFriendRequestsReceived,
+            userFriendRequestsSent,setUserFriendRequestsSent,
             follow , setFollow ,
             favouriteList , setFavouriteList,
             smallScreen , setSmallScreen,
@@ -303,9 +372,11 @@ return (
             opneShareFriendModal, setOpenShareFriendModal,
             shareContent, setShareContent,
             shareTarget, setShareTarget,
+            userSpotlights , setUserSpotlights,
             sharing, setSharing,
             openShare ,closeShareFriends,closeShare,handleShare,openShareFriends,shareToFriends , scale,
-            getPerformanceThumbnailHeight
+            getPerformanceThumbnailHeight , getFeaturedThumbnailHeight,
+            getArenaPerformanceThumbnailHeight , spacing 
             }
             } >
             {children}
@@ -320,7 +391,7 @@ return (
                 <ShareFriendsModal
                 visible={opneShareFriendModal}
                 onClose={closeShareFriends}
-                friends={userFriendData?.friends || []}
+                friends={userFriends || []}
                 onShare={shareToFriends}
                 />
 

@@ -21,7 +21,14 @@ useVideoPlayer,
 } from "expo-video";
 
 import { LinearGradient } from "expo-linear-gradient";
-import { addArenaPostComment, getArenaPostComments, getUserById, isUserFiredPost, isUserFollowingArena, registerView, toggleArenaPostFire } from "../../apiCalls";
+// import { addArenaPostComment,
+//       getArenaPostComments,
+//       getUserById, 
+//       isUserFiredPost,
+//       isUserFollowingArena,
+//       registerView, 
+//       toggleArenaPostFire } from "../../apiCalls";
+
 import { router } from "expo-router";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import SpotlightIcon from "../custom/spotlightIcon";
@@ -29,6 +36,13 @@ import PostData from "./post/postData";
 import PostFooter from "./post/postFooter";
 import VideoProgressBar from "./custom/videoProgressBar";
 import CommentDrawer from "./comment/commentDrawer";
+import { getUserById } from "../../apiCalls/user";
+import { addArenaPostComment, 
+         getArenaPostComments, 
+         isUserFiredPost, 
+         isUserFollowingArena, 
+         registerView, 
+         toggleArenaPostFire } from "../../apiCalls/arenas";
   
   export default function PerformancePost({
     item,

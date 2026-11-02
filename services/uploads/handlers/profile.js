@@ -270,18 +270,10 @@ import {
         const response =
           await saveProfileImageToDataBase({
             userId,
-  
-            fileId:
-              uploadResult.fileId,
-  
-            fileName:
-              uploadResult.fileName,
-  
-            deleteFileId:
-              deleteFileId || null,
-  
-            deleteFileName:
-              deleteFileName || null,
+            fileId: uploadResult.fileId,
+            fileName: uploadResult.fileName,
+            deleteFileId:  deleteFileId || null,
+            deleteFileName:  deleteFileName || null,
           });
   
         /*

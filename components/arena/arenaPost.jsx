@@ -48,8 +48,8 @@ export default function ArenaPost({
     scale,
     getPerformanceThumbnailHeight
   } = useGlobalContext();
+  
   const { showLoading, hideLoading } = useLoading();
-
   const [hasFired, setHasFired] = useState(false);
   const [isReady, setIsReady] = useState(item?.temp || false);
 

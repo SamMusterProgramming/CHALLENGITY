@@ -2,6 +2,7 @@ export const UPLOAD_TYPE = {
     PERFORMANCE: "performance",
     PROFILE: "profile",
     COVER: "cover",
+    ARENA: "arena",
   };
   
   export const UPLOAD_STATUS = {

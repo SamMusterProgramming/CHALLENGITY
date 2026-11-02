@@ -5,6 +5,13 @@ import React, { useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import HomeIcon from "../svgIcons/tab/HomeIcon";
+import DiscoveryIcon from "../svgIcons/tab/DiscoveryIcon";
+import ArenaIcon from "../svgIcons/tab/ArenaIcon";
+import JourneyIcon from "../svgIcons/tab/JourneyIcon";
+import ProfileIcon from "../svgIcons/tab/profileIcon";
+// import  PerformanceLensIcon from "../svgIcons/DiscoveryEyeIcon";
+
 
 const TABS = [
   {
@@ -13,21 +20,23 @@ const TABS = [
     activeIcon: "home-variant",
   },
   {
-    name: "Discover",
-    icon: "compass-outline",
-    activeIcon: "compass",
+    name: "Discovery",
+    icon: "map-search-outline",
+    activeIcon: "map-search",
   },
   {
     name: "Journey",
-    icon: "star-four-points",
-    activeIcon: "star-four-points",
+    icon: "book-open-page-variant-outline",
+    activeIcon: "book-open-page-variant",
   },
   {
-    name: "Arena",
+    name: "Profile",
     icon: "stadium-outline",
     activeIcon: "stadium",
   },
 ];
+
+
 
 export default function NavBar({
   activeIndex,
@@ -35,7 +44,7 @@ export default function NavBar({
   width,
   headerHeight,
 }) {
-  const { scale } = useGlobalContext();
+  const { scale , spacing } = useGlobalContext();
   const animValues = useRef(
     TABS.map(() => new Animated.Value(0))
   ).current;
@@ -53,6 +62,25 @@ export default function NavBar({
     ).start();
   }, [activeIndex]);
 
+  const iconPicker = (name ,color) => {
+    switch (name) {
+      case "Home":
+        return <HomeIcon size={scale(23)} color = {color} />;
+        break;
+      case "Discovery":
+        return <DiscoveryIcon size={scale(23)} color = {color} />;
+        break;
+      case "Journey":
+        return <JourneyIcon  size={scale(23)}  color = {color} />;
+        break;
+      case "Profile":
+        return <ProfileIcon  size={scale(23)}  color = {color} />;
+        break;
+      default:
+        return null;
+    }
+  };
+
   return (
     <View
       style={{
@@ -61,7 +89,8 @@ export default function NavBar({
         borderTopRightRadius: 28,
         borderTopWidth: 1,
         borderColor: "rgba(244,197,66,.14)",
-        paddingHorizontal: 18,
+        paddingHorizontal: scale(1),
+        // paddingVertical :spacing (16),
         // paddingBottom: 8,
         justifyContent: "start",
         shadowColor: "#000",
@@ -84,17 +113,12 @@ export default function NavBar({
         }}
         
       >
-        {TABS.map((tab, index) => {
+        {TABS.map((tab, index) => { 
           const isActive = activeIndex === index;
-
-          // const scale = animValues[index].interpolate({
-          //   inputRange: [0, 1],
-          //   outputRange: [1, 1.03],
-          // });
-
-          const opacity = animValues[index].interpolate({
+          const color = isActive ? "#E8B95A" : "#fff";
+          const opacity =  animValues[index].interpolate({
             inputRange: [0, 1],
-            outputRange: [0.55, 1],
+            outputRange: [0.75, 1],
           });
 
           return (
@@ -122,21 +146,17 @@ export default function NavBar({
 
                   <View
                   style={{
-          
                     alignItems: "center",
                     justifyContent: "center",
-                  }}
-                >
+                  }}  >
              
                     <Text
                       numberOfLines={1}
                       style={{
-                        color: isActive ?"#EAB303": "#aaa",
-                        fontSize: width/42,
-                        fontWeight: "900",
-                        // letterSpacing: 0.5,
-                      }}
-                    >
+                        color: isActive ?"#EAB303": "#fff",
+                        fontSize: scale(9),
+                        fontWeight: isActive ? "600" : "600",
+                      }}  >
                       {tab.name.toUpperCase()}
                     </Text>
         
@@ -156,7 +176,7 @@ export default function NavBar({
                       : "transparent",
                   }}
                 >
-                  <MaterialCommunityIcons
+                  {/* <MaterialCommunityIcons
                     name={
                       isActive
                         ? tab.activeIcon
@@ -168,7 +188,8 @@ export default function NavBar({
                         ? "#EAB308"
                         : "rgba(255,255,255,0.72)"
                     }
-                  />
+                  /> */}
+                     {iconPicker(tab.name ,color)}
                 </View>
 
               

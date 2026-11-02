@@ -4,42 +4,58 @@ import { View, Text, TouchableOpacity, Image, useWindowDimensions } from 'react-
 import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { icons } from '../../constants'
-import { addFollowing, friendRequest, removeFriendRequest, unFollowings } from '../../apiCalls'
+// import { addFollowing, friendRequest, removeFriendRequest, unFollowings } from '../../apiCalls'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { addFollowing, getFollowshipStatus, unFollowings } from '../../apiCalls/user'
 
 export default function FollowButton({ userProfile }) {
-  const { user,  follow, setFollow, notifications } = useGlobalContext()
+  const { user,  userFollowers, setUserFollowers, userFollowings,
+         setUserFollowings, notifications } = useGlobalContext()
 
   const [status, setStatus] = useState(null)
   const { width, height } = useWindowDimensions();
 
 
+  // useEffect(() => {
+
+  //   const getStatus = () => {     
+  //     console.log(userFollowings.users)
+  //     if (userFollowings.users.find(f => f._id === userProfile._id)) {
+  //       setStatus("Following") 
+  //     } else { 
+  //       setStatus("Follow")
+  //     }
+  //   }
+  //   getStatus()
+  // }, [userFollowings])
+
+  const loadStatus = async () => {
+    try {
+      const result = await getFollowshipStatus(
+        user._id,
+        userProfile._id
+      );
+
+      setStatus(result?.status || "Follow");
+    } catch (error) {
+      console.error("FriendButton status error:", error);
+      setStatus("Follow");
+    }
+  };
+
   useEffect(() => {
+    if (!user?._id || !userProfile?._id) return;
+    loadStatus();
+  }, [user?._id, userProfile?._id]);
 
-    const getStatus = () => {
-      if (follow.followings.find(f => f._id == userProfile._id)) {
-        setStatus("Following")
-      } else {
-        setStatus("Follow")
-      }
-    }
-    getStatus()
-  }, [follow])
-
-  const handleFollowing = () => {
-    const rawBody = {   
-      user_id : userProfile._id, 
-     
-    }
-    addFollowing(user._id, rawBody, setFollow)
+  const handleFollowing = async() => {
+    await addFollowing(user._id, userProfile._id, setUserFollowings)
+    setStatus("Following")
   }
 
-  const handleUnFollowing = () => {
-    const rawBody = {
-      user_id: userProfile._id,
-   
-    }
-    unFollowings(user._id, rawBody, setFollow)
+  const handleUnFollowing = async() => {
+    await unFollowings(user._id, userProfile._id, setUserFollowings)
+    setStatus("Follow")
   }
 
   const handleRequest = () => {
@@ -57,42 +73,27 @@ export default function FollowButton({ userProfile }) {
 
   return (
     <>
-      {status && (
+      {/* {status && ( */}
         <TouchableOpacity
           onPress={handleRequest}
-          activeOpacity={0.92}
+          activeOpacity={0.82}
           style={{
-            paddingHorizontal: 18,
-            borderRadius: 9,
+            // paddingHorizontal: 18,
+            borderRadius: 10,
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
-  
+            borderWidth: 1,
+            borderColor:
+              status === "Follow"
+                ? "#B69A55"
+                : "rgba(255,255,255,0.12)",
             backgroundColor:
               status === "Follow"
-                ? "rgba(255,255,255,0.64)"
-                : "rgba(255,255,255,1)",
-  
-            // borderWidth: 1,
-            // borderColor:
-            //   status === "Follow"
-            //     ? "#f4d44d"
-            //     : "rgba(234,179,8,0.25)",
-  
-            // shadowColor:
-            //   status === "Follow"
-            //     ? "#eab308"
-            //     : "#000",
-  
-            // shadowOpacity:
-            //   status === "Follow"
-            //     ? 0.28
-            //     : 0.15,
-  
-            // shadowRadius: 12,
-            // elevation: status === "Follow" ? 6 : 2,
+                ? "#D2BC7A"
+                : "#171819",
           }}
-          className = "py-2 flex-1"
+          className="px- 8 2 flex-1"
         >
           <MaterialCommunityIcons
             name={
@@ -100,11 +101,11 @@ export default function FollowButton({ userProfile }) {
                 ? "account-plus-outline"
                 : "account-check-outline"
             }
-            size={20}
+            size={19}
             color={
               status === "Follow"
-                ? "#000"
-                : "#000"
+                ? "#171715"
+                : "#C7B477"
             }
           />
   
@@ -112,18 +113,18 @@ export default function FollowButton({ userProfile }) {
             style={{
               marginLeft: 8,
               fontSize: width / 36,
-              fontWeight: "700",
-              letterSpacing: 0.4,
+              fontWeight: "600",
+              letterSpacing: 0.25,
               color:
                 status === "Follow"
-                  ? "#000"
-                  : "#000",
+                  ? "#171715"
+                  : "#E4E0D5",
             }}
           >
-            {status}
+            {status === "Follow" ? "Follow" : "Following"}
           </Text>
         </TouchableOpacity>
-      )}
+      {/* )} */}
     </>
   );
 }

@@ -519,54 +519,6 @@ export default function ArenaHeader({
             )}
         </TouchableOpacity>
 
-        {/* =====================================================
-            PERFORMANCES HEADER
-            ===================================================== */}
-
-        {/* <View
-          style={{
-            marginTop: 21,
-
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text
-            style={{
-              color: "#F2F2F3",
-              fontSize: width/25,
-              fontWeight: "900",
-              letterSpacing: -0.2,
-            }}
-          >
-            Performances
-          </Text>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                color: "#E7BE3D",
-                fontSize: width/34,
-                fontWeight: "600",
-              }}
-            >
-              Play All
-            </Text>
-
-            <MaterialCommunityIcons
-              name="chevron-right"
-              size={width/20}
-              color="#E7BE3D"
-            />
-          </TouchableOpacity>
-        </View> */}
 
 
       </View>
@@ -772,25 +724,16 @@ function ArenaMenu({
     <View
       style={{
         position: "absolute",
-
         top: 66,
         right: 16,
-
         width: 205,
-
         borderRadius: 17,
-
         overflow: "hidden",
-
         backgroundColor: "#0B1012",
-
         borderWidth: 1,
         borderColor: "rgba(255,255,255,0.13)",
-
         zIndex: 100,
-
         elevation: 20,
-
         shadowColor: "#000",
         shadowOffset: {
           width: 0,

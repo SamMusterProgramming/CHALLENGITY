@@ -1,370 +1,398 @@
 
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import axios from 'axios'
-import { auth } from './firebase/client'
-import { stageOrderMap } from './utilities/TypeData'
+// import AsyncStorage from '@react-native-async-storage/async-storage'
+// import axios from 'axios'
+// import { auth } from './firebase/client'
+// import { stageOrderMap } from './utilities/TypeData'
 
-const baseURL_DEVOLOPMENT = "http://localhost:8000"
-const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
+// const baseURL_DEVOLOPMENT = "http://localhost:8000"
+// const baseURL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL
 
-export const BASE_URL =  baseURL_PRODUCTION
-export const api = axios.create({
-  baseURL: BASE_URL,
-});
+// export const BASE_URL =  baseURL_DEVOLOPMENT
 
-
-
-export const setLoadingBarAxios = (loadingRef) => {
-  axios.interceptors.request.use(async(config) => {
-    loadingRef.current.continuousStart();
-  }, (error) => {
-    loadingRef.current.complete(); 
-  });
-  axios.interceptors.response.use((response) => {
-    loadingRef.current.complete();
-  }, (error) => {
-    loadingRef.current.complete();
-  });
-}
-
-
-api.interceptors.request.use(
-  async (config) => {
-    const token = await getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-export const saveToken = async (token) => {
-  await AsyncStorage.setItem("token", token);
-};
-
-export const getToken = async () => {
-  return await AsyncStorage.getItem("token");
-};
-
-export const removeToken = async () => {
-  await AsyncStorage.removeItem("token");
-};
+// export const api = axios.create({
+//   baseURL: BASE_URL,
+// });
 
 
 
-// *********************************** AUTHENTIFICATION *************************
+// export const setLoadingBarAxios = (loadingRef) => {
+//   axios.interceptors.request.use(async(config) => {
+//     loadingRef.current.continuousStart();
+//   }, (error) => {
+//     loadingRef.current.complete(); 
+//   });
+//   axios.interceptors.response.use((response) => {
+//     loadingRef.current.complete();
+//   }, (error) => {
+//     loadingRef.current.complete();
+//   });
+// }
 
-export const isAuthenticated = async(setUser)=>{
-  try {
-    await axios.get(BASE_URL +'/users/isAuthenticated')
-    .then(res => { 
-      setUser(res.data)
-        })
-  } catch (error) {
-     console.log(error)     
-  }
+
+// api.interceptors.request.use(
+//   async (config) => {
+//     const token = await getToken();
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
+
+// export const saveToken = async (token) => {
+//   await AsyncStorage.setItem("token", token);
+// };
+
+// export const getToken = async () => {
+//   return await AsyncStorage.getItem("token");
+// };
+
+// export const removeToken = async () => {
+//   await AsyncStorage.removeItem("token");
+// };
+
+
+
+// // *********************************** AUTHENTIFICATION *************************
+
+// export const isAuthenticated = async(setUser)=>{
+//   try {
+//     await axios.get(BASE_URL +'/users/isAuthenticated')
+//     .then(res => { 
+//       setUser(res.data)
+//         })
+//   } catch (error) {
+//      console.log(error)     
+//   }
  
-}
-export const authLogin = async(credentiels,setUser,setMessage,setIsFetching)=>{
+// }
+// export const authLogin = async(credentiels,setUser,setMessage,setIsFetching)=>{
 
-    try {
+//     try {
       
-      await axios.post(BASE_URL +'/users/login',credentiels)
-      .then(res => { 
-                 if (res.data.auth) {
-                   setIsFetching(true)
-                   storeToken(res.data.token)
-                   setUser({...res.data.user,isNewUser:false});
-                 }
-                 else {
-                  setIsFetching(false)
-                  setMessage(res.data.error) }
-          })
-    } catch (error) {
-       console.log(error)     
-    }
-  //  finally {
-  //   setIsFetching(false);
-  //   }
-}
+//       await axios.post(BASE_URL +'/users/login',credentiels)
+//       .then(res => { 
+//                  if (res.data.auth) {
+//                    setIsFetching(true)
+//                    storeToken(res.data.token)
+//                    setUser({...res.data.user,isNewUser:false});
+//                  }
+//                  else {
+//                   setIsFetching(false)
+//                   setMessage(res.data.error) }
+//           })
+//     } catch (error) {
+//        console.log(error)     
+//     }
+//   //  finally {
+//   //   setIsFetching(false);
+//   //   }
+// }
 
-export const authRegister = async(credentiels,setUser,setMessage,setIsFetching)=>{
-  try {
-    await axios.post( BASE_URL +'/users/',credentiels)
-    .then(res => {
-      console.log(res.data)
-      if(res.data.auth) {
-        storeToken(res.data.token)
-        setUser({...res.data.user,isNewUser:true});
-       }
-       else setMessage(res.data.error)
-      })
-  } catch (error) {
-    console.log(error)  
-  } 
-  finally {
-    setIsFetching(false);
-    }
+// export const authRegister = async(credentiels,setUser,setMessage,setIsFetching)=>{
+//   try {
+//     await axios.post( BASE_URL +'/users/',credentiels)
+//     .then(res => {
+//       console.log(res.data)
+//       if(res.data.auth) {
+//         storeToken(res.data.token)
+//         setUser({...res.data.user,isNewUser:true});
+//        }
+//        else setMessage(res.data.error)
+//       })
+//   } catch (error) {
+//     console.log(error)  
+//   } 
+//   finally {
+//     setIsFetching(false);
+//     }
  
-}
+// }
   
-export const getUserById = async(user_id,setUserProfile) =>{
-    try {
-        await api.get(`/users/user/${user_id}`)
-        .then(res => 
-          { 
-            // res.data.profile_img = "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68"
-            setUserProfile({...res.data})
-          } )
-    } catch (error) {
-        console.log(error)
-    }
-}
+// export const getUserById = async(user_id,setUserProfile) =>{
+//     try {
+//         await api.get(`/users/user/${user_id}`)
+//         .then(res => 
+//           { 
+//             // res.data.profile_img = "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68"
+//             setUserProfile({...res.data})
+//           } )
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
 
-export const updateUserInfo = async(user_id,rawBody,setUser)=> {
-  try {
-     await api.patch(`/users/user/${user_id}`,rawBody)
-     .then(res =>{ 
-      setUser(res.data)
-    } )
-  } catch (error) {
-     console.error(error)
-  }
-}
+// export const updateUserInfo = async(user_id,rawBody)=> {
+//   try {
+//     return  await api.patch(`/users/user/${user_id}`,rawBody)
+ 
 
-export const searchUsers = async(user_id,searchQuery,setData , setIsFetching)=>{
-  try {
-    await axios.get(BASE_URL +`/users/find/search?name=${searchQuery}`)
-    .then(res => { 
-               const users =  res.data.users.filter(user=> user._id !== user_id) 
-               setData({users:users})
+//   } catch (error) {
+//      console.error(error)
+//   }
+// }
+
+// export const searchUsers = async(user_id,searchQuery,setData , setIsFetching)=>{
+//   try {
+//     await axios.get(BASE_URL +`/users/find/search?name=${searchQuery}`)
+//     .then(res => { 
+//                const users =  res.data.users.filter(user=> user._id !== user_id) 
+//                setData({users:users})
                
-        })
-  } catch (error) {
-     console.log(error)     
-  }
- finally {
-  setTimeout(() => {
-    setIsFetching(false);
-  }, 1000);
+//         })
+//   } catch (error) {
+//      console.log(error)     
+//   }
+//  finally {
+//   setTimeout(() => {
+//     setIsFetching(false);
+//   }, 1000);
 
-  }
-}
+//   }
+// }
 
-export const deletePushToken = async(user_id)=> {
-  try {
-     await api.patch(`/users/pushexpotoken/delete/${user_id}`)
-  } catch (error) {
-     console.error(error)
-  }
-}
+// export const deletePushToken = async(user_id)=> {
+//   try {
+//      await api.patch(`/users/pushexpotoken/delete/${user_id}`)
+//   } catch (error) {
+//      console.error(error)
+//   }
+// }
 
-// *********************************** getChallenge by id *************************
-
-
-export const getChallengeById = async(id,setChallenge,setIsExpired)=>{
-   try {
-    await axios.get(BASE_URL+ `/challenges/find/${id}`)
-    .then(res =>
-       {
-        if(res.data === "post expired") setIsExpired(true)
-          else {
-         setChallenge(res.data)
-        }
-      } )
-   } catch (error) {
-      console.log(error)
-   }
-}
+// // *********************************** getChallenge by id *************************
 
 
-// *********************************** new Challenge /top challenger *************************
+// export const getChallengeById = async(id,setChallenge,setIsExpired)=>{
+//    try {
+//     await axios.get(BASE_URL+ `/challenges/find/${id}`)
+//     .then(res =>
+//        {
+//         if(res.data === "post expired") setIsExpired(true)
+//           else {
+//          setChallenge(res.data)
+//         }
+//       } )
+//    } catch (error) {
+//       console.log(error)
+//    }
+// }
 
 
-export const getUserAllChallenges = async( user_id , setChallenges)=>{
+// // *********************************** new Challenge /top challenger *************************
+
+
+// export const getUserAllChallenges = async( user_id , setChallenges)=>{
  
-  try {
-      await axios.get( BASE_URL + `/challenges/all/${user_id}`)
-      .then(res => {
-          setChallenges(res.data) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-}  
+//   try {
+//       await axios.get( BASE_URL + `/challenges/all/${user_id}`)
+//       .then(res => {
+//           setChallenges(res.data) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
 
 
-export const getUserChallengeInvites = async( user_id , setChallenges)=>{
+// export const getUserChallengeInvites = async( user_id , setChallenges)=>{
  
-  try {
-      await axios.get( BASE_URL + `/challenges/invites/${user_id}`)
-      .then(res => {
-          setChallenges(res.data) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-} 
+//   try {
+//       await axios.get( BASE_URL + `/challenges/invites/${user_id}`)
+//       .then(res => {
+//           setChallenges(res.data) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// } 
 
-export const getUserPublicChallenges = async( user_id , setChallenges)=>{
+// export const getUserPublicChallenges = async( user_id , setChallenges)=>{
  
-    try {
-        await axios.get( BASE_URL + `/challenges/original/public/${user_id}`)
-        .then(res => {
-            setChallenges([...res.data]) 
-        }
-         )
-    } catch (error) {
-        console.log(error)
-    }
-  }  
-  export const getUserPrivateChallenges = async( user_id , setChallenges)=>{
+//     try {
+//         await axios.get( BASE_URL + `/challenges/original/public/${user_id}`)
+//         .then(res => {
+//             setChallenges([...res.data]) 
+//         }
+//          )
+//     } catch (error) {
+//         console.log(error)
+//     }
+//   }  
+//   export const getUserPrivateChallenges = async( user_id , setChallenges)=>{
  
-    try {
-        await axios.get( BASE_URL + `/challenges/original/private/${user_id}`)
-        .then(res => {
-            setChallenges([...res.data]) 
-        }
-         )
-    } catch (error) {
-        console.log(error)
-    }
-  }  
+//     try {
+//         await axios.get( BASE_URL + `/challenges/original/private/${user_id}`)
+//         .then(res => {
+//             setChallenges([...res.data]) 
+//         }
+//          )
+//     } catch (error) {
+//         console.log(error)
+//     }
+//   }  
 
-  export const getUserPublicParticipateChallenges = async( user_id , setChallenges)=>{
-     try {
-         await axios.get( BASE_URL + `/challenges/participate/public/${user_id}`)
-         .then(res => {
-             setChallenges(res.data) 
-         }
-          )
-     } catch (error) {
-         console.log(error)
-     }
-   }  
+//   export const getUserPublicParticipateChallenges = async( user_id , setChallenges)=>{
+//      try {
+//          await axios.get( BASE_URL + `/challenges/participate/public/${user_id}`)
+//          .then(res => {
+//              setChallenges(res.data) 
+//          }
+//           )
+//      } catch (error) {
+//          console.log(error)
+//      }
+//    }  
 
-   export const getUserPrivateParticipateChallenges = async( user_id , setChallenges)=>{
-    try {
-        await axios.get( BASE_URL + `/challenges/participate/private/${user_id}`)
-        .then(res => {
-            setChallenges(res.data) 
-        }
-         )
-    } catch (error) {
-        console.log(error)
-    }
-  }  
+//    export const getUserPrivateParticipateChallenges = async( user_id , setChallenges)=>{
+//     try {
+//         await axios.get( BASE_URL + `/challenges/participate/private/${user_id}`)
+//         .then(res => {
+//             setChallenges(res.data) 
+//         }
+//          )
+//     } catch (error) {
+//         console.log(error)
+//     }
+//   }  
 
-  //top challenges 
+//   //top challenges 
 
-  export const getTopChallenges = async( user_id , setChallenges)=>{
+//   export const getTopChallenges = async( user_id , setChallenges)=>{
   
-     try {
-         await axios.get( BASE_URL + `/challenges/top/${user_id}`)
-         .then(res => {
-             setChallenges(res.data) 
-         }
-          )
-     } catch (error) {
-         console.log(error)
-     }
-   }  
+//      try {
+//          await axios.get( BASE_URL + `/challenges/top/${user_id}`)
+//          .then(res => {
+//              setChallenges(res.data) 
+//          }
+//           )
+//      } catch (error) {
+//          console.log(error)
+//      }
+//    }  
   
-  export const quitChallenge = async(challenge_id, user_id)=> {
-    try {
-       await axios.patch(BASE_URL + `/challenges/quit/${challenge_id}`,{user_id:user_id})
-    } catch (error) {
-       console.log(error)
-    }
-}
+//   export const quitChallenge = async(challenge_id, user_id)=> {
+//     try {
+//        await axios.patch(BASE_URL + `/challenges/quit/${challenge_id}`,{user_id:user_id})
+//     } catch (error) {
+//        console.log(error)
+//     }
+// }
    
-  export const deleteChallenge = async(challenge_id, user_id)=> {
-    try {
-      return await axios.patch(BASE_URL + `/challenges/quit/${challenge_id}`,{user_id:user_id})
-    } catch (error) {
-       console.log(error)
-    }
-}
+//   export const deleteChallenge = async(challenge_id, user_id)=> {
+//     try {
+//       return await axios.patch(BASE_URL + `/challenges/quit/${challenge_id}`,{user_id:user_id})
+//     } catch (error) {
+//        console.log(error)
+//     }
+// }
 
-export const getUserActivities = async( user_id , setData)=>{
-  try {
+// export const getUserActivities = async( user_id , setData)=>{
+//   try {
 
-    Promise.all([axios.get( BASE_URL + `/challenges/user/${user_id}`), axios.get( BASE_URL + `/talents/user/${user_id}`)]) 
-    .then(res =>  {
-      const data = []
-      if(res[0].data.length > 0) {
-           res[0].data.forEach(element => {
-                data.push({...element , dataType:"challenge" })
-           });
-       } 
-      if(res[1].data.length > 0) {
-          res[1].data.forEach(element => {
-             data.push({...element , dataType:"talent" })
-          });  
-      } 
-      data.sort((a, b) => 
-        new Date(b.updatedAt) - new Date(a.updatedAt) )
-      data.forEach(e => console.log(e.updatedAt))
-      setData(data)
-      } )
+//     Promise.all([axios.get( BASE_URL + `/challenges/user/${user_id}`), axios.get( BASE_URL + `/talents/user/${user_id}`)]) 
+//     .then(res =>  {
+//       const data = []
+//       if(res[0].data.length > 0) {
+//            res[0].data.forEach(element => {
+//                 data.push({...element , dataType:"challenge" })
+//            });
+//        } 
+//       if(res[1].data.length > 0) {
+//           res[1].data.forEach(element => {
+//              data.push({...element , dataType:"talent" })
+//           });  
+//       } 
+//       data.sort((a, b) => 
+//         new Date(b.updatedAt) - new Date(a.updatedAt) )
+//       data.forEach(e => console.log(e.updatedAt))
+//       setData(data)
+//       } )
 
-      // await axios.get( BASE_URL + `/challenges/user/${user_id}`)
-      // .then(res => {
-      //   const data = []
-      //   if(res.data.length > 0) {
-      //        res.data.forEach(element => {
-      //             data.push({...element , dataType:"challenge" })
-      //        });
-      //    } 
-      //     setChallenges(data) 
-      // }
-      //  )
-  } catch (error) {
-      console.log(error)
-  }
-}  
+//       // await axios.get( BASE_URL + `/challenges/user/${user_id}`)
+//       // .then(res => {
+//       //   const data = []
+//       //   if(res.data.length > 0) {
+//       //        res.data.forEach(element => {
+//       //             data.push({...element , dataType:"challenge" })
+//       //        });
+//       //    } 
+//       //     setChallenges(data) 
+//       // }
+//       //  )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
 
-// *********************************** viewers *************************
+// // *********************************** viewers *************************
 
-export const getPostViewers = async( post_id , setViewers)=>{
+// export const getPostViewers = async( post_id , setViewers)=>{
  
-  try {
-      await axios.get( BASE_URL + `/challenges/viewer/${post_id}`)
-      .then(res => {
-          if(!res.data){
-            setViewers("no") 
-          }else
-          setViewers({...res.data}) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-}  
+//   try {
+//       await axios.get( BASE_URL + `/challenges/viewer/${post_id}`)
+//       .then(res => {
+//           if(!res.data){
+//             setViewers("no") 
+//           }else
+//           setViewers({...res.data}) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
 
-export const addViewer = async( post_id , rawBody, setViewersList)=>{
+// export const addViewer = async( post_id , rawBody, setViewersList)=>{
  
-  try {
-      await axios.post( BASE_URL + `/challenges/viewer/${post_id}`,rawBody)
-      .then(res => {
-          setViewersList({...res.data}) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-}  
+//   try {
+//       await axios.post( BASE_URL + `/challenges/viewer/${post_id}`,rawBody)
+//       .then(res => {
+//           setViewersList({...res.data}) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
 
 
-// *********************************** favourites *************************
+// // *********************************** favourites *************************
 
 
-// export const addToFavourite = async(user_id ,body, setData,setIsExpired)=>{
+// // export const addToFavourite = async(user_id ,body, setData,setIsExpired)=>{
+ 
+// //   try {
+// //       await axios.post( BASE_URL + `/challenges/favourite/${user_id}`,body)
+// //       .then(res => {
+// //          if(res.data === "challenge expired") return setIsExpired(true)
+// //           setData(res.data) 
+// //       }
+// //        )
+// //   } catch (error) {
+// //       console.log(error)
+// //   }
+// // }  
+
+// // export const removeFromFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
+ 
+// //   try {
+// //       await axios.patch( BASE_URL + `/challenges/favourite/${user_id}`,body)
+// //       .then(res => {
+// //           if(res.data === "challenge expired") return setIsExpired(true)
+// //           setChallenges(res.data) 
+// //       }
+// //        )
+// //   } catch (error) {
+// //       console.log(error)
+// //   }
+// // }  
+
+// export const addChallengeToFavourite = async(user_id ,body, setData,setIsExpired)=>{
  
 //   try {
 //       await axios.post( BASE_URL + `/challenges/favourite/${user_id}`,body)
@@ -376,14 +404,26 @@ export const addViewer = async( post_id , rawBody, setViewersList)=>{
 //   } catch (error) {
 //       console.log(error)
 //   }
-// }  
+// } 
 
-// export const removeFromFavourite = async(user_id ,body, setChallenges,setIsExpired)=>{
+// export const removeChallengeFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
  
 //   try {
 //       await axios.patch( BASE_URL + `/challenges/favourite/${user_id}`,body)
 //       .then(res => {
 //           if(res.data === "challenge expired") return setIsExpired(true)
+//           setData(res.data) 
+//       } )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
+
+// export const getFavouriteList = async(user_id ,setChallenges)=>{
+ 
+//   try {
+//       await axios.get( BASE_URL + `/challenges/favourite/${user_id}`)
+//       .then(res => { 
 //           setChallenges(res.data) 
 //       }
 //        )
@@ -392,1367 +432,1402 @@ export const addViewer = async( post_id , rawBody, setViewersList)=>{
 //   }
 // }  
 
-export const addChallengeToFavourite = async(user_id ,body, setData,setIsExpired)=>{
- 
-  try {
-      await axios.post( BASE_URL + `/challenges/favourite/${user_id}`,body)
-      .then(res => {
-         if(res.data === "challenge expired") return setIsExpired(true)
-          setData(res.data) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-} 
-
-export const removeChallengeFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
- 
-  try {
-      await axios.patch( BASE_URL + `/challenges/favourite/${user_id}`,body)
-      .then(res => {
-          if(res.data === "challenge expired") return setIsExpired(true)
-          setData(res.data) 
-      } )
-  } catch (error) {
-      console.log(error)
-  }
-}  
-
-export const getFavouriteList = async(user_id ,setChallenges)=>{
- 
-  try {
-      await axios.get( BASE_URL + `/challenges/favourite/${user_id}`)
-      .then(res => { 
-          setChallenges(res.data) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-}  
-
-export const updateChallengeMode = async(challenge_id , body ,setChallenges)=>{
- 
-  try {
-      await axios.patch( BASE_URL + `/challenges/mode/${challenge_id}`,body)
-      .then(res => { 
-          setChallenges(res.data) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-}  
-
-
-export const updateThumbNail = async(challenge_id , body ,setThumb)=>{
- 
-  try {
-      await axios.patch( BASE_URL + `/challenges/update/${challenge_id}`,body)
-      .then(res => { 
-        console.log(res.data)
-          setThumb(res.data.thumbNail_URL) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-}  
-
-
-
-   // *********************************** likes and votes postdata challenge *************************
-  
-   export const getChallengePostData = async(post_id ,body, setPostData  , setIsExpired) =>{
-    try { 
-    await axios.post( BASE_URL + `/challenges/post/${post_id}`,body )
-    .then(res =>  {
-      if(res.data === "expired") {
-          setIsExpired(true)
-       } else setPostData(res.data)
-      } )
-      .finally(()=>{
-        // setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
-  }
-
-
-  export const likeChallengePost = async(post_id , body, setPostData , setIsLoading , setIsExpired) =>{
-    try { 
-    await axios.post( BASE_URL + `/challenges/likes/${post_id}`,body )
-    .then(res =>  {
-         if(res.data === "expired") {
-          return setIsExpired(true)
-         } else
-         setPostData(res.data)
-      } )
-      .finally(()=>{
-        // setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
-
- export const voteChallengePost = async(post_id , body, setPostData ,setIsExpired) =>{
-  try { 
-  await axios.post( BASE_URL + `/challenges/votes/${post_id}`, body )
-  .then(res =>  {
-      if(res.data === "expired") {
-      return setIsExpired(true)
-      } else
-       setPostData(res.data)
-    } )
-    .finally(()=>{
-      // setIsLoading(false)
-    })
-} catch (error) {
-  console.log(error)
-}
-}
-
-export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired) =>{
-  try { 
-  await axios.post( BASE_URL + `/challenges/flags/${post_id}`, body )
-  .then(res =>  {
-      if(res.data === "expired") {
-      return setIsExpired(true)
-      } else
-       setPostData(res.data)
-    } )
-    .finally(()=>{
-      // setIsLoading(false)
-    })
-} catch (error) {
-  console.log(error)
-}
-}
-
-
-
-
-    export const getFollowData = async(user_id ,setFollower)=>{
-      try {
-        await api.get(`/users/follow/data/${user_id}`)
-        .then(res =>  
-          setFollower({...res.data}) 
-       )
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    export const getuserFollowers = async(user_id ,setFollowers)=>{
-      try {
-        await api.get(`/users/followers/${user_id}`)
-        .then(res =>  
-          setFollowers([...res.data.users]) 
-       )
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    export const getuserFollowings = async(user_id ,setFollowings)=>{
-      try {
-        await api.get(`/users/followings/${user_id}`)
-        .then(res =>  
-          setFollowings([...res.data.users]) 
-       )
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    export const isfollowing = async(user_id , follower_id, setIsFollowing)=>{
-      try {
-        await api.post(`/users/followers/${user_id}` ,{follower_id:follower_id} )
-        .then(res =>  { 
-          setIsFollowing({isfollowing:res.data.isfollowing})
-      } )
-      } catch (error) {
-        console.log(error)
-      }
-     }
-
-
-     // followings 
-
-    export const addFollowing = async(user_id , rawBody , setFollow) =>{
-      try {
-        await api.post(  `/users/followings/add/${user_id}`, rawBody )
-        .then(res =>  { 
-          setFollow({...res.data});
-          } )
-      } catch (error) {
-        console.log(error)
-      }
-     }
- 
-
-    export const getFollowings = async(user_id , setFollowings)=>{
-      try {
-        await api.get(`/users/followings/${user_id}` )
-        .then(res =>  { 
-          setFollowings(res.data)
-      } )
-      } catch (error) {
-        console.log(error)
-      }
-     }
-
-     export const unFollowings = async(user_id ,rawBody, setFollow)=>{
-      try {
-        await api.patch(  `/users/unfollowing/${user_id}`,rawBody )
-        .then(res =>  { 
-          setFollow({...res.data})
-      } )
-      } catch (error) {
-        console.log(error)
-      }
-     }
-
-  //*********************** Friends request , adding , postdata  */
-
-  
-   
-  export const friendRequest = async(receiver_id , rawBody , setFriendRequest , setExist) =>{
-    try {
-      await api.post(  `/users/friends/request/${receiver_id}`, rawBody )
-      .then(res =>  { 
-        if(res.data == "exist"){
-            setExist(true)
-        }else
-        setFriendRequest(res.data);
-        } )
-     
-    } catch (error) {
-      console.log(error)
-    }
-   }
-   export const unfriendRequest = async(receiver_id , rawBody , setFriendRequest) =>{
-    try {
-      await api.post( `/users/friends/unfriend/${receiver_id}`, rawBody )
-      .then(res =>  { 
-        setFriendRequest({...res.data});
-        } )
-     
-    } catch (error) {
-      console.log(error)
-    }
-   }
-   export const removeFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
-    try {
-      await api.post(`/users/friends/cancel/${receiver_id}`, rawBody )
-      .then(res =>  {  
-        setFriendRequest({...res.data});
-        } )
-    } catch (error) {
-      console.log(error)
-    }
-   }
-   export const getUserFriendsData = async(receiver_id , setFriendRequest) =>{
-    try {
-      await api.get(  `/users/friends/list/${receiver_id}` )
-      .then(res =>  { 
-        setFriendRequest({...res.data}) 
-        } )
-     
-    } catch (error) {
-      console.log(error)
-    }
-   }
-
-   export const denyFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
-    try {
-      await api.post(  `/users/friends/deny/${receiver_id}`, rawBody )
-      .then(res =>  { 
-        setFriendRequest({...res.data});
-        } )
-     
-    } catch (error) {
-      console.log(error)
-    }
-   }
-
-   export const acceptFriendRequest = async(receiver_id,rawBody,setFriendRequest , setExpired)=>{
-    try {
-      await api.post(  `/users/friends/accept/${receiver_id}`, rawBody )
-      .then(res =>  {  
-        if(res.data == "expired"){
-          setExpired(true)
-        } else
-          setFriendRequest({...res.data});
-        } )
-     
-    } catch (error) {
-      console.log(error)
-    }
-   }
-    
-   //******************************** notifications */
-
-
-   export const getNotificationByUser = async(receiver_id ,setNotification) =>{
-    try {
-      await api.get( `/users/notifications/${receiver_id}` )
-      .then(res =>  { 
-        setNotification(res.data);
-        } )
-    } catch (error) {
-      console.log(error)
-    }
-   }
-   
-  export const updateNotificationByUser = async(_id , setNotification) =>{
-    try {
-      await api.patch( `/users/notifications/${_id}` )
-      .then(res =>  { 
-        setNotification(res.data);
-        } )
-    } catch (error) {
-      console.log(error)
-    }
-   }
-
-   export const markNotificationRead = async(_id) =>{
-    try {
-      await api.patch( `/users/notifications/${_id}` )
-      .then(res =>  { 
-        return res.data
-        } )
-    } catch (error) {
-      console.log(error)
-    }
-   }
- 
-
-   export const deleteUserNotification = async(_id,setNot) =>{
-    try {
-      await api.delete( `/users/notifications/${_id}` )
-      .then(res =>  { 
-           setNot(res.data)
-        } )
-    } catch (error) {
-      console.log(error)
-    }
-   }
-   
-// *********************************** comments , postdata , likes votes *************************
-
-
-export const getCommentsByPost = async(post_id,setComments) =>{
-  try {
-    await api.get( `/challenges/posts/${post_id}` )
-    .then(res =>  { 
-         setComments(res.data)
-      } )
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const addCommentsByPost = async(post_id,body,setComments) =>{
-  try {
-    await api.post( `/challenges/posts/${post_id}`,body)
-    .then(res =>  { 
-         setComments({...res.data})
-      } )
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const deleteCommentsById = async(post_id,body,setComments) =>{
-  try {
-    await api.patch( `/challenges/posts/comment/${post_id}`,body )
-    .then(res =>  {
-         setComments(res.data)
-      } )
-  } catch (error) {
-    console.log(error)
-  }
- }
-
-
- // *********************************** Talents *************************
-
-
- // *********************************** create Talent *************************
-
-
- export const createTalentRoom = async(body, setTalentRoom ,user_id , setUserContestantStatus, setUserParticipation ,setEdition, setIsLoading) =>{
-  try {
-    await api.post( `/talents/creates/`,body )
-    .then(res =>  {
-         setTalentRoom({...res.data})
-         let edition = res.data.editions.find(e => e.status === "open")
-         edition.nextUpdate = Date(edition.createdAt)
-         switch (edition.round) {
-          case 1:
-            edition.title = "Elimination-Round 1"
-            break;
-          case 2:
-              edition.title  = "Elimination-Round 2"
-              break;
-         case 3:
-              edition.title  = "Elimination-Round 3"
-              break;
-          case 4:
-            edition.title  = "Eighth-finals"
-            break;
-          case 5:
-              edition.title = "Quarter Final"
-              break;
-         case 6:
-              edition.title  = "Semi Final"
-              break;
-         case 7:
-                edition.title  = "Grand Final "
-              break;
-         case 8:
-                edition.title  = "Winner"
-              break;
-          default:
-            break;
-         }
-         setEdition(res.data.editions.find(e => e.status === "open"))
-         if(res.data.contestants.length > 0) {
-          const userParticipation = res.data.contestants.find((contestant)=> contestant.user_id === user_id) 
-          userParticipation ? setUserContestantStatus("P") : setUserContestantStatus("NP")
-          if(userParticipation){
-          const rank = res.data.contestants.findIndex(contestant => contestant._id === userParticipation._id)
-          userParticipation["rank"] = rank + 1
-          setUserParticipation({userParticipation})
-          }
-        }else {
-          setUserParticipation(null)
-         setUserContestantStatus("NP")
-        }
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const GetTalentRoomById = async(talentRoom_id, setTalentRoom ) =>{
-  try {
-    await api.get(`/talents/room/${talentRoom_id}` )
-    .then(res =>  {
-         setTalentRoom(res.data)
-      } )
-      .finally(()=>{
-        // setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const GetTalentRoomsByName = async(queryParams,setTalentRooms ,  setIsLoading) =>{
-  try {
-    await api.get( `/talents/rooms`,{
-      params: queryParams
-  } )
-    .then(res =>  {
-         setTalentRooms(res.data)
-       
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const getUserTalent = async(user_id , setUserTalents ) =>{
-  try {
-    await api.get( `/talents/user/talent/${user_id}` )
-    .then(res =>  {
-        setUserTalents(res.data)  
-      })
-      .finally(()=>{
-        // setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const getUserTalentPerformances = async(user_id ,setUserTalentPerformances ) =>{
-  try {
-    await axios.get( BASE_URL + `/talents/user/performance/${user_id}` )
-    .then(res =>  {
-      setUserTalentPerformances(res.data)  
-      })
-      .finally(()=>{
-        // setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const deleteContestantStage = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await api.patch(`/talents/delete/contestant/stage/${talentRoom_id}`,body)
-    .then(res =>  {
-         setTalentRoom(res.data)
-         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const deleteContestantQueue = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await api.patch( BASE_URL + `/talents/delete/contestant/queue/${talentRoom_id}`,body)
-    .then(res =>  {
-         setTalentRoom(res.data)
-         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const deleteContestantElimination = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await api.patch( BASE_URL + `/talents/delete/contestant/Elimination/${talentRoom_id}`,body)
-    .then(res =>  {
-         setTalentRoom(res.data)
-         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const deletePerformanceStage = async(talentRoom_id,body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await api.patch( BASE_URL + `/talents/delete/performance/stage/${talentRoom_id}`,body)
-    .then(res =>  {
-         setTalentRoom(res.data)
-         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const deletePerformanceQueue = async(talentRoom_id,body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await api.patch( BASE_URL + `/talents/delete/performance/queue/${talentRoom_id}`,body)
-    .then(res =>  {
-         setTalentRoom(res.data)
-         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const backInQueue = async(talentRoom_id, body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await api.patch( BASE_URL + `/talents/back/queue/${talentRoom_id}`,body)
-    .then(res =>  {
-         setTalentRoom(res.data)
-         setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
-
- export const eliminationTalentRoom = async(talentRoom_id, setTalentRoom , setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await axios.patch( BASE_URL + `/talents/elimination/${talentRoom_id}`)
-    .then(res =>  {
-         setTalentRoom(res.data)
-       
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
-
- export const addContestantToQue = async(talentRoom_id,body, setTalentRoom , setIsLoading) =>{
-  try {
-    setIsLoading(true)
-    await axios.patch( BASE_URL + `/talents/queue/${talentRoom_id}`,body)
-    .then(res =>  {
-         setTalentRoom(res.data)
-       
-      } )
-      .finally(()=>{
-        setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
- 
-
- export const getTopTalents = async(user_id, setTalentRooms) =>{
-  try {
-    await axios.get( BASE_URL + `/talents/top/${user_id}` )
-    .then(res =>  {
-         setTalentRooms(res.data)
-      } )
-      .finally(()=>{
-        // setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const toggleFavouriteStage = async(user_id ,body, setData,setIsExpired)=>{
- 
-  try {
-      await api.post( BASE_URL + `/talents/favourite/${user_id}`,body)
-      .then(res => {
-         if(res.data === "talent expired") return setIsExpired(true)
-          setData(res.data) 
-      }
-       )
-  } catch (error) {
-      console.log(error)
-  }
-} 
-
-// export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
+// export const updateChallengeMode = async(challenge_id , body ,setChallenges)=>{
  
 //   try {
-//       await api.patch( BASE_URL + `/talents/favourite/${user_id}`,body)
-//       .then(res => {
-//           if(res.data === "talent expired") return setIsExpired(true)
-//           setData(res.data) 
-//       } )
+//       await axios.patch( BASE_URL + `/challenges/mode/${challenge_id}`,body)
+//       .then(res => { 
+//           setChallenges(res.data) 
+//       }
+//        )
 //   } catch (error) {
 //       console.log(error)
 //   }
 // }  
 
-// ***********************************like Talent posts *************************
+
+// export const updateThumbNail = async(challenge_id , body ,setThumb)=>{
+ 
+//   try {
+//       await axios.patch( BASE_URL + `/challenges/update/${challenge_id}`,body)
+//       .then(res => { 
+//         console.log(res.data)
+//           setThumb(res.data.thumbNail_URL) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// }  
 
 
-   export const likeTalentPost = async(post_id , body, setPostData , setIsLoading , setIsExpired) =>{
-    try { 
-    await api.post( `/talents/likes/${post_id}`,body )
-    .then(res =>  {
-         if(res.data === "expired") {
-          return setIsExpired(true)
-         } else
-         setPostData(res.data)
-      } )
-      .finally(()=>{
-        // setIsLoading(false)
-      })
-  } catch (error) {
-    console.log(error)
-  }
- }
 
- export const voteTalentPost = async(post_id , body, setPostData ,setVoted , setIsExpired) =>{
-  try { 
-  await api.post( `/talents/votes/${post_id}`, body )
-  .then(res =>  {
-      if(res.data === "expired") {
-       setIsExpired(true)
-       setVoted(false)
-       return ; 
-      } else{
-        setVoted(true)
-        setPostData(res.data)
-      }
-    } )
-    .finally(()=>{
-      // setIsLoading(false)
-    })
-} catch (error) {
-  console.log(error)
-}
-}
-
-export const flagTalentPost = async(post_id , body, setPostData ,setIsExpired) =>{
-  try { 
-  await api.post( `/talents/flags/${post_id}`, body )
-  .then(res =>  {
-      if(res.data === "expired") {
-      return setIsExpired(true)
-      } else
-       setPostData(res.data)
-    } )
-    .finally(()=>{
-      // setIsLoading(false)
-    })
-} catch (error) {
-  console.log(error)
-}
-}
-
- export const getPostData = async(post_id , setPostData  , setIsExpired) =>{
-  try { 
-  await api.get(`/talents/post/${post_id}` )
-  .then(res =>  {
-    if(res.data === "expired") {
-        setIsExpired(true)
-     } else setPostData(res.data)
-    } )
-    .finally(()=>{
-      // setIsLoading(false)
-    })
-} catch (error) {
-  console.log(error)
-}
-}
-
-//***************post comments, add , edit , delete */
-
-export const addCommentContestant = async(post_id,body,setPostData) =>{
-  try {
-    await api.post( `/talents/post/comment/${post_id}`,body)
-    .then(res =>  { 
-         setPostData({...res.data})
-      } )
-  } catch (error) {
-    console.log(error)
-  }
- }
-
- export const deleteTalentCommentsById = async(post_id,body,setPostData) =>{
-  try {
-
-    await api.patch(`/talents/post/comment/${post_id}`,body )
-    .then(res =>  {
-      setPostData({...res.data})
-      } )
-  } catch (error) {
-    console.log(error)
-  }
- }
-
-    // *********************************** general challenge , talent  *************************
+//    // *********************************** likes and votes postdata challenge *************************
   
-  export const getHotStages = async(user_id , setData ) =>{
-      try { 
-        // setIsFetching(true)
-      await 
-      api.get(`/talents/hotStages/${user_id}`)
-      .then(res =>  {
-        const data = []
-        if(res.data.length > 0) {
-            res.data.forEach(element => {
-               data.push({...element  })
-            });
-        } 
-        // data.sort((a, b) => 
-        //   new Date(b.updatedAt) - new Date(a.updatedAt) )
-        setData(data)
+//    export const getChallengePostData = async(post_id ,body, setPostData  , setIsExpired) =>{
+//     try { 
+//     await axios.post( BASE_URL + `/challenges/post/${post_id}`,body )
+//     .then(res =>  {
+//       if(res.data === "expired") {
+//           setIsExpired(true)
+//        } else setPostData(res.data)
+//       } )
+//       .finally(()=>{
+//         // setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//   }
 
-        } ).finally(() =>{
-          // setIsFetching(false)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-    }
 
-    export const getTrendingStages = async(userCountryCode , setData ) =>{
-      try { 
-        // setIsFetching(true)
-      await 
-      api.get(`/talents/trendingStages/${userCountryCode}`)
-      .then(res =>  {
-        const data = []
-        if(res.data.length > 0) {
-            res.data.forEach(element => {
-               data.push({...element  })
-            });
-        } 
-        // data.sort((a, b) => 
-        //   new Date(b.updatedAt) - new Date(a.updatedAt) )
-        setData(data)
+//   export const likeChallengePost = async(post_id , body, setPostData , setIsLoading , setIsExpired) =>{
+//     try { 
+//     await axios.post( BASE_URL + `/challenges/likes/${post_id}`,body )
+//     .then(res =>  {
+//          if(res.data === "expired") {
+//           return setIsExpired(true)
+//          } else
+//          setPostData(res.data)
+//       } )
+//       .finally(()=>{
+//         // setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
 
-        } ).finally(() =>{
-          // setIsFetching(false)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-    }
+
+//  export const voteChallengePost = async(post_id , body, setPostData ,setIsExpired) =>{
+//   try { 
+//   await axios.post( BASE_URL + `/challenges/votes/${post_id}`, body )
+//   .then(res =>  {
+//       if(res.data === "expired") {
+//       return setIsExpired(true)
+//       } else
+//        setPostData(res.data)
+//     } )
+//     .finally(()=>{
+//       // setIsLoading(false)
+//     })
+// } catch (error) {
+//   console.log(error)
+// }
+// }
+
+// export const flagChallengePost = async(post_id , body, setPostData ,setIsExpired) =>{
+//   try { 
+//   await axios.post( BASE_URL + `/challenges/flags/${post_id}`, body )
+//   .then(res =>  {
+//       if(res.data === "expired") {
+//       return setIsExpired(true)
+//       } else
+//        setPostData(res.data)
+//     } )
+//     .finally(()=>{
+//       // setIsLoading(false)
+//     })
+// } catch (error) {
+//   console.log(error)
+// }
+// }
+
+
+
+
+//     export const getFollowData = async(user_id ,setFollower)=>{
+//       try {
+//         await api.get(`/users/follow/data/${user_id}`)
+//         .then(res =>  
+//           setFollower({...res.data}) 
+//        )
+//       } catch (error) {
+//         console.log(error)
+//       }
+//     }
+
+//     export const getuserFollowers = async(user_id ,setFollowers)=>{
+//       try {
+//         await api.get(`/users/followers/${user_id}`)
+//         .then(res =>  
+//           setFollowers([...res.data.users]) 
+//        )
+//       } catch (error) {
+//         console.log(error)
+//       }
+//     }
+
+//     export const getuserFollowings = async(user_id ,setFollowings)=>{
+//       try {
+//         await api.get(`/users/followings/${user_id}`)
+//         .then(res =>  
+//           setFollowings([...res.data.users]) 
+//        )
+//       } catch (error) {
+//         console.log(error)
+//       }
+//     }
+
+//     export const isfollowing = async(user_id , follower_id, setIsFollowing)=>{
+//       try {
+//         await api.post(`/users/followers/${user_id}` ,{follower_id:follower_id} )
+//         .then(res =>  { 
+//           setIsFollowing({isfollowing:res.data.isfollowing})
+//       } )
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
+
+
+//      // followings 
+
+//     export const addFollowing = async(user_id , rawBody , setFollow) =>{
+//       try {
+//         await api.post(  `/users/followings/add/${user_id}`, rawBody )
+//         .then(res =>  { 
+//           setFollow({...res.data});
+//           } )
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
+ 
+
+//     export const getFollowings = async(user_id , setFollowings)=>{
+//       try {
+//         await api.get(`/users/followings/${user_id}` )
+//         .then(res =>  { 
+//           setFollowings(res.data)
+//       } )
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
+
+//      export const unFollowings = async(user_id ,rawBody, setFollow)=>{
+//       try {
+//         await api.patch(  `/users/unfollowing/${user_id}`,rawBody )
+//         .then(res =>  { 
+//           setFollow({...res.data})
+//       } )
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
+
+//   //*********************** Friends request , adding , postdata  */
+
+//   export const getFriendshipStatus = async (
+//     user_id,
+//     profile_id
+//   ) => {
+//     try {
+//       const response = await api.get(
+//         "/users/friendship/status/",
+//         {
+//           params: {
+//             user_id,
+//             profile_id,
+//           },
+//         }
+//       );
+  
+//       return response.data;
+  
+//     } catch (error) {
+//       console.error(
+//         "getFriendshipStatus error:",
+//         error
+//       );
+  
+//       throw error;
+//     }
+//   };
+   
+//   export const friendRequest = async(receiver_id , rawBody , setFriendRequest , setExist) =>{
+//     try {
+//       await api.post(  `/users/friends/request/${receiver_id}`, rawBody )
+//       .then(res =>  { 
+//         if(res.data == "exist"){
+//             setExist(true)
+//         }else
+//         setFriendRequest(res.data);
+//         } )
+     
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+
+//    export const unfriendRequest = async(senderId , receiverId , setFriendRequest) =>{
+//     try {
+//       await api.post( `/users/friends/unfriend/`,{},
+//         {
+//           params: {
+//             senderId,
+//             receiverId,
+//           },
+//         })
+
+//       .then(res =>  { 
+//         setFriendRequest({...res.data});
+//         } )
+     
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+
+//    export const removeFriendRequest = async(receiver_id,rawBody,setFriendRequest)=>{
+//     try {
+//       await api.post(`/users/friends/cancel/${receiver_id}`, rawBody )
+//       .then(res =>  {  
+//         setFriendRequest({...res.data});
+//         } )
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+
+//    export const getUserFriendsData = async(receiver_id , setFriendRequest) =>{
+//     try {
+//       await api.get(  `/users/friends/list/${receiver_id}` )
+//       .then(res =>  { 
+//         setFriendRequest({...res.data}) 
+//         } )
+     
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+
+//    export const getUserFriendRequestReceived = async(receiver_id , setFriendRequest) =>{
+//     try {
+//       await api.get(  `/users/friendRequests/received/${receiver_id}` )
+//       .then(res =>  { 
+//         setFriendRequest(res.data) 
+//         } )
+     
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+
+//    export const denyFriendRequest = async(senderId ,receiverId,setFriendRequest)=>{
+//     try {
+//       await api.post(  `/users/friends/deny/`,{},
+//         {
+//           params: {
+//             senderId,
+//             receiverId,
+//           },
+//         } )
+//       .then(res =>  { 
+//         setFriendRequest((prev) => ({
+//           ...prev,
+//           users: res.data,
+//         }));
+//         } )
+     
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+
+//    export const acceptFriendRequest = async(senderId ,receiverId,setFriendRequest )=>{
+//     try {
+//       await api.post( `/users/friends/accept/`, 
+//         {},
+//         {
+//           params: {
+//             senderId,
+//             receiverId,
+//           },
+//         }
+//        )
+//       .then(res =>  {  
+//         setFriendRequest((prev) => ({
+//           ...prev,
+//           users: res.data,
+//         }));
+//         } )
+     
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+    
+//    //******************************** notifications */
+
+
+//    export const getNotificationByUser = async(receiver_id ,setNotification) =>{
+//     try {
+//       await api.get( `/users/notifications/${receiver_id}` )
+//       .then(res =>  { 
+//         setNotification(res.data);
+//         } )
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+   
+//   export const updateNotificationByUser = async(_id , setNotification) =>{
+//     try {
+//       await api.patch( `/users/notifications/${_id}` )
+//       .then(res =>  { 
+//         setNotification(res.data);
+//         } )
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+
+//    export const markNotificationRead = async(_id) =>{
+//     try {
+//       await api.patch( `/users/notifications/${_id}` )
+//       .then(res =>  { 
+//         return res.data
+//         } )
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+ 
+
+//    export const deleteUserNotification = async(_id,setNot) =>{
+//     try {
+//       await api.delete( `/users/notifications/${_id}` )
+//       .then(res =>  { 
+//            setNot(res.data)
+//         } )
+//     } catch (error) {
+//       console.log(error)
+//     }
+//    }
+   
+// // *********************************** comments , postdata , likes votes *************************
+
+
+// export const getCommentsByPost = async(post_id,setComments) =>{
+//   try {
+//     await api.get( `/challenges/posts/${post_id}` )
+//     .then(res =>  { 
+//          setComments(res.data)
+//       } )
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const addCommentsByPost = async(post_id,body,setComments) =>{
+//   try {
+//     await api.post( `/challenges/posts/${post_id}`,body)
+//     .then(res =>  { 
+//          setComments({...res.data})
+//       } )
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const deleteCommentsById = async(post_id,body,setComments) =>{
+//   try {
+//     await api.patch( `/challenges/posts/comment/${post_id}`,body )
+//     .then(res =>  {
+//          setComments(res.data)
+//       } )
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+
+//  // *********************************** Talents *************************
+
+
+//  // *********************************** create Talent *************************
+
+
+//  export const createTalentRoom = async(body, setTalentRoom ,user_id , setUserContestantStatus, setUserParticipation ,setEdition, setIsLoading) =>{
+//   try {
+//     await api.post( `/talents/creates/`,body )
+//     .then(res =>  {
+//          setTalentRoom({...res.data})
+//          let edition = res.data.editions.find(e => e.status === "open")
+//          edition.nextUpdate = Date(edition.createdAt)
+//          switch (edition.round) {
+//           case 1:
+//             edition.title = "Elimination-Round 1"
+//             break;
+//           case 2:
+//               edition.title  = "Elimination-Round 2"
+//               break;
+//          case 3:
+//               edition.title  = "Elimination-Round 3"
+//               break;
+//           case 4:
+//             edition.title  = "Eighth-finals"
+//             break;
+//           case 5:
+//               edition.title = "Quarter Final"
+//               break;
+//          case 6:
+//               edition.title  = "Semi Final"
+//               break;
+//          case 7:
+//                 edition.title  = "Grand Final "
+//               break;
+//          case 8:
+//                 edition.title  = "Winner"
+//               break;
+//           default:
+//             break;
+//          }
+//          setEdition(res.data.editions.find(e => e.status === "open"))
+//          if(res.data.contestants.length > 0) {
+//           const userParticipation = res.data.contestants.find((contestant)=> contestant.user_id === user_id) 
+//           userParticipation ? setUserContestantStatus("P") : setUserContestantStatus("NP")
+//           if(userParticipation){
+//           const rank = res.data.contestants.findIndex(contestant => contestant._id === userParticipation._id)
+//           userParticipation["rank"] = rank + 1
+//           setUserParticipation({userParticipation})
+//           }
+//         }else {
+//           setUserParticipation(null)
+//          setUserContestantStatus("NP")
+//         }
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const GetTalentRoomById = async(talentRoom_id, setTalentRoom ) =>{
+//   try {
+//     await api.get(`/talents/room/${talentRoom_id}` )
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+//       } )
+//       .finally(()=>{
+//         // setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const GetTalentRoomsByName = async(queryParams,setTalentRooms ,  setIsLoading) =>{
+//   try {
+//     await api.get( `/talents/rooms`,{
+//       params: queryParams
+//   } )
+//     .then(res =>  {
+//          setTalentRooms(res.data)
+       
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const getUserTalent = async(user_id , setUserTalents ) =>{
+//   try {
+//     await api.get( `/talents/user/talent/${user_id}` )
+//     .then(res =>  {
+//         setUserTalents(res.data)  
+//       })
+//       .finally(()=>{
+//         // setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const getUserTalentPerformances = async(user_id ,setUserTalentPerformances ) =>{
+//   try {
+//     await axios.get( BASE_URL + `/talents/user/performance/${user_id}` )
+//     .then(res =>  {
+//       setUserTalentPerformances(res.data)  
+//       })
+//       .finally(()=>{
+//         // setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const deleteContestantStage = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await api.patch(`/talents/delete/contestant/stage/${talentRoom_id}`,body)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+//          setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const deleteContestantQueue = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await api.patch( BASE_URL + `/talents/delete/contestant/queue/${talentRoom_id}`,body)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+//          setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const deleteContestantElimination = async(talentRoom_id,body, setTalentRoom ,setUserParticipation, setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await api.patch( BASE_URL + `/talents/delete/contestant/Elimination/${talentRoom_id}`,body)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+//          setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const deletePerformanceStage = async(talentRoom_id,body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await api.patch( BASE_URL + `/talents/delete/performance/stage/${talentRoom_id}`,body)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+//          setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const deletePerformanceQueue = async(talentRoom_id,body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await api.patch( BASE_URL + `/talents/delete/performance/queue/${talentRoom_id}`,body)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+//          setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const backInQueue = async(talentRoom_id, body, setTalentRoom ,setUserParticipation , setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await api.patch( BASE_URL + `/talents/back/queue/${talentRoom_id}`,body)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+//          setUserParticipation(res.data.contestants.find(c => c.user_id == body.user_id))
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+
+//  export const eliminationTalentRoom = async(talentRoom_id, setTalentRoom , setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await axios.patch( BASE_URL + `/talents/elimination/${talentRoom_id}`)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+       
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+
+//  export const addContestantToQue = async(talentRoom_id,body, setTalentRoom , setIsLoading) =>{
+//   try {
+//     setIsLoading(true)
+//     await axios.patch( BASE_URL + `/talents/queue/${talentRoom_id}`,body)
+//     .then(res =>  {
+//          setTalentRoom(res.data)
+       
+//       } )
+//       .finally(()=>{
+//         setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+ 
+
+//  export const getTopTalents = async(user_id, setTalentRooms) =>{
+//   try {
+//     await axios.get( BASE_URL + `/talents/top/${user_id}` )
+//     .then(res =>  {
+//          setTalentRooms(res.data)
+//       } )
+//       .finally(()=>{
+//         // setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const toggleFavouriteStage = async(user_id ,body, setData,setIsExpired)=>{
+ 
+//   try {
+//       await api.post( BASE_URL + `/talents/favourite/${user_id}`,body)
+//       .then(res => {
+//          if(res.data === "talent expired") return setIsExpired(true)
+//           setData(res.data) 
+//       }
+//        )
+//   } catch (error) {
+//       console.log(error)
+//   }
+// } 
+
+// // export const removeTalentRoomFromFavourite = async(user_id ,body, setData,setIsExpired)=>{
+ 
+// //   try {
+// //       await api.patch( BASE_URL + `/talents/favourite/${user_id}`,body)
+// //       .then(res => {
+// //           if(res.data === "talent expired") return setIsExpired(true)
+// //           setData(res.data) 
+// //       } )
+// //   } catch (error) {
+// //       console.log(error)
+// //   }
+// // }  
+
+// // ***********************************like Talent posts *************************
+
+
+//    export const likeTalentPost = async(post_id , body, setPostData , setIsLoading , setIsExpired) =>{
+//     try { 
+//     await api.post( `/talents/likes/${post_id}`,body )
+//     .then(res =>  {
+//          if(res.data === "expired") {
+//           return setIsExpired(true)
+//          } else
+//          setPostData(res.data)
+//       } )
+//       .finally(()=>{
+//         // setIsLoading(false)
+//       })
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const voteTalentPost = async(post_id , body, setPostData ,setVoted , setIsExpired) =>{
+//   try { 
+//   await api.post( `/talents/votes/${post_id}`, body )
+//   .then(res =>  {
+//       if(res.data === "expired") {
+//        setIsExpired(true)
+//        setVoted(false)
+//        return ; 
+//       } else{
+//         setVoted(true)
+//         setPostData(res.data)
+//       }
+//     } )
+//     .finally(()=>{
+//       // setIsLoading(false)
+//     })
+// } catch (error) {
+//   console.log(error)
+// }
+// }
+
+// export const flagTalentPost = async(post_id , body, setPostData ,setIsExpired) =>{
+//   try { 
+//   await api.post( `/talents/flags/${post_id}`, body )
+//   .then(res =>  {
+//       if(res.data === "expired") {
+//       return setIsExpired(true)
+//       } else
+//        setPostData(res.data)
+//     } )
+//     .finally(()=>{
+//       // setIsLoading(false)
+//     })
+// } catch (error) {
+//   console.log(error)
+// }
+// }
+
+//  export const getPostData = async(post_id , setPostData  , setIsExpired) =>{
+//   try { 
+//   await api.get(`/talents/post/${post_id}` )
+//   .then(res =>  {
+//     if(res.data === "expired") {
+//         setIsExpired(true)
+//      } else setPostData(res.data)
+//     } )
+//     .finally(()=>{
+//       // setIsLoading(false)
+//     })
+// } catch (error) {
+//   console.log(error)
+// }
+// }
+
+// //***************post comments, add , edit , delete */
+
+// export const addCommentContestant = async(post_id,body,setPostData) =>{
+//   try {
+//     await api.post( `/talents/post/comment/${post_id}`,body)
+//     .then(res =>  { 
+//          setPostData({...res.data})
+//       } )
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//  export const deleteTalentCommentsById = async(post_id,body,setPostData) =>{
+//   try {
+
+//     await api.patch(`/talents/post/comment/${post_id}`,body )
+//     .then(res =>  {
+//       setPostData({...res.data})
+//       } )
+//   } catch (error) {
+//     console.log(error)
+//   }
+//  }
+
+//     // *********************************** general challenge , talent  *************************
+  
+//   export const getHotStages = async(user_id , setData ) =>{
+//       try { 
+//         // setIsFetching(true)
+//       await 
+//       api.get(`/talents/hotStages/${user_id}`)
+//       .then(res =>  {
+//         const data = []
+//         if(res.data.length > 0) {
+//             res.data.forEach(element => {
+//                data.push({...element  })
+//             });
+//         } 
+//         // data.sort((a, b) => 
+//         //   new Date(b.updatedAt) - new Date(a.updatedAt) )
+//         setData(data)
+
+//         } ).finally(() =>{
+//           // setIsFetching(false)
+//         })
+//     } catch (error) {
+//       console.log(error)
+//     }
+//     }
+
+//     export const getTrendingStages = async(userCountryCode , setData ) =>{
+//       try { 
+//         // setIsFetching(true)
+//       await 
+//       api.get(`/talents/trendingStages/${userCountryCode}`)
+//       .then(res =>  {
+//         const data = []
+//         if(res.data.length > 0) {
+//             res.data.forEach(element => {
+//                data.push({...element  })
+//             });
+//         } 
+//         // data.sort((a, b) => 
+//         //   new Date(b.updatedAt) - new Date(a.updatedAt) )
+//         setData(data)
+
+//         } ).finally(() =>{
+//           // setIsFetching(false)
+//         })
+//     } catch (error) {
+//       console.log(error)
+//     }
+//     }
      
      
-    // export const getFavouriteStageList = async( user_id ,  setFavourites) =>{
-    //   try { 
-    //   await api.get( BASE_URL + `/talents/favourites/${user_id}`)
-    //   .then(res =>  {
-    //        setFavourites(res.data)
-    //     } )
-    //     .finally(()=>{
-    //       // setIsLoading(false)
-    //     })
-    // } catch (error) {
-    //   console.log(error)
-    // }
-    // }
+//     // export const getFavouriteStageList = async( user_id ,  setFavourites) =>{
+//     //   try { 
+//     //   await api.get( BASE_URL + `/talents/favourites/${user_id}`)
+//     //   .then(res =>  {
+//     //        setFavourites(res.data)
+//     //     } )
+//     //     .finally(()=>{
+//     //       // setIsLoading(false)
+//     //     })
+//     // } catch (error) {
+//     //   console.log(error)
+//     // }
+//     // }
 
-    export const getFavouriteStages = async( user_id ,  setFavourites) =>{
-      try { 
-      await api.get( BASE_URL + `/talents/favouriteStages/${user_id}`)
-      .then(res =>  {
-           setFavourites(res.data)
-        } )
-        .finally(()=>{
-          // setIsLoading(false)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-    }
+//     export const getFavouriteStages = async( user_id ,  setFavourites) =>{
+//       try { 
+//       await api.get( BASE_URL + `/talents/favouriteStages/${user_id}`)
+//       .then(res =>  {
+//            setFavourites(res.data)
+//         } )
+//         .finally(()=>{
+//           // setIsLoading(false)
+//         })
+//     } catch (error) {
+//       console.log(error)
+//     }
+//     }
 
-    export const getStageById = async( stage_id ,  setStage) =>{
-      try { 
-      await api.get( BASE_URL + `/talents/stage/${stage_id}`)
-      .then(res =>  {
-           setStage(res.data)
-        } )
-        .finally(()=>{
-          // setIsLoading(false)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-    }
-
-
-    export const getFavouriteChallenges = async( user_id , data  , setFavourites) =>{
-      try { 
-      await axios.post( BASE_URL + `/challenges/favourites/${user_id}` , data)
-      .then(res =>  {
-           setFavourites(res.data)
-        } )
-        .finally(()=>{
-          // setIsLoading(false)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-    }
-
-    export const getAllTalentStages = async( setTalentStages) =>{
-      try {
-        await api.get( `/talents/stages` )
-        .then(res =>  {
-          // console.log(res.data)
-          setTalentStages(res.data)  
-          })
-          .finally(()=>{
-            // setIsLoading(false)
-          })
-      } catch (error) {
-        console.log(error)
-      }
-     }
-
-     export const getRegionTalentStages = async(region , setTalentStages) =>{
-      try {
-        await api.get(`/talents/stages/region/${region}` )
-        .then(res =>  {
-          const stages = res.data ; 
-          const sortedStages = stages.sort((a, b) => {
-            return (
-              (stageOrderMap[a.name] || Number.MAX_SAFE_INTEGER) -
-              (stageOrderMap[b.name] || Number.MAX_SAFE_INTEGER)
-            );
-          });
-          setTalentStages([...sortedStages])  
-          })
-          .finally(()=>{
-            // setIsLoading(false)
-          })
-      } catch (error) {
-        console.log(error)
-      }
-     }
-
-     export const getStageByNameAndRegion = async(body ) =>{
-      try {
-        return await api.post(`/talents/findStage` ,body )
-        .then(res =>  {
-             return res.data 
-          })
-          .finally(()=>{
-            // setIsLoading(false)
-          })
-      } catch (error) {
-        console.log(error)
-      }
-     }
+//     export const getStageById = async( stage_id ,  setStage) =>{
+//       try { 
+//       await api.get( BASE_URL + `/talents/stage/${stage_id}`)
+//       .then(res =>  {
+//            setStage(res.data)
+//         } )
+//         .finally(()=>{
+//           // setIsLoading(false)
+//         })
+//     } catch (error) {
+//       console.log(error)
+//     }
+//     }
 
 
-     //****************geo location , ip , user location */
+//     export const getFavouriteChallenges = async( user_id , data  , setFavourites) =>{
+//       try { 
+//       await axios.post( BASE_URL + `/challenges/favourites/${user_id}` , data)
+//       .then(res =>  {
+//            setFavourites(res.data)
+//         } )
+//         .finally(()=>{
+//           // setIsLoading(false)
+//         })
+//     } catch (error) {
+//       console.log(error)
+//     }
+//     }
 
-     export const canAttendStage = async (room_id , gpsLocation ) => {
-      try {
-           const response = await api.post(
-          `/talents/geoAccess/${room_id}`,
-          {
-            gpsCountryCode: gpsLocation?.countryCode,
-          }
-        );
-        return response.data;
-      } catch (error) {
-        console.error("Join stage error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const getAllTalentStages = async( setTalentStages) =>{
+//       try {
+//         await api.get( `/talents/stages` )
+//         .then(res =>  {
+//           // console.log(res.data)
+//           setTalentStages(res.data)  
+//           })
+//           .finally(()=>{
+//             // setIsLoading(false)
+//           })
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
 
-    //****************** Arena creation , posts *************/
+//      export const getRegionTalentStages = async(region , setTalentStages) =>{
+//       try {
+//         await api.get(`/talents/stages/region/${region}` )
+//         .then(res =>  {
+//           const stages = res.data ; 
+//           const sortedStages = stages.sort((a, b) => {
+//             return (
+//               (stageOrderMap[a.name] || Number.MAX_SAFE_INTEGER) -
+//               (stageOrderMap[b.name] || Number.MAX_SAFE_INTEGER)
+//             );
+//           });
+//           setTalentStages([...sortedStages])  
+//           })
+//           .finally(()=>{
+//             // setIsLoading(false)
+//           })
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
+
+//      export const getStageByNameAndRegion = async(body ) =>{
+//       try {
+//         return await api.post(`/talents/findStage` ,body )
+//         .then(res =>  {
+//              return res.data 
+//           })
+//           .finally(()=>{
+//             // setIsLoading(false)
+//           })
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
+
+
+//      //****************geo location , ip , user location */
+
+//      export const canAttendStage = async (room_id , gpsLocation ) => {
+//       try {
+//            const response = await api.post(
+//           `/talents/geoAccess/${room_id}`,
+//           {
+//             gpsCountryCode: gpsLocation?.countryCode,
+//           }
+//         );
+//         return response.data;
+//       } catch (error) {
+//         console.error("Join stage error:", error.response?.data);
+//         throw error;
+//       }
+//     };
+
+//     //****************** Arena creation , posts *************/
     
-    export const createArenaByUser = async (user_id , data ) => {
-      try {
-           const response = await api.post(
-          `/arenas/create/${user_id}`,  data);
-        return response.data;
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const createArenaByUser = async (user_id , data ) => {
+//       try {
+//            const response = await api.post(
+//           `/arenas/create/${user_id}`,  data);
+//         return response.data;
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const updateArenaByUser = async (arena_id , data ) => {
-      try {
-           const response = await api.post(
-          `/arenas/update/${arena_id}`, data);
-        return response.data;
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const updateArenaByUser = async (arena_id , data ) => {
+//       try {
+//            const response = await api.post(
+//           `/arenas/update/${arena_id}`, data);
+//         return response.data;
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const deleteArenaByUser = async (arena_id , data ) => {
-      try {
-           const response = await api.post(
-          `/arenas/delete/${arena_id}`,  data);
-        return response.data;
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const deleteArenaByUser = async (arena_id , data ) => {
+//       try {
+//            const response = await api.post(
+//           `/arenas/delete/${arena_id}`,  data);
+//         return response.data;
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const getArenaByUser = async (user_id ,setSelectedArena , setArenas, arena_id  ) => {
-      try {
+//     export const getArenaByUser = async (user_id ,setSelectedArena , setArenas, arena_id  ) => {
+//       try {
        
-           const response = await api.get(
-          `/arenas/user/${user_id}`);
-           if(response.data.length) setSelectedArena( !arena_id ? response.data[0] : response.data.find(a => a._id === arena_id))
-            setArenas(response.data);
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//            const response = await api.get(
+//           `/arenas/user/${user_id}`);
+//            if(response.data.length) setSelectedArena( !arena_id ? response.data[0] : response.data.find(a => a._id === arena_id))
+//             setArenas(response.data);
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const getArenaById = async (user_id ,arena_id ) => {
-      try {
+//     export const getArenaById = async (user_id ,arena_id ) => {
+//       try {
        
-           const response = await api.get(
-          `/arenas/arena?userId=${user_id}&arenaId=${arena_id}`);
-           return response.data
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//            const response = await api.get(
+//           `/arenas/arena?userId=${user_id}&arenaId=${arena_id}`);
+//            return response.data
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const getArenaByProfile = async (profile_id ,body, setSelectedArena , setArenas, arena_id  ) => {
-      try {
-           const response = await api.post(
-          `/arenas/profile/${profile_id}`,body);
-           if(response.data.length) setSelectedArena( !arena_id ? response.data[0] : response.data.find(a => a._id === arena_id))
-            setArenas(response.data);
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const getArenaByProfile = async (profile_id ,body, setSelectedArena , setArenas, arena_id  ) => {
+//       try {
+//            const response = await api.post(
+//           `/arenas/profile/${profile_id}`,body);
+//            if(response.data.length) setSelectedArena( !arena_id ? response.data[0] : response.data.find(a => a._id === arena_id))
+//             setArenas(response.data);
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const getLocalArenas = async (arena_id , body , setArenas ) => {
-      try {
-           const response = await api.get(
-          `/arenas/local/arena/${arena_id}`,body);
-          //  if(response.data.length) setSelectedArena(response.data[0])
-           setArenas(response.data);
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const getLocalArenas = async (arena_id , body , setArenas ) => {
+//       try {
+//            const response = await api.get(
+//           `/arenas/local/arena/${arena_id}`,body);
+//           //  if(response.data.length) setSelectedArena(response.data[0])
+//            setArenas(response.data);
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const addPerformanceToArena = async (arena_id , body) => {
-      try {
-           return  await api.post(`/arenas/post/addPost/${arena_id}`, body);
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const getUserSpotlights = async (userId , setSpotlights ) => {
+//       try {
+//            const response = await api.get(
+//           `/arenas/spotlights/${userId}`);
+//            setSpotlights(response.data);
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const getPostsArena = async (arena_id , setPosts ) => {
-      try {
-           const response = await api.get(`/arenas/posts/${arena_id}`);
-          setPosts([...response.data]);
-      } catch (error) {
-        console.error("getting posts error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const addPerformanceToArena = async (arena_id , body) => {
+//       try {
+//            return  await api.post(`/arenas/post/addPost/${arena_id}`, body);
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const  deleteArenaPost = async (post_id ,  setArena , setUserArenas) => {
-      try {
-           const response = await api.delete(`/arenas/post/${post_id}`);
-          setArena(response.data.selectedArena);
-          setUserArenas(response.data.arenas)
-      } catch (error) {
-        console.error("getting posts error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const getPostsArena = async (arena_id , setPosts ) => {
+//       try {
+//            const response = await api.get(`/arenas/posts/${arena_id}`);
+//           setPosts([...response.data]);
+//       } catch (error) {
+//         console.error("getting posts error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const toggleStarArena = async (
-      body
-    ) => {
-      try {
-        const response = await api.patch(
-          `/arenas/arena/star/`,
-          body
-        );
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    };
+//     export const  deleteArenaPost = async (post_id ,  setArena , setUserArenas) => {
+//       try {
+//            const response = await api.delete(`/arenas/post/${post_id}`);
+//           setArena(response.data.selectedArena);
+//           setUserArenas(response.data.arenas)
+//       } catch (error) {
+//         console.error("getting posts error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const isUserStarredArena = async (
-      body
-    ) => {
-      try {
-        const response = await api.get(
-          `/arenas/arena/isStarred/`,
-          body
-        );
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    };
+//     export const toggleStarArena = async (
+//       body
+//     ) => {
+//       try {
+//         const response = await api.patch(
+//           `/arenas/arena/star/`,
+//           body
+//         );
+//         return response.data;
+//       } catch (error) {
+//         console.error(error);
+//         throw error;
+//       }
+//     };
 
-    export const toggleFollowerArena = async (
-      body
-    ) => {
-      try {
-        const response = await api.patch(
-          `/arenas/arena/follower/`,
-          body
-        );
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    };
+//     export const isUserStarredArena = async (
+//       body
+//     ) => {
+//       try {
+//         const response = await api.get(
+//           `/arenas/arena/isStarred/`,
+//           body
+//         );
+//         return response.data;
+//       } catch (error) {
+//         console.error(error);
+//         throw error;
+//       }
+//     };
 
-    export const isUserFollowingArena = async (
-      body
-    ) => {
-      try {
-        const response = await api.get(
-          `/arenas/arena/isFollowing/`,
-          body
-        );
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    };
+//     export const toggleFollowerArena = async (
+//       body
+//     ) => {
+//       try {
+//         const response = await api.patch(
+//           `/arenas/arena/follower/`,
+//           body
+//         );
+//         return response.data;
+//       } catch (error) {
+//         console.error(error);
+//         throw error;
+//       }
+//     };
+
+//     export const isUserFollowingArena = async (
+//       body
+//     ) => {
+//       try {
+//         const response = await api.get(
+//           `/arenas/arena/isFollowing/`,
+//           body
+//         );
+//         return response.data;
+//       } catch (error) {
+//         console.error(error);
+//         throw error;
+//       }
+//     };
     
 
 
-    export const toggleArenaPostSpotlight = async(post_id)=>{
-      try {
-        const response = await api.patch(`/arenas/post/spotlight/${post_id}`);
-        //  setArena(response.data);
-      } catch (error) {
-        console.error("getting posts error:", error.response?.data);
-        throw error;
-     }
-    }
+//     export const toggleArenaPostSpotlight = async(post_id)=>{
+//       try {
+//         const response = await api.patch(`/arenas/post/spotlight/${post_id}`);
+//         //  setArena(response.data);
+//       } catch (error) {
+//         console.error("getting posts error:", error.response?.data);
+//         throw error;
+//      }
+//     }
 
-    export const isUserFiredPost = async (
-      body
-    ) => {
-      try {
-        const response = await api.patch(
-          `/arenas/post/isFired/`,
-          body
-        );
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    };
+//     export const isUserFiredPost = async (
+//       body
+//     ) => {
+//       try {
+//         const response = await api.patch(
+//           `/arenas/post/isFired/`,
+//           body
+//         );
+//         return response.data;
+//       } catch (error) {
+//         console.error(error);
+//         throw error;
+//       }
+//     };
   
-    export const toggleArenaPostFire = async( body )=>{
-      try {
-        const response = await api.patch(`/arenas/post/fire/`,body);
-       return response.data
-      } catch (error) {
-        console.error("getting posts error:", error.response?.data);
-        throw error;
-      }
-    }
+//     export const toggleArenaPostFire = async( body )=>{
+//       try {
+//         const response = await api.patch(`/arenas/post/fire/`,body);
+//        return response.data
+//       } catch (error) {
+//         console.error("getting posts error:", error.response?.data);
+//         throw error;
+//       }
+//     }
 
-    export const registerView = async(post_id )=>{
-      try {
-        const response = await api.patch(`/arenas/post/view/${post_id}`);
-      } catch (error) {
-        console.error("getting posts error:", error.response?.data);
-        throw error;
-      }
-    }
+//     export const registerView = async(post_id )=>{
+//       try {
+//         const response = await api.patch(`/arenas/post/view/${post_id}`);
+//       } catch (error) {
+//         console.error("getting posts error:", error.response?.data);
+//         throw error;
+//       }
+//     }
     
-    export const getArenaPostComments = async(postId) => {
-      try {
-           const response = await api.get(`/arenas/post/comment/${postId}`);
-           return response.data
-      } catch (error) {
-        console.error("getting posts error:", error.response?.data);
-        throw error;
-      }
-    };
+//     export const getArenaPostComments = async(postId) => {
+//       try {
+//            const response = await api.get(`/arenas/post/comment/${postId}`);
+//            return response.data
+//       } catch (error) {
+//         console.error("getting posts error:", error.response?.data);
+//         throw error;
+//       }
+//     };
 
-    export const addArenaPostComment = async (postId , body) => {
-    try {
-      const response =  await api.post(`/arenas/post/addComment/${postId}`, body);
-      return response.data
-    } catch (error) {
-      console.error("creating arena error:", error.response?.data);
-      throw error;
-    }
-    }
+//     export const addArenaPostComment = async (postId , body) => {
+//     try {
+//       const response =  await api.post(`/arenas/post/addComment/${postId}`, body);
+//       return response.data
+//     } catch (error) {
+//       console.error("creating arena error:", error.response?.data);
+//       throw error;
+//     }
+//     }
 
-    export const deleteArenaPostComment = async ( body) => {
-      try {
-        const response =  await api.patch(`/arenas/post/deleteComment/`, body);
-        return response.data
-      } catch (error) {
-        console.error("creating arena error:", error.response?.data);
-        throw error;
-      }
-      }
+//     export const deleteArenaPostComment = async ( body) => {
+//       try {
+//         const response =  await api.patch(`/arenas/post/deleteComment/`, body);
+//         return response.data
+//       } catch (error) {
+//         console.error("creating arena error:", error.response?.data);
+//         throw error;
+//       }
+//       }
  
     
-    export const getGlobalSpotlightPerformances = async (page = 1 ) => {
-        try {
-            return  await api.get(
-                `/arenas/global/spotlightPerformances?page=${page}`
-            );
-        } catch (error) {
-            console.log(
-                "Spotlight performances error:",
-                error.response?.data || error.message
-            );
-            throw error;
-        }
-    };
+//     export const getGlobalSpotlightPerformances = async (page = 1 ) => {
+//         try {
+//             return  await api.get(
+//                 `/arenas/global/spotlightPerformances?page=${page}`
+//             );
+//         } catch (error) {
+//             console.log(
+//                 "Spotlight performances error:",
+//                 error.response?.data || error.message
+//             );
+//             throw error;
+//         }
+//     };
 
-    export const getRegionalSpotlightPerformances = async (page = 1 , countryCode ="US" ) => {
-      try {
-        return await api.get(
-          `/arenas/regional/spotlightPerformances?page=${page}&countryCode=${countryCode}`
-        );
-      } catch (error) {
-          console.log(
-              "Spotlight performances error:",
-              error.response?.data || error.message
-          );
-          throw error;
-      }
-  };
+//     export const getRegionalSpotlightPerformances = async (page = 1 , countryCode ="US" ) => {
+//       try {
+//         return await api.get(
+//           `/arenas/regional/spotlightPerformances?page=${page}&countryCode=${countryCode}`
+//         );
+//       } catch (error) {
+//           console.log(
+//               "Spotlight performances error:",
+//               error.response?.data || error.message
+//           );
+//           throw error;
+//       }
+//   };
 
-    export const getLocalSpotlightPerformances = async (page = 1 , countryCode ="US" ) => {
-      try {
-        return await api.get(
-          `/arenas/local/spotlightPerformances?page=${page}&countryCode=${countryCode}`
-        );
-      } catch (error) {
-        console.log(
-            "Spotlight performances error:",
-            error.response?.data || error.message
-        );
-        throw error;
-     }
-    }; 
+//     export const getLocalSpotlightPerformances = async (page = 1 , countryCode ="US" ) => {
+//       try {
+//         return await api.get(
+//           `/arenas/local/spotlightPerformances?page=${page}&countryCode=${countryCode}`
+//         );
+//       } catch (error) {
+//         console.log(
+//             "Spotlight performances error:",
+//             error.response?.data || error.message
+//         );
+//         throw error;
+//      }
+//     }; 
 
-    export const getFollowedArenas = async (userId, page = 1 , setArenas) => {
-      try {
-        const response = await api.get(
-          `/arenas/following?userId=${userId}&page=${page}`
-        );
-        setArenas(response.data);
-      } catch (error) {
-        throw error;
-      }
-    };
+//     export const getFollowedArenas = async (userId, page = 1 , setArenas) => {
+//       try {
+//         const response = await api.get(
+//           `/arenas/following?userId=${userId}&page=${page}`
+//         );
+//         setArenas(response.data);
+//       } catch (error) {
+//         throw error;
+//       }
+//     };
 
-    export const getRegionalArenas = async(region , setRegionalArenas) =>{
-      try {
-        await api.get(`/arens/region/${region}` )
-        .then(res =>  {
-          const arenas = res.data ; 
-          setRegionalArenas([...arenas])  
-          })
-          .finally(()=>{
-            // setIsLoading(false)
-          })
-      } catch (error) {
-        console.log(error)
-      }
-     }
+//     export const getRegionalArenas = async(region , setRegionalArenas) =>{
+//       try {
+//         await api.get(`/arens/region/${region}` )
+//         .then(res =>  {
+//           const arenas = res.data ; 
+//           setRegionalArenas([...arenas])  
+//           })
+//           .finally(()=>{
+//             // setIsLoading(false)
+//           })
+//       } catch (error) {
+//         console.log(error)
+//       }
+//      }
     
 
-  // search 
+//   // search 
 
-  export const getSearchSuggestions = async (query) => {
-    try {
-      const response = await api.get("users/search/suggestions", {
-        params: {
-          q: query,
-          limit: 5,
-        },
-      });
+//   export const getSearchSuggestions = async (query) => {
+//     try {
+//       const response = await api.get("users/search/suggestions", {
+//         params: {
+//           q: query,
+//           limit: 5,
+//         },
+//       });
   
-      return response.data;
-    } catch (error) {
-      console.error(
-        "getSearchSuggestions error:",
-        error?.response?.data || error.message
-      );
+//       return response.data;
+//     } catch (error) {
+//       console.error(
+//         "getSearchSuggestions error:",
+//         error?.response?.data || error.message
+//       );
   
-      throw error;
-    }
-  };
+//       throw error;
+//     }
+//   };
 
 
-// =========================================================
-// DEEP SEARCH
-// =========================================================
+// // =========================================================
+// // DEEP SEARCH
+// // =========================================================
 
-export const deepSearch = async ({
-  query,
-  type = "people",
-  page = 1,
-  limit = 20,
-}) => {
-  try {
+// export const deepSearch = async ({
+//   query,
+//   type = "people",
+//   page = 1,
+//   limit = 20,
+// }) => {
+//   try {
 
-    const response = await api.get(
-      `users/search/deep`,
-      {
-        params: {
-          q: query,
-          type,
-          page,
-          limit,
-        },
-      }
-    );
+//     const response = await api.get(
+//       `users/search/deep`,
+//       {
+//         params: {
+//           q: query,
+//           type,
+//           page,
+//           limit,
+//         },
+//       }
+//     );
 
-    return response.data;
+//     return response.data;
 
-  } catch (error) {
-    console.error(
-      "deepSearch error:",
-      error
-    );
+//   } catch (error) {
+//     console.error(
+//       "deepSearch error:",
+//       error
+//     );
 
-    throw error;
-  }
-};
+//     throw error;
+//   }
+// };
 
-// share 
-export const shareWithFriends = async ({
-  receiverIds,
-  sharedType,
-  sharedId,
-  sharedName,
-  sharedCategory,
-  metadata = {},
-}) => {
-  try {
-    const response = await api.post("users/share", {
-      receiverIds,
-      sharedType,
-      sharedId,
-      sharedName,
-      metadata,
-      sharedCategory,
-    });
-    return response.data;
-  } catch (error) {
-    console.log(
-      "SHARE WITH FRIENDS API ERROR:",
-      error?.response?.data || error.message
-    );
+// // share 
+// export const shareWithFriends = async ({
+//   receiverIds,
+//   sharedType,
+//   sharedId,
+//   sharedName,
+//   sharedCategory,
+//   metadata = {},
+// }) => {
+//   try {
+//     const response = await api.post("users/share", {
+//       receiverIds,
+//       sharedType,
+//       sharedId,
+//       sharedName,
+//       metadata,
+//       sharedCategory,
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.log(
+//       "SHARE WITH FRIENDS API ERROR:",
+//       error?.response?.data || error.message
+//     );
 
-    throw error;
-  }
-};
+//     throw error;
+//   }
+// };

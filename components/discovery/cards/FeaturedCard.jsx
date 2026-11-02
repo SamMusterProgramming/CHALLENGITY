@@ -4,29 +4,29 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  useWindowDimensions,
-  ActivityIndicator,
+  Pressable,
+
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {  MaterialCommunityIcons } from "@expo/vector-icons";
 
-import {
-  deleteArenaPost,
-  isUserFiredPost,
-  toggleArenaPostFire,
-  toggleArenaPostSpotlight,
-} from "../../../apiCalls";
+// import {
+//   deleteArenaPost,
+//   isUserFiredPost,
+//   toggleArenaPostFire,
+//   toggleArenaPostSpotlight,
+// } from "../../../apiCalls";
 import { useLoading } from "../../../context/loadingContext";
-import SpotlightIcon from "../../custom/spotlightIcon";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import { countries, stageIcons } from "../../../utilities/TypeData";
+import RisingStarIcon from "../../svgIcons/RisingStarIcon";
+import ArenaIcon from "../../svgIcons/tab/ArenaIcon";
+import ArenaPortalIcon from "../../svgIcons/ArenaPortalIcon";
+import { formatCount } from "../../../helper";
+import TalentIcon from "../../custom/TalentIcon";
+import CountryFlag from "../../common/CountryFlag";
 
-const formatCount = (value = 0) => {
-  const number = Number(value) || 0;
-  if (number >= 1000000) return `${(number / 1000000).toFixed(1)}M`;
-  if (number >= 1000) return `${(number / 1000).toFixed(1)}K`;
-  return `${number}`;
-};
+
 
 export default function FeaturedCard({
   entry,
@@ -42,7 +42,9 @@ export default function FeaturedCard({
     setUserArenas,
     setOpenArenaAlertModal,
     setArenaActionModal,
-    scale
+    scale,
+    spacing,
+    getFeaturedThumbnailHeight
   } = useGlobalContext();
   const { showLoading, hideLoading } = useLoading();
 
@@ -83,7 +85,6 @@ export default function FeaturedCard({
     entry?.media?.thumbnail?.cdnUrl ||
     entry?.media?.thumbnail?.url;
 
-
   const caption =
       entry?.caption ||
       entry?.title ||
@@ -97,57 +98,47 @@ export default function FeaturedCard({
       entry?.arena.arenaName ||
     "Arena performer";
 
-
-
-
-  
-
   const openPerformance = () => {
     setSelectedPost?.(entry);
     onPress?.(entry);
   };
 
- 
-
-
-  // if (!isReady && !item?.temp) return null;
-
   return (
     <View
       style={{
-        marginHorizontal: 8,
-        borderRadius: 7,
-        overflow: "hidden",
-        // backgroundColor: "#0A0C0E",
-        // borderWidth: 1,
         width,
-        // borderColor:   "rgba(234,179,8,0.24)"
-          //  "rgba(255,255,255,0.065)",
+        height: spacing(420),
       }}
-      className = " rounded-t-3xl"
+      className="justify-start  items-center  bg-[#000000]"
     >
+
+
+
       <TouchableOpacity
         activeOpacity={0.96}
-        onPress = { () => setSelectedPost(entry) }
-      >
+        onPress = { () => setSelectedPost(entry) } 
+        className = "w-full p-2 flex-1 rounded-t-3xl bg-black border-l-2 border-r-2 border-t-2 border-[#252424] justify-center items-center "  
+        >
         <View
           style={{
-            width: "100%",
-            height: height,
-            backgroundColor: "#111315",
+            // width: "100%",
+            // height:  getFeaturedThumbnailHeight(),
+            // backgroundColor: "#111315",
             // position: "relative",
           }}
-        >
+          className="flex-row justify-center items-start flex-1"
+          >
           {thumbnail ? (
             <Image
               source={{ uri: thumbnail }}
-              resizeMode="cover"
+              // resizeMode="cover"
+              resizeMethod= "cover"
               style={{
                 width: "100%",
-                height: "100%",
-                alignSelf : "center"
+                height: "95%",
+                // alignSelf : "center"
               }}
-              className = "rounded-3xl"
+              className = "rounded-t-xl"
             />
           ) : (
             <View
@@ -187,8 +178,8 @@ export default function FeaturedCard({
             pointerEvents="none"
             colors={[
               "transparent",
-              "rgba(0,0,0,0.05)",
-              "rgba(0,0,0,0.28)",
+              "rgba(0,0,0,0.25)",
+              "rgba(0,0,0,0.38)",
               "rgba(0,0,0,0.86)",
             ]}
             locations={[0, 0.38, 0.62, 1]}
@@ -196,7 +187,7 @@ export default function FeaturedCard({
               position: "absolute",
               left: 0,
               right: 0,
-              bottom: 0,
+              bottom: -1,
               height: "58%",
             }}
           />
@@ -210,55 +201,43 @@ export default function FeaturedCard({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-            }}
-          >
+            }}  >
+
+            {isSpotlight && (
             <View
               style={{
-                flexDirection: "row",
+                flexDirection: "col",
                 alignItems: "center",
                 paddingHorizontal: 9,
                 paddingVertical: 6,
-                borderRadius: 999,
-            
+                // borderRadius: 999,
               }}
-            >
-              {isSpotlight && (
-                <SpotlightIcon size={scale(15)} />
-              ) }
+              className = "bg-black/40 p-1 rounded-md"  >
             
-            </View>
-          </View>
-
-          {/* {duration && !item?.temp && (
-            <View
-              style={{
-                position: "absolute",
-                right: 11,
-                top: 11,
-                paddingHorizontal: 7,
-                paddingVertical: 4,
-                borderRadius: 6,
-                backgroundColor: "rgba(0,0,0,0.62)",
-              }}
-            >
+              <RisingStarIcon size={scale(30)} />
+              
               <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontSize: 10,
-                  fontWeight: "800",
-                }}
-              >
-                {duration}
+                  style={{
+                    color: "#E8B95A",
+                    fontSize: scale(7),
+                    fontWeight: "700",
+                    marginTop :5
+                  }}
+                >
+                  SPOTLIGHT
               </Text>
+            
             </View>
-          )} */}
+            ) }
+            
+          </View>
 
             <View
               style={{
                 position: "absolute",
                 left: 23,
                 right: 13,
-                bottom: 20,
+                bottom: scale(30),
                 flexDirection: "row",
                 alignItems: "center",
               }}   >
@@ -271,14 +250,14 @@ export default function FeaturedCard({
               >
                 <MaterialCommunityIcons
                   name="eye-outline"
-                  size={scale(18)}
+                  size={scale(14)}
                   color="#FFFFFF"
                 />
                 <Text
                   style={{
                     marginLeft: 4,
                     color: "#FFFFFF",
-                    fontSize: scale(10),
+                    fontSize: scale(9),
                     fontWeight: "800",
                   }}
                 >
@@ -296,21 +275,21 @@ export default function FeaturedCard({
               >
                 <MaterialCommunityIcons
                   name={hasFired ? "fire" : "fire"}
-                  size={scale(18)}
+                  size={scale(14)}
                   color={hasFired ? "#EAB308" : "#FFFFFF"}
                 />
                 <Text
                   style={{
                     marginLeft: 4,
                     color: hasFired ? "#EAB308" : "#FFFFFF",
-                    fontSize: scale(10),
+                    fontSize: scale(9),
                     fontWeight: "800",
                   }}
                 >
                   {formatCount(fires)}
                 </Text>
               </TouchableOpacity>
-
+{/* 
               <View
                 style={{
                   flexDirection: "row",
@@ -333,41 +312,42 @@ export default function FeaturedCard({
                 >
                   {formatCount(comments)}
                 </Text>
-              </View>
-
-              {/* <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="share-outline"
-                  size={width/23}
-                  color="#FFFFFF"
-                />
-                <Text
-                  style={{
-                    marginLeft: 4,
-                    color: "#FFFFFF",
-                    fontSize: width/38,
-                    fontWeight: "800",
-                  }}
-                >
-                  {formatCount(shares)}
-                </Text>
               </View> */}
+
+            
+            </View>
+            <View
+                className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
+                style={{
+                  bottom :-spacing(5) ,
+                  padding : spacing(4),
+                  zIndex :1002,
+                }}  >
+                {/* <ArenaPortalIcon size={scale(30)} /> */}
+                <Image
+                source={{ uri: entry.arena.profileImage.publicUrl }}
+                resizeMode="cover"
+                style={{
+                  width: scale(70),
+                  height: scale(70),
+                }}
+                className ="rounded-full"
+              />
             </View>
  
         </View>
+
       </TouchableOpacity>
 
 
 
 
-      <View
-        className = "rounded-xl mt-2 py-4 px-3 w-full  bg-[#171616] "
-      >
+      {/* <View
+      style = {{
+        paddingVertical : spacing(12),
+        paddingHorizontal : spacing(12)
+      }}
+        className = " bg-[#121212]  w-full   " >
         <View
           style={{
             flexDirection: "row",
@@ -383,8 +363,6 @@ export default function FeaturedCard({
             >
               <View
                 style={{
-                  width: 21,
-                  height: 21,
                   borderRadius: 11,
                   overflow: "hidden",
                   backgroundColor: "#191C1F",
@@ -400,18 +378,13 @@ export default function FeaturedCard({
                     }}
                   />
                 ) : (
-                  <MaterialCommunityIcons
-                    name="stadium"
-                    size={scale(15)}
-                    color="#fff"
-                  />
+                  <ArenaPortalIcon  size={scale(20)}  color = "#EAB308" />
                 )}
               </View>
 
               <Text
                 numberOfLines={1}
                 style={{
-                  flexShrink: 1,
                   marginLeft: 6,
                   color: "#FFF",
                   fontSize: scale(13),
@@ -421,16 +394,6 @@ export default function FeaturedCard({
               >
                 {performerName}
               </Text>
-
-              {/* <View
-                style={{
-                  width: 3,
-                  height: 3,
-                  borderRadius: 2,
-                  marginHorizontal: 6,
-                  backgroundColor: "#555A60",
-                }}
-              /> */}
 
             
             </View>
@@ -443,15 +406,14 @@ export default function FeaturedCard({
               paddingRight: 10,
               marginTop: 8,
               width
-            }}
-          >
+            }} >
              <View
-             className = "flex-row w-full pr-4 gap- 1">
+             className = "flex-row w-full pr-4 ">
                 
                 <Text
                   // numberOfLines={1}
                   style={{
-                    color: "#fff",
+                    color: "#c0c0c0",
                     fontSize: scale(10) ,
                     fontWeight: "700",
                   }} 
@@ -461,7 +423,7 @@ export default function FeaturedCard({
                 <Text
                   // numberOfLines={1}
                   style={{
-                    color: "#fff",
+                    color: "#c0c0c0",
                     fontSize: scale(10) ,
                     fontWeight: "700",
                   }} 
@@ -470,33 +432,181 @@ export default function FeaturedCard({
                 </Text>
                 
                 <View
-                 className = " flex-row justify-center tex t-center items-center px-8 flex-1 ">
+                 className = " flex-row justify-start tex t-center items-center px-2 flex-1 ">
                   <Text
                     numberOfLines={1}
                     style={{
-                      color: "#aaa",
-                      fontSize: scale(10) ,
-                      fontWeight: "600",
-                    }} >
-                      {'Caption - '} 
-                  </Text>
-                  <Text
-                    numberOfLines={1}
-                    style={{
-                      color: "#fff",
+                      color: "#c0c0c0",
                       fontSize: scale(10),
                       fontWeight: "600",
                       letterSpacing: -0.15,
                       // width :200
                     }}
                   >
-                  {caption}  
+                  | {' '} {caption}  
                   </Text>
                 </View>
             </View>
        
         </View>
-      </View>
+      </View> */}
+
+
+
+       <View
+            className="flex-row bg- [#161a20] rounded- b-[30px]  justify-between w-full"
+            style={{
+                // marginTop: spacing(6),
+                height : scale(110)
+            }}  >
+
+             <View 
+             style = {{
+              paddingVertical: spacing(16),
+              paddingHorizontal: spacing(12),
+             }}
+             className = "flex-row justify-center items-center bg-[#202021] rounded-bl-[10px] rounded-tr-full  gap -4" >
+
+                <View
+                className="items-center justify-center"
+                style={{
+                   }}  >
+                    <View
+                    className="items-center  gap-4 justify-center"
+                    style={{
+
+                    }}  >
+                      <TalentIcon talent={entry.arena.talentType} size={scale(29)} color={"white"}/>
+                      <Text
+                          style={{
+                          // marginTop: spacing(3),
+                          color: "white",
+                          fontSize: scale(9),
+                          fontWeight: "800",
+                          letterSpacing: scale(0.3),
+                          }}  >
+                          {entry.arena.talentType.toUpperCase()}
+                      </Text>
+                    </View>
+              </View>
+            </View>
+
+
+            {/* METRICS */}
+             <View
+             className = "flex-1  justify-center bg-[#202021] items-center">
+                   
+                <Pressable
+                    android_ripple={{
+                      color: "rgba(232,185,90,0.06)",
+                    }}
+                    style={{
+                        // paddingBottom: spacing(16),
+                        paddingHorizontal: spacing(12),
+                        paddingTop : scale(28)
+                        
+                    }}
+                    className = "justify-start mb-4  flex-1 rounded-b-[50px] bg-black items-center"
+                  >
+                    <View className="flex-row items-center  ">
+
+                        <View
+                          className="flex-1 items-center justify-center"
+                          style={{
+                            paddingRight: spacing(8),
+                          }}   >
+                          <Text
+                            numberOfLines={1}
+                            style={{
+                              color: "#F4F4F2",
+                              fontSize: scale(14),
+                              lineHeight: spacing(16),
+                              fontWeight: "800",
+                              letterSpacing: scale(0.25),
+                            }}  >
+                            {entry.arena.arenaName}
+                        </Text>
+
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            marginTop: spacing(14),
+                            color: "rgba(255,255,255,0.92)",
+                            fontSize: scale(11),
+                            lineHeight: spacing(12),
+                            fontWeight: "500",
+                          }}
+                        >
+                          {caption}
+                        </Text>
+
+                      </View>
+
+                    
+                    </View>
+                  </Pressable>
+             
+          
+
+                      <View
+                          className="bg- [black]/70 border-b-2 border-b-goldSoft/50 items-center  absolute   justify-center"
+                          style={{
+                            top : -scale(4) ,
+                            left:  -scale(8),
+                            paddingVertical : scale(3),
+                            zIndex :1002,
+                          }}   >
+                            <Text
+                                    className = "text-goldSoft/100"
+                                    style={{
+                                    fontSize: scale(8),
+                                    fontWeight: "800",
+                                    letterSpacing: scale(0.4),
+                                    }}  >
+                                 {isSpotlight ? "SPOTLIGHT":"PERFORMANCE"} 
+                            </Text>
+                      </View>
+
+              </View>
+
+              <View 
+             style = {{
+              paddingVertical: spacing(16),
+              paddingHorizontal: spacing(16),
+             }}
+             className = "flex-row bg-[#202021] rounded-br-[10px] rounded-tl-full  gap -4" >
+                <View
+                    className="items-center justify-center"
+                    style={{
+                    //   width: spacing(60),
+                    }}  >
+                    <View
+                      className="items-center gap-4 justify-center"
+                      style={{
+                          // width: spacing(55),
+                          // height: spacing(70),
+                      }}
+                      >
+                        <CountryFlag
+                            code={entry.arena.region}
+                            size={scale(27)}
+                        />
+                        <Text
+                            style={{
+                            // marginTop: spacing(3),
+                             color: "white",
+                              fontSize: scale(10),
+                              fontWeight: "700",
+                              letterSpacing: scale(0.3),
+                            }}  >
+                            {entry.arena.region}
+                        </Text>
+                    </View>
+                </View>
+
+            </View>
+         
+        </View>
 
       
     </View>

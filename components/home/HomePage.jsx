@@ -3,20 +3,40 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   FlatList,
-  useWindowDimensions
+  useWindowDimensions,
+  Platform
 } from "react-native";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import {  getRegionTalentStages, getStageByNameAndRegion, getUserTalent } from "../../apiCalls";
 import FeaturedCarousel from "../discovery/carousels/FeaturedCarousel";
 import ArenaCarousel from "../discovery/carousels/ArenaCarousel";
 import StageCarousel from "../discovery/carousels/StageCarousel";
+import DiamandSeperator from "../custom/diamandSeperator";
+import HeaderApp from "../header/headerApp";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 export const homeState = {
   scrollY: 0,
 };
-export default function HomePage({onScroll}) {
-  const { user , setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading , userArenas, localArenas , 
-    regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh
+export default function HomePage({
+              onScroll,
+              user,
+              showNotifications,
+              showSearch,
+              showFavourite ,
+              setShowNotifications,
+              setShowSearch,
+              setShowFavourite,
+              setShowProfile,
+              width,
+              height,
+              headerHeight,
+              setMissionVisible}) {
+
+  const {  setUserTalents ,hotStages ,  setHotStages ,globalSelectedRegion, isLoading , userArenas, localArenas , 
+    regionStages,setRegionStages, hotStageScrolledIndex  , globalRefresh , setGlobalRefresh , spacing , scale
   } = useGlobalContext();
+  const insets = useSafeAreaInsets();
+
   const sections = [
     {id:"spotlightPerformancesL"},
     {id:"spotlightPerformancesR"},
@@ -29,7 +49,7 @@ export default function HomePage({onScroll}) {
   const flatListRef = useRef(null);
   const [isHotStageReady, setIsHotStageReady] = useState(false);
   const scrollY = useRef(homeState.scrollY || 0);
-  const{width , height} = useWindowDimensions()
+  // const{width , height} = useWindowDimensions()
 
 
   useEffect(() => {
@@ -74,37 +94,40 @@ export default function HomePage({onScroll}) {
           });
   }, [regionStages])
 
-  // const [isFocused, setIsFocused] = useState(true);
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     setIsFocused(true);
-    
-  //     return () =>  {
-  //               setIsFocused(false);
-            
-  //             }
-  //   }, [])
-  // );
-  
-  // const handleScroll = (e) => {
 
-  // };
-
-  // if (!isFocused) { return null; }
 
   return (
     
     <View
     style ={{
-      // paddingBottom : height * 0.059 ,
+      paddingBottom : spacing(32),
+      paddingTop:Platform.OS == "ios" ? insets.top : insets.top
     }}
-    className="flex-1 w-[100%]  px- 1 bg-[#15171e] [#161515] gap-1">
+    className="flex-1 w-[100%] bg-black  12 [#161515] gap-1">
+
+          <View
+            className="w-full bg-black justify-center items-center mb- 4 " >
+            <HeaderApp
+              user={user && user || null}
+              showNotifications = {showNotifications}
+              showSearch = {showSearch}
+              showFavourite = {showFavourite}
+              setShowNotifications={setShowNotifications}
+              setShowSearch={setShowSearch}
+              setShowFavourite={setShowFavourite}
+              setShowProfile={setShowProfile}
+              width={width}
+              height = {height}
+              headerHeight={headerHeight}
+              setMissionVisible ={setMissionVisible}
+            />
+       
+          </View>
+        
       <FlatList
             ref={flatListRef}
             onScroll={onScroll}
             scrollEventThrottle={16}
-          
-            // 🔥 helps stability when restoring
             initialNumToRender={10}
             windowSize={10}
             data={sections}
@@ -113,33 +136,35 @@ export default function HomePage({onScroll}) {
               {switch (item.id) {
                 case  "spotlightPerformancesL" :
                   return (
-                    <FeaturedCarousel
-                      height = {height * 0.31} 
-                      type = "local"
-                     />
+                     <>
+                        {/* <DiamandSeperator /> */}
+                        <FeaturedCarousel  type = "local"  />
+                     </>
                   )
                 case  "spotlightPerformancesR" :
                    return (
-                    <FeaturedCarousel
-                      height = {height * 0.31} 
-                      type = "regional"
-                     />
+                     <>
+                        <FeaturedCarousel type = "regional"  />
+                     </>
                    )
                 case  "spotlightPerformancesG" :
                    return (
-                    <FeaturedCarousel
-                        height = {height * 0.31} 
-                        type = "global"
-                     />
+                     <>
+                        <FeaturedCarousel type = "global" />
+                     </>
                    )
                 case "trendingStage":
                     return (
-                      <StageCarousel type = "local"   />
+                     <>
+                        <StageCarousel type = "local"   />
+                     </>
                     )
                   break;
                 case "hotStage":
                   return (
+                     <>
                       <StageCarousel type = "global"  />
+                     </>
                   )
                 break;
                 // case "favourite":
@@ -167,13 +192,15 @@ export default function HomePage({onScroll}) {
                 default:
                   break;
               }}
-           
+              
             }
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}  
             contentContainerStyle={{
               // backgroundColor: "black",  
-              // paddingBottom: 20,
+              paddingBottom: 20,
+              paddingTop: scale(20),
+
             }}
             keyboardShouldPersistTaps="handled"
             // ListFooterComponent={()=>{

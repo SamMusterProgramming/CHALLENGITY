@@ -34,7 +34,7 @@ import ArenaFooter from "../arena/arenaFooter/arenaFooter";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Stages({
-  data , title
+  data , title , textHeader , description1 , description2
 }) {
   const {
     userTalents,
@@ -151,7 +151,7 @@ export default function Stages({
     <View
       style={{
         paddingHorizontal: spacing(12),
-        // paddingTop: spacing(26),
+        paddingTop: spacing(20),
         paddingBottom: spacing(12),
         width,
       }}
@@ -163,24 +163,73 @@ export default function Stages({
           stage COLLECTION HEADER
        ========================================= */}
 
+      <View style={{ marginBottom: spacing(8) }}>
+      
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: spacing(5),
+              }}
+            >
+              <View
+                style={{
+                  width: scale(18),
+                  height: "80%",
+                  backgroundColor: "#E8B95A",
+                  marginRight: spacing(8),
+                }}
+              />
+
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontSize: scale(11),
+                  fontWeight: "900",
+                  letterSpacing: scale(0.8),
+                }}
+              >
+                {textHeader}
+              </Text>
+            </View>
+
+            <Text
+              style={{
+                color: "#FFFFFF",
+                fontSize: scale(12),
+                lineHeight: scale(20),
+                fontWeight: "400",
+                letterSpacing: scale(0.15),
+                opacity: 0.82,
+              }}
+            >
+              {description1}
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontWeight: "700",
+                }}
+              >
+                performances
+              </Text>
+              {description2}
+            </Text>
+
+      </View>
+
 
       <View
         style={{
           width: "100%",
-          marginTop: scale(24),
-          marginBottom: scale(10),
+          marginTop: scale(8),
+          marginBottom: scale(16),
           paddingVertical: scale(10),
           paddingHorizontal: scale(12),
           flexDirection: "row",
           alignItems: "center",
-          // justifyContent: "space-center",
-
-          // backgroundColor: "rgba(255,255,255,0.025)",
-          // borderWidth: 1,
-          // borderColor: "rgba(232,185,90,0.16)",
-          // borderRadius: scale(7),
+          borderRadius: scale(12),
         }}
-        className = "justify-center gap-4 flex-1"
+        className = "justify-between bg-[#1b1a1a] flex-1"
       >
         {/* SECTION TITLE + COUNT */}
         <View
@@ -206,7 +255,7 @@ export default function Stages({
           <Text
             numberOfLines={1}
             style={{
-              color: "#F4F0E8",
+              color: "#c0c0c0",
               fontSize: scale(12),
               fontWeight: "700",
               letterSpacing: scale(0.35),
@@ -358,100 +407,6 @@ export default function Stages({
           STAGE CAROUSEL PAGE CONTROLS
       ========================================= */}
 
-      {/* {totalStagePages > 0 && (
-       <View
-       style={{
-        width: "100%",
-        marginTop: scale(24),
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-  
-       }}
-     >
-       <Pressable
-         onPress={() => goToStagePage(-1)}
-         disabled={activeStageIndex === 0}
-         hitSlop={scale(8)}
-         accessibilityRole="button"
-         accessibilityLabel="Previous stage page"
-         style={{
-           width: scale(42),
-          //  height: scale(36),
-           alignItems: "center",
-           justifyContent: "center",
-           borderRadius: scale(12),
-           opacity: activeStageIndex === 0 ? 0.28 : 1,
-         }}
-       >
-         <Ionicons
-           name="chevron-back"
-           size={scale(23)}
-           color={
-             activeStageIndex === 0
-               ? "rgba(255,255,255,0.65)"
-               : GOLD
-           }
-         />
-       </Pressable>
-
-       <View
-         accessibilityRole="progressbar"
-         accessibilityLabel={`Stage page ${activeStageIndex + 1} of ${totalStagePages}`}
-         style={{
-           flex: 1,
-           flexDirection: "row",
-           alignItems: "center",
-           justifyContent: "center",
-           gap: scale(7),
-         }}
-       >
-         {Array.from({ length: totalStagePages }, (_, index) => {
-           const isActive = index === activeStageIndex;
-     
-           return (
-             <View
-               key={`stage-page-${index}`}
-               style={{
-                 width: !isActive ? scale(9) : scale(9),
-                 height: scale(9),
-                 borderRadius: scale(4),
-                 backgroundColor: isActive
-                   ?  GOLD
-                   : "rgba(255,255,255,0.34)",
-               }}
-             />
-           );
-         })}
-       </View>
-     
-       <Pressable
-         onPress={() => goToStagePage(1)}
-         disabled={activeStageIndex === totalStagePages - 1}
-         hitSlop={scale(8)}
-         accessibilityRole="button"
-         accessibilityLabel="Next stage page"
-         style={{
-           width: scale(42),
-          //  height: scale(36),
-           alignItems: "center",
-           justifyContent: "center",
-           borderRadius: scale(12),
-           opacity: activeStageIndex === totalStagePages - 1 ? 0.28 : 1,
-         }}
-       >
-         <Ionicons
-           name="chevron-forward"
-           size={scale(23)}
-           color={
-             activeStageIndex === totalStagePages - 1
-               ? "rgba(255,255,255,0.65)"
-               : GOLD
-           }
-         />
-       </Pressable>
-     </View>
-      )} */}
 
         {/* BOTTOM PAGE INDICATOR */}
         {totalStagePages  > 1 && (
@@ -461,7 +416,7 @@ export default function Stages({
               flexDirection: "row",
               // alignItems: "end",
               justifyContent: "space-between",
-              marginTop: spacing(28),
+              marginTop: spacing(16),
               // gap: spacing(14),
               // height: scale(64)
             }}

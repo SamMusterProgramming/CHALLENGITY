@@ -1,41 +1,124 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useRef } from "react";
+
 import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   Dimensions,
-  Pressable,
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { deepSearch } from "../../../apiCalls";
-// import StageCard from "../stage/StageCard";
+
+import { Ionicons } from "@expo/vector-icons";
+
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedScrollHandler,
+  interpolate,
+  Extrapolation,
+  withTiming,
+} from "react-native-reanimated";
+
 import ArenaJourneyCard from "../../myJourney/card/ArenaJourneyCard";
 import UserProfileCard from "../../profile/card/userProfileCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import StageCard from "../../discovery/cards/StageCard";
+import { deepSearch } from "../../../apiCalls/discovery";
+import ArenaCard from "../../discovery/cards/ArenaCard";
+import UserCard from "../../discovery/cards/userCard";
 
 const { width, height } = Dimensions.get("window");
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 export default function DeepSearchModal({
   visible,
   query,
   onClose,
 }) {
- 
+
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [searchType, setSearchType] = useState("people");
-  const { scale , spacing } = useGlobalContext();
+  const listRef = useRef(null);
+  const scrollY = useSharedValue(0);
+  const activeCategory = useSharedValue(0);
+  const { scale, spacing } = useGlobalContext();
+
+  /*
+   * =========================================================
+   * HEADER COLLAPSE ANIMATION
+   * =========================================================
+   */
+
+  const introAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      height: interpolate(
+        scrollY.value,
+        [0, 100],
+        [112, 0],
+        Extrapolation.CLAMP
+      ),
+      opacity: interpolate(
+        scrollY.value,
+        [0, 35, 100],
+        [1, 0.45, 0],
+        Extrapolation.CLAMP
+      ),
+      transform: [
+        {
+          translateY: interpolate(
+            scrollY.value,
+            [0, 100],
+            [0, -22],
+            Extrapolation.CLAMP
+          ),
+        },
+      ],
+    };
+  });
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = Math.max(0, event.contentOffset.y);
+    },
+  });
+
+  /*
+   * =========================================================
+   * CATEGORY UNDERLINE ANIMATION
+   * =========================================================
+   */
+
+  const underlineAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: withTiming(
+            activeCategory.value * ((width - 40 - 16) / 3),
+            { duration: 260 }
+          ),
+        },
+      ],
+    };
+  });
+
+  /*
+   * =========================================================
+   * INITIALIZATION
+   * =========================================================
+   */
 
   useEffect(() => {
     if (visible) {
       setSearchType("people");
+      activeCategory.value = 0;
+      scrollY.value = 0;
     }
   }, [visible]);
 
@@ -43,14 +126,22 @@ export default function DeepSearchModal({
     if (!visible) {
       return;
     }
+
     if (!query?.trim()) {
       return;
     }
+
     performSearch({
       page: 1,
       replace: true,
     });
   }, [visible]);
+
+  /*
+   * =========================================================
+   * SEARCH
+   * =========================================================
+   */
 
   const performSearch = async ({
     pageNumber = 1,
@@ -59,28 +150,30 @@ export default function DeepSearchModal({
     if (!query?.trim()) {
       return;
     }
+
     try {
       if (replace) {
         setLoading(true);
       } else {
         setLoadingMore(true);
       }
+
       const response = await deepSearch({
         query: query.trim(),
         type: searchType,
         page: pageNumber,
         limit: 20,
       });
-      const newResults =
-        response?.results || [];
+
+      const newResults = response?.results || [];
+
       if (replace) {
         setResults(newResults);
       } else {
-        setResults(prev => [
+        setResults((prev) => [
           ...prev,
           ...newResults,
         ]);
-
       }
 
       setPage(pageNumber);
@@ -105,191 +198,375 @@ export default function DeepSearchModal({
    * SEARCH TYPES
    * =========================================================
    */
-  const handleFilterChange = (
-    type
-  ) => {
+
+  const handleFilterChange = (type) => {
     if (type === searchType) {
       return;
     }
+
+    const selectedIndex = searchTypes.findIndex(
+      (item) => item.id === type
+    );
+
+    activeCategory.value = selectedIndex;
+
     setSearchType(type);
     setResults([]);
     setPage(1);
     setHasMore(true);
+
+    scrollY.value = 0;
+
+    listRef.current?.scrollToOffset({
+      offset: 0,
+      animated: true,
+    });
   };
 
   useEffect(() => {
     if (!visible) {
       return;
     }
+
     if (!query?.trim()) {
       return;
     }
+
     performSearch({
       pageNumber: 1,
       replace: true,
     });
   }, [searchType]);
 
-
   const searchTypes = [
     {
       id: "people",
       label: "People",
-      icon: "people-outline",
     },
     {
       id: "arenas",
       label: "Arenas",
-      icon: "flame-outline",
     },
     {
       id: "stages",
       label: "Stages",
-      icon: "trophy-outline",
     },
   ];
-// load more
 
-const loadMore = () => {
+  /*
+   * =========================================================
+   * PAGINATION
+   * =========================================================
+   */
+
+  const loadMore = () => {
     if (loading) {
       return;
     }
+
     if (loadingMore) {
       return;
     }
+
     if (!hasMore) {
       return;
     }
+
     performSearch({
       type: searchType,
       pageNumber: page + 1,
       replace: false,
     });
-
   };
 
- // rendering 
- const renderResult = ({ item }) => {
+  /*
+   * =========================================================
+   * RESULT RENDERING
+   * =========================================================
+   */
+
+  const renderResult = ({ item }) => {
     if (!item) {
       return null;
     }
+
     if (item.resultType === "user") {
       return (
-        <View className="mb-3">
-
-          <UserProfileCard
-              entry={item}
-              width={width * 0.95}
-              height={width/2.2}
+        <View style={{ marginBottom: 24 }}>
+          <UserCard
+            user={item}
+            width={width * 0.93}
+            onPress={() => {
+              // Navigate to the user's profile
+            }}
+            onFollowPress={() => {
+              // Handle follow / unfollow
+            }}
+            isFollowing={false}
           />
-
         </View>
       );
     }
 
     if (item.resultType === "arena") {
       return (
-        <View className="mb-3">
-
-          <ArenaJourneyCard
+        <View style={{ marginBottom: 22 }}>
+          <ArenaCard
             entry={item}
             width={width * 0.95}
-            height={width/1.1}
+            height={width / 1.1}
           />
-
         </View>
       );
     }
 
     if (item.resultType === "stage") {
       return (
-        <View className="mb-3">
-
+        <View style={{ marginBottom: 22 }}>
           <StageCard
-             entry={item}
-             width={width * 0.95}
-             height={width/1.1}
+            entry={item}
+            width={width * 0.95}
+            height={width / 1.1}
           />
         </View>
       );
     }
+
     return null;
   };
 
+  /*
+   * =========================================================
+   * EMPTY STATE
+   * =========================================================
+   */
 
   const renderEmpty = () => {
     if (loading) {
       return null;
     }
+
     return (
-      <View className="flex-1 items-center justify-center px-8">
-        <View className="
-          h-14
-          w-14
-          items-center
-          justify-center
-          rounded-2xl
-          border
-          border-white/[0.06]
-          bg-white/[0.03]
-        ">
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 32,
+        }}
+      >
+        <View
+          style={{
+            width: 72,
+            height: 72,
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 22,
+            backgroundColor: "rgba(218,184,105,0.07)",
+            borderWidth: 1,
+            borderColor: "rgba(218,184,105,0.18)",
+          }}
+        >
           <Ionicons
             name="search-outline"
-            size={24}
-            color="rgba(255,255,255,0.25)"
+            size={27}
+            color="rgba(218,184,105,0.65)"
           />
         </View>
 
-        <Text className="
-          mt-4
-          text-[15px]
-          font-semibold
-          text-white/70
-        ">
+        <Text
+          style={{
+            marginTop: 20,
+            fontSize: scale(15),
+            fontWeight: "700",
+            color: "#F0E8D8",
+          }}
+        >
           Nothing found
         </Text>
 
-        <Text className="
-          mt-2
-          text-center
-          text-[11px]
-          leading-[17px]
-          text-white/30
-        ">
+        <Text
+          style={{
+            marginTop: 9,
+            textAlign: "center",
+            fontSize: scale(11),
+            lineHeight: 18,
+            color: "rgba(255,255,255,0.38)",
+          }}
+        >
           No {searchType} matched "{query}"
         </Text>
-
       </View>
     );
   };
 
-  const renderFooter = () => {
+  /*
+   * =========================================================
+   * LIST FOOTER
+   * =========================================================
+   */
 
+  const renderFooter = () => {
     if (!loadingMore) {
-      return <View className="h-8" />;
+      return <View style={{ height: 30 }} />;
     }
 
     return (
-      <View className="items-center py-6">
-
+      <View
+        style={{
+          alignItems: "center",
+          paddingVertical: 26,
+        }}
+      >
         <ActivityIndicator
           size="small"
-          color="#EAB308"
+          color="#D8B86A"
         />
 
-        <Text className="
-          mt-2
-          text-[10px]
-          font-medium
-          text-white/30
-        ">
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: scale(10),
+            fontWeight: "600",
+            color: "rgba(255,255,255,0.35)",
+          }}
+        >
           Loading more...
         </Text>
-
       </View>
     );
   };
 
+  /*
+   * =========================================================
+   * PREMIUM CATEGORY SELECTOR
+   * Compact segmented navigation
+   * Always stays visible
+   * =========================================================
+   */
+
+  const renderCategorySelector = () => {
+    return (
+      <View
+        style={{
+          marginHorizontal: 20,
+          marginTop: 5,
+          marginBottom: 17,
+          padding: 4,
+          height: scale(40),
+          borderRadius: 13,
+          backgroundColor: "#151512",
+          borderWidth: 1,
+          borderColor: "rgba(218,184,105,0.10)",
+          overflow: "hidden",
+          justifyContent: "center",
+        }}
+      >
+        {/* ACTIVE SEGMENT BACKGROUND */}
+
+        {/* <View
+          pointerEvents="none"
+          style = {{
+            position: "absolute",
+            top: 4,
+            bottom: 4,
+            left: 4,
+            width: "33.333%",
+            paddingRight: 3,
+            }} >
+          <View
+            style={{
+              flex: 1,
+              borderRadius: 9,
+              backgroundColor: "rgba(218,184,105,0.075)",
+            }}
+          />
+        </View> */}
+
+        {/* CATEGORY LABELS */}
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          {searchTypes.map((item, index) => {
+            const active = searchType === item.id;
+
+            return (
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.75}
+                onPress={() => handleFilterChange(item.id)}
+                className = "rounded-xl"
+                style={{
+                  flex: 1,
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: active ? "black" : "",
+                  }} >
+                <Text
+                  className = "uppercase"
+                  style={{
+                    fontSize: scale(11),
+                    fontWeight: active ? "800" : "500",
+                    // letterSpacing: active ? 0.35 : 0.15,
+                    color: active
+                      ? "#E7CD94"
+                      : "#c0c0c0",
+                  }}  >
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* ANIMATED GOLD UNDERLINE */}
+
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            {
+              position: "absolute",
+              bottom: 4,
+              left: 4,
+              width: "33.333%",
+              height: 2,
+              alignItems: "center",
+            },
+            underlineAnimatedStyle,
+          ]}
+        >
+          <View
+            style={{
+              width: 23,
+              height: 2,
+              borderRadius: 2,
+              backgroundColor: "#D8B86A",
+              shadowColor: "#D8B86A",
+              shadowOpacity: 0.45,
+              shadowRadius: 5,
+              shadowOffset: {
+                width: 0,
+                height: 0,
+              },
+              elevation: 2,
+            }}
+          />
+        </Animated.View>
+      </View>
+    );
+  };
+
+  /*
+   * =========================================================
+   * MAIN MODAL
+   * =========================================================
+   */
 
   return (
     <View
@@ -297,13 +574,10 @@ const loadMore = () => {
         position: "absolute",
         inset: 0,
         zIndex: 10000,
+        backgroundColor: "rgba(0,0,0,0.64)",
       }}
-      className="bg-black/60"
     >
-
-      {/* =====================================================
-          BACKDROP
-      ===================================================== */}
+      {/* BACKDROP */}
 
       <TouchableOpacity
         activeOpacity={1}
@@ -314,10 +588,7 @@ const loadMore = () => {
         }}
       />
 
-
-      {/* =====================================================
-          SHEET
-      ===================================================== */}
+      {/* SHEET */}
 
       <View
         style={{
@@ -326,356 +597,193 @@ const loadMore = () => {
           right: 0,
           bottom: 0,
           height: height * 0.94,
+          overflow: "hidden",
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
+          borderTopWidth: 1,
+          borderColor: "rgba(218,184,105,0.17)",
+          backgroundColor: "#090909",
         }}
-        className="
-          overflow-hidden
-          rounded-t-[28px]
-          border-t
-          border-white/[0.08]
-          bg-[#090909]
-        "
       >
+        {/* HANDLE */}
 
-        {/* ===================================================
-            HANDLE
-        =================================================== */}
+        {/* <View
+          style={{
+            alignItems: "center",
+            paddingTop: 12,
+            paddingBottom: 5,
+          }}
+        >
+          <View
+            style={{
+              width: 40,
+              height: 4,
+              borderRadius: 4,
+              backgroundColor: "rgba(218,184,105,0.35)",
+            }}
+          />
+        </View> */}
 
-        <View className="items-center pt-3">
+        {/* =================================================
+            COLLAPSIBLE INTRO
+        ================================================= */}
 
-          <View className="
-            h-[4px]
-            w-[42px]
-            rounded-full
-            bg-white/[0.18]
-          " />
-
-        </View>
-
-
-        {/* ===================================================
-            HEADER
-        =================================================== */}
-
-        <View className="
-          px-5
-          pt-5
-        ">
-
-          <View className="
-            flex-row
-            items-center
-            justify-between
-          ">
-
-            <View className="flex-1">
-
-              <Text 
+        <Animated.View
+          style={[
+            {
+              overflow: "hidden",
+            },
+            introAnimatedStyle,
+          ]}
+        >
+          <View
+            style={{
+              paddingHorizontal: 21,
+              paddingTop: 17,
+              paddingBottom: 12,
+            }}
+          >
+            <View
               style={{
-                color: "#eab308",
-                fontSize: scale(16),
-                fontWeight: "500",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
-              
-              >
-                SEARCH DEEPER
-              </Text>
+            >
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={{
+                    color: "#D8B86A",
+                    fontSize: scale(17),
+                    fontWeight: "800",
+                    letterSpacing: 2.1,
+                  }}
+                >
+                  SEARCH DEEPER
+                </Text>
 
-              <Text
-              style ={{
-                fontSize :width/30
-              }}
-               className=" mt-1 text-[12px] text-white/100 "
-              numberOfLines={1}
-              >
-                Results for "{query}"
-              </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    marginTop: 7,
+                    color: "#F0E8D8",
+                    fontSize: scale(12),
+                    fontWeight: "500",
+                  }}
+                >
+                  Results for "{query}"
+                </Text>
+              </View>
 
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={onClose}
+                style={{
+                  marginLeft: 15,
+                  width: 39,
+                  height: 39,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 20,
+                  backgroundColor: "#15130F",
+                  borderWidth: 1,
+                  borderColor: "rgba(218,184,105,0.20)",
+                }}
+              >
+                <Ionicons
+                  name="close"
+                  size={21}
+                  color="#D8B86A"
+                />
+              </TouchableOpacity>
             </View>
 
-
-            {/* CLOSE */}
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={onClose}
-              className="  ml-4  p-1   items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.04]   "
+            <Text
+              style={{
+                marginTop: 12,
+                fontSize: scale(11),
+                lineHeight: 17,
+                color: "rgba(255,255,255,0.42)",
+              }}
             >
-
-              <Ionicons
-                name="close"
-                size={scale(25)}
-                color="rgba(255,255,255,0.7)"
-              />
-
-            </TouchableOpacity>
-
+              Explore the Itri community, arenas and stages.
+            </Text>
           </View>
+        </Animated.View>
 
+        {/* PINNED CATEGORY SELECTOR */}
 
-          {/* =================================================
-              DESCRIPTION
-          ================================================= */}
+        {renderCategorySelector()}
 
-          <Text 
-          style = {{
-            fontSize : scale (12)
+        {/* RESULTS SUMMARY */}
+
+        <View
+          style={{
+            paddingHorizontal: 22,
+            paddingBottom: 13,
+            borderBottomWidth: 1,
+            borderBottomColor: "rgba(255,255,255,0.045)",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
-          className=" mt-4   text-white/55  ">
-            Search across people, arenas and stages .
+        >
+          <Text
+            style={{
+              color: "rgba(218,184,105,0.75)",
+              fontSize: scale(9),
+              fontWeight: "800",
+              letterSpacing: 1.8,
+            }}
+          >
+            {searchType.toUpperCase()}
           </Text>
 
-
-          {/* =================================================
-              FILTER PILLS
-          ================================================= */}
-
-          <View className="
-            mt-5
-            flex-row
-            items-center
-          ">
-
-            {/* PEOPLE */}
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                handleFilterChange("people")
-              }
-              className={`
-                mr-2
-                h-[38px]
-                flex-1
-                flex-row
-                items-center
-                justify-center
-                rounded-lg
-                border
-                ${
-                  searchType === "people"
-                    ? "border-yellow-500/40 bg-yellow-500/[0.12]"
-                    : "border-white/[0.27] bg-white/[0.03]"
-                }
-              `}
+          {!loading && results.length > 0 && (
+            <Text
+              style={{
+                fontSize: scale(10),
+                fontWeight: "600",
+                color: "rgba(255,255,255,0.35)",
+              }}
             >
-
-              <MaterialCommunityIcons
-                name="account-group-outline"
-                size={15}
-                color={
-                  searchType === "people"
-                    ? "#EAB308"
-                    : "rgba(255,255,255,0.4)"
-                }
-              />
-
-              <Text
-                className={`
-                  ml-2
-                  text-[10px]
-                  font-bold
-                  uppercase
-                  tracking-[0.8px]
-                  ${
-                    searchType === "people"
-                      ? "text-yellow-500"
-                      : "text-white/45"
-                  }
-                `}
-              >
-                People
-              </Text>
-
-            </TouchableOpacity>
-
-
-            {/* ARENAS */}
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                handleFilterChange("arenas")
-              }
-              className={`
-                mr-2
-                h-[38px]
-                flex-1
-                flex-row
-                items-center
-                justify-center
-                rounded-lg
-                border
-                ${
-                  searchType === "arenas"
-                    ? "border-yellow-500/40 bg-yellow-500/[0.12]"
-                    : "border-white/[0.27] bg-white/[0.03]"
-                }
-              `}
-            >
-
-              <MaterialCommunityIcons
-                name="stadium-outline"
-                size={15}
-                color={
-                  searchType === "arenas"
-                    ? "#EAB308"
-                    : "rgba(255,255,255,0.4)"
-                }
-              />
-
-              <Text
-                className={`
-                  ml-2
-                  text-[10px]
-                  font-bold
-                  uppercase
-                  tracking-[0.8px]
-                  ${
-                    searchType === "arenas"
-                      ? "text-yellow-500"
-                      : "text-white/45"
-                  }
-                `}
-              >
-                Arenas
-              </Text>
-
-            </TouchableOpacity>
-
-
-            {/* STAGES */}
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                handleFilterChange("stages")
-              }
-              className={`
-                h-[38px]
-                flex-1
-                flex-row
-                items-center
-                justify-center
-                rounded-lg
-                border
-                ${
-                  searchType === "stages"
-                    ? "border-yellow-500/40 bg-yellow-500/[0.12]"
-                    : "border-white/[0.27] bg-white/[0.03]"
-                }
-              `}
-            >
-
-              <MaterialCommunityIcons
-                name="trophy-outline"
-                size={15}
-                color={
-                  searchType === "stages"
-                    ? "#EAB308"
-                    : "rgba(255,255,255,0.4)"
-                }
-              />
-
-              <Text
-                className={`
-                  ml-2
-                  text-[10px]
-                  font-bold
-                  uppercase
-                  tracking-[0.8px]
-                  ${
-                    searchType === "stages"
-                      ? "text-yellow-500"
-                      : "text-white/45"
-                  }
-                `}
-              >
-                Stages
-              </Text>
-
-            </TouchableOpacity>
-
-          </View>
-
-        </View>
-
-
-        {/* ===================================================
-            RESULTS HEADER
-        =================================================== */}
-
-        <View className="
-          px-5
-          pb-3
-          pt-6
-        ">
-
-          <View className="
-            flex-row
-            items-center
-            justify-between
-          ">
-
-            <Text className="
-              text-[10px]
-              font-bold
-              uppercase
-              tracking-[1.2px]
-              text-white/30
-            ">
-              {searchType}
+              {results.length}
+              {hasMore ? "+" : ""} results
             </Text>
-
-            {!loading && results.length > 0 && (
-              <Text className="
-                text-[10px]
-                font-medium
-                text-white/25
-              ">
-                {results.length}
-                {hasMore ? "+" : ""} results
-              </Text>
-            )}
-
-          </View>
-
+          )}
         </View>
 
-
-        {/* ===================================================
-            LOADING
-        =================================================== */}
+        {/* LOADING */}
 
         {loading ? (
-
-          <View className="
-            flex-1
-            items-center
-            justify-center
-          ">
-
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <ActivityIndicator
               size="small"
-              color="#EAB308"
+              color="#D8B86A"
             />
 
-            <Text className="
-              mt-3
-              text-[11px]
-              text-white/30
-            ">
+            <Text
+              style={{
+                marginTop: 14,
+                fontSize: scale(11),
+                fontWeight: "500",
+                color: "rgba(255,255,255,0.38)",
+              }}
+            >
               Searching...
             </Text>
-
           </View>
-
         ) : (
+          /* RESULTS */
 
-          /* =================================================
-             RESULTS FLATLIST
-          ================================================= */
-
-          <FlatList
+          <AnimatedFlatList
+            ref={listRef}
             data={results}
             renderItem={renderResult}
             keyExtractor={(item, index) =>
@@ -683,22 +791,22 @@ const loadMore = () => {
             }
             contentContainerStyle={{
               paddingHorizontal: 20,
-              paddingBottom: 40,
+              paddingTop: 20,
+              paddingBottom: 45,
               flexGrow: results.length === 0 ? 1 : 0,
             }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             ListEmptyComponent={renderEmpty}
             ListFooterComponent={renderFooter}
             removeClippedSubviews={false}
           />
-
         )}
-
       </View>
-
     </View>
   );
 }

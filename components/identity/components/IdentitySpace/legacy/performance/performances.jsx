@@ -26,7 +26,7 @@ import PerformanceTabs from "./performanceTabs";
 import PerformanceCard from "./performanceCard/performanceCard";
 
 export default function Performances({
-  data , title
+  data , title , textHeader , description1 , description2
 }) {
   const {
     userSpotlights,
@@ -183,8 +183,8 @@ export default function Performances({
     <View
         style={{
           paddingHorizontal: spacing(12),
-          // paddingTop: spacing(26),
-          paddingBottom: spacing(26),
+          paddingTop: spacing(20),
+          paddingBottom: spacing(12),
           width,
         }}
         className="justify-center items -center"
@@ -192,17 +192,73 @@ export default function Performances({
 
    
 
-      {/* =========================================
+         {/* =========================================
           SPOTLIGHTS COLLECTION HEADER
           ========================================= */}
 
- 
+      <View style={{
+         marginBottom: spacing(8) ,
+        //  paddingHorizontal: scale(12),
+        }}>
+        
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: spacing(5),
+              }}
+            >
+              <View
+                style={{
+                  width: scale(18),
+                  height: "80%",
+                  backgroundColor: "#E8B95A",
+                  marginRight: spacing(8),
+                }}
+              />
+
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontSize: scale(11),
+                  fontWeight: "900",
+                  letterSpacing: scale(0.8),
+                }}
+              >
+                {textHeader}
+              </Text>
+            </View>
+
+            <Text
+              style={{
+                color: "#FFFFFF",
+                fontSize: scale(12),
+                lineHeight: scale(20),
+                fontWeight: "400",
+                letterSpacing: scale(0.15),
+                opacity: 0.82,
+              }}
+            >
+              {description1}
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontWeight: "700",
+                }}
+              >
+                performances
+              </Text>
+              {description2}
+            </Text>
+
+      </View>
+
 
       <View
         style={{
           width: "100%",
-          marginTop: scale(24),
-          marginBottom: scale(10),
+          marginTop: scale(8),
+          marginBottom: scale(16),
           paddingVertical: scale(10),
           paddingHorizontal: scale(12),
           flexDirection: "row",
@@ -212,9 +268,9 @@ export default function Performances({
           // backgroundColor: "rgba(255,255,255,0.025)",
           // borderWidth: 1,
           // borderColor: "rgba(232,185,90,0.16)",
-          // borderRadius: scale(7),
+          borderRadius: scale(12),
         }}
-        className = "justify-center gap-4 flex-1"
+        className = "justify-between bg-[#1b1a1a] flex-1"
       >
         {/* SECTION TITLE + COUNT */}
         <View
@@ -240,7 +296,7 @@ export default function Performances({
           <Text
             numberOfLines={1}
             style={{
-              color: "#F4F0E8",
+              color: "#c0c0c0",
               fontSize: scale(12),
               fontWeight: "700",
               letterSpacing: scale(0.35),

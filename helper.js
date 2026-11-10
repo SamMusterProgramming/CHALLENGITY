@@ -569,8 +569,20 @@ export const extractStageEntries = (
     },
   
     dancing: {
-      publicUrl: "https://f005.backblazeb2.com/file/challengify-Images/avatar/dancingAvatar.avif",
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/dancingAvatar.avif",
       fileId: "4_z416b61472e3f671f90c50018_f103c79a1285a8513_d20261023_m040640_c005_v0501012_t0036_u01792728400007",
       fileName: "dancingAvatar.avif",
+    },
+
+    melody: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/instrumentAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    art: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/artAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11805213be353ac2_d20261103_m192403_c005_v0521006_t0005_u01793733843268",
+      fileName: "artAvatar.jpg",
     },
   };

@@ -8,15 +8,9 @@ export default function ActionButtons({user}) {
 
   const {scale, spacing} = useGlobalContext()
   return (
-    <View
-        style = {{
-            paddingHorizontal: spacing(12),
-            paddingTop: spacing(26),
-            gap :20
-          }}
-          className = "flex-row ">
+    <>
            <FriendButton userProfile={user} />
            <FollowButton userProfile={user} />
-    </View>
+    </>
   )
 }

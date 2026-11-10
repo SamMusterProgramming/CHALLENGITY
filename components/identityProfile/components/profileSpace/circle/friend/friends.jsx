@@ -158,7 +158,7 @@ const Friends = ({data , title}) => {
   return (
     <View
       style={{
-        paddingHorizontal: spacing(18),
+        paddingHorizontal: spacing(12),
         // paddingTop: spacing(26),
         paddingBottom: spacing(12),
         width,
@@ -171,93 +171,110 @@ const Friends = ({data , title}) => {
           FRIENDS COLLECTION HEADER
        ========================================= */}
 
-      {friends.length > 0 && (
       <View
         style={{
           width: "100%",
-          marginTop: scale(24),
-          paddingVertical: scale(6),
-          paddingHorizontal : scale(6),
-          marginBottom : scale(9),
+          marginTop: scale(28),
+          marginBottom: scale(20),
+          paddingVertical: scale(10),
+          paddingHorizontal: scale(12),
           flexDirection: "row",
-          // alignItems: "end",
-          justifyContent: "space-between",
-        }}
+          alignItems: "center",
+          // justifyContent: "space-between",
 
+          // backgroundColor: "rgba(255,255,255,0.075)",
+          // borderWidth: 1,
+          // borderColor: "rgba(232,185,90,0.16)",
+          borderRadius: scale(12),
+        }}
+        className = "justify-between bg-[#1b1a1a]  flex-1"
       >
-       
+        {/* SECTION TITLE + COUNT */}
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-            // flexShrink: 1,
-            // minWidth: 0,
+            flexShrink: 1,
+            minWidth: 0,
           }}
-          className = "text -end"
         >
-          <Text
-            // numberOfLines={1}
+          {/* GOLD ACCENT */}
+          <View
             style={{
-              color: "#F4F0E8",
+              width: scale(3),
+              height: scale(12),
+              borderRadius: scale(2),
+              backgroundColor: "#E8B95A",
+              marginRight: scale(10),
+              opacity: 0.9,
+            }}
+          />
+
+          <Text
+            numberOfLines={1}
+            style={{
+              color: "#c0c0c0",
               fontSize: scale(12),
               fontWeight: "700",
-              // letterSpacing: scale(0.15),
-              // flexShrink: 1,
+              letterSpacing: scale(0.35),
+              flexShrink: 1,
             }}
-            className = "uppe rcase"
           >
             {title}
           </Text>
 
+          {/* COUNT BADGE */}
       
-            <Text
-              style={{
-                marginLeft: scale(9),
-                color: "rgba(232,185,90,0.95)",
-                fontSize: scale(12),
-                fontWeight: "700",
-                fontVariant: ["tabular-nums"],
-              }}
-            >
-              {friends.length}
-            </Text>
-        
+          <Text
+            style={{
+              marginLeft: scale(9),
+              color: "#E8B95A",
+              fontSize: scale(11),
+              fontWeight: "700",
+              fontVariant: ["tabular-nums"],
+            }}
+          >
+            {friends.length}
+          </Text>
+
         </View>
 
-      
+        {/* VIEW ALL */}
         <Pressable
           onPress={() => {
             // Open all arenas
           }}
           accessibilityRole="button"
-          accessibilityLabel={`View all `}
+          accessibilityLabel={`View all ${title}`}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 4 }}
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginLeft: scale(12),
-            paddingVertical: scale(6),
+            justifyContent: "center",
+            marginLeft: scale(10),
+            paddingVertical: scale(5),
+            paddingLeft: scale(5),
           }}
         >
           <Text
             style={{
               color: "#E8B95A",
-              fontSize: scale(12),
+              fontSize: scale(11),
               fontWeight: "600",
-              letterSpacing: scale(0.1),
-            }}   >
+              letterSpacing: scale(0.15),
+            }}
+          >
             View all
           </Text>
 
           <Ionicons
             name="arrow-forward"
-            size={scale(14)}
+            size={scale(13)}
             color="#E8B95A"
             style={{ marginLeft: scale(5) }}
           />
         </Pressable>
       </View>
-      )}
 
       {/* =========================================
           FRIENDS CAROUSEL

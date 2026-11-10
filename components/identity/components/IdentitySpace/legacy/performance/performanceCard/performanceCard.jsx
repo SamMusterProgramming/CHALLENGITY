@@ -27,6 +27,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import RisingStarIcon from "../../../../../../svgIcons/RisingStarIcon";
 import { formatCount } from "../../../../../../../helper";
 import { LinearGradient } from "expo-linear-gradient";
+import { countries } from "../../../../../../../utilities/TypeData";
 
 // Enable LayoutAnimation on Android
 if (
@@ -168,7 +169,7 @@ export default function PerformanceCard({
                         source={{ uri: thumbnail }}
                         resizeMode="cover"
                         style={{
-                          height : "95%"
+                          height : "86%"
                         }}
                         className="h- full w-full rounded-2xl"
                       />
@@ -237,8 +238,8 @@ export default function PerformanceCard({
               position: "absolute",
               left: 0,
               right: 0,
-              bottom: -2,
-              height: "58%",
+              bottom: 2,
+              height: "88%",
             }}
           />
           
@@ -272,9 +273,9 @@ export default function PerformanceCard({
             <View
               style={{
                 position: "absolute",
-                left: 23,
+                right: 23,
                 right: 13,
-                bottom: scale(30),
+                bottom: scale(55),
                 flexDirection: "row",
                 alignItems: "center",
               }}   >
@@ -327,56 +328,54 @@ export default function PerformanceCard({
                 </Text>
               </TouchableOpacity>
 
-              {/* <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginRight: 16,
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="comment-outline"
-                  size={scale(16)}
-                  color="#FFFFFF"
-                />
-                <Text
-                  style={{
-                    marginLeft: 4,
-                    color: "#FFFFFF",
-                    fontSize: scale(10),
-                    fontWeight: "800",
-                  }}
-                >
-                  {formatCount(comments)}
-                </Text>
-              </View> */}
-
            </View>
 
            <View
-                className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
-                style={{
-                  bottom :-spacing(5) ,
-                  padding : spacing(4),
-                  zIndex :1002,
-                }}  >
+                 className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
+                 style={{
+                   bottom :spacing(20) ,
+                   left: "23%",
+                   padding : spacing(2),
+                   zIndex :1002,
+                 }}  >
                 {/* <ArenaPortalIcon size={scale(30)} /> */}
                 <Image
                 source={{ uri: performance.arena.profileImage.publicUrl }}
                 resizeMode="cover"
                 style={{
-                  width: scale(70),
-                  height: scale(70),
+                  width: scale(90),
+                  height: scale(90),
                 }}
                 className ="rounded-full"
               />
            </View>
 
-     </View>
+           <Text
+                className = "absolute bottom-2 right-4 uppercase"
+                style={{
+                // marginTop: spacing(3),
+                  color: "#c0c0c0",
+                  fontSize: scale(9),
+                  fontWeight: "700",
+                  // letterSpacing: scale(0.3),
+                  
+                }}  >
+                        {countries.find(c=> c.code == country)?.name}
+           </Text>
+           <Text
+                           className = "absolute bottom-2 left-4 uppercase"
+                           style={{
+                           // marginTop: spacing(3),
+                             color: "#c0c0c0",
+                             fontSize: scale(9),
+                             fontWeight: "700",
+                             // letterSpacing: scale(0.3),
+                             
+                           }}  >
+                          {talent.toUpperCase()}
+            </Text>
 
-
-
-
+       </View>
 
 
        <View
@@ -386,151 +385,113 @@ export default function PerformanceCard({
                 height : scale(110)
             }}  >
 
-             <View 
+            <View 
              style = {{
-              paddingVertical: spacing(16),
-              paddingHorizontal: spacing(12),
+              paddingVertical: spacing(8),
+              paddingHorizontal: spacing(8),
              }}
-             className = "flex-row justify-center items-center bg-[#202021] rounded-bl-[10px] rounded-tr-full  gap -4" >
-
-                <View
-                className="items-center justify-center"
-                style={{
-                   }}  >
-                    <View
-                    className="items-center  gap-4 justify-center"
-                    style={{
-
-                    }}  >
-                      <TalentIcon talent={talent} size={scale(29)} color={"white"}/>
-                      <Text
-                          style={{
-                          // marginTop: spacing(3),
-                          color: "white",
-                          fontSize: scale(9),
-                          fontWeight: "800",
-                          letterSpacing: scale(0.3),
-                          }}  >
-                          {talent.toUpperCase()}
-                      </Text>
-                    </View>
-              </View>
+             className = " justify-center absolute top-0 left-4 z-50 items-center bg-[#202021] round ed-bl-[10px] rounded-full  gap -4" >
+                      <TalentIcon talent={talent} size={scale(27)} color={"gold"}/>
             </View>
 
 
             {/* METRICS */}
              <View
-             className = "flex-1  justify-center bg-[#202021] items-center">
+             className = "flex-1  justify-center b g-[#202021] items-center">
                    
-                <Pressable
+                  <Pressable
                     android_ripple={{
                       color: "rgba(232,185,90,0.06)",
                     }}
                     style={{
-                        // paddingBottom: spacing(16),
-                        paddingHorizontal: spacing(12),
-                        paddingTop : scale(28)
-                        
+      
                     }}
-                    className = "justify-start mb-4  flex-1 rounded-b-[50px] bg-black items-center"
+                    className = "justify-start bg-black  flex-1   items-start"
                   >
-                    <View className="flex-row items-center  ">
+                    <View 
+                    style ={{
+                      paddingLeft : spacing(80),
+                      paddingTop : spacing(8)
+                    }}
+                     className=" bg-black border-x-2 border-b-2 rounded-b-3xl min-w-full flex-1 border-[#252424] items-start ">
 
-                        <View
-                          className="flex-1 items-center justify-center"
-                          style={{
-                            paddingRight: spacing(8),
-                          }}   >
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              color: "#F4F4F2",
-                              fontSize: scale(14),
-                              lineHeight: spacing(16),
-                              fontWeight: "800",
-                              letterSpacing: scale(0.25),
-                            }}  >
-                            {name}
-                        </Text>
-
+                      {/* Performance classification */}
+                      <View
+                        className="flex-row items-center"
+                        style={{
+                          // marginTop: spacing(10),
+                          paddingHorizontal: spacing(9),
+                          paddingVertical: spacing(8),
+                          borderRadius: scale(5),
+                          backgroundColor: "rgba(232,185,90,0.09)",
+                          borderWidth: scale(0.7),
+                          borderColor: "rgba(232,185,90,0.25)",
+                        }} >
                         <Text
-                          numberOfLines={1}
                           style={{
-                            marginTop: spacing(14),
-                            color: "rgba(255,255,255,0.92)",
-                            fontSize: scale(11),
-                            lineHeight: spacing(12),
-                            fontWeight: "500",
+                            color: "#E8B95A",
+                            fontSize: scale(9),
+                            fontWeight: "800",
+                            letterSpacing: scale(0.8),
                           }}
                         >
-                          {caption}
+                          {isSpotlight ? "SPOTLIGHT FEATURE" : "ARENA PERFORMANCE"}
                         </Text>
-
                       </View>
+
+                      {/* Arena name */}
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          marginTop: spacing(16),
+                          color: "#F1EEE7",
+                          fontSize: scale(14),
+                          fontWeight: "800",
+                          letterSpacing: scale(0.2),
+                        }}
+                      >
+                        {name}
+                      </Text>
 
                     
+
+                      {/* Caption */}
+                      <Text
+                        numberOfLines={2}
+                        style={{
+                          marginTop: spacing(8),
+                          color: "rgba(255,255,255,0.76)",
+                          fontSize: scale(11),
+                          lineHeight: scale(16),
+                          fontWeight: "400",
+                          letterSpacing: scale(0.1),
+                        }}
+                      >
+                        {caption}
+                      </Text>
+
                     </View>
                   </Pressable>
-             
-          
 
-                      <View
-                          className="bg- [black]/70 border-b-2 border-b-goldSoft/50 items-center  absolute   justify-center"
-                          style={{
-                            top : -scale(4) ,
-                            left:  -scale(8),
-                            paddingVertical : scale(3),
-                            zIndex :1002,
-                          }}   >
-                            <Text
-                                    className = "text-goldSoft/100"
-                                    style={{
-                                    fontSize: scale(8),
-                                    fontWeight: "800",
-                                    letterSpacing: scale(0.4),
-                                    }}  >
-                                 {isSpotlight ? "SPOTLIGHT":"PERFORMANCE"} 
-                            </Text>
-                      </View>
+                     
 
               </View>
 
               <View 
-             style = {{
-              paddingVertical: spacing(16),
-              paddingHorizontal: spacing(16),
-             }}
-             className = "flex-row bg-[#202021] rounded-br-[10px] rounded-tl-full  gap -4" >
-                <View
-                    className="items-center justify-center"
-                    style={{
-                    //   width: spacing(60),
-                    }}  >
-                    <View
-                      className="items-center gap-4 justify-center"
-                      style={{
-                          // width: spacing(55),
-                          // height: spacing(70),
-                      }}
-                      >
+                style = {{
+                  paddingVertical: spacing(8),
+                  paddingHorizontal: spacing(8),
+                  // height : scale(60),
+                  // width : scale(60)
+                  }}
+                  className = "flex-row absolute top-0 right-4 justify-center items-center bg-[#202021]  rounded-full  gap -4" >
                         <CountryFlag
                             code={country}
-                            size={scale(27)}
+                            size={scale(30)}
                         />
-                        <Text
-                            style={{
-                            // marginTop: spacing(3),
-                             color: "white",
-                              fontSize: scale(10),
-                              fontWeight: "700",
-                              letterSpacing: scale(0.3),
-                            }}  >
-                            {country}
-                        </Text>
-                    </View>
-                </View>
+              </View>
 
-            </View>
+           
          
         </View>
 

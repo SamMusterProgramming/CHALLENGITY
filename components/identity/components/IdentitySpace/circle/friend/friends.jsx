@@ -18,7 +18,7 @@ const GOLD = "#E8B95A";
 const BG = "#050505";
 
 
-const Friends = ({data , title}) => {
+const Friends = ({data , title , textHeader , description1 , description2}) => {
   const { userFriends,setUserFriends, scale, spacing, user } = useGlobalContext();
   const [activePage, setActivePage] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -157,7 +157,7 @@ const Friends = ({data , title}) => {
     <View
       style={{
         paddingHorizontal: spacing(12),
-        // paddingTop: spacing(26),
+        paddingTop: spacing(20), 
         paddingBottom: spacing(12),
         width,
       }}
@@ -168,13 +168,60 @@ const Friends = ({data , title}) => {
       {/* =========================================
           FRIENDS COLLECTION HEADER
        ========================================= */}
+      
+      <View style={{
+         marginBottom: spacing(8) ,
+        //  paddingHorizontal: scale(12),
+        }}>
+        
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: spacing(5),
+              }}
+            >
+              <View
+                style={{
+                  width: scale(18),
+                  height: "80%",
+                  backgroundColor: "#E8B95A",
+                  marginRight: spacing(8),
+                }}
+              />
 
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontSize: scale(11),
+                  fontWeight: "900",
+                  letterSpacing: scale(0.8),
+                }}
+              >
+                {textHeader}
+              </Text>
+            </View>
+
+            <Text
+              style={{
+                color: "#FFFFFF",
+                fontSize: scale(12),
+                lineHeight: scale(20),
+                fontWeight: "400",
+                letterSpacing: scale(0.15),
+                opacity: 0.82,
+              }}
+            >
+              {description1}
+            </Text>
+
+      </View>
 
       <View
         style={{
           width: "100%",
-          marginTop: scale(24),
-          marginBottom: scale(10),
+          marginTop: scale(8),
+          marginBottom: scale(16),
           paddingVertical: scale(10),
           paddingHorizontal: scale(12),
           flexDirection: "row",
@@ -184,9 +231,9 @@ const Friends = ({data , title}) => {
           // backgroundColor: "rgba(255,255,255,0.025)",
           // borderWidth: 1,
           // borderColor: "rgba(232,185,90,0.16)",
-          // borderRadius: scale(7),
+          borderRadius: scale(12),
         }}
-        className = "justify-center gap-4 flex-1"
+        className = "justify-between bg-[#1b1a1a] gap-4 flex-1"
       >
               
 

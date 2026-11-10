@@ -28,7 +28,7 @@ export default function CircleBuilder() {
       >
         <View
           style={{
-            paddingHorizontal: spacing(20),
+            paddingHorizontal: spacing(4),
             paddingTop: spacing(22),
             paddingBottom: spacing(20),
           }}

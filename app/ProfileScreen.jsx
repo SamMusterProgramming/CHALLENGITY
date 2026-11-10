@@ -181,9 +181,17 @@ export default function ProfileScreen() {
 
           case "actionButtons":
             return (
-              <ActionButtons
-                user={profile}
-              />
+              <View
+              style = {{
+                    paddingHorizontal: spacing(12),
+                    paddingTop: spacing(26),
+                    gap :20
+                  }}
+                  className = "flex-row">
+                  <ActionButtons
+                    user={profile}
+                  />
+              </View>
             );
 
         case "globalStats":

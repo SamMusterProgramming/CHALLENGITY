@@ -35,20 +35,28 @@ export default function CircleContent({
     return null;
   }
   return (
-    <>
-    {(friends.users?.length > 0 || followers.users?.length > 0 || followings.users.length > 0) && (
     <View
+    style={{
+      width: "100%",
+      paddingHorizontal: spacing(10),
+      // marginBottom: spacing(26),
+    }}
+    // className = "items-center justify-center "
+    className= "bord er-x-[rgba(232,185,90,0.38)] self-center items-center bor der-[rgba(232,185,90,0.38)] rounded-b-3xl rounded-tr-3xl border-[1px]"  >
+
+    {(friends.users?.length > 0 || followers.users?.length > 0 || followings.users.length > 0) && (
+      <View
       style={{
         paddingHorizontal: spacing(18),
-        paddingTop: spacing(26),
-        paddingBottom: spacing(12),
+        paddingTop: spacing(36),
+        // paddingBottom: spacing(32),
         width,
       }}
       className="justify-center w- full items-center"
-       >
+      >
 
       <View
-        className="items-center justify-center"
+        className="items-start justify-center"
         style={{
           // width: "100%",
           // marginBottom: spacing(10),
@@ -59,21 +67,12 @@ export default function CircleContent({
           className="flex-row items-center justify-center"
           style={{
             gap: spacing(8),
-            marginBottom: spacing(6),
-          }}
-        >
-          <View
-            style={{
-              // width: scale(18),
-              height: scale(1),
-              backgroundColor: "rgba(232,185,90,0.35)",
-            }}
-            className = "flex-1"
-          />
+            marginBottom: spacing(12),
+          }}  >
 
           <Text
             style={{
-              fontSize: scale(20),
+              fontSize: scale(18),
               fontWeight: "900",
               letterSpacing: scale(2.2),
               color: "#F5F5F5",
@@ -97,16 +96,32 @@ export default function CircleContent({
           />
         </View>
 
-        <Text
+
+        <View
             style={{
-              fontSize: scale(9),
-              fontWeight: "700",
-              letterSpacing: scale(0.8),
-              color: "#E8B95A",
-            }}
-          >
-            CIRCLE SPACE
-        </Text>
+              flexDirection: "row",
+              alignItems: "center",
+              }} >
+              <View
+                style={{
+                  width: scale(18),
+                  height: 1,
+                  backgroundColor: "#E8B95A",
+                  marginRight: spacing(8),
+                }}
+              />
+
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontSize: scale(9),
+                  fontWeight: "900",
+                  letterSpacing: scale(2),
+                }}
+              >
+                CIRCLE SPACE
+            </Text>
+        </View>
       </View>
 
          <Friends data = {friends.users} title = {`${profile.name?.trim().split(/\s+/)[0] ?? ""}'s Friends`}/>
@@ -193,6 +208,6 @@ export default function CircleContent({
     </View> */}
 
     {/* <CircleOverview /> */}
-    </>
+    </View>
   )
 }

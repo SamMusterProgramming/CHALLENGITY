@@ -1,9 +1,9 @@
+
 import React from "react";
 import Svg, {
   Path,
   Circle,
   Ellipse,
-  Rect,
   Defs,
   LinearGradient,
   RadialGradient,
@@ -12,558 +12,288 @@ import Svg, {
 
 const GOLD = "#E8B95A";
 
-const ArtIcon = ({
-  size = 32,
-  color = GOLD,
-}) => {
+const ArtIcon = ({ size = 32, color = GOLD }) => {
   return (
     <Svg
       width={size}
       height={size}
-      viewBox="7 5 86 90"
+      viewBox="0 0 100 100"
       preserveAspectRatio="xMidYMid meet"
       fill="none"
     >
       <Defs>
-        {/* Main metallic gold */}
         <LinearGradient
-          id="artMainGold"
-          x1="22"
-          y1="82"
-          x2="76"
-          y2="18"
-          gradientUnits="userSpaceOnUse"
-        >
-          <Stop offset="0" stopColor="#8C4E0D" />
-          <Stop offset="0.15" stopColor="#C97C18" />
-          <Stop offset="0.3" stopColor="#F2BD40" />
-          <Stop offset="0.45" stopColor="#FFF1A0" />
-          <Stop offset="0.58" stopColor="#FFD45A" />
-          <Stop offset="0.75" stopColor="#D99020" />
-          <Stop offset="0.88" stopColor={color} />
-          <Stop offset="1" stopColor="#8B4D0D" />
-        </LinearGradient>
-
-        {/* Palette metallic surface */}
-        <LinearGradient
-          id="artPaletteGold"
-          x1="20"
-          y1="28"
-          x2="66"
-          y2="82"
-          gradientUnits="userSpaceOnUse"
-        >
-          <Stop offset="0" stopColor="#A66011" />
-          <Stop offset="0.18" stopColor="#E1A02B" />
-          <Stop offset="0.38" stopColor="#FFD968" />
-          <Stop offset="0.52" stopColor="#F2BB3F" />
-          <Stop offset="0.7" stopColor="#C87916" />
-          <Stop offset="0.88" stopColor="#A05B0E" />
-          <Stop offset="1" stopColor="#6D3D09" />
-        </LinearGradient>
-
-        {/* Palette glow */}
-        <RadialGradient
-          id="artPaletteGlow"
-          cx="37"
-          cy="35"
-          r="43"
-          gradientUnits="userSpaceOnUse"
-        >
-          <Stop offset="0" stopColor="#FFFBE0" stopOpacity={0.8} />
-          <Stop offset="0.3" stopColor="#FFE88A" stopOpacity={0.4} />
-          <Stop offset="0.65" stopColor="#F0B63A" stopOpacity={0.12} />
-          <Stop offset="1" stopColor="#A85F10" stopOpacity={0} />
-        </RadialGradient>
-
-        {/* Brush shaft */}
-        <LinearGradient
-          id="artBrushGold"
-          x1="48"
-          y1="76"
-          x2="82"
+          id="artGold"
+          x1="17"
+          y1="85"
+          x2="83"
           y2="15"
           gradientUnits="userSpaceOnUse"
         >
-          <Stop offset="0" stopColor="#8A4C0C" />
-          <Stop offset="0.16" stopColor="#D68B1E" />
-          <Stop offset="0.36" stopColor="#FFE58A" />
-          <Stop offset="0.5" stopColor="#FFF2A4" />
-          <Stop offset="0.64" stopColor="#E2A12C" />
-          <Stop offset="0.84" stopColor={color} />
-          <Stop offset="1" stopColor="#8A4C0C" />
+          <Stop offset="0" stopColor="#89500F" />
+          <Stop offset="0.23" stopColor="#C98725" />
+          <Stop offset="0.45" stopColor="#FFE68A" />
+          <Stop offset="0.62" stopColor="#FFF2B0" />
+          <Stop offset="0.8" stopColor={color} />
+          <Stop offset="1" stopColor="#986019" />
         </LinearGradient>
 
-        {/* Ferrule */}
         <LinearGradient
-          id="artFerruleGold"
-          x1="49"
+          id="artPalette"
+          x1="17"
+          y1="30"
+          x2="72"
+          y2="82"
+          gradientUnits="userSpaceOnUse"
+        >
+          <Stop offset="0" stopColor="#FFE68A" />
+          <Stop offset="0.3" stopColor="#E4A438" />
+          <Stop offset="0.65" stopColor="#B8751D" />
+          <Stop offset="1" stopColor="#89500F" />
+        </LinearGradient>
+
+        <LinearGradient
+          id="artBrush"
+          x1="53"
+          y1="77"
+          x2="84"
+          y2="16"
+          gradientUnits="userSpaceOnUse"
+        >
+          <Stop offset="0" stopColor="#89500F" />
+          <Stop offset="0.25" stopColor="#D18B28" />
+          <Stop offset="0.48" stopColor="#FFF0A0" />
+          <Stop offset="0.7" stopColor={color} />
+          <Stop offset="1" stopColor="#986019" />
+        </LinearGradient>
+
+        <LinearGradient
+          id="artFerrule"
+          x1="47"
           y1="69"
-          x2="61"
-          y2="76"
+          x2="62"
+          y2="78"
           gradientUnits="userSpaceOnUse"
         >
-          <Stop offset="0" stopColor="#744009" />
-          <Stop offset="0.25" stopColor="#D18A1F" />
-          <Stop offset="0.48" stopColor="#FFF1A0" />
-          <Stop offset="0.68" stopColor="#E0A02B" />
-          <Stop offset="1" stopColor="#7A430A" />
+          <Stop offset="0" stopColor="#89500F" />
+          <Stop offset="0.4" stopColor="#FFE68A" />
+          <Stop offset="0.65" stopColor="#D18B28" />
+          <Stop offset="1" stopColor="#89500F" />
         </LinearGradient>
 
-        {/* Bristles */}
         <LinearGradient
-          id="artBristles"
-          x1="45"
-          y1="88"
-          x2="57"
-          y2="72"
+          id="artBristle"
+          x1="43"
+          y1="91"
+          x2="58"
+          y2="74"
           gradientUnits="userSpaceOnUse"
         >
-          <Stop offset="0" stopColor="#704009" />
-          <Stop offset="0.28" stopColor="#AA6410" />
-          <Stop offset="0.52" stopColor="#E5A632" />
-          <Stop offset="0.75" stopColor="#FFE080" />
-          <Stop offset="1" stopColor="#95530C" />
+          <Stop offset="0" stopColor="#89500F" />
+          <Stop offset="0.45" stopColor="#D18B28" />
+          <Stop offset="0.75" stopColor="#FFE68A" />
+          <Stop offset="1" stopColor="#A66514" />
         </LinearGradient>
 
-        {/* Sparkles */}
-        <RadialGradient
-          id="artSparkle"
-          cx="50"
-          cy="50"
-          r="50"
-          gradientUnits="userSpaceOnUse"
-        >
-          <Stop offset="0" stopColor="#FFFBE5" />
-          <Stop offset="0.25" stopColor="#FFF0A0" />
-          <Stop offset="0.5" stopColor="#FFD45A" />
-          <Stop offset="0.75" stopColor="#D98E20" />
-          <Stop offset="1" stopColor="#8A4D0D" />
-        </RadialGradient>
-
-        {/* Soft central glow */}
         <RadialGradient
           id="artGlow"
-          cx="43"
-          cy="52"
-          r="40"
+          cx="38"
+          cy="44"
+          r="44"
           gradientUnits="userSpaceOnUse"
         >
-          <Stop offset="0" stopColor="#FFF4AE" stopOpacity={0.25} />
-          <Stop offset="0.45" stopColor="#FFD65A" stopOpacity={0.1} />
+          <Stop offset="0" stopColor="#FFF4AE" stopOpacity={0.3} />
+          <Stop offset="0.5" stopColor="#E8B95A" stopOpacity={0.1} />
           <Stop offset="1" stopColor="#C47714" stopOpacity={0} />
         </RadialGradient>
       </Defs>
 
-      {/* =====================================================
-          DECORATIVE SPARKLES
-          ===================================================== */}
+      {/* Ambient glow */}
+      <Circle cx="43" cy="50" r="42" fill="url(#artGlow)" />
 
+      {/* Artist palette silhouette */}
       <Path
         d="
-          M72 5
-          C72.6 10.1 74 11.6 79.1 12.2
-          C74 12.8 72.6 14.3 72 19.5
-          C71.4 14.3 70 12.8 64.9 12.2
-          C70 11.6 71.4 10.1 72 5
+          M46 19
+          C30 19 17.5 28.2 13.5 41.8
+          C9.3 55.8 15.7 71.3 28.2 79.1
+          C38.4 85.5 51.5 85.7 61.5 79.7
+          C65.6 77.2 66.9 73.4 64.7 70.3
+          C62.5 67.3 58.7 67.5 55.1 68.9
+          C49.3 71.2 43.3 69.5 40.1 65.1
+          C36.5 60.2 37.3 53.7 41.7 49.7
+          C46.2 45.7 52.5 45.1 57.7 47.2
+          C64.4 49.9 72.2 47.3 75.5 41.4
+          C80.4 32.8 66.7 19 46 19
           Z
         "
-        fill="url(#artSparkle)"
+        fill="url(#artPalette)"
+        stroke="#986019"
+        strokeWidth={1.25}
+        strokeLinejoin="round"
       />
 
-      <Circle
-        cx="72"
-        cy="12.2"
-        r="0.95"
-        fill="#FFFBE5"
-        opacity={0.95}
-      />
-
+      {/* Inner palette highlight */}
       <Path
         d="
-          M22 17
-          C22.4 20.7 23.5 21.8 27.2 22.2
-          C23.5 22.6 22.4 23.7 22 27.4
-          C21.6 23.7 20.5 22.6 16.8 22.2
-          C20.5 21.8 21.6 20.7 22 17
-          Z
-        "
-        fill="url(#artSparkle)"
-      />
-
-      <Path
-        d="
-          M84 31
-          C84.35 34.2 85.3 35.1 88.5 35.5
-          C85.3 35.85 84.35 36.8 84 40
-          C83.65 36.8 82.7 35.85 79.5 35.5
-          C82.7 35.1 83.65 34.2 84 31
-          Z
-        "
-        fill="#FFE68A"
-      />
-
-      {/* =====================================================
-          PALETTE GLOW
-          ===================================================== */}
-
-      <Ellipse
-        cx="42"
-        cy="53"
-        rx="34"
-        ry="35"
-        fill="url(#artGlow)"
-      />
-
-      {/* =====================================================
-          ARTIST PALETTE
-          ===================================================== */}
-
-      <Path
-        d="
-          M48.5 23
-          C33.5 23
-          21.1 31.1
-          16.8 43
-          C11.9 56.5
-          17.4 70.9
-          29.2 79
-          C38 85.1
-          49.7 86.5
-          59.2 82.1
-          C65.1 79.4
-          67.8 75
-          65.3 71.6
-          C62.8 68.2
-          58.8 68.4
-          55.3 69.7
-          C51.5 71.1
-          47.1 70.4
-          44.3 67
-          C41.3 63.3
-          41.8 58.2
-          45.1 54.9
-          C48.1 51.9
-          52.6 50.9
-          57.1 52
-          C63.4 53.5
-          70.6 50.9
-          74 45.1
-          C79.1 36.4
-          66.5 23
-          48.5 23
-          Z
-        "
-        fill="url(#artPaletteGold)"
-      />
-
-      {/* Inner palette lighting */}
-      <Path
-        d="
-          M47.8 26
-          C35.3 26
-          24.8 33
-          21 44.1
-          C17.2 55.5
-          21.9 67.5
-          31.7 74.7
-          C39.1 80.2
-          48.7 81.6
-          56.6 78.2
-          C59.2 77.1
-          61.7 75
-          60.9 73.2
-          C60.1 71.5
-          57.6 71.8
-          55.2 72.7
-          C50.1 74.5
-          44.5 72.9
-          40.9 68.8
-          C37 64.4
-          37.5 57.8
-          41.6 53.5
-          C45.4 49.5
-          51.2 48.2
-          56.9 49.8
-          C62.5 51.4
-          68.5 49
-          71.2 44.2
-          C75.1 37.1
-          64.3 26
-          47.8 26
-          Z
-        "
-        fill="url(#artPaletteGlow)"
-        opacity={0.9}
-      />
-
-      {/* Palette top highlight */}
-      <Path
-        d="
-          M21.5 43
-          C25.8 32.7 35.7 26.3 47.9 26
-          C58.8 25.7 67.5 30.6 70.7 36.4
+          M19 43
+          C23.2 29.8 34.3 23 47 22.5
+          C58 22.1 67.4 27 71.4 33.2
         "
         stroke="#FFF2A0"
         strokeWidth={1.15}
         strokeLinecap="round"
-        opacity={0.65}
-      />
-
-      {/* =====================================================
-          PAINT DABS
-          ===================================================== */}
-
-      <Circle
-        cx="30"
-        cy="40"
-        r="4.3"
-        fill="url(#artMainGold)"
-      />
-
-      <Circle
-        cx="44"
-        cy="33.5"
-        r="4.2"
-        fill="url(#artMainGold)"
-      />
-
-      <Circle
-        cx="58"
-        cy="38"
-        r="4.3"
-        fill="url(#artMainGold)"
-      />
-
-      <Circle
-        cx="26.5"
-        cy="54"
-        r="4.1"
-        fill="url(#artMainGold)"
-      />
-
-      <Circle
-        cx="32"
-        cy="66.5"
-        r="3.9"
-        fill="url(#artMainGold)"
-      />
-
-      <Circle
-        cx="52"
-        cy="61"
-        r="4"
-        fill="url(#artMainGold)"
-      />
-
-      {/* Paint dab highlights */}
-      <Circle
-        cx="28.8"
-        cy="38.7"
-        r="0.95"
-        fill="#FFFBE5"
-        opacity={0.9}
-      />
-
-      <Circle
-        cx="42.8"
-        cy="32.2"
-        r="0.9"
-        fill="#FFFBE5"
-        opacity={0.8}
-      />
-
-      <Circle
-        cx="56.7"
-        cy="36.7"
-        r="0.9"
-        fill="#FFFBE5"
         opacity={0.75}
       />
 
-      {/* =====================================================
-          THUMB HOLE
-          ===================================================== */}
-
-      <Ellipse
-        cx="57.5"
-        cy="61"
-        rx="7.8"
-        ry="6.1"
-        fill="#6C3C09"
-        opacity={0.9}
+      {/* Palette lower contour */}
+      <Path
+        d="M17.5 53 C17.2 64 23.4 73.4 33 78.2"
+        stroke="#89500F"
+        strokeWidth={0.85}
+        strokeLinecap="round"
+        opacity={0.65}
       />
 
+      {/* Paint dabs */}
+      <Circle cx="29" cy="39" r="4.1" fill="url(#artGold)" />
+      <Circle cx="44" cy="31.5" r="4.3" fill="url(#artGold)" />
+      <Circle cx="59" cy="37" r="4.1" fill="url(#artGold)" />
+      <Circle cx="25" cy="54" r="3.9" fill="url(#artGold)" />
+      <Circle cx="32" cy="67" r="3.8" fill="url(#artGold)" />
+
+      {/* Paint highlights */}
+      <Circle cx="27.8" cy="37.7" r="0.85" fill="#FFFBE5" opacity={0.85} />
+      <Circle cx="42.7" cy="30.2" r="0.85" fill="#FFFBE5" opacity={0.8} />
+      <Circle cx="57.7" cy="35.8" r="0.85" fill="#FFFBE5" opacity={0.8} />
+
+      {/* Thumb hole */}
       <Ellipse
         cx="57.5"
-        cy="60.6"
-        rx="5.8"
-        ry="4.4"
+        cy="60"
+        rx="7.3"
+        ry="6"
+        fill="#71400D"
+        opacity={0.85}
+      />
+      <Ellipse
+        cx="57.5"
+        cy="60"
+        rx="5.6"
+        ry="4.5"
         fill="#100B06"
       />
-
-      <Ellipse
-        cx="56.3"
-        cy="59.4"
-        rx="2.8"
-        ry="1.8"
-        fill="#FFF0A0"
-        opacity={0.14}
-      />
-
-      {/* =====================================================
-          PALETTE EDGE DETAIL
-          ===================================================== */}
-
       <Path
-        d="
-          M18.5 51
-          C17.5 61.5 22.3 70.8 31.2 76.8
-        "
-        stroke="#8A4D0D"
-        strokeWidth={1}
+        d="M54.5 58.8 C56 57.5 58.5 57.3 60 58.2"
+        stroke="#FFE68A"
+        strokeWidth={0.7}
         strokeLinecap="round"
-        opacity={0.55}
+        opacity={0.25}
       />
 
+      {/* Brush handle shadow */}
       <Path
-        d="
-          M22.2 68.8
-          C27 75.4 35.7 79.6 44.1 80.2
-        "
-        stroke="#FFF0A0"
-        strokeWidth={0.75}
+        d="M53 72 L81 17"
+        stroke="#6D3C09"
+        strokeWidth={6.8}
         strokeLinecap="round"
-        opacity={0.35}
+        opacity={0.45}
       />
 
-      {/* =====================================================
-          PAINT BRUSH
-          ===================================================== */}
-
-      {/* Brush dark shadow */}
+      {/* Brush handle */}
       <Path
-        d="
-          M51.2 72.8
-          L80.7 17.2
-        "
-        stroke="#6E3D09"
-        strokeWidth={7}
-        strokeLinecap="round"
-        opacity={0.5}
-      />
-
-      {/* Main brush handle */}
-      <Path
-        d="
-          M52.2 72
-          L81.2 16.2
-        "
-        stroke="url(#artBrushGold)"
-        strokeWidth={5.2}
+        d="M53.5 70.8 L81.2 16.8"
+        stroke="url(#artBrush)"
+        strokeWidth={4.8}
         strokeLinecap="round"
       />
 
       {/* Handle highlight */}
       <Path
-        d="
-          M54 68.8
-          L80 19
-        "
-        stroke="#FFF3A5"
-        strokeWidth={0.95}
-        strokeLinecap="round"
-        opacity={0.78}
-      />
-
-      {/* Ferrule */}
-      <Path
-        d="
-          M48.2 74
-          L54.6 62
-          L62.8 66.4
-          L56.5 78.4
-          Z
-        "
-        fill="url(#artFerruleGold)"
-      />
-
-      {/* Ferrule highlight */}
-      <Path
-        d="
-          M51 70.8
-          L58.8 67
-        "
-        stroke="#FFF5B2"
+        d="M55 66.5 L79.5 19"
+        stroke="#FFF5B8"
         strokeWidth={0.85}
         strokeLinecap="round"
-        opacity={0.72}
+        opacity={0.8}
       />
 
-      {/* Bristles */}
+      {/* Brush ferrule */}
       <Path
         d="
-          M48.2 74
-          C45.9 77.7 44.4 81.8 44
-          86.2
-          C48.5 84.6 52.7 82
-          56.5 78.4
+          M47.8 74.8
+          L54.2 62.3
+          L62.2 66.4
+          L55.8 78.9
           Z
         "
-        fill="url(#artBristles)"
+        fill="url(#artFerrule)"
+        stroke="#89500F"
+        strokeWidth={0.8}
+        strokeLinejoin="round"
       />
 
-      {/* Bristle highlight */}
+      {/* Ferrule rim */}
+      <Path
+        d="M51 68.5 L59 72.5"
+        stroke="#FFF2A0"
+        strokeWidth={0.8}
+        strokeLinecap="round"
+        opacity={0.8}
+      />
+
+      {/* Brush bristles */}
       <Path
         d="
-          M47.3 77
-          C46.1 79.7 45.2 82.1 44.8 84.4
+          M47.8 74.8
+          C45.2 78.3 43.6 83.5 42.8 89.8
+          C48.1 87.6 52.5 83.9 55.8 78.9
+          Z
         "
-        stroke="#FFF0A0"
+        fill="url(#artBristle)"
+        stroke="#89500F"
+        strokeWidth={0.8}
+        strokeLinejoin="round"
+      />
+
+      {/* Bristle detail */}
+      <Path
+        d="M48.5 77.8 C46.6 81.4 45.1 84.6 44.1 87.5"
+        stroke="#FFE68A"
         strokeWidth={0.75}
         strokeLinecap="round"
-        opacity={0.6}
+        opacity={0.7}
       />
 
-      {/* =====================================================
-          SMALL ART SPARKLES
-          ===================================================== */}
-
+      {/* Small upper sparkle */}
       <Path
         d="
-          M13 65
-          C13.4 68.6 14.4 69.6 18 70
-          C14.4 70.4 13.4 71.4 13 75
-          C12.6 71.4 11.6 70.4 8 70
-          C11.6 69.6 12.6 68.6 13 65
+          M77 7
+          C77.35 10.3 78.2 11.2 81.5 11.5
+          C78.2 11.85 77.35 12.7 77 16
+          C76.65 12.7 75.8 11.85 72.5 11.5
+          C75.8 11.2 76.65 10.3 77 7
           Z
         "
-        fill="#FFE991"
+        fill="url(#artGold)"
       />
 
-      <Circle
-        cx="80"
-        cy="51"
-        r="0.9"
-        fill="#FFFBE5"
+      <Circle cx="77" cy="11.5" r="0.6" fill="#FFFBE5" />
+
+      {/* Small side glint */}
+      <Path
+        d="
+          M11 67
+          C11.3 69.6 12 70.3 14.6 70.6
+          C12 70.9 11.3 71.6 11 74.2
+          C10.7 71.6 10 70.9 7.4 70.6
+          C10 70.3 10.7 69.6 11 67
+          Z
+        "
+        fill="#FFE68A"
         opacity={0.85}
       />
 
-      <Circle
-        cx="67"
-        cy="68"
-        r="0.75"
-        fill="#FFFBE5"
-        opacity={0.8}
-      />
-
-      <Circle
-        cx="24"
-        cy="30"
-        r="0.75"
-        fill="#FFFBE5"
-        opacity={0.8}
-      />
+      <Circle cx="82" cy="52" r="0.8" fill="#FFFBE5" opacity={0.8} />
     </Svg>
   );
 };

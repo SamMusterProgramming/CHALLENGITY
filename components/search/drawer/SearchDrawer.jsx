@@ -27,97 +27,163 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { getSearchSuggestions } from "../../../apiCalls";
+import { getSearchSuggestions } from "../../../apiCalls/discovery";
 import ArenaJourneyCard from "../../myJourney/card/ArenaJourneyCard";
 import UserProfileCard from "../../profile/card/userProfileCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import DeepSearchModal from "../modal/DeepSearchModal";
 import StageCard from "../../discovery/cards/StageCard";
-
+import UserCard from "../../discovery/cards/userCard";
+import ArenaCard from "../../discovery/cards/ArenaCard";
 
 const SearchFooter = ({ onPress }) => {
-    return (
-      <View className="border-t border-white/[0.06] bg-[#090909] px-4 pb-6 pt-3">
-  
-        <TouchableOpacity
-          activeOpacity={0.85}
-          onPress={onPress}
-          className=" flex-row items-center border border-yellow-500/25  bg-yellow-500/[0.07]  px-4 py-3 rounded-[5px] "
+  return (
+    <View
+      style={{
+        backgroundColor: "#090909",
+        paddingHorizontal: 0,
+        paddingTop: 15,
+        paddingBottom: 22,
+        borderTopWidth: 1,
+        borderTopColor: "rgba(218,184,105,0.13)",
+      }}
+    >
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={onPress}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          minHeight: 76,
+          paddingHorizontal: 15,
+          paddingVertical: 13,
+          borderRadius: 13,
+          backgroundColor: "#12110E",
+          borderWidth: 1,
+          borderColor: "rgba(218,184,105,0.32)",
+        }}
+      >
+        {/* ICON */}
+        <View
+          style={{
+            width: 45,
+            height: 45,
+            borderRadius: 12,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(218,184,105,0.10)",
+            borderWidth: 1,
+            borderColor: "rgba(218,184,105,0.16)",
+          }}
         >
-  
-          <View
-            className=" h-9 w-9  items-center justify-center rounded-xl bg-yellow-500/[0.10] "
-          >
-            <Ionicons
-              name="search"
-              size={18}
-              color="#EAB308"
-            />
-          </View>
-  
-          <View className="ml-3 flex-1">
-  
-            <Text className="text-[13px] font-bold text-white">
-              Search deeper
-            </Text>
-  
-            <Text className="mt-[2px] text-[10px] text-white/40">
-              Explore all people, arenas and stages
-            </Text>
-  
-          </View>
-  
           <Ionicons
-            name="chevron-forward"
-            size={18}
-            color="#EAB308"
+            name="scan-outline"
+            size={21}
+            color="#D8B86A"
           />
-  
-        </TouchableOpacity>
-  
-      </View>
-    );
-  };
+        </View>
 
-const { width , height} = Dimensions.get("window");
+        {/* LABEL */}
+        <View style={{ flex: 1, marginLeft: 13 }}>
+          <Text
+            style={{
+              color: "#F2E8D2",
+              fontSize: 14,
+              fontWeight: "800",
+              letterSpacing: 0.35,
+            }}
+          >
+            Deep Search
+          </Text>
+
+          <Text
+            style={{
+              color: "rgba(235,225,204,0.48)",
+              fontSize: 10,
+              marginTop: 5,
+              letterSpacing: 0.15,
+            }}
+          >
+            Discover beyond the suggestions
+          </Text>
+        </View>
+
+        {/* ACTION */}
+        <View
+          style={{
+            width: 34,
+            height: 34,
+            borderRadius: 17,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(218,184,105,0.10)",
+            borderWidth: 1,
+            borderColor: "rgba(218,184,105,0.22)",
+          }}
+        >
+          <Ionicons
+            name="arrow-forward"
+            size={16}
+            color="#D8B86A"
+          />
+        </View>
+      </TouchableOpacity>
+
+      <Text
+        style={{
+          color: "rgba(218,184,105,0.38)",
+          fontSize: 8,
+          fontWeight: "700",
+          letterSpacing: 2,
+          textAlign: "center",
+          marginTop: 12,
+        }}
+      >
+        EXPLORE MORE OF ITRI
+      </Text>
+    </View>
+  );
+};
+
+const { width, height } = Dimensions.get("window");
 
 export default function SearchDrawer({
   visible,
   onClose,
 }) {
+  const insets = useSafeAreaInsets();
+  const drawerWidth = width;
+  const translateX = useSharedValue(drawerWidth);
 
-const insets = useSafeAreaInsets();
-const drawerWidth = width;
-const translateX = useSharedValue(drawerWidth);
-const [focused, setFocused] = useState(false);
-const [query, setQuery] = useState("");
-const [searchMode, setSearchMode] = useState("suggestions");
-const [suggestions, setSuggestions] = useState({
+  const [focused, setFocused] = useState(false);
+  const [query, setQuery] = useState("");
+  const [searchMode, setSearchMode] = useState("suggestions");
+
+  const [suggestions, setSuggestions] = useState({
     users: [],
     arenas: [],
     stages: [],
   });
-const [results, setResults] = useState(null);
-const [searching, setSearching] = useState(false);
-const [deepSearchVisible, setDeepSearchVisible] = useState(false);
-const { scale , spacing } = useGlobalContext();
 
-useEffect(() => {
-if (visible) {
-    translateX.value = withSpring(0, {
-    damping: 18,
-    stiffness: 160,
-    overshootClamping: true,
-    });
-} else {
-    translateX.value = withTiming(
-    drawerWidth,
-    {
+  const [results, setResults] = useState(null);
+  const [searching, setSearching] = useState(false);
+  const [deepSearchVisible, setDeepSearchVisible] = useState(false);
+
+  const { scale, spacing } = useGlobalContext();
+
+  useEffect(() => {
+    if (visible) {
+      translateX.value = withSpring(0, {
+        damping: 18,
+        stiffness: 160,
+        overshootClamping: true,
+      });
+    } else {
+      translateX.value = withTiming(drawerWidth, {
         duration: 220,
+      });
     }
-    );
-}
-}, [visible, drawerWidth]);
+  }, [visible, drawerWidth]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -128,7 +194,6 @@ if (visible) {
       ],
     };
   });
-
 
   const closeDrawer = () => {
     translateX.value = withTiming(
@@ -141,7 +206,6 @@ if (visible) {
       }
     );
   };
-
 
   const panGesture = Gesture.Pan()
     .activeOffsetX([-10, 10])
@@ -171,8 +235,8 @@ if (visible) {
       }
     });
 
-// api calls 
-const searchSuggestions = async (query) => {
+  // API calls
+  const searchSuggestions = async (query) => {
     if (!query?.trim()) {
       return [];
     }
@@ -182,22 +246,24 @@ const searchSuggestions = async (query) => {
 
   useEffect(() => {
     const searchQuery = query.trim();
-  
+
     if (searchQuery.length < 2) {
       setSuggestions({
         users: [],
         arenas: [],
         stages: [],
       });
-  
+
       setSearching(false);
       return;
     }
-  
+
     const timeout = setTimeout(async () => {
       try {
         setSearching(true);
+
         const data = await getSearchSuggestions(searchQuery);
+
         setSuggestions({
           users: data?.users || [],
           arenas: data?.arenas || [],
@@ -213,7 +279,7 @@ const searchSuggestions = async (query) => {
         setSearching(false);
       }
     }, 300);
-  
+
     return () => clearTimeout(timeout);
   }, [query]);
 
@@ -222,20 +288,18 @@ const searchSuggestions = async (query) => {
       ...item,
       resultType: "user",
     })),
-  
+
     ...(suggestions.arenas || []).map((item) => ({
       ...item,
       resultType: "arena",
     })),
-  
+
     ...(suggestions.stages || []).map((item) => ({
       ...item,
       resultType: "stage",
     })),
   ];
 
-
-  
   if (!visible) {
     return null;
   }
@@ -248,25 +312,18 @@ const searchSuggestions = async (query) => {
         zIndex: 9999,
       }}
     >
-      {/* =================================================
-          BACKDROP
-      ================================================= */}
-
+      {/* BACKDROP */}
       <TouchableOpacity
         activeOpacity={1}
         onPress={closeDrawer}
         style={{
           position: "absolute",
           inset: 0,
-          backgroundColor:
-            "rgba(0,0,0,0.58)",
+          backgroundColor: "rgba(0,0,0,0.68)",
         }}
       />
 
-      {/* =================================================
-          DRAWER
-      ================================================= */}
-
+      {/* DRAWER */}
       <GestureDetector gesture={panGesture}>
         <Animated.View
           style={[
@@ -278,276 +335,320 @@ const searchSuggestions = async (query) => {
               bottom: 10,
               width: drawerWidth,
               backgroundColor: "#090909",
-              borderTopLeftRadius: 28,
-              borderBottomLeftRadius: 28,
+              borderTopLeftRadius: 25,
+              borderBottomLeftRadius: 25,
               borderLeftWidth: 1,
-              borderLeftColor:
-                "rgba(255,255,255,0.06)",
+              borderLeftColor: "rgba(218,184,105,0.16)",
               overflow: "hidden",
             },
           ]}
         >
           <View className="flex-1 bg-[#090909]">
 
-            {/* =================================================
-                HEADER
-            ================================================= */}
+            {/* HEADER */}
+            <View
+              style={{
+                paddingHorizontal: 20,
+                paddingTop: 19,
+                paddingBottom: 17,
+              }}
+            >
+              {/* HEADER TOP */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 20,
+                }}
+              >
+                <View style={{ flex: 1, paddingLeft: 2 }}>
+                  <Text
+                    style={{
+                      color: "#D8B86A",
+                      fontSize: scale(17),
+                      fontWeight: "800",
+                      letterSpacing: 2.2,
+                    }}
+                  >
+                    SEARCH
+                  </Text>
 
-            <View className="px-3 pt-3 pb-2">
+                  <Text
+                    style={{
+                      color: "rgba(255,255,255,0.40)",
+                      fontSize: scale(10),
+                      marginTop: 5,
+                      letterSpacing: 0.25,
+                    }}
+                  >
+                    Find people, arenas & stages
+                  </Text>
+                </View>
 
-              {/* TOP */}
-              <View className="mb-2 5 flex-row items-center justify-between">
-
-                <View
-                   className = "fl ex-1 px- 2"
-                   >
-                    <Text
-                       style={{
-                        color: "#eab308",
-                        fontSize: scale(16),
-                        fontWeight: "500",
-                      }}
-                      className = "tracking-wide"
-                    >
-                        SEARCH
-                    </Text>
-                    <Text
-                        style={{
-                        color:
-                            "rgba(255,255,255,0.45)",
-                        fontSize: scale(9),
-                        marginTop: 4,
-                        }} >
-                        Find people, arenas & stages
-                    </Text>
-                </View>  
-
-                <TouchableOpacity 
-                className ="py-2  b g-white justify-center items-center"
-                onPress={closeDrawer}>
-                    <MaterialCommunityIcons
-                        name="chevron-right"
-                        size={scale(45)}
-                        color="#eab308"
-                    />
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={closeDrawer}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#15130F",
+                    borderWidth: 1,
+                    borderColor: "rgba(218,184,105,0.18)",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={27}
+                    color="#D8B86A"
+                  />
                 </TouchableOpacity>
-
               </View>
 
-              {/* =================================================
-                  SEARCH INPUT
-              ================================================= */}
-
+              {/* SEARCH INPUT */}
               <View
-                className={`h-[54px] flex-row items-center rounded-[10px] border mb- 4 px-4 ${
-                  focused
-                    ? "border-[#EAB308]/20 b g-[#14120A]"
-                    : "border-white/[0.07] b g-[#111111]"
-                }`}
+                style={{
+                  height: 55,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  borderRadius: 13,
+                  borderWidth: 1,
+                  borderColor: focused
+                    ? "rgba(218,184,105,0.42)"
+                    : "rgba(255,255,255,0.08)",
+                  backgroundColor: focused
+                    ? "#15130F"
+                    : "#111111",
+                  paddingHorizontal: 16,
+                }}
               >
-
                 <Ionicons
                   name="search-outline"
-                  size={21}
-                  color="#EAB308"
+                  size={20}
+                  color="#D8B86A"
                 />
 
                 <TextInput
                   value={query}
                   onChangeText={setQuery}
-                  placeholder="Search Itri "
-                  placeholderTextColor="rgba(255,255,255,0.35)"
+                  placeholder="Search Itri"
+                  placeholderTextColor="rgba(255,255,255,0.32)"
                   autoCorrect={false}
                   autoCapitalize="none"
                   returnKeyType="search"
-                  onFocus={() =>
-                    setFocused(true)
-                  }
-
-                  onBlur={() =>
-                    setFocused(false)
-                  }
-
-                  className="ml-3 flex-1 text-[15px] font-medium text-white"
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  style={{
+                    flex: 1,
+                    marginLeft: 12,
+                    color: "#FFFFFF",
+                    fontSize: 14,
+                    fontWeight: "500",
+                    paddingVertical: 0,
+                  }}
                 />
 
                 {query.length > 0 && (
                   <TouchableOpacity
                     activeOpacity={0.8}
-                    onPress={() =>
-                      setQuery("")
-                    }
-                    className="ml-2 h-7 w-7 items-center justify-center rounded-full bg-white/[0.07]"  >
+                    onPress={() => setQuery("")}
+                    style={{
+                      marginLeft: 8,
+                      width: 29,
+                      height: 29,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 15,
+                      backgroundColor: "rgba(255,255,255,0.07)",
+                    }}
+                  >
                     <Ionicons
                       name="close"
-                      size={scale(18)}
+                      size={scale(17)}
                       color="rgba(255,255,255,0.55)"
                     />
                   </TouchableOpacity>
                 )}
-
               </View>
-
             </View>
 
-            {/* =================================================
-                CONTENT — WE WILL BUILD THIS NEXT
-            ================================================= */}
-
-            <View className="flex-1 px- 5 pt- 7">
-
+            {/* CONTENT */}
+            <View
+              style={{
+                flex: 1,
+                paddingHorizontal: 12,
+                paddingTop: 5,
+              }}
+            >
               {query.length === 0 ? (
                 <View>
-                  {/* <Text className="mb-4 text-[11px] font-bold uppercase tracking-[1.2px] text-white/30">
-                    Explore
-                  </Text> */}
-{/* 
-                  <View className="rounded-2xl border border-white/[0.06] bg-[#101010] p-4">
-
-                    <View className="flex-row items-center">
-                      <View className="h-10 w-10 items-center justify-center rounded-xl bg-[#EAB308]/[0.08]">
-                        <Ionicons
-                          name="search-outline"
-                          size={19}
-                          color="#EAB308"
-                        />
-                      </View>
-
-                      <View className="ml-3 flex-1">
-                        <Text className="text-[14px] font-semibold text-white">
-                          Discover Itri
-                        </Text>
-
-                        <Text className="mt-1 text-[11px] text-white/40">
-                          Search people, arenas and competitions
-                        </Text>
-                      </View>
-                    </View>
-
-                  </View> */}
+                  {/* Empty initial search state */}
                 </View>
               ) : (
-                <View
-                className ="w-full flex-1">
+                <View className="w-full flex-1">
 
-                  <View 
-                   style = {{
-                    paddingHorizontal : spacing(10),
-                    paddingVertical : spacing(16)
-                  }}
-                  className=" flex-row items-center justify-between">
-                    <Text 
-                     style = {{
-                      fontSize :  scale(10),
-                   
+                  {/* SUGGESTIONS HEADER */}
+                  {/* <View
+                    style={{
+                      paddingHorizontal: spacing(10),
+                      paddingVertical: spacing(14),
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                     }}
-                    className="text-[11px] fon t-bold uppercase trac king-[1.2px] text-white/80">
-                    Suggestions
+                  >
+                    <Text
+                      style={{
+                        color: "rgba(242,232,210,0.78)",
+                        fontSize: scale(10),
+                        fontWeight: "800",
+                        letterSpacing: 1.6,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Suggestions
                     </Text>
+
                     {searching && (
-                    <Ionicons
+                      <Ionicons
                         name="ellipsis-horizontal"
                         size={18}
-                        color="rgba(255,255,255,0.3)"
-                    />
+                        color="rgba(218,184,105,0.65)"
+                      />
                     )}
-                 </View>
+                  </View> */}
 
+                  {/* RESULTS */}
                   <FlatList
-                        data={suggestionData}
-                        keyExtractor={(item) =>
-                            `${item.resultType}-${item._id}`
-                        }
-                        showsVerticalScrollIndicator={false}
-                        keyboardShouldPersistTaps="handled"
-                        contentContainerStyle ={{
-                            // rowGap:20
-                        }}
-                        renderItem={({ item }) => {
-                            switch (item.resultType) {
-                            case "user":
-                                return (
-                                <View
-                                className = "mb-8">
-                                    <UserProfileCard
-                                        entry={item}
-                                        width={width * 0.95}
-                                        height={width/2}
-                                    />
-                                </View>
-                                );
-                              break;
-                            case "arena":
-                                return (
-                                  <View
-                                  className = "mb-8">
-                                    <ArenaJourneyCard
-                                    entry={item}
-                                    width={width * 0.95}
-                                    height={width/1.1}
-                                    />
-                                  </View>
-                                );
-
-                            case "stage":
-                                return (
-                                 <View
-                                 className = "mb-8">
-                                    <StageCard
-                                        entry={item}
-                                        width={width * 0.95}
-                                        height={width/1.1}
-                                    />
-                                 </View>
-                                );
-                               break;
-                            default:
-                                return null;
-                            }
-                        }}
-                      
-                        ListEmptyComponent={
-                            !searching ? (
-                            <View 
-                            style = {{
-                              height : height /1.8
-                            }}
-                            className="items-center justify-center  flex- 1 py-10">
-                                <Ionicons
-                                name="search-outline"
-                                size={scale(45)}
-                                color="rgba(255,255,255,0.2)"
-                                />
-                                <Text 
-                                style = {{
-                                  fontSize :  scale(14)
+                    data={suggestionData}
+                    keyExtractor={(item) =>
+                      `${item.resultType}-${item._id}`
+                    }
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={{
+                      paddingBottom: 10,
+                    }}
+                    renderItem={({ item }) => {
+                      switch (item.resultType) {
+                        case "user":
+                          return (
+                            <View style={{ marginBottom: 20 }}>
+                              <UserCard
+                                user={item}
+                                width={width * 0.90}
+                                onPress={() => {
+                                  // Navigate to the user's profile
                                 }}
-                                className="mt-3 text-[12px] text-white/30">
-                                No suggestions found
-                                </Text>
+                                onFollowPress={() => {
+                                  // Handle follow / unfollow
+                                }}
+                                isFollowing={false}
+                              />
                             </View>
-                            ) : null
-                        }
-                    />
-                    {suggestionData.length > 0 && (
-                        <SearchFooter
-                        onPress={() => setDeepSearchVisible(true)}
-                        />
-                    )}
+                          );
 
+                        case "arena":
+                          return (
+                            <View style={{ marginBottom: 20 }}>
+                              <ArenaCard
+                                entry={item}
+                                width={width * 0.90}
+                                height={width / 1.1}
+                              />
+                            </View>
+                          );
+
+                        case "stage":
+                          return (
+                            <View style={{ marginBottom: 20 }}>
+                              <StageCard
+                                entry={item}
+                                width={width * 0.95}
+                                height={width / 1.1}
+                              />
+                            </View>
+                          );
+
+                        default:
+                          return null;
+                      }
+                    }}
+                    ListEmptyComponent={
+                      !searching ? (
+                        <View
+                          style={{
+                            height: height / 1.8,
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: 76,
+                              height: 76,
+                              borderRadius: 38,
+                              alignItems: "center",
+                              justifyContent: "center",
+                              backgroundColor: "rgba(218,184,105,0.06)",
+                              borderWidth: 1,
+                              borderColor: "rgba(218,184,105,0.13)",
+                            }}
+                          >
+                            <Ionicons
+                              name="search-outline"
+                              size={scale(32)}
+                              color="rgba(218,184,105,0.55)"
+                            />
+                          </View>
+
+                          <Text
+                            style={{
+                              color: "rgba(255,255,255,0.48)",
+                              fontSize: scale(13),
+                              fontWeight: "600",
+                              marginTop: 17,
+                            }}
+                          >
+                            No suggestions found
+                          </Text>
+
+                          <Text
+                            style={{
+                              color: "rgba(255,255,255,0.25)",
+                              fontSize: scale(10),
+                              marginTop: 6,
+                            }}
+                          >
+                            Try another search
+                          </Text>
+                        </View>
+                      ) : null
+                    }
+                  />
+
+                  {/* DEEP SEARCH FOOTER */}
+                  {suggestionData.length > 0 && (
+                    <SearchFooter
+                      onPress={() => setDeepSearchVisible(true)}
+                    />
+                  )}
                 </View>
               )}
-
             </View>
-
           </View>
         </Animated.View>
       </GestureDetector>
+
+      {/* DEEP SEARCH MODAL */}
       {deepSearchVisible && (
         <DeepSearchModal
-        visible={deepSearchVisible}
-        query={query}
-        onClose={() => setDeepSearchVisible(false)}
+          visible={deepSearchVisible}
+          query={query}
+          onClose={() => setDeepSearchVisible(false)}
         />
       )}
     </View>

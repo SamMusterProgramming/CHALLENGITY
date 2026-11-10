@@ -41,27 +41,19 @@ export default function CircleContent() {
   style={{
     width: "100%",
     paddingHorizontal: spacing(10),
-    // paddingTop: spacing(20),
-    // paddingBottom: spacing(16),
-    marginTop : - 2.5,
-    marginBottom: spacing(46),
+    marginBottom: spacing(26),
   }}
   // className = "items-center justify-center "
-  className= "border-x-[rgba(232,185,90,0.38)] self-center items-center border-[rgba(232,185,90,0.38)] rounded-b-3xl rounded-tr-3xl border-[1px]"  >
+  className= "bord er-x-[rgba(232,185,90,0.38)] self-center items-center bor der-[rgba(232,185,90,0.38)] rounded-b-3xl rounded-tr-3xl border-[1px]"  >
 
-    <CircleBuilder
-      // userTalents={userTalents}
-      // favouriteStages={favouriteStages}
-      // onCreateArena={() => setOpenCreateArena(true)}
-      // onFindStage = {null}
-    />
+    <CircleBuilder  />
 
     {(userFriends.users.length > 0 || userFollowers.users.length > 0 || userFollowings.users.length > 0 ) && (
     <View
       style={{
         paddingHorizontal: spacing(18),
-        paddingTop: spacing(26),
-        paddingBottom: spacing(34),
+        // paddingTop: spacing(26),
+        paddingBottom: spacing(32),
         width,
       }}
       className="justify-center w- full items-center"
@@ -69,7 +61,7 @@ export default function CircleContent() {
 
 
       <View
-        className="items-center justify-center"
+        className="items-start justify-start"
         style={{
           // width: "100%",
           // marginBottom: spacing(10),
@@ -80,21 +72,13 @@ export default function CircleContent() {
           className="flex-row items-center justify-center"
           style={{
             gap: spacing(8),
-            marginBottom: spacing(6),
+            // marginBottom: spacing(12),
           }}
         >
-          <View
-            style={{
-              // width: scale(18),
-              height: scale(1),
-              backgroundColor: "rgba(232,185,90,0.35)",
-            }}
-            className = "flex-1"
-          />
-
+      
           <Text
             style={{
-              fontSize: scale(20),
+              fontSize: scale(18),
               fontWeight: "900",
               letterSpacing: scale(2.2),
               color: "#F5F5F5",
@@ -110,29 +94,22 @@ export default function CircleContent() {
 
           <View
             style={{
-              // width: scale(18),
               height: scale(1),
               backgroundColor: "rgba(232,185,90,0.35)",
             }}
             className = "flex-1"
           />
         </View>
-
-        <Text
-            style={{
-              fontSize: scale(9),
-              fontWeight: "700",
-              letterSpacing: scale(0.8),
-              color: "#E8B95A",
-            }}
-          >
-            MY CIRCLE SPACE
-        </Text>
       </View>
 
-         <Friends data = {userFriends.users} title ="My Friends" />
-         <Friends data = {userFollowers.users} title ="My Followers" />
-         <Friends data = {userFollowings.users} title ="My Followings" />
+         <Friends data = {userFriends.users} title ="My Friends" textHeader = {`INNER CIRCLE`} 
+         description1={'Stay connected with the people who share your journey. Discover their latest milestones and celebrate the moments that make every connection meaningful.'}/>
+        
+         <Friends data = {userFollowers.users} title ="My Followers" textHeader ={`JOURNEY FOLLOWERS`}
+         description1={`the people keeping up with your performances, following your competitive milestones, and watching your talent evolve.`} />
+        
+         <Friends data = {userFollowings.users} title ="My Followings" textHeader = {`FOLLOWING JOURNEYS`}
+         description1={`Keep track of the talent you follow, discover their latest performances, and follow their achievements, competition milestones, and growth along the way.`}/>
     </View>
     )}
 

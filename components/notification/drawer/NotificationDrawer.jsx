@@ -4,434 +4,682 @@ import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
+  SectionList,
   useWindowDimensions,
 } from "react-native";
 
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  useAnimatedScrollHandler,
   withSpring,
   withTiming,
+  interpolate,
+  Extrapolation,
   runOnJS,
 } from "react-native-reanimated";
+
 import {
   Gesture,
   GestureDetector,
 } from "react-native-gesture-handler";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useGlobalContext } from "../../../context/GlobalProvider";
-// import DisplayTalentNotification from "../notification/DisplayTalentNotifications";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { useGlobalContext } from "../../../context/GlobalProvider";
+
 import DisplayTalentNotification from "../sections/DisplayTalentNotifications";
 import DisplayArenaNotification from "../sections/DisplayArenaNotification";
 import DisplaySocialNotification from "../sections/DisplaySocialNotification";
-// import DisplaySocialNotification from "../notification/DisplaySocialNotification";
-// import DisplayArenaNotification from "../notification/DisplayArenaNotification";
+
+const COLORS = {
+  background: "#080808",
+  gold: "#E8BE66",
+  goldLight: "#F5D58E",
+  secondary: "#A9A39A",
+  muted: "#716D66",
+};
+
+const TABS = [
+  {
+    key: "all",
+    label: "All",
+  },
+  {
+    key: "stage",
+    label: "Stage",
+    category: "competition",
+  },
+  {
+    key: "arena",
+    label: "Arena",
+    category: "arena",
+  },
+  {
+    key: "social",
+    label: "Social",
+    category: "friends",
+  },
+];
+
+const AnimatedSectionList =
+  Animated.createAnimatedComponent(SectionList);
+
+const getDateGroup = (createdAt) => {
+  if (!createdAt) return "EARLIER";
+
+  const date = new Date(createdAt);
+
+  if (Number.isNaN(date.getTime())) return "EARLIER";
+
+  const now = new Date();
+
+  const today = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const notificationDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+
+  if (notificationDate.getTime() === today.getTime()) {
+    return "TODAY";
+  }
+
+  if (notificationDate.getTime() === yesterday.getTime()) {
+    return "YESTERDAY";
+  }
+
+  return "EARLIER";
+};
+
 export default function NotificationDrawer({
   visible,
   onClose,
 }) {
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+
   const drawerWidth = width * 0.99;
+
   const translateX = useSharedValue(drawerWidth);
+  const scrollY = useSharedValue(0);
+
   const flatListRef = useRef(null);
+
   const {
-    notifications,
+    notifications = [],
     setNotifications,
     user,
-    scale ,
-    spacing
+    scale,
   } = useGlobalContext();
+
+  const [activeTab, setActiveTab] = useState("all");
+
+  // --------------------------------------------------
+  // ANIMATED TAB INDICATOR
+  // --------------------------------------------------
+
+  const [tabBarWidth, setTabBarWidth] = useState(0);
+
+  const tabIndicatorX = useSharedValue(0);
+
+  const activeTabIndex = Math.max(
+    0,
+    TABS.findIndex((tab) => tab.key === activeTab)
+  );
+
+  const tabSlotWidth =
+    tabBarWidth > 0 ? tabBarWidth / TABS.length : 0;
+
+  const indicatorWidth = Math.min(
+    34,
+    tabSlotWidth * 0.42
+  );
+
+  useEffect(() => {
+    if (!tabSlotWidth) return;
+
+    const targetX =
+      activeTabIndex * tabSlotWidth +
+      (tabSlotWidth - indicatorWidth) / 2;
+
+    tabIndicatorX.value = withSpring(targetX, {
+      damping: 22,
+      stiffness: 180,
+      mass: 0.8,
+    });
+  }, [
+    activeTabIndex,
+    tabSlotWidth,
+    indicatorWidth,
+  ]);
+
+  const tabIndicatorAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: tabIndicatorX.value,
+      },
+    ],
+  }));
+
   const nativeGesture = Gesture.Native();
-  const [scrollEnabled, setScrollEnabled] =
-    useState(true);
-  const [activeTab, setActiveTab] = useState("stage");
-  const indicator = useSharedValue(0);
-  
 
- 
-
-  const competitionNotifications = notifications
-  .filter((n) => n.category === "competition")
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-const friendNotifications = notifications
-  .filter((n) => n.category === "friends")
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-const arenaNotifications = notifications
-  .filter((n) => n.category === "arena")
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  const competitionBadgeNumber = competitionNotifications.length;
-  const friendBadgeNumber = friendNotifications.length;
-
-
-    const TABS = [
-      {
-        key: "stage",
-        label: "STAGE",
-        icon: "trophy-outline",
-        badge: 2,
-      },
-      {
-        key: "arena",
-        label: "ARENA",
-        icon: "stadium-outline",
-        badge: 1,
-      },
-      {
-        key: "social",
-        label: "SOCIAL",
-        icon: "account-group-outline",
-        badge: 6,
-      },
-      // {
-      //   key: "system",
-      //   label: "System",
-      //   icon: "bell-outline",
-      //   badge: 0,
-      // },
-    ];
+  // --------------------------------------------------
+  // DRAWER ANIMATION
+  // --------------------------------------------------
 
   useEffect(() => {
     if (visible) {
       translateX.value = withSpring(0, {
-        damping: 18,
-        stiffness: 160,
+        damping: 20,
+        stiffness: 150,
+        mass: 0.85,
         overshootClamping: true,
       });
+
+      scrollY.value = 0;
     } else {
-      translateX.value =
-        withTiming(drawerWidth);
+      translateX.value = withTiming(drawerWidth, {
+        duration: 260,
+      });
     }
-  }, [visible]);
+  }, [visible, drawerWidth]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  // --------------------------------------------------
+  // COLLAPSING HEADER
+  // --------------------------------------------------
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = Math.max(0, event.contentOffset.y);
+    },
+  });
+
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    const progress = interpolate(
+      scrollY.value,
+      [0, 55],
+      [1, 0],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      height: interpolate(
+        scrollY.value,
+        [0, 55],
+        [70, 0],
+        Extrapolation.CLAMP
+      ),
+      opacity: progress,
+      transform: [
+        {
+          translateY: interpolate(
+            scrollY.value,
+            [0, 55],
+            [0, -12],
+            Extrapolation.CLAMP
+          ),
+        },
+      ],
+    };
+  });
+
+  // --------------------------------------------------
+  // NOTIFICATION DATA
+  // --------------------------------------------------
+
+  const sortedNotifications = useMemo(() => {
+    return [...notifications].sort(
+      (a, b) =>
+        new Date(b.createdAt || 0).getTime() -
+        new Date(a.createdAt || 0).getTime()
+    );
+  }, [notifications]);
+
+  const tabCounts = useMemo(
+    () => ({
+      all: sortedNotifications.length,
+
+      stage: sortedNotifications.filter(
+        (item) => item.category === "competition"
+      ).length,
+
+      arena: sortedNotifications.filter(
+        (item) => item.category === "arena"
+      ).length,
+
+      social: sortedNotifications.filter(
+        (item) => item.category === "friends"
+      ).length,
+    }),
+    [sortedNotifications]
+  );
+
+  const filteredNotifications = useMemo(() => {
+    if (activeTab === "all") {
+      return sortedNotifications;
+    }
+
+    const selectedTab = TABS.find(
+      (tab) => tab.key === activeTab
+    );
+
+    if (!selectedTab?.category) return [];
+
+    return sortedNotifications.filter(
+      (item) => item.category === selectedTab.category
+    );
+  }, [sortedNotifications, activeTab]);
+
+  // --------------------------------------------------
+  // DATE GROUPING
+  // --------------------------------------------------
+
+  const sections = useMemo(() => {
+    const groups = {
+      TODAY: [],
+      YESTERDAY: [],
+      EARLIER: [],
+    };
+
+    filteredNotifications.forEach((notification) => {
+      const group = getDateGroup(notification.createdAt);
+      groups[group].push(notification);
+    });
+
+    return Object.entries(groups)
+      .filter(([_, data]) => data.length > 0)
+      .map(([title, data]) => ({
+        title,
+        data,
+      }));
+  }, [filteredNotifications]);
+
+  // --------------------------------------------------
+  // CLOSE DRAWER
+  // --------------------------------------------------
 
   const closeDrawer = () => {
-    onClose();
+    onClose?.();
   };
 
+  // --------------------------------------------------
+  // SWIPE TO CLOSE
+  // --------------------------------------------------
+
   const panGesture = Gesture.Pan()
-    .activeOffsetX([-10, 10])
-    .failOffsetY([-10, 10])
+    .activeOffsetX([-12, 12])
+    .failOffsetY([-12, 12])
     .onUpdate((event) => {
-      translateX.value = Math.max(
-        0,
-        event.translationX
-      );
+      translateX.value = Math.max(0, event.translationX);
     })
     .onEnd(() => {
-      if (translateX.value > 120) {
-        translateX.value =
-          withTiming(width);
+      if (translateX.value > drawerWidth * 0.25) {
+        translateX.value = withTiming(drawerWidth, {
+          duration: 220,
+        });
 
-        runOnJS(onClose)();
+        runOnJS(closeDrawer)();
       } else {
-        translateX.value =
-          withSpring(0);
+        translateX.value = withSpring(0, {
+          damping: 20,
+          stiffness: 160,
+        });
       }
     });
 
-  const filteredNotifications =
-    useMemo(() => {
-      switch (activeTab) {
-        case "stage":
-          return competitionNotifications;
- 
-        case "arena":
-          return arenaNotifications;
+  // --------------------------------------------------
+  // TAB NAVIGATION
+  // --------------------------------------------------
 
-        case "social":
-          return friendNotifications;
+  const handleTabPress = (tabKey) => {
+    if (tabKey === activeTab) return;
 
-        default:
-          break;
-      }
-      return notifications.filter(
-        (n) =>
-          n.category === activeTab
-      );
-    }, [notifications, activeTab]);
+    setActiveTab(tabKey);
 
-  const animatedStyle =
-    useAnimatedStyle(() => ({
-      transform: [
-        {
-          translateX:
-            translateX.value,
-        },
-      ],
-    }));
+    scrollY.value = 0;
 
- 
-
-  const TabButton = ({
-                      item,
-                      index,
-                    }) => {
-    const isActive =  activeTab === item.key;
-      return (
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => {
-            setActiveTab(item.key);
-            indicator.value = withSpring(index);
-          }}
-        
-          className={`  mr-2 h-[38px] flex-1 flex-row items-center gap-2 justify-center rounded-lg full border
-            ${
-              isActive
-                ? "border-yellow-500/40 bg-yellow-500/[0.12]"
-                : "border-[#c0c0c0]/50 bg-white/[0.03]"
-            }
-          `}
-        >
-          <MaterialCommunityIcons
-            name={item.icon}
-            size={scale(15)}
-            color={
-              isActive
-                ? "#F4C542"
-                : "#c0c0c0"
-            }
-          />
-          
-      
-          <Text
-            style={{
-              marginTop: spacing(2),
-              fontWeight: "400",
-              fontSize: scale(11),
-              color: isActive
-                ? "#F4C542"
-                : "#c0c0c0",
-            }}
-          >
-            {item.label}
-          </Text>
-      
-          {item.badge > 0 && (
-            <View
-              style={{
-                position: "absolute",
-                top: 10,
-                right: 10,
-                width: 8,
-                height: 8,
-                borderRadius: 4,
-                backgroundColor: "#F4C542",
-              }}
-            />
-          )}
-        </TouchableOpacity>
-      );
+    flatListRef.current?.scrollToOffset?.({
+      offset: 0,
+      animated: false,
+    });
   };
+
+  // --------------------------------------------------
+  // TAB RENDERER
+  // --------------------------------------------------
+
+  const renderTab = (tab) => {
+    const isActive = activeTab === tab.key;
+    const count = tabCounts[tab.key] || 0;
+
+    return (
+      <TouchableOpacity
+        key={tab.key}
+        activeOpacity={0.7}
+        onPress={() => handleTabPress(tab.key)}
+        className="flex-1 min-w-0 h-[48px] flex-row items-center justify-center"
+      >
+        <Text
+          numberOfLines={1}
+          style={{
+            color: isActive ? "#F5D58E" : "#99938A",
+            fontSize: scale(12),
+            fontWeight: isActive ? "700" : "500",
+            letterSpacing: isActive ? 0.2 : 0,
+          }}
+        >
+          {tab.label}
+        </Text>
+
+        <Text
+          style={{
+            marginLeft: 5,
+            color: isActive ? "#DDB65F" : "#716D66",
+            fontSize: scale(10),
+            fontWeight: isActive ? "700" : "500",
+          }}
+        >
+          {count}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  // --------------------------------------------------
+  // NOTIFICATION RENDERER
+  // --------------------------------------------------
+
+  const renderNotification = ({ item }) => {
+    switch (item.category) {
+      case "competition":
+        // return (
+        //   <DisplayTalentNotification
+        //     notification={item}
+        //     setNotifications={setNotifications}
+        //     user={user}
+        //   />
+        // );
+
+      case "arena":
+        return (
+          <DisplayArenaNotification
+            notification={item}
+            setNotifications={setNotifications}
+            user={user}
+          />
+        );
+
+      // case "friends":
+      //   return (
+      //     <DisplaySocialNotification
+      //       notification={item}
+      //       setNotifications={setNotifications}
+      //       user={user}
+      //     />
+      //   );
+
+      default:
+        return null;
+    }
+  };
+
+  // --------------------------------------------------
+  // SECTION HEADER
+  // --------------------------------------------------
+
+  const renderSectionHeader = ({ section }) => (
+    <View className="flex-row items-center gap-3 mb-3 mt-1">
+      <Text
+        className="text-[#E8BE66] font-bold tracking-[1.4px]"
+        style={{ fontSize: scale(10) }}
+      >
+        {section.title}
+      </Text>
+
+      <View className="flex-1 h-[1px] bg-[#E8BE66]/15" />
+    </View>
+  );
+
+  // --------------------------------------------------
+  // EMPTY STATE
+  // --------------------------------------------------
+
+  const renderEmptyState = () => (
+    <View className="flex-1 items-center justify-center px-9 pb-12">
+      <View className="w-[68px] h-[68px] rounded-full bg-[#E8BE66]/[0.10] border border-[#E8BE66]/25 items-center justify-center mb-4">
+        <MaterialCommunityIcons
+          name="bell-outline"
+          size={scale(29)}
+          color={COLORS.gold}
+        />
+      </View>
+
+      <Text
+        className="text-[#F5F3EF] font-bold mb-2"
+        style={{ fontSize: scale(16) }}
+      >
+        You're all caught up
+      </Text>
+
+      <Text
+        className="text-[#A9A39A] text-center leading-5"
+        style={{ fontSize: scale(12) }}
+      >
+        Your activity and updates will appear here.
+      </Text>
+    </View>
+  );
 
   if (!visible) return null;
 
   return (
-    <View
-      style={{
-        position: "absolute",
-        inset : 0,
-        zIndex : 9999
-      }}
-      className = "z-0"
-    >
+    <View className="absolute inset-0 z-[9999]">
+      {/* BACKDROP */}
+
       <TouchableOpacity
         activeOpacity={1}
         onPress={closeDrawer}
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundColor:
-            "rgba(0,0,0,1)",
-        }}
+        className="absolute inset-0 bg-black/90"
       />
 
-      <GestureDetector
-        gesture={panGesture}
-      >
+      {/* DRAWER */}
+
+      <GestureDetector gesture={panGesture}>
         <Animated.View
+          className="absolute right-0 bottom-0 bg-[#000000] rounded-tl-[30px] border-l border-[#E8BE66]/20 overflow-hidden"
           style={[
             animatedStyle,
             {
-              position: "absolute",
-              right: 0,
-              top: insets.top,
-              bottom: 0,
               width: drawerWidth,
-              backgroundColor:
-                "#070707",
-              borderTopLeftRadius: 28,
-              borderBottomLeftRadius: 28,
-              borderLeftWidth: 1,
-              overflow: "hidden",
+              top: insets.top,
+              paddingBottom: insets.bottom,
             },
           ]}
         >
-          <View
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 2,
-              backgroundColor:
-                "rgba(234,179,8,0.25)",
-            }}  />
+          {/* GOLD EDGE */}
 
-          <View
-            style={{
-              flex: 1,
-              backgroundColor:
-                "#090909",
-            }}
+          <View className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#E8BE66]/50 z-10" />
+
+          {/* COMPACT COLLAPSING HEADER */}
+
+          <Animated.View
+            style={[
+              headerAnimatedStyle,
+              {
+                overflow: "hidden",
+              },
+            ]}
           >
-      
-            <View
-              style={{
-                // paddingHorizontal: 2,
-                // borderBottomWidth: 1,
-                // borderBottomColor: "rgba(234,179,8,.50)",
-                backgroundColor: "#090909",
-              }}
-              className = "mb-4"
-            >
-               {/* HEADER */}
-              <View 
-                className="pl- 2 pt-3 pb- 2 mb- 2 w-full  flex-row justify-between items-center borde r-b bo rder-[rgba(234,179,8,.50)]">
-                 <View
-                  className = "flex-1 px-3"
-                  >
-                  <Text 
-                     style={{
-                      color: "#eab308",
-                      fontSize: scale(16),
-                      fontWeight: "500",
-                    }}
-                    className = "tracking-wide uppercase"
-                    >
-                    NOTIFICATION
-                  </Text>
-                  <Text
-                    style={{
-                      color:
-                        "#aaa",
-                      fontSize: scale(9),
-                      marginTop: 4,
-                    }} >
-                    Explore notifications from Arenas , stages , friends
-                  </Text>
-                </View>
-                <TouchableOpacity 
-                className ="py-2 px- 4 b g-white justify-center items-center"
-                onPress={onClose}>
-                  <MaterialCommunityIcons
-                    name="chevron-right"
-                    size={scale(45)}
-                    color= "#eab308"
-                  />
-                </TouchableOpacity>
+            <View className="h-[70px] flex-row items-center px-5">
+              <View className="p-2 rounded-xl border border-[#E8BE66]/35 bg-[#E8BE66]/[0.08] items-center justify-center mr-3">
+                <MaterialCommunityIcons
+                  name="bell-ring-outline"
+                  size={scale(30)}
+                  color={COLORS.goldLight}
+                />
               </View>
+
+              <View className="flex-1 justify-center">
+                <Text
+                  className="text-[#F5F3EF] font-bold tracking-[-0.3px]"
+                  style={{ fontSize: scale(18) }}
+                >
+                  Your Activity
+                </Text>
+
+                <Text
+                  className="text-[#A9A39A] mt-0.5"
+                  style={{
+                    fontSize: scale(10),
+                    paddingTop: scale(8),
+                  }}
+                  numberOfLines={1}
+                >
+                  Your latest updates across the community
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={closeDrawer}
+                activeOpacity={0.7}
+                className="w-10 h-10 items-center justify-center ml-2"
+              >
+                <MaterialCommunityIcons
+                  name="close"
+                  size={scale(24)}
+                  color={COLORS.gold}
+                />
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+
+          {/* MINIMAL STICKY CATEGORY NAVIGATION */}
+
+          <View className="px-4 pt-1.5 bg-[#080808]">
+            <View
+              className="relative"
+              onLayout={(event) => {
+                const measuredWidth =
+                  event.nativeEvent.layout.width;
+
+                setTabBarWidth(measuredWidth);
+              }}
+            >
+              {/* TAB LABELS */}
+
+              <View className="flex-row items-center">
+                {TABS.map(renderTab)}
+              </View>
+
+              {/* SUBTLE BASELINE */}
 
               <View
+                pointerEvents="none"
+                className="absolute bottom-0 left-0 right-0 h-[1px]"
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  // marginTop: 24,
-                }}
-                className = "items-center  p-3"  >
-                {TABS.map((item, index) => (
-                  <TabButton
-                    key={item.key}
-                    item={item}
-                    index={index}
-                  />
-                ))}
-              </View>
-            </View>
-
-            <GestureDetector
-              gesture={nativeGesture}
-            >
-              <FlatList
-                ref={flatListRef}
-                data={
-                  filteredNotifications
-                }
-                renderItem = {({item}) =>{
-                  switch (activeTab) {
-                    case "stage":
-                      return (
-                        <DisplayTalentNotification
-                          notification={item}
-                          setNotifications={
-                            setNotifications
-                          }
-                          user={user}
-                        />
-                      );
-                    case "arena":
-                      return (
-                        <DisplayArenaNotification
-                          notification={item}
-                          setNotifications={
-                            setNotifications
-                          }
-                          user={user}
-                        />
-                      );
-                    case "social":
-                      return (
-                        <DisplaySocialNotification
-                          notification={item}
-                          setNotifications={
-                            setNotifications
-                          }
-                          user={user}
-                        />
-                      );
-                    default:
-                      break;
-                  }
-                  // renderNotification
-                 }
-                }
-                keyExtractor={(item) => item._id}
-                showsVerticalScrollIndicator={ false  }
-                keyboardShouldPersistTaps="handled"
-                nestedScrollEnabled
-                initialNumToRender={
-                  10
-                }
-                maxToRenderPerBatch={
-                  10
-                }
-                windowSize={10}
-                removeClippedSubviews
-                scrollEnabled={
-                  scrollEnabled
-                }
-                onScrollBeginDrag={() =>
-                  setScrollEnabled(
-                    true
-                  )
-                }
-                contentContainerStyle={{
-                  paddingHorizontal: 0,
-                  // paddingVertical : 18,
-                  // paddingTop: 18,
-                  paddingBottom: 20,
-                  zIndex :999
+                  backgroundColor: "rgba(255,255,255,0.07)",
                 }}
               />
-            </GestureDetector>
 
-            <View
-              className = "h-14 w-full"
+              {/* MOVING GOLD UNDERLINE */}
+
+              {tabBarWidth > 0 && (
+                <Animated.View
+                  pointerEvents="none"
+                  style={[
+                    {
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      width: indicatorWidth,
+                      height: 2.5,
+                      borderRadius: 10,
+                      backgroundColor: COLORS.gold,
+                      shadowColor: COLORS.gold,
+                      shadowOffset: {
+                        width: 0,
+                        height: 0,
+                      },
+                      shadowOpacity: 0.75,
+                      shadowRadius: 6,
+                      elevation: 4,
+                    },
+                    tabIndicatorAnimatedStyle,
+                  ]}
+                />
+              )}
+            </View>
+
+            <View className="h-3" />
+          </View>
+
+          {/* NOTIFICATION LIST */}
+
+          <GestureDetector gesture={nativeGesture}>
+            <AnimatedSectionList
+              ref={flatListRef}
+              sections={sections}
+              keyExtractor={(item, index) =>
+                item._id?.toString() || index.toString()
+              }
+              renderItem={renderNotification}
+              // renderSectionHeader={renderSectionHeader}
+              ListEmptyComponent={renderEmptyState}
+              onScroll={scrollHandler}
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              stickySectionHeadersEnabled={false}
+              keyboardShouldPersistTaps="handled"
+              nestedScrollEnabled
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              removeClippedSubviews
+              contentContainerStyle={{
+                paddingHorizontal: 16,
+                paddingTop: 11,
+                paddingBottom: 10,
+                flexGrow: sections.length === 0 ? 1 : undefined,
+              }}
+              ItemSeparatorComponent={() => (
+                <View className="h-2.5" />
+              )}
             />
+          </GestureDetector>
+
+          {/* COMPACT FOOTER */}
+
+          <View className="px-5 pt-1 bg-[#080808]">
+            <View className="h-[1px] bg-[#E8BE66]/15" />
+
+            <View className="flex-row items-center justify-center py-2 gap-2">
+              <MaterialCommunityIcons
+                name="creation"
+                size={scale(13)}
+                color={COLORS.gold}
+              />
+
+              <Text
+                className="text-[#E8BE66] font-medium tracking-[0.2px]"
+                style={{ fontSize: scale(10) }}
+              >
+                Keep going. Your talent matters.
+              </Text>
+            </View>
           </View>
         </Animated.View>
       </GestureDetector>

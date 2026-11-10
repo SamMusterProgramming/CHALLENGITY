@@ -33,7 +33,7 @@ import ArenaFooter from "./arenaFooter/arenaFooter";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Arenas({
-  data , title
+  data , title , textHeader , description1 , description2
 }) {
   const {
     // userArenas,
@@ -173,7 +173,7 @@ export default function Arenas({
     <View
       style={{
         paddingHorizontal: spacing(12),
-        // paddingTop: spacing(26),
+        paddingTop: spacing(20), 
         paddingBottom: spacing(12),
         width,
       }}
@@ -185,25 +185,78 @@ export default function Arenas({
       {/* =========================================
           ARENA COLLECTION HEADER
       ========================================= */}
+      
+      <View style={{
+         marginBottom: spacing(8) ,
+        //  paddingHorizontal: scale(12),
+        }}>
+        
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: spacing(5),
+              }}
+            >
+              <View
+                style={{
+                  width: scale(18),
+                  height: "80%",
+                  backgroundColor: "#E8B95A",
+                  marginRight: spacing(8),
+                }}
+              />
 
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontSize: scale(11),
+                  fontWeight: "900",
+                  letterSpacing: scale(0.8),
+                }}
+              >
+                {textHeader}
+              </Text>
+            </View>
+
+            <Text
+              style={{
+                color: "#FFFFFF",
+                fontSize: scale(12),
+                lineHeight: scale(20),
+                fontWeight: "400",
+                letterSpacing: scale(0.15),
+                opacity: 0.82,
+              }}
+            >
+              {description1}
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontWeight: "700",
+                }}
+              >
+                performances
+              </Text>
+              {description2}
+            </Text>
+
+      </View>
+
+      
      
       <View
         style={{
           width: "100%",
-          marginTop: scale(24),
-          marginBottom: scale(10),
+          marginTop: scale(8),
+          marginBottom: scale(16),
           paddingVertical: scale(10),
           paddingHorizontal: scale(12),
           flexDirection: "row",
           alignItems: "center",
-          // justifyContent: "space-between",
-
-          // backgroundColor: "rgba(255,255,255,0.025)",
-          // borderWidth: 1,
-          // borderColor: "rgba(232,185,90,0.16)",
-          // borderRadius: scale(7),
+          borderRadius: scale(12),
         }}
-        className = "justify-center gap-4 flex-1"
+        className = "justify-between bg-[#1b1a1a]  flex-1"
       >
         {/* SECTION TITLE + COUNT */}
         <View
@@ -229,7 +282,7 @@ export default function Arenas({
           <Text
             numberOfLines={1}
             style={{
-              color: "#F4F0E8",
+              color: "#c0c0c0",
               fontSize: scale(12),
               fontWeight: "700",
               letterSpacing: scale(0.35),
@@ -388,111 +441,6 @@ export default function Arenas({
           ARENA CAROUSEL PAGE CONTROLS
       ========================================= */}
 
-      {/* {totalArenaPages > 1 && (
-      <View
-       style={{
-         width: "100%",
-         marginTop: scale(24),
-         flexDirection: "row",
-         alignItems: "center",
-         justifyContent: "space-between",
-       }}
-     >
- 
-       <Pressable
-         onPress={() => goToArenaPage(-1)}
-         disabled={activeArenaIndex === 0}
-         hitSlop={scale(8)}
-         accessibilityRole="button"
-         accessibilityLabel="Previous arena page"
-         style={{
-           width: scale(42),
-           height: scale(36),
-           alignItems: "center",
-           justifyContent: "center",
-           borderRadius: scale(12),
-           opacity: activeArenaIndex === 0 ? 0.28 : 1,
-         }}
-       >
-         <Ionicons
-           name="chevron-back"
-           size={scale(23)}
-           color={
-             activeArenaIndex === 0
-               ? "rgba(255,255,255,0.65)"
-               : GOLD
-           }
-         />
-       </Pressable>
-     
-       <View
-         accessibilityRole="progressbar"
-         accessibilityLabel={`Arena page ${
-           activeArenaIndex + 1
-         } of ${totalArenaPages}`}
-         style={{
-           flex: 1,
-           flexDirection: "row",
-           alignItems: "center",
-           justifyContent: "center",
-           gap: scale(7),
-         }}
-       >
-         {Array.from({ length: totalArenaPages }, (_, index) => {
-           const isActive = index === activeArenaIndex;
-     
-           return (
-             <View
-               key={`arena-page-${index}`}
-               style={{
-                 width: !isActive ? scale(9) : scale(9),
-                 height: scale(9),
-                 borderRadius: scale(4),
-                 backgroundColor: isActive
-                   ? GOLD
-                   : "rgba(255,255,255,0.24)",
-     
-                 // Subtle glow on the active dot
-                 shadowColor: "#E8B95A",
-                 shadowOffset: { width: 0, height: 0 },
-                 shadowOpacity: isActive ? 0.55 : 0,
-                 shadowRadius: isActive ? 5 : 0,
-                 elevation: isActive ? 2 : 0,
-               }}
-             />
-           );
-         })}
-       </View>
-     
-       <Pressable
-         onPress={() => goToArenaPage(1)}
-         disabled={activeArenaIndex === totalArenaPages - 1}
-         hitSlop={scale(8)}
-         accessibilityRole="button"
-         accessibilityLabel="Next arena page"
-         style={{
-           width: scale(42),
-          //  height: scale(36),
-           alignItems: "center",
-           justifyContent: "center",
-           borderRadius: scale(12),
-           opacity:
-             activeArenaIndex === totalArenaPages - 1 ? 0.28 : 1,
-         }}
-       >
-         <Ionicons
-           name="chevron-forward"
-           size={scale(23)}
-           color={
-             activeArenaIndex === totalArenaPages - 1
-               ? "rgba(255,255,255,0.65)"
-               : GOLD
-           }
-         />
-       </Pressable>
-     </View>
-      )} */}
-
        {/* BOTTOM PAGE INDICATOR */}
        {totalArenaPages  > 1 && (
           <View
@@ -501,7 +449,7 @@ export default function Arenas({
               flexDirection: "row",
               // alignItems: "end",
               justifyContent: "space-between",
-              marginTop: spacing(28),
+              marginTop: spacing(16),
               // gap: spacing(14),
               // height: scale(64)
             }}

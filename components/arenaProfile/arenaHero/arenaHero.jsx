@@ -4,6 +4,7 @@ import { memo, useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 import TalentIcon from "../../custom/TalentIcon";
 import CountryFlag from "../../common/CountryFlag";
+import { useGlobalContext } from "../../../context/GlobalProvider";
 
 const GOLD = "#E6C66A";
 const GOLD_DARK = "#B8943D";
@@ -24,7 +25,6 @@ const formatCount = (value = 0) => {
 export const ArenaHero = memo(function ArenaHero({
     arena,
     isMe,
-    scale,
     uploadPerformanceLoading,
     setArenaActionModal,
     setOpenArenaAlertModal,
@@ -32,6 +32,8 @@ export const ArenaHero = memo(function ArenaHero({
     onPressStar,
     onPressOwner,
   }) {
+
+    const {sharing , openShare , scale , spacing } = useGlobalContext()
     const [coverFailed, setCoverFailed] = useState(false);
     const [logoFailed, setLogoFailed] = useState(false);
   
@@ -120,17 +122,17 @@ export const ArenaHero = memo(function ArenaHero({
             style={{
               position: "absolute",
               bottom: 0,
-              left: 20,
-              right: 20,
+              left: scale(15),
+              right: scale(15),
               transform: [{ translateY: 38 }],
               flexDirection: "row",
-              alignItems: "flex-end",
+            //   alignItems: "flex- end",
             }}
           >
             <View
               style={{
-                width: 94,
-                height: 94,
+                width: scale(94),
+                height: scale(94),
                 borderRadius: 26,
                 padding: 3,
                 backgroundColor: "#181713",
@@ -169,9 +171,45 @@ export const ArenaHero = memo(function ArenaHero({
               )}
             </View>
   
-            <View style={{ flex: 1 }} />
+            {/* <View style={{ flex: 1 }} /> */}
   
             {isMe && (
+            <View
+            className = "flex -1  items-center justify-center gap-2">
+               <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => openShare({
+                          category:"arena",
+                          type: "shared_arena",
+                          _id:arena._id,
+                          name:arena.arenaName,
+                          region:arena.region,
+                          talent:arena.talentType,
+                          ownerId:arena.owner_id
+                      })}
+                      disabled={sharing}
+                      style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: 12,
+                          borderWidth: 1,
+                      }}
+                      className="  bg-[#1c1c1d] flex- 1 self-center justify-center"
+                      > 
+                      {sharing ? (
+                          <ActivityIndicator
+                          size="small"
+                          color="#fff"
+                          />
+                      ) : (
+                          <MaterialCommunityIcons
+                          name="share"
+                          size={scale(30)}
+                          color="#fff"
+                          />
+                      )}
+              </TouchableOpacity>
               <View
                 style={{
                   backgroundColor: "rgba(230,198,106,0.12)",
@@ -182,6 +220,7 @@ export const ArenaHero = memo(function ArenaHero({
                   paddingVertical: 7,
                   marginBottom: 0,
                 }}
+                className =" flex-row  gap- 2"
               >
                 <Text
                   style={{
@@ -193,8 +232,13 @@ export const ArenaHero = memo(function ArenaHero({
                 >
                   YOUR ARENA
                 </Text>
+                
               </View>
+            </View>
             )}
+
+             
+
           </View>
         </View>
   

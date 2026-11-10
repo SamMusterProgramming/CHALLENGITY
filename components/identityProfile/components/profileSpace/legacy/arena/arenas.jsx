@@ -160,9 +160,10 @@ export default function Arenas({
   return (
     <View
       style={{
-        paddingHorizontal: spacing(18),
+        paddingHorizontal: spacing(12),
         // paddingTop: spacing(26),
-        paddingBottom: spacing(26),
+        // paddingBottom: spacing(26),
+        paddingBottom: spacing(12),
         width,
       }}
       className="justify-center items -center"
@@ -171,66 +172,73 @@ export default function Arenas({
       {/* =========================================
           ARENA COLLECTION HEADER
       ========================================= */}
-
-     
+      
     <View
         style={{
           width: "100%",
-          marginTop: scale(24),
-          paddingVertical: scale(6),
-          paddingHorizontal : scale(6),
-          marginBottom : scale(7),
+          marginTop: scale(28),
+          marginBottom: scale(20),
+          paddingVertical: scale(10),
+          paddingHorizontal: scale(12),
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
+          // justifyContent: "space-between",
+
+          // backgroundColor: "rgba(255,255,255,0.075)",
+          // borderWidth: 1,
+          // borderColor: "rgba(232,185,90,0.16)",
+          borderRadius: scale(12),
         }}
+        className = "justify-between bg-[#1b1a1a]  flex-1"
       >
         {/* SECTION TITLE + COUNT */}
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-            // flexShrink: 1,
-            // minWidth: 0,
+            flexShrink: 1,
+            minWidth: 0,
           }}
         >
+          {/* GOLD ACCENT */}
+          <View
+            style={{
+              width: scale(3),
+              height: scale(12),
+              borderRadius: scale(2),
+              backgroundColor: "#E8B95A",
+              marginRight: scale(10),
+              opacity: 0.9,
+            }}
+          />
+
           <Text
             numberOfLines={1}
             style={{
-              color: "#F4F0E8",
+              color: "#c0c0c0",
               fontSize: scale(12),
               fontWeight: "700",
-              // letterSpacing: scale(0.15),
+              letterSpacing: scale(0.35),
               flexShrink: 1,
             }}
-            className = "upp ercase"
           >
             {arenaSectionTitle}
           </Text>
 
-          {/* <View
+          {/* COUNT BADGE */}
+      
+          <Text
             style={{
               marginLeft: scale(9),
-              paddingHorizontal: scale(7),
-              paddingVertical: scale(3),
-              borderRadius: 999,
-              backgroundColor: "rgba(232,185,90,0.09)",
-              alignItems: "center",
-              justifyContent: "center",
+              color: "#E8B95A",
+              fontSize: scale(11),
+              fontWeight: "700",
+              fontVariant: ["tabular-nums"],
             }}
-          > */}
-            <Text
-              style={{
-                marginLeft: scale(9),
-                color: "rgba(232,185,90,0.95)",
-                fontSize: scale(12),
-                fontWeight: "700",
-                fontVariant: ["tabular-nums"],
-              }}
-            >
-              {arenas.length}
-            </Text>
-          {/* </View> */}
+          >
+            {arenas.length}
+          </Text>
+
         </View>
 
         {/* VIEW ALL */}
@@ -244,16 +252,18 @@ export default function Arenas({
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginLeft: scale(12),
-            paddingVertical: scale(6),
+            justifyContent: "center",
+            marginLeft: scale(10),
+            paddingVertical: scale(5),
+            paddingLeft: scale(5),
           }}
         >
           <Text
             style={{
               color: "#E8B95A",
-              fontSize: scale(12),
+              fontSize: scale(11),
               fontWeight: "600",
-              letterSpacing: scale(0.1),
+              letterSpacing: scale(0.15),
             }}
           >
             View all
@@ -261,12 +271,13 @@ export default function Arenas({
 
           <Ionicons
             name="arrow-forward"
-            size={scale(14)}
+            size={scale(13)}
             color="#E8B95A"
             style={{ marginLeft: scale(5) }}
           />
         </Pressable>
       </View>
+     
 
 
       {/* =========================================
@@ -476,19 +487,6 @@ export default function Arenas({
        </Pressable>
      </View>
       )}
-
-      {/* <View
-        style={{
-          paddingVertical: scale(16),
-        }}
-      >
-        <ArenaFooter
-          scale={scale}
-          spacing={spacing}
-          onPress={handleAction}
-          activeArenaTab={activeArenaTab}
-        />
-      </View> */}
 
       {openModal && (
         <CreateArenaModal

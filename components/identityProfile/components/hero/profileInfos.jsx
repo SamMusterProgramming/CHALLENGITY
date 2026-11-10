@@ -156,26 +156,7 @@ export default function ProfileInfos({
           </Text>
         )}
 
-        {/* =================================================== */}
-        {/* TALENT                                              */}
-        {/* =================================================== */}
-
-        {/* {talent && (
-          <Text
-            numberOfLines={1}
-            className="text-white/80"
-            style={{
-              marginTop: spacing(7),
-              fontSize: scale(12),
-              lineHeight: spacing(17),
-              fontWeight: "700",
-              letterSpacing: 0.1,
-            }}
-          >
-            {talent}
-          </Text>
-        )} */}
-
+      
         {/* =================================================== */}
         {/* REGION                                              */}
         {/* =================================================== */}

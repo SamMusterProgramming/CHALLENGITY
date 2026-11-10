@@ -1,35 +1,22 @@
 
-import React, {
-  useMemo,
-} from "react";
-
+import React, { useMemo, useRef, useEffect } from "react";
 import {
   View,
   Text,
   Pressable,
+  Animated,
+  Easing,
 } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
-import {
-  useGlobalContext,
-} from "../../../../context/GlobalProvider";
-
-import ArenaPortalIcon
-  from "../../../svgIcons/ArenaPortalIcon";
-import { ProfileIcon } from "../../../svgIcons/profileIcon";
+import { useGlobalContext } from "../../../../context/GlobalProvider";
 import { useProfileSpace } from "../context/ProfileSpaceContext";
 import LegacyIcon from "../../../svgIcons/others/legacyIcon";
 import CircleIcon from "../../../svgIcons/others/circleIcon";
 
-export default function IdentitySpace({}) {
-  const {
-    scale,
-    spacing,
-  } = useGlobalContext();
-
-  const {
-    activeSpace,
-    changeSpace,
-  } = useProfileSpace();
+export default function IdentitySpace() {
+  const { scale, spacing } = useGlobalContext();
+  const { activeSpace, changeSpace } = useProfileSpace();
 
   const spaces = useMemo(
     () => [
@@ -49,115 +36,293 @@ export default function IdentitySpace({}) {
     []
   );
 
+  const active =
+    spaces.find((space) => space.id === activeSpace) ?? spaces[0];
+
+  const inactive =
+    spaces.find((space) => space.id !== active.id) ?? spaces[1];
+
+  const activeOpacity = useRef(new Animated.Value(1)).current;
+  const inactiveOpacity = useRef(new Animated.Value(1)).current;
+  const activeScale = useRef(new Animated.Value(1)).current;
+  const inactiveScale = useRef(new Animated.Value(1)).current;
+
+  const hasMounted = useRef(false);
+  const animationRef = useRef(null);
+
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
+    animationRef.current?.stop();
+
+    activeOpacity.setValue(0.78);
+    inactiveOpacity.setValue(0.78);
+    activeScale.setValue(0.985);
+    inactiveScale.setValue(0.985);
+
+    animationRef.current = Animated.parallel([
+      Animated.timing(activeOpacity, {
+        toValue: 1,
+        duration: 380,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(inactiveOpacity, {
+        toValue: 1,
+        duration: 380,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.spring(activeScale, {
+        toValue: 1,
+        stiffness: 120,
+        damping: 20,
+        mass: 1,
+        useNativeDriver: true,
+      }),
+      Animated.spring(inactiveScale, {
+        toValue: 1,
+        stiffness: 120,
+        damping: 20,
+        mass: 1,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    animationRef.current.start();
+
+    return () => animationRef.current?.stop();
+  }, [
+    activeSpace,
+    activeOpacity,
+    inactiveOpacity,
+    activeScale,
+    inactiveScale,
+  ]);
+
+  const ActiveIcon = active.icon;
+  const InactiveIcon = inactive.icon;
+
   return (
     <View
-      className="w-[100%] self-center"
+      className="w-full self-center"
       style={{
-        // paddingHorizontal: spacing(18),
+        paddingHorizontal: spacing(16),
         paddingTop: spacing(16),
-        // paddingBottom: spacing(22),
       }}
     >
-
       <View
-        className="flex-row"
         style={{
-          gap: spacing(10),
+          width: "100%",
+          height: spacing(120),
+          borderRadius: scale(8),
+          overflow: "hidden",
+          // backgroundColor: "#17150F",
+          borderWidth: 1,
+          // borderColor: "rgba(255,255,255,0.10)",
         }}
       >
-        {[...spaces]
-          .sort(
-            (a, b) =>
-              Number(b.id === activeSpace) -
-              Number(a.id === activeSpace)
-          )
-          .map((space) => {
-            const Icon = space.icon;
-            const isActive =
-              activeSpace === space.id;
+        {/* Interlocking surfaces */}
+        <Svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 400 150"
+          preserveAspectRatio="none"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        >
+         
+          {/* Active surface */}
+          {/* <Path
+            d="
+              M0 0
+              H92
+              C92 28 92 52 112 65
+              C125 74 140 74 158 74
+              H170
+              C190 74 202 88 202 108
+              C270 108 330 120 400 108
+              V150
+              H0
+              Z
+            "
+            fill="#17150F"
+          /> */}
 
-            return (
-              <Pressable
-                key={space.id}
-                onPress={() =>
-                  changeSpace(space.id)
-                }
-                className={`fle x-1 z-40 overfl ow-hidden justify-center items-center ${
-                  isActive
-                    ? "border-x-[rgba(232,185,90,0.38)] w-[60%] border-t-[rgba(232,185,90,0.38)] border-[1px] rounded-t-3xl"
-                    : "border-[rgba(255,255,255,0.40)] flex-1 border-[1px] rounded-3xl "
-                }`}
-                style={{
-                  height: isActive
-                    ? spacing(142)
-                    : spacing(130),
+          {/* Muted surface */}
+          <Path
+            d="
+              M92 0
+              H400
+              V108
+              C330 120 270 108 202 108
+              C202 88 190 74 170 74
+              H158
+              C140 74 125 74 112 65
+              C92 52 92 28 92 0
+              Z
+            "
+            fill="#111418"
+          />
 
-                  backgroundColor:
-                    isActive
-                      ? "rgba(0,0,0.1)"
-                      : "rgba(0,0,0.1)",
+          {/* Shared boundary */}
+          {/* <Path
+            d="
+              M92 0
+              C92 28 92 52 112 65
+              C125 74 140 74 158 74
+              H170
+              C190 74 202 88 202 108
+              H400
+            "
+            fill="none"
+            stroke="rgba(220,184,105,0.38)"
+            strokeWidth="1.15"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          /> */}
 
-                  paddingHorizontal: spacing(10),
-                  paddingVertical: spacing(18),
-                }}
-              >
-                {/* ICON + TITLE */}
+        </Svg>
 
-                <View
-                  className="flex-col gap-4 items-center justify-center"
+        {/* Selected identity: bottom-left */}
+        <Pressable
+          onPress={() => changeSpace(active.id)}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }} >
+          <Animated.View
+            style={{
+              position: "absolute",
+              left: spacing(2),
+              bottom: spacing(0),
+              width: "84%",
+              alignItems: "flex-start",
+              opacity: activeOpacity,
+              transform: [{ scale: activeScale }],
+            }}
+          >
+            <ActiveIcon size={scale(34)} />
+
+            <Text
+              style={{
+                color: "#E8C879",
+                fontSize: scale(15),
+                fontWeight: "800",
+                letterSpacing: 2,
+                marginTop: spacing(16),
+              }}
+            >
+              {active.title}
+            </Text>
+
+            <Text
+              numberOfLines={2}
+              style={{
+                width: "100%",
+                color: "rgba(232,200,121,0.60)",
+                fontSize: scale(9),
+                fontWeight: "600",
+                letterSpacing: 0.8,
+                marginTop: spacing(12),
+                lineHeight: scale(11),
+              }}
+            >
+              {active.description}
+            </Text>
+          </Animated.View>
+        </Pressable>
+
+        {/* Muted identity: deliberately asymmetric layout */}
+        <Pressable
+          onPress={() => changeSpace(inactive.id)}
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            width: "77%",
+            height: "57.3%",
+          }}
+        >
+          <Animated.View
+            style={{
+              position: "absolute",
+              top: spacing(8),
+              left: "8%",
+              right: "5%",
+              opacity: inactiveOpacity,
+              transform: [{ scale: inactiveScale }],
+            }}
+          >
+            {/* Icon sits close to the curved joint */}
+            <View
+              style={{
+                // alignItems: "flex-start",
+                paddingLeft: spacing(12),
+                paddingTop : spacing (4)
+              }}
+              className = "flex-row items-end "
+            >
+              <InactiveIcon
+                size={scale(32)}
+                color="#85898E"
+              />
+               <Text
                   style={{
-                    minHeight: spacing(34),
+                    marginLeft: spacing(44),
+                    // marginTop: spacing(2),
+                    color: "#A0A3A7",
+                    fontSize: scale(12),
+                    fontWeight: "800",
+                    letterSpacing: 1.8,
                   }}
                 >
-                  <Icon
-                    size={
-                      isActive
-                        ? scale(40)
-                        : scale(30)
-                    }
-                  />
-
-                  <Text
-                    style={{
-                      marginLeft: spacing(7),
-                      color: isActive
-                        ? "#F4C542"
-                        : "rgba(255,255,255,0.88)",
-                      fontSize: isActive
-                        ? scale(16)
-                        : scale(13),
-                      lineHeight: spacing(17),
-                      fontWeight: "800",
-                      letterSpacing: scale(1.5),
-                    }}
-                  >
-                    {space.title}
-                  </Text>
-                </View>
-
-                {/* DESCRIPTION */}
-
-                <Text
-                  numberOfLines={2}
-                  className="text-center"
-                  style={{
-                    marginTop: isActive ? scale(16) : spacing(6),
-                    color: isActive
-                      ? "rgba(232,185,90,0.62)"
-                      : "rgba(255,255,255,0.38)",
-                    fontSize: isActive
-                      ? scale(10)
-                      : scale(8),
-                    lineHeight: spacing(15),
-                    fontWeight: "600",
-                    letterSpacing: scale(0.25),
-                  }}
-                >
-                  {space.description}
+                  {inactive.title}
                 </Text>
-              </Pressable>
-            );
-          })}
+            </View>
+
+            {/* Title is intentionally shifted right */}
+            {/* <Text
+              style={{
+                marginLeft: spacing(59),
+                // marginTop: spacing(2),
+                color: "#A0A3A7",
+                fontSize: scale(12),
+                fontWeight: "800",
+                letterSpacing: 1.8,
+              }}
+            >
+              {inactive.title}
+            </Text> */}
+
+            {/* Description stays within the muted card's text column */}
+            <Text
+              numberOfLines={2}
+              style={{
+                marginLeft: spacing(92),
+                marginTop: spacing(10),
+                width: "78%",
+                color: "#777C82",
+                fontSize: scale(8),
+                fontWeight: "600",
+                letterSpacing: 0.3,
+                lineHeight: scale(10),
+                flexWrap: "wrap",
+              }}
+            >
+              {inactive.description}
+            </Text>
+          </Animated.View>
+        </Pressable>
       </View>
     </View>
   );

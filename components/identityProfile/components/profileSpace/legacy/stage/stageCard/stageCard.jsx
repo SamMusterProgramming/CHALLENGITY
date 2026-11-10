@@ -20,6 +20,8 @@ import TalentIcon
   from "../../../../../../custom/TalentIcon";
 import StagePortalIcon from "../../../../../../svgIcons/StagePortalIcon";
 import { LinearGradient } from "expo-linear-gradient";
+import { formatCount, talentAvatar } from "../../../../../../../helper";
+import { countries } from "../../../../../../../utilities/TypeData";
 if (
   Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -86,12 +88,12 @@ const getThumbnail = (performance) => {
   );
 };
 
-const StageCard = ({ profile, stage, isLast = false, onOpenStage  , width}) => {
+const StageCard = ({ stage, isLast = false, onOpenStage  , width}) => {
   const { user, spacing, scale } = useGlobalContext();
 
   const [expanded, setExpanded] = useState(true);
 
-  const currentUserId = normalizeId(profile?._id);
+  const currentUserId = normalizeId(user?._id);
 
   const contestants = Array.isArray(stage?.contestants)
     ? stage.contestants
@@ -286,7 +288,7 @@ const StageCard = ({ profile, stage, isLast = false, onOpenStage  , width}) => {
                       }}
                       style={{
                         // flex:1,
-                        height : "95%"
+                        height : "86%"
                       }}
                       resizeMode="cover"
                       className="h- full w-full rounded-xl"
@@ -319,47 +321,81 @@ const StageCard = ({ profile, stage, isLast = false, onOpenStage  , width}) => {
               })}
             </View>
           ) : (
-            <View
-              style={{
-                height: scale(90),
-                borderRadius: scale(7),
-              }}
-              className="items-center justify-center border border-[#E8B95A]/10 bg-[#0D0C09]"
-            >
-              <StagePortalIcon size={scale(25)} />
+     
 
-              <Text
-                style={{
-                  fontSize: scale(9),
-                  marginTop: spacing(6),
-                  letterSpacing: scale(0.5),
-                }}
-                className="uppercase text-[#70695C]"
-              >
-                No performances yet
-              </Text>
-            </View>
+            <Pressable
+              className="items-center w-full h-full  justify-start"
+              // onPress={() => router.push({
+              //   pathname:
+              //     "/arenaProfile",
+              //   params: {
+              //     arena_id:
+              //       arena._id,
+              //   },
+              // })}
+              style={{
+                // flex:1,
+                borderRadius: scale(10),
+                borderWidth: scale(1),
+                // borderColor: "rgba(255,255,255,0.06)",
+                // backgroundColor: "rgba(255,255,255,0.09)",
+              }}
+             
+            >
+              <Image
+                   source={{ uri: talentAvatar[stage.name.toLowerCase()]?.publicUrl }}
+                  resizeMode="cover"
+                  style={{
+                    height : "86%"
+                  }}
+                  className="opacity-50  w-full rounded-xl"
+               />
+      
+            </Pressable>
           )}
 
-            <View
-                className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
+            <View className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
                 style={{
-                  bottom :-spacing(5) ,
-                  padding : spacing(4),
+                  bottom :spacing(20) ,
+                  padding : spacing(2),
                   zIndex :1002,
-            
-                }}  >
+                }} >
                 {/* <ArenaPortalIcon size={scale(30)} /> */}
                 <Image
                 source={{ uri: user.profileImage.publicUrl }}
                 resizeMode="cover"
                 style={{
-                  width: scale(70),
-                  height: scale(70),
+                  width: scale(90),
+                  height: scale(90),
                 }}
                 className ="rounded-full"
               />
             </View>
+
+            <Text
+                className = "absolute bottom-4 right-4 uppercase"
+                style={{
+                // marginTop: spacing(3),
+                  color: "#c0c0c0",
+                  fontSize: scale(9),
+                  fontWeight: "700",
+                  // letterSpacing: scale(0.3),
+                  
+                }}  >
+                        {countries.find(c=> c.code == country)?.name}
+           </Text>
+           <Text
+                           className = "absolute bottom-4 left-4 uppercase"
+                           style={{
+                           // marginTop: spacing(3),
+                             color: "#c0c0c0",
+                             fontSize: scale(9),
+                             fontWeight: "700",
+                             // letterSpacing: scale(0.3),
+                             
+                           }}  >
+                          {stage.name.toUpperCase()}
+            </Text>
 
         </View>
       )}
@@ -367,223 +403,197 @@ const StageCard = ({ profile, stage, isLast = false, onOpenStage  , width}) => {
 
 
         <View
-            className="flex-row bg- [#161a20] rounded- b-[30px]  justify-between w-full"
-            style={{
+          className="flex-row rounded-b-3xl border-x-2 border-b-2 border-[#252424]   justify-between w-full"
+          style={{
                 // marginTop: spacing(6),
-                height : scale(110)
+                height : scale(125)
             }}
             >
-             <View 
-             style = {{
-              paddingVertical: spacing(16),
-              paddingHorizontal: spacing(12),
-             }}
-             className = "flex-row justify-center items-center bg-[#202021] rounded-bl-[10px] rounded-tr-full  gap -4" >
-           
-
-                <View
-                className="items-center justify-center"
-                style={{
-                   }}  >
-                    <View
-                    className="items-center  gap-4 justify-center"
-                    style={{
-
-                    }}  >
-                      <TalentIcon talent={stage?.name} size={scale(29)} color={"white"}/>
-                      <Text
-                          style={{
-                          // marginTop: spacing(3),
-                          color: "white",
-                          fontSize: scale(9),
-                          fontWeight: "800",
-                          letterSpacing: scale(0.3),
-                          }}  >
-                          {stage?.name.toUpperCase()}
-                      </Text>
-                    </View>
+              <View 
+                style = {{
+                  paddingVertical: spacing(8),
+                  paddingHorizontal: spacing(8),
+                  // height : scale(60),
+                  // width : scale(60)
+                }}
+                className = "flex-row z-50 absolute top-0 left-2 justify-center items-center bg-[#202021] round ed-bl-[10px] rounded-full  gap -4" >
+                    <TalentIcon talent={stage.name} size={scale(27)} color={"gold"}/>
               </View>
-            </View>
 
 
             {/* METRICS */}
              <View
-             className = "flex-1  justify-center bg-[#202021] items-center">
+              className = "flex-1  justify-start bg- [#202021] items-center">
                    
-                <Pressable
+                  <Pressable
                     android_ripple={{
                       color: "rgba(232,185,90,0.06)",
                     }}
                     style={{
                         // paddingBottom: spacing(16),
-                        paddingHorizontal: spacing(12),
-                        paddingTop : scale(28)
-
-                    }}
-                    className = "justify-start mb-4  flex-1 rounded-b-[50px] bg-black items-center"
-                  >
-                    <View className="flex-row items-center  ">
-
-                        <View
-                          className="flex-1 items-center justify-center"
-                          style={{
-                            paddingRight: spacing(8),
-                          }}   >
+                        // paddingHorizontal: spacing(12),
+                        // marginBottom: spacing(8),
+                      }}
+                      className = "justify-end b g-black  flex-1  bg- black items-center"                      >
+                       <View
+                        style={{
+                          // marginBottom: spacing(4),
+                          paddingBottom : scale(4)
+                        }}
+                        className=" bg-black bord er-x-2 min-w-full flex-1 bord er-[#252424] items-center ">
                           <Text
                             numberOfLines={1}
                             style={{
                               color: "#F4F4F2",
-                              fontSize: scale(14),
-                              lineHeight: spacing(16),
+                              fontSize: scale(15),
+                              // lineHeight: spacing(16),
                               fontWeight: "800",
                               letterSpacing: scale(0.25),
                             }}  >
                                 {stage?.name}Stage{country}
                           </Text>
 
-                        <Text
-                          numberOfLines={1}
-                          style={{
-                            marginTop: spacing(14),
-                            color: "rgba(255,255,255,0.92)",
-                            fontSize: scale(10),
-                            lineHeight: spacing(12),
-                            fontWeight: "500",
-                          }}
-                        >
-                         {participation.status}   {/* {biography} */}.  {' '}
-                         <Text
+                          <Text
+                            numberOfLines={1}
                             style={{
-                            fontSize: scale(10),
-                            marginTop: spacing(1),
-                            letterSpacing: scale(0.2),
+                              marginTop: spacing(12),
+                              color: "rgba(255,255,255,0.92)",
+                              fontSize: scale(10),
+                              lineHeight: spacing(12),
+                              fontWeight: "500",
                             }}
-                            className="uppercase font-bold text-[#b9b7b2]"  >
-                            Rank {' '}
+                          >
+                          {participation.status}   {/* {biography} */}.  {' '}
                             <Text
                                 style={{
                                 fontSize: scale(10),
+                                marginTop: spacing(1),
+                                letterSpacing: scale(0.2),
                                 }}
-                                className="font-semibold text-[#E8B95A]"  >
-                                {participation.rank
-                                ? `#${participation.rank}`
-                                : "—"}
+                                className="uppercase font-bold text-[#b9b7b2]"  >
+                                Rank {' '}
+                                <Text
+                                    style={{
+                                    fontSize: scale(10),
+                                    }}
+                                    className="font-semibold text-[#E8B95A]"  >
+                                    {participation.rank
+                                    ? `#${participation.rank}`
+                                    : "—"}
+                                </Text>
                             </Text>
-                        </Text>
-                           
-                        </Text>
-
+                          </Text>
                       </View>
 
-                    
-                    </View>
+                       {/* Statistics */}
+      
+                      <View
+                      className = "  min-w-[90%] rounded-xl mb-4 border-[1px] self-center py-3 px-4 b g-[gold]/5  bor der-[gold]/20 flex-row justify-between   "
+                      >
+                        {[
+                          {
+                            label: "ON STAGE",
+                            value: stage.contestants.length,
+                            icon: "play-box-multiple-outline",
+                          },
+                          {
+                            label: "ROUND",
+                            value: round,
+                            icon: "account-group-outline",
+                          },
+                          {
+                            label: "STARS",
+                            value: 6,
+                            icon: "star",
+                          },
+                        ].map((stat,index) => (
+                          <View 
+                          className = " flex-row flex-1 justify-center"
+                          key={stat.label}>
+                            <View
+                            // key={stat.label}
+                            className="flex-row flex-1 items-center gap-2 justify-center">
+                          
+                            {/* Icon and number in one row */}
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 4,
+                              }}
+                            >
+                              <View
+                                style={{
+                                  // width: 29,
+                                  // height: 29,
+                                  borderRadius: 10,
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  backgroundColor: "rgba(232, 185, 90, 0.10)",
+                                  borderWidth: 1,
+                                  borderColor: "rgba(232, 185, 90, 0.14)",
+                                }}
+                              >
+                               <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    color: "#F4F4F2",
+                                    fontSize: scale(8.5),
+                                    // lineHeight: spacing(16),
+                                    fontWeight: "500",
+                                    // letterSpacing: scale(0.25),
+                                  }}  >
+                                      {stat.label}
+                                </Text>
+                              </View>
+                          
+                              <Text
+                                numberOfLines={1}
+                                adjustsFontSizeToFit
+                                minimumFontScale={0.8}
+                                style={{
+                                  flexShrink: 1,
+                                  color: "white",
+                                  fontSize: scale(10),
+                                  fontWeight: "700",
+                                  letterSpacing: -0.3,
+                                  fontVariant: ["tabular-nums"],
+                                }}
+                              >
+                                {formatCount(stat.value)}
+                              </Text>
+                            </View>
+                          </View>
+                          { index !==2 && (
+                            <View
+                            className = "h-[90%] w-[1px] mx- 6 bg-gray-400 self-center rounded-full"
+                            />
+                          )}
+                          </View>
+                        ))}
+                      </View>
+
+
                   </Pressable>
              
-           
-                      {/* <View
-                          className=" items-center gap-2 absolute top-2 left-0 justify-center">
-                           
-                            <Text
-                              style={{
-                              // marginTop: spacing(3),
-                              color: "#c0c0c0",
-                              fontSize: scale(8),
-                              fontWeight: "700",
-                              letterSpacing: scale(0.3),
-                              }} >
-                              contestant
-                            </Text>
-                            <Text
-                                style={{
-                                // marginLeft: spacing(4),
-                                fontSize: scale(10),
-                                color: "gold",
-                                fontWeight: "700",
-                                }}     >
-                               {contestants.length}
-                            </Text>
-                     </View>
-                     <View
-                        className="fle x-row items-center absolute top-2 right-2 gap-2 justify-center">
-                        
-                            <Text
-                                  style={{
-                                    color: "#c0c0c0",
-                                    fontSize: scale(8),
-                                    fontWeight: "700",
-                                    letterSpacing: scale(0.3),
-                                  }} >
-                                  Round
-                            </Text>
-                            <Text
-                                style={{
-                                // marginLeft: spacing(4),
-                                fontSize: scale(10),
-                                color: "#E8B95A",
-                                fontWeight: "700",
-                                }}
-                            >
-                                {round}
-                            </Text>
-                      </View> */}
-                      <View
-                          className="bg- [black]/70 border-b-2 border-b-goldSoft/50 items-center  absolute   justify-center"
-                          style={{
-                            top :  -scale(4) ,
-                            left:  -scale(8),
-                            paddingVertical : scale(3),
-                            zIndex :1002,
-                          }}   >
-                            <Text
-                                    className = "text-goldSoft/90"
-                                    style={{
-                                    fontSize: scale(8),
-                                    fontWeight: "800",
-                                    letterSpacing: scale(0.3),
-                                    }}  >
-                                  STAGE
-                            </Text>
-                      </View>
-
 
               </View>
 
               <View 
-             style = {{
-              paddingVertical: spacing(16),
-              paddingHorizontal: spacing(16),
-             }}
-             className = "flex-row bg-[#202021] rounded-br-[10px] rounded-tl-full  gap -4" >
-                <View
-                    className="items-center justify-center"
-                    style={{
-                    //   width: spacing(60),
-                    }}  >
-                    <View
-                      className="items-center gap-4 justify-center"
-                      style={{
-                          // width: spacing(55),
-                          // height: spacing(70),
-                      }}
-                      >
-                        <CountryFlag
-                            code={country}
-                            size={scale(27)}
-                        />
-                        <Text
-                            style={{
-                            // marginTop: spacing(3),
-                             color: "white",
-                              fontSize: scale(10),
-                              fontWeight: "700",
-                              letterSpacing: scale(0.3),
-                            }}  >
-                            {country}
-                        </Text>
-                    </View>
-                </View>
+                style = {{
+                  paddingVertical: spacing(8),
+                  paddingHorizontal: spacing(8),
+                  // height : scale(60),
+                  // width : scale(60)
+                }}
+                className = "flex-row absolute top-0 right-2 justify-center items-center bg-[#202021]  rounded-full  gap -4" >
+                    <CountryFlag
+                        code={country}
+                        size={scale(30)}
+                    />
+              </View>
 
-            </View>
+         
         </View>
 
      

@@ -80,7 +80,7 @@ export default function IdentityInfo({
           bottom: spacing(18),
           width: avatarSize,
           height: avatarSize,
-          borderWidth: scale(4),
+          borderWidth: scale(2),
         }}
       >
         {profileImage ? (

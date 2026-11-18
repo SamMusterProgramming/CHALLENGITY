@@ -14,7 +14,9 @@ import { router } from "expo-router";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 import CountryFlag from "../../common/CountryFlag";
 import TalentIcon from "../../custom/TalentIcon";
-import { formatCount, talentAvatar } from "../../../helper";
+import { arenaProfileAvatar, formatCount, talentAvatar } from "../../../helper";
+import TalentIconSelector from "../../common/talentIconSelector";
+import { LinearGradient } from "expo-linear-gradient";
 
 const normalizeId = (value) => {
   if (value === null || value === undefined) return "";
@@ -29,7 +31,7 @@ const getEntryUserId = (entry) => {
   }
 
   return normalizeId(
-    entry?.user_id ??
+      entry?.user_id ??
       entry?.userId ??
       entry?.user?.id ??
       entry?.user?._id ??
@@ -59,10 +61,10 @@ const StageCard = ({
 }) => {
 
   const {user , scale ,getArenaPerformanceThumbnailHeight , spacing} = useGlobalContext()
+  
   const performances = [...entry.contestants.map(c =>  {
        return c.performances[0]
   })]|| [];
-
 
   const currentUserId = user?._id;
 
@@ -75,6 +77,8 @@ const StageCard = ({
   const eliminations = Array.isArray(entry?.eliminations)
     ? entry.eliminations
     : [];
+
+ 
 
   /*
    * ---------------------------------------------------------
@@ -139,6 +143,22 @@ const StageCard = ({
     currentUserId,
   ]);
 
+
+  
+  const participantThumbnail1 = participation.status == "ON STAGE" ? participation.entry.performances[0]?.thumbnail.publicUrl
+                                : contestants.length > 0 ? contestants[0]?.performances[0]?.thumbnail.publicUrl//user?.profileImage?.publicUrl || user.profileImage.publicUrl
+                                : arenaProfileAvatar[entry.talentType.toLowerCase()]?.publicUrl
+
+  const participantThumbnail2 = participation.status == "ON STAGE" && participation.rank == 1 ? contestants[1]?.performances[0].thumbnail.publicUrl     
+                                : participation.status == "ON STAGE" && participation.rank == 2 ? contestants[0]?.performances[0].thumbnail.publicUrl
+                                : contestants[1]?.performances[0].thumbnail.publicUrl
+
+  const participantProfile1 =  participation.status == "ON STAGE" ? user.profileImage.publicUrl 
+                              : contestants.length > 0 ? contestants[0]?.user?.profileImage?.publicUrl 
+                              : null
+
+  const participantProfile2 = contestants[1]?.user?.profileImage?.publicUrl || null
+
   
 
   const totalPerformances = () => {
@@ -177,6 +197,9 @@ const StageCard = ({
     );
   };
 
+  const stageProfileImage = participation.status ? user.profileImage.publicUrl :
+                            entry.contestants.length > 0 ?  entry.contestants[0].profileImage?.publicUrl :
+                            arenaProfileAvatar[entry.talentType.toLowerCase()]?.publicUrl
 
   const statusConfig = {
     "On Stage": {
@@ -216,6 +239,8 @@ const StageCard = ({
   const selectedContestant =  entry.contestants?.find(c => c.user_id === user?._id) ||
                               entry.contestants[0] || null
 
+  
+
   const renderPerformance = (
     performance,
     index
@@ -245,7 +270,7 @@ const StageCard = ({
           <Image
             source={{ uri: imageUri }}
             resizeMode="cover"
-            className="absolute rounded-3xl inset-0 h-full w-full opacity-80"
+            className="absolute rounded-xl inset-0 h-full w-full opacity-80"
           />
           </>
         ) : (
@@ -301,12 +326,15 @@ const StageCard = ({
 
       <View
       style ={{
-        height :getArenaPerformanceThumbnailHeight(),
+        height :getArenaPerformanceThumbnailHeight() - scale(30),
         gap: spacing(6),
         paddingBottom: spacing(6),
       }}
        className=" p-1 rounded-t-3xl bg-black border-l-2 border-r-2 border-t-2 border-[#252424] justify-center flex -1 flex-row  ">
-        {visiblePerformances.map(
+       
+
+
+        {/* {visiblePerformances.map(
           renderPerformance
         )}
 
@@ -315,154 +343,368 @@ const StageCard = ({
           style = {{
             height : "86%"
           }}
-           className="flex-1 items-center justify-center rounded-[13px] border border-white/[0.06] bg-[#171717]">
+           className="flex-1 items-center justify-center rounded-[13px] border border-white/[0.06] b g-[#171717]">
              <Image
-                   source={{ uri: talentAvatar[entry.name.toLowerCase()]?.publicUrl }}
-                  resizeMode="cover"
+                   source={{ uri: talentAvatar[entry.talentType.toLowerCase()]?.publicUrl }}
+                  resizeMode="contain"
                   style={{
-                    height : "86%"
+                    height : "100%"
                   }}
-                  className="opacity-50  w-full rounded-xl"
+                  className="opacity-80  w-full rounded-xl"
                />
            
           </View>
-        )}
+        )} */}
 
           <View
-              className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
-              style={{
-                bottom :spacing(20) ,
-                padding : spacing(2),
-                zIndex :1002,
-              }}  >
-              <Image
-              source={{ uri: user.profileImage.publicUrl }}
-              resizeMode="cover"
-              style={{
-                width: scale(90),
-                height: scale(90),
-              }}
-              className ="rounded-full"
-            />
+                  className="flex-row flex-1"
+                  style={{
+                    gap: spacing(6),
+                    // paddingVertical: spacing(6),
+
+                  }}  >
+                    <Image
+                        source={{ uri:  talentAvatar[entry.talentType.toLowerCase()]?.publicUrl}}
+                        resizeMode="cover"
+                        style={{
+                          height : "100%"
+                        }}
+                        className="h- full w-full  rounded-xl"
+                        />  
           </View>
 
-          <Text
-                className = "absolute bottom-4 right-4 uppercase"
-                style={{
-                // marginTop: spacing(3),
-                  color: "#c0c0c0",
-                  fontSize: scale(9),
-                  fontWeight: "700",
-                  // letterSpacing: scale(0.3),
-                  
-                }}  >
-                        {countries.find(c=> c.code == entry.region)?.name}
-          </Text>
-          <Text
-                className = "absolute bottom-4 left-4 uppercase"
-                style={{
-                // marginTop: spacing(3),
-                  color: "#c0c0c0",
-                  fontSize: scale(9),
-                  fontWeight: "700",
-                  // letterSpacing: scale(0.3),
-                  
-                }}  >
-               {entry.name.toUpperCase()}
-            </Text>
+
+          <LinearGradient
+            pointerEvents="none"
+            colors={[
+              "rgba(0,0,0,0.14)",
+              "rgba(0,0,0,0.34)",
+              "#000",
+            ]}
+            locations={[0, 0.63, 1]}
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            }}
+          />
+
+       
 
       </View>
 
 
           {/* footer */}
 
-           
-      <View
-          className="flex-row rounded-b-3xl border-x-2 border-b-2 border-[#252424]   justify-between w-full"
+
+        <View
+          className="flex-col  rounded-b-3xl border-x-2 border-b-2 border-[#252424]  items-start justify-start w-full"
           style={{
-              // marginTop: spacing(6),
-              height : scale(125)
-            }}  >
+              height : scale(175),
+              paddingHorizontal : spacing(16)
+          }}  >
 
-            <View 
-             style = {{
-              paddingVertical: spacing(8),
-              paddingHorizontal: spacing(8),
-             }}
-             className = " justify-center absolute top-0 left-4 z-50 items-center bg-[#202021] round ed-bl-[10px] rounded-full  gap -4" >
-                      <TalentIcon talent={entry.name}  size={scale(27)} color={"gold"}/>
-            </View>
-
-
-             {/* METRICS */}
-             <View
-              className = "flex-1  justify-start bg- [#202021] items-center">
-                   
-                  <Pressable
-                    android_ripple={{
-                      color: "rgba(232,185,90,0.06)",
-                    }}
+            <View
+                  style={{
+                    flexDirection: "row",
+                    marginTop: -spacing(66),
+                    gap : spacing(4)
+                  }}
+                >
+                  <View
                     style={{
-                        
-                        // marginBottom: spacing(4),
-                      }}
-                      className = "justify-end b g-black  flex-1  bg- black items-center"                      >
-                       <View
-                        style={{
-                          // marginBottom: spacing(4),
-                          paddingBottom : scale(4)
-                        }}
-                        className=" bg-black bord er-x-2 min-w-full flex-1 bord er-[#252424] items-center ">
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              color: "#F4F4F2",
-                              fontSize: scale(15),
-                              // lineHeight: spacing(16),
-                              fontWeight: "800",
-                              letterSpacing: scale(0.25),
-                            }}  >
-                                {entry?.name}Stage{entry.region}
-                          </Text>
+                      width: scale(80),
+                      height: scale(120),
+                      borderRadius: 8,
+                      padding: 1,
+                      backgroundColor: "#181713",
+                      borderWidth: 1,
+                      // borderColor: "#B8943D",
+                      overflow: "hidden",
+                    }} 
+                    // className = "z-0" 
+                    >
+                      { participantThumbnail1 && (
+                        <Image
+                          source={{ uri: participantThumbnail1 }}
+                          resizeMode="cover"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: 8,
+                          }}
+                          className = "opacity-65"
+                        />
+                      ) }
+                  
+                    
+                  </View>
 
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              marginTop: spacing(16),
-                              color: "rgba(255,255,255,0.92)",
-                              fontSize: scale(10),
-                              lineHeight: spacing(12),
-                              fontWeight: "500",
-                            }}
-                          >
-                          {participation.status}   {/* {biography} */}.  {' '}
-                            <Text
+                  { participantThumbnail2 && (
+                  <View
+                    style={{
+                      width: scale(80),
+                      height: scale(120),
+                      borderRadius: 8,
+                      padding: 1,
+                      backgroundColor: "#181713",
+                      borderWidth: 1,
+                      // borderColor: "#B8943D",
+                      overflow: "hidden",
+                    }}
+                    className = "opacity-65"
+                  >
+                      <Image
+                        source={{ uri: participantThumbnail2 }}
+                        resizeMode="cover"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 8,
+                        }}
+                      />
+                  
+                  </View>
+                  ) }
+          
+                  {/* arena identity  */}
+                  <View
+                    style={{
+                      // borderRadius: 26,
+                      // padding: 3,
+                      overflow: "hidden",
+                      marginLeft : spacing(16)
+                    }}
+                    className = "items-center flex-1 justify-between"
+                        >
+
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          color: "#F5F3ED",
+                          fontSize: scale(14),
+                          // lineHeight: scale(33),
+                          fontWeight: "900",
+                          letterSpacing: -0.6,
+                        }}
+                      >
+                        {entry?.name || "Stage"}
+                      </Text>
+
+                      <View
+                        style={{
+                          paddingTop: 7,
+                          // height: scale(80),
+                        }}
+                        className = "flex-row justify-center  flex-1 items-end"
+                        >
+                          <View
+                          className = "flex-col gap-3 items-center ">
+                              <TalentIconSelector code={entry.talentType} size={scale(43)} />
+                              <Text
                                 style={{
-                                fontSize: scale(10),
-                                marginTop: spacing(1),
-                                letterSpacing: scale(0.2),
+                                  color: "#fff",
+                                  fontSize: scale(9),
+                                  fontWeight: "600",
                                 }}
-                                className="uppercase font-bold text-[#b9b7b2]"  >
-                                Rank {' '}
-                                <Text
-                                    style={{
-                                    fontSize: scale(10),
-                                    }}
-                                    className="font-semibold text-[#E8B95A]"  >
-                                    {participation.rank
-                                    ? `#${participation.rank}`
-                                    : "—"}
-                                </Text>
-                            </Text>
-                          </Text>
+                              >
+                                {entry.talentType.toUpperCase() || "Talent type"}
+                              </Text>
+                          </View>
+                          <View
+                          className="justify-center  h-full items-center">
+                            <View
+                            className ="mx-4  h-2 w-2 bg-[#c0c0c0] rounded-full "
+                              />
+                          </View>
+                          <View
+                          className = "flex-col gap-4 ml-3 items-center">
+                              
+                              <CountryFlag code={entry.region} size={scale(35)} />
+                              <Text
+                                style={{
+                                  color: "#fff",
+                                  fontSize: scale(9),
+                                  fontWeight: "600",
+                                  letterSpacing : 2.8
+                                }}
+                              >
+                                {entry.region || "US"}
+                              </Text>
+                          </View>
                       </View>
 
-                       {/* Statistics */}
-      
-                      <View
-                      className = "  min-w-[90%] rounded-xl mb-4 border-[1px] self-center py-3 px-4 b g-[gold]/5  bor der-[gold]/20 flex-row justify-between   "
+
+                  </View>
+
+                </View>
+
+                <View
+                style = {{
+                  marginTop : spacing(16),
+                  gap : spacing(6)
+                 }}
+                className = "flex-row gap -4" >
+                       {participantProfile1 ? ( 
+                        <View
+                          style = {{
+                            width : scale(78),
+                            paddingVertical : scale(8)
+                          }}
+                          className = " flex-row border  border-[gold]/25 rounded-3xl justify-center items-end gap-3" >
+                              <Image
+                                  source={{ uri: participantProfile1 }}
+                                  resizeMode="cover"
+                                  style={{
+                                    width: scale(25),
+                                    height: scale(25),
+                                  }}
+                                  className = " z-50 rounded-full"
+                                />
+                                <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    color: "gold",
+                                    fontSize: scale(11),
+                                    // lineHeight: scale(33),
+                                    fontWeight: "600",
+                                    letterSpacing: -0.6,
+                                  }}
+                                >
+                                #{''} {participation.status ? participation.rank : 1}
+                                </Text>
+                                <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    color: "white",
+                                    fontSize: scale(8),
+                                    // lineHeight: scale(33),
+                                    fontWeight: "600",
+                                    letterSpacing: -0.6,
+                                  }}
+                                  className = "absolute top-2 right-5"
+                                >
+                                 {participation.status && "YOU"}
+                                </Text>
+                          </View>
+                          ):(
+                            <View
+                            style = {{
+                              // width : scale(78),
+                              paddingVertical : scale(12)
+                            }}
+                            className = " flex-row flex-1 border  border-[gold]/25 rounded-3xl justify-center items-end gap-2" >
+                             <Text
+                                numberOfLines={2}
+                                style={{
+                                  color: "#D8CBB2",
+                                  fontSize: scale(10),
+                                  lineHeight: scale(16),
+                                  fontWeight: "500",
+                                  letterSpacing: 0,
+                                }}
+                                  >
+                                No contestants yet. Be the first to showcase your talent!
+                              </Text>
+                            </View>
+                          )}
+
+                          {participantProfile2  && (
+                          <View
+                          style = {{
+                            // bottom : -spacing(15),
+                            // left:4,
+                            width : scale(78),
+                            paddingVertical : scale(8)
+                          }}
+                          className = " flex-row border  border-[gold]/25 rounded-3xl justify-center items-end gap-3" >
+                              <Image
+                                  source={{ uri: participantProfile2 }}
+                                  resizeMode="cover"
+                                  style={{
+                                    width: scale(25),
+                                    height: scale(25),
+                                  }}
+                                  className = " z-50 rounded-full"
+                                />
+                                <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    color: "gold",
+                                    fontSize: scale(11),
+                                    // lineHeight: scale(33),
+                                    fontWeight: "600",
+                                    letterSpacing: -0.6,
+                                  }}
+                                >
+                                # {participation .status && participation.rank == 2 ? "1" : "2"}  
+                                </Text>
+                          </View>
+                          )}
+
+                         {contestants.length > 2 && (
+                          <View
+                          style = {{
+                            // bottom : -spacing(15),
+                            // left:4,
+                            // width : scale(76),
+                            paddingVertical : scale(8)
+                          }}
+                          className = " flex-row border flex-1 border-[gold]/25 rounded-3xl justify-center items-center gap-2" >
+                              {/* <Image
+                                  source={{ uri: participantProfile2 }}
+                                  resizeMode="cover"
+                                  style={{
+                                    width: scale(25),
+                                    height: scale(25),
+                                  }}
+                                  className = " z-50 rounded-full"
+                                /> */}
+                                <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    color: "gold",
+                                    fontSize: scale(12),
+                                    // lineHeight: scale(33),
+                                    fontWeight: "600",
+                                    letterSpacing: -0.6,
+                                  }}
+                                >
+                                + {' '} {contestants.length-2} {' '} Contestants
+                                </Text>
+                          </View>
+                          )}
+                </View>
+               
+               <View
+               style = {{
+                // marginTop: "auto",
+                flex:1,
+                marginBottom : spacing(16),
+               }}
+               className = "justify-end "
+               >
+                  {/* <Text
+                      numberOfLines={1}
+                      style={{
+                        color: "#fff",
+                        fontSize: scale(11),
+                        lineHeight: scale(22),
+                      }}
+                    >
+                      {entry.biography.trim() ||
+                        "Your biography will appear here. Introduce yourself and give visitors a sense of your arena."}
+                  </Text> */}
+
+                  <View
+                  style = {{
+                    marginTop : spacing(8),
+                  }}
+                    className = "  min-w -[90%] w-full rounded-xl border- [1px] sel f-start py-2  flex-row justify-start   "
                       >
-                        {[
+                    {[
                           {
                             label: "ON STAGE",
                             value: entry.contestants.length,
@@ -480,13 +722,13 @@ const StageCard = ({
                           },
                         ].map((stat,index) => (
                           <View 
-                          className = " flex-row flex-1 justify-center"
+                          className = " flex-row flex-1 justify-start  between"
                           key={stat.label}>
-                            <View
-                            // key={stat.label}
-                            className="flex-row flex-1 items-center gap-2 justify-center">
+                           <View
+                           // key={stat.label}
+                           className="flex-row flex-1 items-center gap-2 justify-between">
                           
-                            {/* Icon and number in one row */}
+          
                             <View
                               style={{
                                 flexDirection: "row",
@@ -539,34 +781,18 @@ const StageCard = ({
                             </View>
                           </View>
                           { index !==2 && (
-                            <View
-                            className = "h-[90%] w-[1px] mx- 6 bg-gray-400 self-center rounded-full"
-                            />
+                             <View
+                             className = "h-[90%] w-[1px] mr-[20%] bg-gray-400 self-center rounded-full"
+                             />
                           )}
                           </View>
                         ))}
-                      </View>
+                  </View>
 
 
-                  </Pressable>
-             
-              </View>
 
-
-              <View 
-                  style = {{
-                    paddingVertical: spacing(8),
-                    paddingHorizontal: spacing(8),
-                    // height : scale(60),
-                    // width : scale(60)
-                    }}
-                    className = "flex-row absolute top-0 right-4 justify-center items-center bg-[#202021]  rounded-full  gap -4" >
-                          <CountryFlag
-                              code={entry.region}
-                              size={scale(30)}
-                          />
-              </View>
-         
+               </View>
+               
         </View>
 
 

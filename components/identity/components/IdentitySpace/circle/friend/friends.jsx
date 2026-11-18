@@ -18,7 +18,7 @@ const GOLD = "#E8B95A";
 const BG = "#050505";
 
 
-const Friends = ({data , title , textHeader , description1 , description2}) => {
+const Friends = ({data , title , textHeader , description1 , description2 , type}) => {
   const { userFriends,setUserFriends, scale, spacing, user } = useGlobalContext();
   const [activePage, setActivePage] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -157,8 +157,8 @@ const Friends = ({data , title , textHeader , description1 , description2}) => {
     <View
       style={{
         paddingHorizontal: spacing(12),
-        paddingTop: spacing(20), 
-        paddingBottom: spacing(12),
+        paddingTop: spacing(40), 
+        // paddingBottom: spacing(12),
         width,
       }}
       className="justify-center items -center"
@@ -168,18 +168,71 @@ const Friends = ({data , title , textHeader , description1 , description2}) => {
       {/* =========================================
           FRIENDS COLLECTION HEADER
        ========================================= */}
+
+<View
+          className="items-start justify-center"
+          style={{
+            gap : spacing(2)
+          }}  >
+
+            <View
+              className="flex-row text-start w-full items-center justify-start"
+              style={{
+                gap: spacing(8),
+               
+              }}   >
+
+                <View
+                  style={{
+                    // width: scale(18),
+                    flex:1 ,
+                    height: "50%",
+                    backgroundColor: "rgba(255,1255,255,0.35)",
+                  }}
+                  className = "flex-1"
+               />
+
+                <Text
+                  style={{
+                    fontSize: scale(16),
+                    fontWeight: "900",
+                    letterSpacing: scale(0.8),
+                    color: "#F5F5F5",
+                    textAlign: "center",
+                    textShadowColor: "rgba(232,185,90,0.14)",
+                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowRadius: scale(8),
+                  }}  >
+                   {type}
+                </Text>
+
+                <View
+                style={{
+                  width: scale(18),
+                  height: "60%",
+                  backgroundColor: "#FFF",
+                  marginLeft: spacing(8),
+                }}
+              />
+             
+            </View>
+
+      </View>
+
+
       
       <View style={{
          marginBottom: spacing(8) ,
-        //  paddingHorizontal: scale(12),
+         paddingTop: scale(12),
         }}>
         
-            <View
+        <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
-                marginBottom: spacing(5),
+                // alignItems: "center",
+                marginBottom: spacing(12),
               }}
+              className = "items-center"
             >
               <View
                 style={{
@@ -196,10 +249,20 @@ const Friends = ({data , title , textHeader , description1 , description2}) => {
                   fontSize: scale(11),
                   fontWeight: "900",
                   letterSpacing: scale(0.8),
+                  includeFontPadding : false
                 }}
               >
                 {textHeader}
               </Text>
+
+              <View
+                style={{
+                  flex: 1,
+                  height: "68%",
+                  backgroundColor: "rgba(255,1255,255,0.35)",
+                  marginLeft: spacing(8),
+                }}
+              />
             </View>
 
             <Text

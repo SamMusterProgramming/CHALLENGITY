@@ -23,29 +23,44 @@ export default function CircleBuilder() {
       <View
         style={{
           width: "100%",
-          paddingBottom: spacing(16),
+          // paddingBottom: spacing(16),
         }}
       >
         <View
           style={{
             paddingHorizontal: spacing(4),
             paddingTop: spacing(22),
-            paddingBottom: spacing(20),
+            // paddingBottom: spacing(20),
           }}
         >
           {/* TITLE */}
-          <Text
-            style={{
-              color: "#F4F0E8",
-              fontSize: scale(20),
-              lineHeight: scale(32),
-              fontWeight: "900",
-              letterSpacing: scale(-0.5),
-            }}
-          >
-            Your circle starts here.
-          </Text>
 
+          <View
+            className="flex-row items-center justify-center"
+            style={{
+              gap: spacing(8),
+            }} >
+               <Text
+                style={{
+                  color: "#F4F0E8",
+                  fontSize: scale(18),
+                  lineHeight: scale(32),
+                  fontWeight: "900",
+                  letterSpacing: scale(-0.5),
+                }}
+                >
+                Build your circle
+              </Text>
+              <View
+                style={{
+                  flex:1,
+                  height: "30%",
+                  backgroundColor: "rgba(255,255,255,0.3)",
+                  marginLeft: spacing(8),
+                }}
+              />
+          </View>
+         
           {/* INTRODUCTION */}
           <Text
             style={{

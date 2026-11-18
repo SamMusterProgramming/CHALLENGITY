@@ -25,6 +25,7 @@ import ArenaPortalIcon from "../../svgIcons/ArenaPortalIcon";
 import { formatCount } from "../../../helper";
 import TalentIcon from "../../custom/TalentIcon";
 import CountryFlag from "../../common/CountryFlag";
+import TalentIconSelector from "../../common/talentIconSelector";
 
 
 
@@ -296,7 +297,7 @@ export default function FeaturedCard({
               className="bg-[gold]/60  items-center rounded-full absolute bot tom-0  justify-center"
               style={{
                 bottom :spacing(20) ,
-                left: "23%",
+                left: spacing(100),
                 padding : spacing(2),
                 zIndex :1002,
               }}  >
@@ -311,7 +312,7 @@ export default function FeaturedCard({
               />
             </View>
 
-            <Text
+            {/* <Text
                 className = "absolute bottom-2 right-2 uppercase"
                 style={{
                 // marginTop: spacing(3),
@@ -334,7 +335,7 @@ export default function FeaturedCard({
                              
                            }}  >
                           {entry.arena.talentType.toUpperCase()}
-            </Text>
+            </Text> */}
  
         </View>
 
@@ -349,13 +350,30 @@ export default function FeaturedCard({
                 height : scale(110)
             }}  >
 
+       
+
             <View 
              style = {{
               paddingVertical: spacing(8),
               paddingHorizontal: spacing(8),
+              top : - scale(25)
              }}
-             className = " justify-center absolute top-0 left-4 z-50 items-center bg-[#202021] round ed-bl-[10px] rounded-full  gap -4" >
-                      <TalentIcon talent={entry.arena.talentType}  size={scale(27)} color={"gold"}/>
+             className = " justify-center absolute to p-0 [-30] left-2 z-50 items-center gap-2 bg-[#000000] round ed-bl-[10px] roun ded-full  gap -4" >
+                      
+                      <TalentIconSelector code={entry.arena.talentType.toUpperCase()} size={scale(60)} />
+                      <Text
+                           className = " uppercase"
+                           style={{
+                           // marginTop: spacing(3),
+                             color: "#fff",
+                             fontSize: scale(10),
+                             fontWeight: "600",
+                             letterSpacing: scale(0.8),
+                             
+                           }}  >
+                          {entry.arena.talentType.toUpperCase()}
+                      </Text>
+
             </View>
 
             
@@ -374,7 +392,7 @@ export default function FeaturedCard({
                   >
                     <View 
                     style ={{
-                      paddingLeft : spacing(90),
+                      paddingLeft : spacing(110),
                       paddingTop : spacing(4)
                     }}
                      className=" bg-black border-x-2 border-b-2 rounded-b-3xl min-w-full flex-1 border-[#252424] items-start ">
@@ -438,18 +456,35 @@ export default function FeaturedCard({
              
               </View>
 
+              
+
               <View 
-                  style = {{
-                    paddingVertical: spacing(8),
-                    paddingHorizontal: spacing(8),
-                    // height : scale(60),
-                    // width : scale(60)
-                    }}
-                    className = "flex-row absolute top-0 right-4 justify-center items-center bg-[#202021]  rounded-full  gap -4" >
-                          <CountryFlag
-                              code={entry.arena.region}
-                              size={scale(30)}
-                          />
+                style = {{
+                  paddingVertical: spacing(12),
+                  paddingHorizontal: spacing(8),
+                  top : - scale(25),
+                  // width : scale(100)
+                  }}
+                  className = "fle x-row absolute gap-2 top- 0 right-2  border-b-2 border-[white]/35 justify-center items-center b g-[#202021]  round ed-full  gap -4" >
+                      
+                        <CountryFlag
+                            code={entry.arena.region}
+                            size={scale(35)}
+                        />
+ 
+                        <Text
+                          className = "absol ute bott om-4 rig ht-4 uppercase"
+                          numberOfLines={1}
+                          style={{
+                            color: "#fff",
+                            fontSize: scale(12),
+                            fontWeight: "600",
+                            letterSpacing: scale(0.8),
+                            
+                          }}  >
+                               {entry.arena.region}   
+                               {/* {countries.find(c => c.code == country).name} */}
+                        </Text>
               </View>
         </View>
 

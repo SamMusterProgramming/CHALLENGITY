@@ -1025,11 +1025,12 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TalentPickerModal from "./TalentPickerModal";
-import { stageIcons } from "../../utilities/TypeData";
+import { stageIcons, talentStages } from "../../utilities/TypeData";
 import TalentIcon from "../custom/TalentIcon";
-import { talentAvatar } from "../../helper";
+import { arenaProfileAvatar, talentAvatar } from "../../helper";
 import { enqueueArenaUpload, removeUploadJob } from "../../services/uploads/uploadQueue";
-import { getArenaByUser } from "../../apiCalls/arenas";
+import CountryFlag from "../common/CountryFlag";
+import TalentIconSelector from "../common/talentIconSelector";
 
 const GOLD = "#D8B65A";
 const BACKGROUND = "#090A0C";
@@ -1058,9 +1059,14 @@ const getImageUri = (image) => {
 
 const getDefaultCover = (talentType) => {
   if (!talentType) return null;
-
   return talentAvatar?.[talentType.toLowerCase()] || null;
 };
+
+const getDefaultProfile = (talentType) => {
+  if (!talentType) return null;
+  return arenaProfileAvatar?.[talentType.toLowerCase()] || null;
+};
+
 
 const getDefaultArenaName = (user, talentType, countryCode) => {
   const firstName = user?.name?.trim().split(/\s+/)[0] || "";
@@ -1079,18 +1085,18 @@ export default function CreateArenaModal({
   const insets = useSafeAreaInsets();
 
   const [form, setForm] = useState(() => ({
-    arenaName: getDefaultArenaName(user, "Sport", userCountryCode),
-    talentType: "Sport",
+    arenaName: getDefaultArenaName(user, "Singing", userCountryCode),
+    talentType: "Singing",
     region: user?.country || "",
     biography: "",
     description: "",
   }));
 
   const [profileImage, setProfileImage] = useState(
-    user?.profileImage || null
+    getDefaultProfile("Singing")
   );
   const [coverImage, setCoverImage] = useState(
-    getDefaultCover("Sport")
+    getDefaultCover("Singing")
   );
 
   const [customProfileImage, setCustomProfileImage] = useState(false);
@@ -1114,9 +1120,9 @@ export default function CreateArenaModal({
   // has already chosen a custom image in this modal.
   useEffect(() => {
     if (!customProfileImage) {
-      setProfileImage(user?.profileImage || null);
+      setProfileImage(getDefaultProfile(form.talentType));
     }
-  }, [user?.profileImage, customProfileImage]);
+  }, [form.talentType, customProfileImage]);
 
   // Update default artwork when the talent changes. A custom cover
   // must never be replaced by the default artwork.
@@ -1249,7 +1255,7 @@ export default function CreateArenaModal({
       // must upload them and convert them into image metadata.
       profileImage: customProfileImage
         ? getImageUri(profileImage)
-        : user?.profileImage || null,
+        : getDefaultProfile(talentType) || null,
 
       coverImage: customCoverImage
         ? getImageUri(coverImage)
@@ -1320,32 +1326,40 @@ export default function CreateArenaModal({
         alignItems: "center",
         marginBottom: spacing(18),
       }}
+      className = "w-full "
     >
       <View
         style={{
-          width: 42,
-          height: 42,
+          // width: 42,
+          // height: 42,
           marginRight: 14,
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 12,
           backgroundColor: "#2D2C24",
         }}
-      >
-        <Ionicons name={icon} size={19} color={GOLD} />
+        className = "p-2"  >
+        <Ionicons name={icon} size={15} color={GOLD} />
       </View>
 
       <Text
         style={{
-          flex: 1,
+          // flex: 1,
           color: "#FFFFFF",
-          fontSize: scale(18),
+          fontSize: scale(16),
           fontWeight: "800",
           letterSpacing: -0.4,
-        }}
-      >
+        }} >
         {title}
       </Text>
+      <View
+                style={{
+                  flex: 1,
+                  height: "38%",
+                  backgroundColor: "rgba(255,1255,255,0.35)",
+                  marginLeft: spacing(8),
+                }}
+              />
     </View>
   );
 
@@ -1356,28 +1370,46 @@ export default function CreateArenaModal({
     multiline = false,
     maxLength,
     hint,
+    disabled = false
   }) => {
     const value = form[field];
 
     return (
       <View style={{ marginBottom: spacing(17) }}>
+       
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: spacing(8),
+            marginBottom : spacing(12)
           }}
         >
-          <Text
-            style={{
-              color: "#E4E4E7",
-              fontSize: scale(12),
-              fontWeight: "700",
-            }}
-          >
-            {label}
-          </Text>
+
+           <View
+              style={{
+                flexDirection: "row",
+                // alignItems: "center",
+                marginTop: spacing(12),
+              }}
+              className = "items-center"
+            >
+    
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: scale(11),
+                  fontWeight: "600",
+                  // letterSpacing: scale(0.8),
+                  includeFontPadding : false
+                }}
+                className = "uppercase"
+              >
+                {label}
+              </Text>
+
+          </View>
+          
 
           {maxLength ? (
             <Text
@@ -1392,6 +1424,7 @@ export default function CreateArenaModal({
         </View>
 
         <TextInput
+          readOnly = {disabled}
           value={value}
           onChangeText={(text) => updateField(field, text)}
           placeholder={placeholder}
@@ -1402,8 +1435,8 @@ export default function CreateArenaModal({
           textAlignVertical={multiline ? "top" : "center"}
           selectionColor={GOLD}
           style={{
-            minHeight: multiline ? scale(92) : scale(54),
-            height: multiline ? scale(92) : scale(54),
+            // minHeight: multiline ? scale(92) : scale(54),
+            height: multiline ? scale(65) : scale(45),
             paddingHorizontal: 16,
             paddingVertical: multiline ? 14 : 0,
             borderWidth: 1,
@@ -1532,161 +1565,195 @@ export default function CreateArenaModal({
             paddingBottom: 32,
           }}
         >
-          {/* Story */}
-          <View style={{ marginBottom: 26 }}>
-            <SectionHeading
-              title="Tell your story"
-              icon="document-text-outline"
-            />
-
-            <Text
-              style={{
-                marginBottom: 20,
-                color: MUTED,
-                fontSize: scale(12),
-                lineHeight: scale(20),
-              }}
-            >
-              Give people a reason to discover your arena. Tell them
-              who you are and what makes your space special.
-            </Text>
-
-            {renderInput({
-              label: "Biography",
-              field: "biography",
-              placeholder: "Introduce yourself and your arena...",
-              multiline: true,
-              maxLength: MAX_BIOGRAPHY_LENGTH,
-              hint: "Keep it personal, clear, and memorable.",
-            })}
-
-            {renderInput({
-              label: "Description",
-              field: "description",
-              placeholder: "What makes your arena different?",
-              multiline: true,
-              maxLength: MAX_DESCRIPTION_LENGTH,
-              hint: "Describe the experience people can expect.",
-            })}
-          </View>
-
-          <View
-            style={{
-              height: 1,
-              marginBottom: 28,
-              backgroundColor: "#222328",
-            }}
-          />
+         
 
           {/* Identity */}
-          <View style={{ marginBottom: 26 }}>
+          <View 
+          style={{ marginBottom: spacing(26) }}
+          >
+
             <SectionHeading
               title="Define your arena"
               icon="shield-checkmark-outline"
             />
-
-            {renderInput({
-              label: "Arena name",
-              field: "arenaName",
-              placeholder: "Give your arena a name",
-              hint: "Choose a name people will recognize.",
-            })}
-
-            <Text
+            
+            <View
               style={{
-                marginBottom: 9,
-                color: "#E4E4E7",
-                fontSize: scale(12),
-                fontWeight: "700",
+                flexDirection: "row",
+                // alignItems: "center",
+                marginTop: spacing(12),
+                marginBottom : spacing(16)
               }}
+              className = "items-center"
             >
-              Talent type
-            </Text>
+           
 
+              <Text
+                style={{
+                  color: "#E8B95A",
+                  fontSize: scale(11),
+                  fontWeight: "600",
+                  letterSpacing: scale(0.8),
+                  includeFontPadding : false
+                }}
+              >
+                TALENT
+              </Text>
+
+            </View>
+           
             <TouchableOpacity
               onPress={() => setTalentPickerVisible(true)}
               disabled={isSubmitting}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: spacing(18),
-                padding: 14,
+                marginBottom: spacing(30),
+                paddingVertical: spacing(20),
                 borderWidth: 1,
-                borderColor: BORDER,
-                borderRadius: 14,
-                backgroundColor: INPUT_BACKGROUND,
+                // borderColor: form.talentType
+                //   ? BORDER
+                //   : BORDER,
+                borderRadius: 19,
               }}
             >
+              {/* TALENT DISPLAY */}
               <View
                 style={{
-                  width: 50,
-                  height: 50,
-                  marginRight: 14,
+                  flexDirection: "row",
+                  paddingVertical : 23,
+
+                }}
+                className = "items -end"
+              >
+                {/* LARGE TALENT ICON */}
+
+                <View
+                  style={{
+                    marginRight: 15,
+                    alignItems: "center",
+                    justifyContent: "center",
+
+                  }}
+                  className = "px -3 rounded-xl "
+                >
+                  {form.talentType  ? (
+                    // <TalentIcon talent={form.talentType} size={50} />
+                    <TalentIconSelector code = {form.talentType} size={65}/>
+
+                  ) : (
+                    <MaterialCommunityIcons
+                      name="trophy-outline"
+                      size={65}
+                      color={GOLD}
+                    />
+                  )}
+                </View>
+
+                {/* TALENT DETAILS */}
+
+                <View style={{ flex: 1 }}>
+                  
+                  <Text
+                    style={{
+                      color: form.talentType ? "#F5D58E" : "#FFFFFF",
+                      fontSize: scale(16),
+                      fontWeight: "900",
+                      letterSpacing: 0.2,
+                      margontTop : scale(10)
+                    }}
+                  >
+                    {form.talentType || "Choose your talent"}
+                  </Text>
+
+                  <Text
+                    style={{
+                      color: "#c0c0c0",
+                      fontSize: scale(11),
+                      marginTop: 6,
+                      lineHeight: 18,
+                    }}
+                  >
+                    {form.talentType
+                      ? talentStages.find(t => t.name === form.talentType)?.description
+                      : "Select the talent you want to showcase."}
+                  </Text>
+                </View>
+
+              </View>
+
+              {/* BOTTOM HELPER TEXT */}
+
+              <View
+                style={{
+                  flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 15,
-                  backgroundColor: "#201E17",
+                  marginTop: 13,
+                  paddingHorizontal: 2,
                 }}
               >
-                {stageIcons?.[form.talentType] ? (
-                  <TalentIcon talent={form.talentType} size={29} />
-                ) : (
-                  <MaterialCommunityIcons
-                    name="trophy-outline"
-                    size={27}
-                    color={GOLD}
-                  />
-                )}
-              </View>
-
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{
-                    color: "#FFFFFF",
-                    fontSize: scale(14),
-                    fontWeight: "800",
-                  }}
-                >
-                  {form.talentType || "Choose your talent"}
-                </Text>
+                <Ionicons
+                  name="information-circle-outline"
+                  size={14}
+                  color="#8F8061"
+                />
 
                 <Text
                   style={{
-                    marginTop: 5,
-                    color: "#858791",
-                    fontSize: scale(11),
+                    color: "#8F887B",
+                    fontSize: scale(9),
+                    marginLeft: 6,
+                    letterSpacing: 0.15,
                   }}
                 >
-                  Select your talent category
+                  Tap to {form.talentType ? "change" : "select"} your talent
                 </Text>
               </View>
-
-              <Ionicons
-                name="chevron-forward"
-                size={19}
-                color="#D4D4D8"
-              />
             </TouchableOpacity>
 
+            {renderInput({
+              label: "NAME",
+              field: "arenaName",
+              placeholder: "Give your arena a name",
+              hint: "Choose a name people will recognize.",
+              maxLength : 20
+            })}
+      
+            <View
+            className = "w-full justify-center">
             {renderInput({
               label: "Region",
               field: "region",
               placeholder: "Country or region",
               hint: "Where is your arena based?",
+              disabled : true
             })}
+              <View
+              className = "absolute right-4 mb-4 ">
+                  <CountryFlag code={form.region} size={30} />
+              </View>
+            </View>
+
+    
+
+
+           
           </View>
 
+
+
+
+{/* 
           <View
             style={{
               height: 1,
               marginBottom: 28,
               backgroundColor: "#222328",
             }}
-          />
+          /> */}
 
           {/* Artwork */}
-          <View style={{ marginBottom: 28 }}>
+          <View style={{ marginBottom: spacing(46) }}>
+           
             <SectionHeading
               title="Make it yours"
               icon="color-palette-outline"
@@ -1694,7 +1761,7 @@ export default function CreateArenaModal({
 
             <Text
               style={{
-                marginBottom: 22,
+                marginBottom: spacing(22),
                 color: MUTED,
                 fontSize: scale(12),
                 lineHeight: scale(20),
@@ -1707,7 +1774,7 @@ export default function CreateArenaModal({
             {/* Profile image */}
             <Text
               style={{
-                marginBottom: 13,
+                marginBottom: spacing(16),
                 color: "#E4E4E7",
                 fontSize: scale(12),
                 fontWeight: "700",
@@ -1720,7 +1787,7 @@ export default function CreateArenaModal({
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                marginBottom: 27,
+                marginBottom: spacing(30),
               }}
             >
               <View
@@ -1732,8 +1799,7 @@ export default function CreateArenaModal({
                   borderColor: "#38342A",
                   borderRadius: 24,
                   backgroundColor: SURFACE,
-                }}
-              >
+                  }} >
                 {renderImage(profileImage)}
               </View>
 
@@ -1800,7 +1866,7 @@ export default function CreateArenaModal({
             {/* Cover image */}
             <View
               style={{
-                marginBottom: 13,
+                marginBottom: spacing(16),
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -1859,7 +1925,7 @@ export default function CreateArenaModal({
                   }}
                 />
 
-                <View
+                {/* <View
                   style={{
                     position: "absolute",
                     top: 14,
@@ -1882,7 +1948,7 @@ export default function CreateArenaModal({
                   >
                     ARENA COVER
                   </Text>
-                </View>
+                </View> */}
 
                 <TouchableOpacity
                   onPress={() => pickImage("cover")}
@@ -1977,27 +2043,65 @@ export default function CreateArenaModal({
             ) : null}
           </View>
 
-          <View
+          {/* <View
             style={{
               height: 1,
               marginBottom: 28,
               backgroundColor: "#222328",
             }}
-          />
+          /> */}
+
+
+
+           {/* Story */}
+           <View style={{ marginBottom: spacing(26) }}>
+            
+            <SectionHeading
+              title="Tell your story"
+              icon="document-text-outline"
+            />
+
+            <Text
+              style={{
+                marginBottom: 20,
+                color: MUTED,
+                fontSize: scale(12),
+                lineHeight: scale(20),
+              }}
+            >
+              Give people a reason to discover your arena. Tell them
+              who you are and what makes your space special.
+            </Text>
+
+            {renderInput({
+              label: "Biography",
+              field: "biography",
+              placeholder: "Introduce yourself and your arena...",
+              multiline: true,
+              maxLength: MAX_BIOGRAPHY_LENGTH,
+              hint: "Keep it personal, clear, and memorable.",
+            })}
+
+            {renderInput({
+              label: "Description",
+              field: "description",
+              placeholder: "What makes your arena different?",
+              multiline: true,
+              maxLength: MAX_DESCRIPTION_LENGTH,
+              hint: "Describe the experience people can expect.",
+            })}
+          </View>
+
+          {/* <View
+            style={{
+              height: 1,
+              marginBottom: 28,
+              backgroundColor: "#222328",
+            }}
+          /> */}
 
           {/* Live preview */}
           <View style={{ marginBottom: 20 }}>
-            <Text
-              style={{
-                marginBottom: 9,
-                color: "#BFA052",
-                fontSize: 10,
-                fontWeight: "800",
-                letterSpacing: 2.3,
-              }}
-            >
-              04 / THE FINAL LOOK
-            </Text>
 
             <Text
               style={{
@@ -2028,12 +2132,13 @@ export default function CreateArenaModal({
                 borderWidth: 1,
                 borderColor: BORDER,
                 borderRadius: 26,
-                backgroundColor: SURFACE,
+                backgroundColor: "black",
               }}
+              className = "justify-start"
             >
               <View
                 style={{
-                  height: Math.min(width * 0.58, 270),
+                  height:  scale(200),
                   overflow: "hidden",
                 }}
               >
@@ -2043,7 +2148,7 @@ export default function CreateArenaModal({
                   colors={[
                     "rgba(0,0,0,0.02)",
                     "rgba(0,0,0,0.2)",
-                    "rgba(0,0,0,0.88)",
+                    "rgba(0,0,0,0.68)",
                   ]}
                   locations={[0, 0.45, 1]}
                   style={{
@@ -2055,132 +2160,93 @@ export default function CreateArenaModal({
                   }}
                 />
 
-                <View
-                  style={{
-                    position: "absolute",
-                    top: 16,
-                    left: 16,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderWidth: 1,
-                    borderColor: "rgba(255,255,255,0.2)",
-                    borderRadius: 22,
-                    backgroundColor: "rgba(0,0,0,0.35)",
-                  }}
-                >
-                  <Ionicons
-                    name="shield-checkmark"
-                    size={13}
-                    color={GOLD}
-                  />
-
-                  <Text
-                    style={{
-                      marginLeft: 7,
-                      color: "#FFFFFF",
-                      fontSize: 9,
-                      fontWeight: "800",
-                      letterSpacing: 1.6,
-                    }}
-                  >
-                    ARENA PROFILE
-                  </Text>
-                </View>
-
-                <View
-                  style={{
-                    position: "absolute",
-                    right: 17,
-                    bottom: 19,
-                    left: 17,
-                  }}
-                >
-                  <Text
-                    style={{
-                      marginBottom: 7,
-                      color: "#E4C875",
-                      fontSize: 10,
-                      fontWeight: "800",
-                      letterSpacing: 2,
-                    }}
-                  >
-                    {(form.region || "YOUR REGION").toUpperCase()}
-                  </Text>
-
-                  <Text
-                    numberOfLines={2}
-                    style={{
-                      color: "#FFFFFF",
-                      fontSize: scale(25),
-                      fontWeight: "900",
-                      lineHeight: scale(32),
-                      letterSpacing: -0.5,
-                    }}
-                  >
-                    {form.arenaName.trim() || "Your Arena Name"}
-                  </Text>
-                </View>
               </View>
 
               <View style={{ paddingHorizontal: 19, paddingBottom: 21 }}>
                 <View
                   style={{
                     flexDirection: "row",
-                    alignItems: "flex-end",
-                    marginTop: -36,
+                    // alignItems: "flex-end",
+                    marginTop: -scale(46),
                   }}
+                  className = "items-end"
                 >
                   <View
                     style={{
-                      width: 82,
-                      height: 82,
+                      width: scale(100),
+                      height: scale(100),
+                      borderRadius: 26,
+                      padding: 3,
+                      backgroundColor: "#181713",
+                      borderWidth: 1,
+                      borderColor:  "#B8943D" ,
                       overflow: "hidden",
-                      borderWidth: 4,
-                      borderColor: SURFACE,
-                      borderRadius: 25,
-                      backgroundColor: "#222328",
                     }}
                   >
-                    {renderImage(profileImage)}
+                     <Image
+                        source={{ uri : getImageUri(profileImage) }}
+                        resizeMode="cover"
+                        style={{ width: "100%", height: "100%" , borderRadius: 26, }}
+                      />
+                    {/* {renderImage(profileImage)} */}
                   </View>
 
-                  <View style={{ flex: 1, marginLeft: 13, paddingBottom: 4 }}>
+                  <View 
+                  className = "flex-1  item s-center  "
+                  style={{ marginLeft: spacing(26),height: scale(110), }}>
                     <Text
                       style={{
-                        marginBottom: 7,
-                        color: "#777A84",
-                        fontSize: 9,
-                        fontWeight: "800",
-                        letterSpacing: 1.7,
+                        color: "#FFFFFF",
+                        fontSize: scale(16),
+                        fontWeight: "900",
+                        lineHeight: scale(32),
+                        letterSpacing: 0.5,
                       }}
-                    >
-                      TALENT
+                      >
+                         {form.arenaName.trim() || "Your Arena Name"}
                     </Text>
-
                     <View
                       style={{
-                        alignSelf: "flex-start",
-                        paddingHorizontal: 12,
-                        paddingVertical: 7,
-                        borderWidth: 1,
-                        borderColor: "#4A4129",
-                        borderRadius: 22,
-                        backgroundColor: "#211E16",
+                        paddingTop: 7,
                       }}
-                    >
-                      <Text
-                        style={{
-                          color: "#E4C875",
-                          fontSize: scale(11),
-                          fontWeight: "800",
-                        }}
+                      className = "flex-row  items-end"
                       >
-                        {form.talentType || "Talent type"}
-                      </Text>
+                        <View
+                        className = "flex-col gap-3 items-center ">
+                            <TalentIconSelector code={form.talentType} size={scale(42)} />
+                            <Text
+                              style={{
+                                color: "#fff",
+                                fontSize: scale(10),
+                                fontWeight: "600",
+                              }}
+                            >
+                              {form.talentType.toUpperCase() || "Talent type"}
+                            </Text>
+                       </View>
+                       <View
+                       className="justify-center h-full items-center">
+                          <View
+                          className ="mx-6 h-2 w-2 bg-[#c0c0c0] rounded-full "
+                            />
+                        </View>
+                        <View
+                            className = "flex-col gap-3 ml-3 items-center">
+                            <CountryFlag code={form.region} size={scale(37)} />
+                            <Text
+                              style={{
+                                color: "#fff",
+                                fontSize: scale(10),
+                                fontWeight: "600",
+                              }}
+                            >
+                              {form.region || "US"}
+                            </Text>
+                        </View>
                     </View>
+
                   </View>
+
                 </View>
 
                 <View style={{ marginTop: 25 }}>

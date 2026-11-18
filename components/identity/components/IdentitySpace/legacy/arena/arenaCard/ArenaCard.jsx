@@ -28,6 +28,7 @@ import FollowersIcon from "../../../../../../svgIcons/others/followersIcon";
 import { LinearGradient } from "expo-linear-gradient";
 import { countries } from "../../../../../../../utilities/TypeData";
 import { formatCount, talentAvatar } from "../../../../../../../helper";
+import TalentIconSelector from "../../../../../../common/talentIconSelector";
 
 // Enable LayoutAnimation on Android
 if (
@@ -117,10 +118,18 @@ export default function ArenaCard({
     post?.media?.thumbnail?.cdnUrl || post?.media?.thumbnail?.publicUrl || null;
 
   return (
-    <View
+    <Pressable
+      onPress={() => router.push({
+        pathname:
+          "/arenaProfile",
+        params: {
+          arena_id:
+            arena._id,
+        },
+      })}
       style={{
         // paddingHorizontal: spacing(16),
-        height: spacing(420),
+        height: spacing(430),
         width :  width * 0.99,
         borderRadius : scale(7)
       }}
@@ -134,7 +143,7 @@ export default function ArenaCard({
           }}
           className = "w-full p-2 flex-1 rounded-t-3xl bg-black border-l-2 border-r-2 border-t-2 border-[#252424] justify-center items-center "  >
 
-          {visiblePosts.length > 0 ? (
+          {/* {visiblePosts.length > 0 ? (
             <View
               className="flex-row flex-1"
               style={{
@@ -207,7 +216,6 @@ export default function ArenaCard({
                         />
                     )}
 
-                    {/* MORE OVERLAY */}
 
                     {showMore && (
                       <View
@@ -284,7 +292,6 @@ export default function ArenaCard({
                   padding : spacing(2),
                   zIndex :1002,
                 }}  >
-                {/* <ArenaPortalIcon size={scale(30)} /> */}
                 <Image
                 source={{ uri: arena.profileImage?.publicUrl }}
                 resizeMode="cover"
@@ -293,111 +300,201 @@ export default function ArenaCard({
                   height: scale(90),
                 }}
                 className ="rounded-full" />
+            </View> */}
+            <View
+                  className="flex-row flex-1"
+                  style={{
+                    gap: spacing(6),
+                    // paddingVertical: spacing(6),
+
+                  }}  >
+                    <Image
+                        source={{ uri:  talentAvatar[arena.talentType.toLowerCase()]?.publicUrl}}
+                        resizeMode="cover"
+                        style={{
+                          height : "100%"
+                        }}
+                        className="h- full w-full  rounded-xl"
+                        />  
             </View>
 
-            <Text
-                className = "absolute bottom-4 right-4 uppercase"
-                style={{
-                // marginTop: spacing(3),
-                  color: "#c0c0c0",
-                  fontSize: scale(9),
-                  fontWeight: "700",
-                  // letterSpacing: scale(0.3),
-                  
-                }}  >
-                        {countries.find(c=> c.code == country)?.name}
-            </Text>
-            <Text
-                           className = "absolute bottom-4 left-4 uppercase"
-                           style={{
-                           // marginTop: spacing(3),
-                             color: "#c0c0c0",
-                             fontSize: scale(9),
-                             fontWeight: "700",
-                             // letterSpacing: scale(0.3),
-                             
-                           }}  >
-                          {talent.toUpperCase()}
-            </Text>
-       
-     </View>
-   
+            <LinearGradient
+            pointerEvents="none"
+            colors={[
+              "rgba(0,0,0,0.04)",
+              "rgba(0,0,0,0.34)",
+              "#000",
+            ]}
+            locations={[0, 0.73, 1]}
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            }}
+          />
 
 
-
+      </View>
 
 
       <View
-          className="flex-row rounded-b-3xl border-x-2 border-b-2 border-[#252424]   justify-between w-full"
+          className="flex-col rounded-b-3xl border-x-2 border-b-2 border-[#252424]  items-start justify-start w-full"
           style={{
-              // marginTop: spacing(6),
-              height : scale(125)
+              height : scale(165),
+              paddingHorizontal : spacing(24)
           }}  >
 
-             <View 
-             style = {{
-              paddingVertical: spacing(8),
-              paddingHorizontal: spacing(8),
-             }}
-             className = " justify-center absolute top-0 left-4 z-50 items-center  bg-[#202021] round ed-bl-[10px] rounded-full  gap -4" >
-                      <TalentIcon talent={talent} size={scale(27)} color={"gold"}/>
-            </View>
-
-
-            {/* METRICS */}
-             <View
-             className = "flex-1 justify-start bg- [#202021] items-center">
-                   
-                <Pressable
-                    android_ripple={{
-                      color: "rgba(232,185,90,0.06)",
-                    }}
+            <View
+                  style={{
+                    // position: "absolute",
+                    // bottom: -40,
+                    // left: scale(15),
+                    // right: scale(15),
+                    // transform: [{ translateY: 38 }],
+                    flexDirection: "row",
+                    marginTop: - spacing(36),
+                  //   alignItems: "flex- end",
+                  }}
+                >
+                  <View
                     style={{
-         
+                      width: scale(90),
+                      height: scale(90),
+                      borderRadius: 26,
+                      padding: 3,
+                      backgroundColor: "#181713",
+                      borderWidth: 1,
+                      borderColor: "#B8943D",
+                      overflow: "hidden",
                     }}
-                    className = "justify-start b g-black  flex-1   items-center"
                   >
-                    <View
+                    { arena?.profileImage ? (
+                      <Image
+                        source={{ uri: arena.profileImage.publicUrl }}
+                        resizeMode="cover"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 22,
+                        }}
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          flex: 1,
+                          borderRadius: 22,
+                          backgroundColor: "#222019",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name="shield-star-outline"
+                          size={42}
+                          color={GOLD}
+                        />
+                      </View>
+                    )}
+                  </View>
+          
+                  {/* arena identity  */}
+                  <View
                     style={{
-                      // marginBottom: spacing(4),
-                       paddingTop : scale(4)
+                      // borderRadius: 26,
+                      // padding: 3,
+                      overflow: "hidden",
+                      marginLeft : spacing(26)
                     }}
-                     className=" bg-black bord er-x-2 min-w-full flex-1 bord er-[#252424] items-center ">
-                       
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              color: "#F4F4F2",
-                              fontSize: scale(15),
-                              // lineHeight: spacing(16),
-                              fontWeight: "800",
-                              letterSpacing: scale(0.25),
-                            }}  >
-                            {name}
-                          </Text>
+                    className = "items-start justify-between"
+                        >
 
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              marginTop: spacing(12),
-                              color: "rgba(255,255,255,0.92)",
-                              fontSize: scale(11),
-                              lineHeight: spacing(12),
-                              fontWeight: "500",
-                            }}
-                          >
-                            {biography}
-                          </Text>
+                      <Text
+                        style={{
+                          color: "#F5F3ED",
+                          fontSize: scale(16),
+                          // lineHeight: scale(33),
+                          fontWeight: "900",
+                          letterSpacing: -0.6,
+                        }}
+                      >
+                        {arena?.arenaName || "Arena"}
+                      </Text>
 
-                        
-                    </View>
+                      <View
+                        style={{
+                          paddingTop: 7,
+                          // height: scale(80),
+                        }}
+                        className = "flex-row flex-1 items-end"
+                        >
+                          <View
+                          className = "flex-col gap-3 items-center ">
+                              <TalentIconSelector code={arena.talentType} size={scale(27)} />
+                              <Text
+                                style={{
+                                  color: "#fff",
+                                  fontSize: scale(9),
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {arena.talentType.toUpperCase() || "Talent type"}
+                              </Text>
+                          </View>
+                          <View
+                          className="justify-center h-full items-center">
+                            <View
+                            className ="mx-6 h-2 w-2 bg-[#c0c0c0] rounded-full "
+                              />
+                          </View>
+                          <View
+                          className = "flex-col gap-4 ml-3 items-center">
+                              
+                              <CountryFlag code={arena.region} size={scale(21)} />
+                              <Text
+                                style={{
+                                  color: "#fff",
+                                  fontSize: scale(9),
+                                  fontWeight: "600",
+                                  letterSpacing : 2.8
+                                }}
+                              >
+                                {arena.region || "US"}
+                              </Text>
+                          </View>
+                      </View>
 
-              
 
-                  {/* Statistics */}
-      
-                   <View
-                    className = "  min-w-[90%] rounded-xl mb-4 border-[1px] self-center py-3 px-4 b g-[gold]/5  bor der-[gold]/20 flex-row justify-between   "
+                  </View>
+
+                </View>
+               
+               <View
+               style = {{
+                // marginTop: "auto",
+                flex:1,
+                marginBottom : spacing(16),
+               }}
+               className = "justify-end"
+               >
+                  <Text
+                      numberOfLines={1}
+                      style={{
+                        color: "#fff",
+                        fontSize: scale(11),
+                        lineHeight: scale(22),
+                      }}
+                    >
+                      {arena.biography.trim() ||
+                        "Your biography will appear here. Introduce yourself and give visitors a sense of your arena."}
+                  </Text>
+
+                  <View
+                  style = {{
+                    marginTop : spacing(8),
+                  }}
+                    className = "  min-w -[90%] w-full rounded-xl border- [1px] sel f-start py-2  flex-row justify-start   "
                       >
                     {[
                       {
@@ -417,13 +514,13 @@ export default function ArenaCard({
                       },
                     ].map((stat,index) => (
                       <View 
-                       className = " flex-row flex-1 justify-center  between"
+                       className = " flex-row flex-1 justify-start  between"
                        key={stat.label}>
                         <View
                         // key={stat.label}
-                        className="flex-row flex-1 items-center gap-2 justify-center">
+                        className="flex-row flex-1 items-center gap-2 justify-between">
                       
-                        {/* Icon and number in one row */}
+
                         <View
                           style={{
                             flexDirection: "row",
@@ -445,7 +542,7 @@ export default function ArenaCard({
                           >
                             <MaterialCommunityIcons
                               name={stat.icon}
-                              size={12}
+                              size={17}
                               color={"white"}
                             />
                           </View>
@@ -469,34 +566,17 @@ export default function ArenaCard({
                       </View>
                       { index !==2 && (
                         <View
-                        className = "h-[90%] w-[1px] mx- 6 bg-gray-400 self-center rounded-full"
+                        className = "h-[90%] w-[1px] mr-[30%] bg-gray-400 self-center rounded-full"
                         />
                       )}
                       </View>
                     ))}
                   </View>
 
-                  </Pressable>
-              </View>
 
-              <View 
-                style = {{
-                  paddingVertical: spacing(8),
-                  paddingHorizontal: spacing(8),
-                  // height : scale(60),
-                  // width : scale(60)
-                  }}
-                  className = "flex-row absolute top-0 right-4 justify-center items-center bg-[#202021]  rounded-full  gap -4" >
-                        <CountryFlag
-                            code={country}
-                            size={scale(30)}
-                        />
-              </View>
 
-            {/* < View
-              className = "w-full absolute bottom-0 h-2 bg-[#202021]"
-             /> */}
-         
+               </View>
+               
         </View>
 
 
@@ -513,6 +593,6 @@ export default function ArenaCard({
         />
        )}
 
-    </View>
+    </Pressable>
   );
 }

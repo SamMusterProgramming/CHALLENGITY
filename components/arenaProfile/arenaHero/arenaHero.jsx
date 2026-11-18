@@ -1,17 +1,18 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useEffect, useState } from "react";
-import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 import TalentIcon from "../../custom/TalentIcon";
 import CountryFlag from "../../common/CountryFlag";
 import { useGlobalContext } from "../../../context/GlobalProvider";
+import TalentIconSelector from "../../common/talentIconSelector";
 
 const GOLD = "#E6C66A";
 const GOLD_DARK = "#B8943D";
 const BACKGROUND = "#080909";
 const SURFACE = "#141515";
 const MUTED = "#929598";
-const BORDER = "rgba(230,198,106,0.15)";
+const BORDER = "rgba(230,198,106,0.45)";
 
 const formatCount = (value = 0) => {
     const n = Number(value) || 0;
@@ -121,7 +122,7 @@ export const ArenaHero = memo(function ArenaHero({
           <View
             style={{
               position: "absolute",
-              bottom: 0,
+              bottom: -40,
               left: scale(15),
               right: scale(15),
               transform: [{ translateY: 38 }],
@@ -131,8 +132,8 @@ export const ArenaHero = memo(function ArenaHero({
           >
             <View
               style={{
-                width: scale(94),
-                height: scale(94),
+                width: scale(100),
+                height: scale(100),
                 borderRadius: 26,
                 padding: 3,
                 backgroundColor: "#181713",
@@ -170,155 +171,289 @@ export const ArenaHero = memo(function ArenaHero({
                 </View>
               )}
             </View>
-  
-            {/* <View style={{ flex: 1 }} /> */}
-  
-            {isMe && (
+    
+            {/* arena identity  */}
             <View
-            className = "flex -1  items-center justify-center gap-2">
-               <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={() => openShare({
-                          category:"arena",
-                          type: "shared_arena",
-                          _id:arena._id,
-                          name:arena.arenaName,
-                          region:arena.region,
-                          talent:arena.talentType,
-                          ownerId:arena.owner_id
-                      })}
-                      disabled={sharing}
-                      style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: 12,
-                          borderWidth: 1,
-                      }}
-                      className="  bg-[#1c1c1d] flex- 1 self-center justify-center"
-                      > 
-                      {sharing ? (
-                          <ActivityIndicator
-                          size="small"
-                          color="#fff"
-                          />
-                      ) : (
-                          <MaterialCommunityIcons
-                          name="share"
-                          size={scale(30)}
-                          color="#fff"
-                          />
-                      )}
-              </TouchableOpacity>
-              <View
-                style={{
-                  backgroundColor: "rgba(230,198,106,0.12)",
-                  borderWidth: 1,
-                  borderColor: BORDER,
-                  borderRadius: 20,
-                  paddingHorizontal: 12,
-                  paddingVertical: 7,
-                  marginBottom: 0,
-                }}
-                className =" flex-row  gap- 2"
-              >
+              style={{
+                // borderRadius: 26,
+                // padding: 3,
+                overflow: "hidden",
+                marginLeft : spacing(26)
+              }}
+              className = "items-start justify-between"
+                  >
+
                 <Text
                   style={{
-                    color: GOLD,
-                    fontSize: scale(10),
-                    fontWeight: "800",
-                    letterSpacing: 1.2,
+                    color: "#F5F3ED",
+                    fontSize: scale(20),
+                    // lineHeight: scale(33),
+                    fontWeight: "900",
+                    letterSpacing: -0.6,
                   }}
                 >
-                  YOUR ARENA
+                  {arena?.arenaName || "Arena"}
                 </Text>
-                
-              </View>
-            </View>
-            )}
 
-             
+                <View
+                  style={{
+                    paddingTop: 7,
+                    // height: scale(80),
+                  }}
+                  className = "flex-row flex-1 items-end"
+                  >
+                    <View
+                    className = "flex-col gap-3 items-center ">
+                        <TalentIconSelector code={arena.talentType} size={scale(42)} />
+                        <Text
+                          style={{
+                            color: "#fff",
+                            fontSize: scale(10),
+                            fontWeight: "600",
+                          }}
+                        >
+                          {arena.talentType.toUpperCase() || "Talent type"}
+                        </Text>
+                    </View>
+                    <View
+                    className="justify-center h-full items-center">
+                      <View
+                      className ="mx-6 h-2 w-2 bg-[#c0c0c0] rounded-full "
+                        />
+                    </View>
+                    <View
+                    className = "flex-col gap-3 ml-3 items-center">
+                        
+                        <CountryFlag code={arena.region} size={scale(37)} />
+                        <Text
+                          style={{
+                            color: "#fff",
+                            fontSize: scale(10),
+                            fontWeight: "600",
+                          }}
+                        >
+                          {arena.region || "US"}
+                        </Text>
+                    </View>
+                </View>
+
+
+            </View>
 
           </View>
+
+
         </View>
   
         {/* Arena identity */}
-        <View style={{ paddingTop: scale(51), paddingHorizontal: 20 }}>
-          <Text
-            style={{
-              color: "#F5F3ED",
-              fontSize: scale(22),
-              lineHeight: scale(33),
-              fontWeight: "900",
-              letterSpacing: -0.6,
-            }}
-          >
-            {arena?.arenaName || "Arena"}
-          </Text>
-  
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              flexWrap: "wrap",
-              marginTop: scale(9),
-            }}   >
+        <View style={{ marginTop: scale(110), paddingHorizontal: 20 }}>
 
-            <TalentIcon talent={arena.talentType} color={"gold"} size={scale(19)} />
+      
 
-            <Text
+          <View style={{ marginBottom: spacing(16) , paddingRight:scale(24) }}>
+                  {/* <Text
+                    style={{
+                      marginBottom: spacing(10),
+                      color: "#A7A8B0",
+                      fontSize: scale(11),
+                      fontWeight: "600",
+                      letterSpacing: 1.8,
+                    }}
+                  >
+                   
+                  </Text> */}
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: spacing(16),
+                    }}  >
+
+                    <Ionicons
+                      name="sparkles-outline"
+                      size={14}
+                      color={GOLD}
+                    />
+
+                    <Text
+                      style={{
+                        marginLeft: 8,
+                        color: "#A7A8B0",
+                        fontSize: scale(10),
+                        fontWeight: "600",
+                        letterSpacing: 1.8,
+                      }}  >
+                       ABOUT
+                    </Text>
+                    <View
+                      style={{
+                        flex: 1,
+                        height: "38%",
+                        backgroundColor: "rgba(255,1255,255,0.35)",
+                        marginLeft: spacing(8),
+                      }}
+                    />
+
+                  </View>
+
+                  <Text
+                    style={{
+                      color: "#fff",
+                      fontSize: scale(13),
+                      lineHeight: scale(22),
+                    }}
+                  >
+                    {arena.biography.trim() ||
+                      "Your biography will appear here. Introduce yourself and give visitors a sense of your arena."}
+                  </Text>
+          </View>
+          
+          <Pressable
+              onPress={() => onPressOwner?.(arena?.owner_id)}
               style={{
-                paddingTop : scale(5),
-                marginLeft: scale(9),
-                color: "#D1C7AA",
-                fontSize: scale(11),
-                fontWeight: "600",
+                flex: 1,
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: "rgba(232,185,90,0.25)",
+                paddingHorizontal: scale(16),
+                paddingVertical: scale(16),
+                // justifyContent: "space-center",
               }}
-              className = "uppercase"
+              className = "justify-center "
             >
-              {arena?.talentType || "Sports arena"}
-            </Text>
-  
-            {!!arena?.region && (
-              <>
-                <View
+              <View 
+              className = "flex-1"
+              style={{ flexDirection: "row", alignItems: "center" }}>
+                <Image
+                  source={{ uri: arena.owner.profileImage.publicUrl }}
                   style={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: 2,
-                    backgroundColor: "#68645A",
-                    marginHorizontal: scale(19),
+                    width: scale(35),
+                    height: scale(35),
+                    borderRadius: 999,
+                    borderWidth: 1,
+                    borderColor: GOLD_DARK,
                   }}
                 />
-  
-                <CountryFlag code={arena.region} size={scale(18)} />
+
+                <View style={{ 
+                  // flex: 1,
+                   marginLeft: scale(9) 
+                   }}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      color: "#F4F0E8",
+                      fontSize: scale(12),
+                      fontWeight: "700",
+                    }}
+                  >
+                    {arena?.owner?.fullname || "Arena Creator"}
+                  </Text>
+
+                  <View style={{ flexDirection: "row", alignItems: "center", marginTop: spacing(7) }}>
+                    <MaterialCommunityIcons
+                      name="map-marker-outline"
+                      size={scale(12)}
+                      color={GOLD}
+                    />
+                    <Text
+                      numberOfLines={1}
+                      style={{
+                        color: "#C5BBA9",
+                        fontSize: scale(10),
+                        marginLeft: 3,
+                      }}
+                    >
+                     {arena?.owner?.city || arena?.region || "Location unavailable"}
+                    </Text>
+                  </View>
+                </View>
+
+                <View
+                  className = "absolute right-4 top-4">
+                      <MaterialCommunityIcons
+                      name="arrow-up-right"
+                      size={scale(25)}
+                      color={GOLD}
+                       />
+                </View>
+
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  // borderTopWidth: 1,
+                  // borderTopColor: "rgba(255,255,255,0.08)",
+                  paddingTop: scale(14),
+                }}
+              >
                 <Text
                   style={{
-                    paddingTop : scale(5),
-                    marginLeft: scale(9),
-                    color: MUTED,
-                    fontSize: scale(12),
+                    color: "#c0c0c0",
+                    fontSize: scale(10),
+                    fontWeight: "600",
                   }}
                 >
-                  {arena.region}
+                  Discover the arena creator
                 </Text>
-              </>
-            )}
-          </View>
+
+                
+              </View>
+          </Pressable> 
   
-          {!!arena?.biography && (
-            <Text
-              style={{
-                color: "#FFF",
-                fontSize: scale(13),
-                lineHeight: scale(20),
-                marginTop: scale(29),
-              }}
-            >
-              {arena.biography}
-            </Text>
-          )}
-          {!!arena?.description && (
+          <View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: spacing(40),
+                }}
+              >
+                <Ionicons
+                  name="sparkles-outline"
+                  size={14}
+                  color={GOLD}
+                />
+
+                <Text
+                  style={{
+                    marginLeft: 8,
+                    color: "#A7A8B0",
+                    fontSize: scale(10),
+                    fontWeight: "600",
+                    letterSpacing: 1.8,
+                  }}
+                >
+                  THE EXPERIENCE
+                </Text>
+                <View
+                      style={{
+                        flex: 1,
+                        height: "38%",
+                        backgroundColor: "rgba(255,1255,255,0.35)",
+                        marginLeft: spacing(8),
+                      }}
+                    />
+              </View>
+
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: scale(12),
+                  lineHeight: scale(21),
+                  marginTop: spacing(16),
+                }}
+              >
+                {arena.description.trim() ||
+                  "Your arena description will appear here. Describe what makes your arena worth discovering."}
+              </Text>
+          </View>
+
+          {/* {!!arena?.description && (
             <Text
               style={{
                 color: "#A6A7A4",
@@ -329,14 +464,15 @@ export const ArenaHero = memo(function ArenaHero({
             >
               {arena.description}
             </Text>
-          )}
+          )} */}
   
           {/* Social actions */}
           {!isMe && (
             <View
               style={{
                 flexDirection: "row",
-                marginTop: 22,
+                paddingTop: spacing(12),
+                marginBottom : spacing(4),
                 gap: 10,
               }}
             >
@@ -346,15 +482,15 @@ export const ArenaHero = memo(function ArenaHero({
                 style={{
                   flex: 1,
                   minHeight: 46,
-                  borderRadius: 14,
+                  borderRadius: 10,
                   alignItems: "center",
                   justifyContent: "center",
                   flexDirection: "row",
                   backgroundColor: arena?.isFollower
-                    ? "#27251E"
+                    ? "#000000"
                     : GOLD,
                   borderWidth: 1,
-                  borderColor: GOLD_DARK,
+                  borderColor: BORDER,
                 }}
               >
                 <MaterialCommunityIcons
@@ -383,7 +519,7 @@ export const ArenaHero = memo(function ArenaHero({
                   borderRadius: 14,
                   borderWidth: 1,
                   borderColor: BORDER,
-                  backgroundColor: "#191918",
+                  backgroundColor: "#00000",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -397,7 +533,7 @@ export const ArenaHero = memo(function ArenaHero({
             </View>
           )}
   
-          {!isMe && (
+          {/* {!isMe && (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => onPressOwner?.(arena?.owner_id)}
@@ -430,13 +566,13 @@ export const ArenaHero = memo(function ArenaHero({
                 color={GOLD}
               />
             </TouchableOpacity>
-          )}
+          )} */}
   
           {/* Statistics */}
           <View
             style={{
               flexDirection: "row",
-              marginVertical: scale(18),
+              marginTop: scale(16),
             //   marginBottom: 23,
               gap: 9,
             }}
@@ -468,7 +604,7 @@ export const ArenaHero = memo(function ArenaHero({
                   backgroundColor: SURFACE,
                   borderRadius: 8,
                   borderWidth: 1,
-                  borderColor: BORDER,
+                  // borderColor: BORDER,
                   justifyContent: "center",
                 }}
               >
@@ -476,7 +612,7 @@ export const ArenaHero = memo(function ArenaHero({
                 <Text
                   numberOfLines={1}
                   style={{
-                    color: MUTED,
+                    color: "#c0c0c0",
                     fontSize: scale(9),
                     letterSpacing: 0.2,
                     fontWeight: "500",
@@ -550,7 +686,7 @@ export const ArenaHero = memo(function ArenaHero({
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "row",
-                        marginVertical: scale(12)
+                        marginTop: scale(44)
                     }}
                     className="w-[100%] self-center py-4 p x-8"
                     >

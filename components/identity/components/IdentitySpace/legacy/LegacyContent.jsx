@@ -74,50 +74,11 @@ export default function LegacyContent() {
       style={{
         paddingHorizontal: spacing(12),
         // paddingTop: spacing(16),
-        paddingBottom: spacing(32),
+        // paddingBottom: spacing(32),
         width,
       }}
       className="justify-center self-center w- full items-center"
        >
-
-        <View
-          className="items-start justify-center"
-          style={{
-            gap : spacing(2)
-          }}  >
-
-            <View
-              className="flex-row text-start w-full items-center justify-start"
-              style={{
-                gap: spacing(8),
-               
-              }}   >
-
-                <Text
-                  style={{
-                    fontSize: scale(18),
-                    fontWeight: "900",
-                    letterSpacing: scale(2.2),
-                    color: "#F5F5F5",
-                    textAlign: "center",
-                    textShadowColor: "rgba(232,185,90,0.14)",
-                    textShadowOffset: { width: 0, height: 1 },
-                    textShadowRadius: scale(8),
-                  }}  >
-                   ARENAS
-                </Text>
-
-              <View
-                style={{
-                  // width: scale(18),
-                  height: scale(1),
-                  backgroundColor: "rgba(232,185,90,0.35)",
-                }}
-                className = "flex-1"
-              />
-            </View>
-
-        </View>
 
         <Arenas data = {userArenas} title = {"My Arenas"} textHeader = {"TALENT SPACE"}
          description1 = {`Your personal space for every arena you create. Each arena holds its own `} 
@@ -136,55 +97,18 @@ export default function LegacyContent() {
       style={{
         paddingHorizontal: spacing(12),
         // paddingTop: spacing(16),
-        paddingBottom: spacing(32),
+        // paddingBottom: spacing(32),
         width,
       }}
       className="justify-center  items-center"   >
-          
-        <View
-        className="items-start justify-center"
-        style={{
-          gap : spacing(2)
-           }}  >
-          <View
-            className="flex-row items-center justify-center"
-            style={{
-              gap: spacing(8),
-              }}   >
-
-              <Text
-                style={{
-                  fontSize: scale(18),
-                  fontWeight: "900",
-                  letterSpacing: scale(2.2),
-                  color: "#F5F5F5",
-                  textAlign: "center",
-                  textShadowColor: "rgba(232,185,90,0.14)",
-                  textShadowOffset: { width: 0, height: 1 },
-                  textShadowRadius: scale(8),
-                }}
-              >
-                STAGES
-              </Text>
-
-              <View
-                style={{
-                  height: scale(1),
-                  backgroundColor: "rgba(232,185,90,0.35)",
-                }}
-                className = "flex-1"
-              />
-          </View>
-
-        </View>
 
         <Stages data = {userTalents} title = "My Stages" textHeader = {"COMPETITION SPACE"} 
         description1={`Your journey on every stage, all in one place. Revisit the competitions you've been part of, relive your `} 
         description2={` , track your rankings, and see how far you've progressed.`}/>
         
         <Stages data = {favouriteStages || []}  title = "My Favourites"  textHeader = {"FAVOURITE COMPETITIONS"} 
-        description1={`Revisit your favourite stages, relive unforgettable moments, and stay connected to the talent you love. Discover new `} 
-        description2={` , support your favourites, and make your voice count with every vote.`}/>
+        description1={`Revisit your favourite stages and stay connected to the talent you love. Discover new `} 
+        description2={` and make your voice count with every vote.`}/>
     </View>
     )}
 
@@ -194,49 +118,10 @@ export default function LegacyContent() {
       // className="w-full"
       style={{
         paddingHorizontal: spacing(12),
-        // paddingTop: spacing(16),
-        paddingBottom: spacing(32),
         width,
       }}
       className="justify-center  items-center"   >
           
-        <View
-        className="items-start justify-center"
-        style={{
-          gap : spacing(2)
-        }}  >
-          <View
-            className="flex-row items-center justify-center"
-            style={{
-              gap: spacing(8),
-            }} >
-
-            <Text
-              style={{
-                fontSize: scale(18),
-                fontWeight: "900",
-                letterSpacing: scale(2.2),
-                color: "#F5F5F5",
-                textAlign: "center",
-                textShadowColor: "rgba(232,185,90,0.14)",
-                textShadowOffset: { width: 0, height: 1 },
-                textShadowRadius: scale(8),
-                }}  >
-
-              SPOTLIGHTS
-            </Text>
-
-            <View
-              style={{
-                // width: scale(18),
-                height: scale(1),
-                backgroundColor: "rgba(232,185,90,0.35)",
-              }}
-              className = "flex-1"
-            />
-          </View>
-        </View>
-
         <Performances data = {allPerformances || []} title = "My Performances" textHeader = {"PERFORMANCE HUB"} 
         description1={` Every performance, all in one place. Revisit your moments across all arenas, track your progress, and see how your talent evolves with every `} 
         description2={``}/>

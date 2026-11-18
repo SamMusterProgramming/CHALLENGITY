@@ -426,30 +426,43 @@ export default function LegacyBuilder() {
       <View
         style={{
           width: "100%",
-          paddingBottom: spacing(16),
+          // paddingBottom: spacing(16),
         }}
       >
         <View
           style={{
             paddingHorizontal: spacing(4),
             paddingTop: spacing(22),
-            paddingBottom: spacing(20),
+            // paddingBottom: spacing(20),
           }}
         >
           {/* TITLE */}
-
-          <Text
+          
+          <View
+            className="flex-row items-center justify-center"
             style={{
-              color: "#F4F0E8",
-              fontSize: scale(20),
-              lineHeight: scale(32),
-              fontWeight: "900",
-              letterSpacing: scale(-0.5),
-            }}
-          >
-            Build your legacy.
-          </Text>
-
+              gap: spacing(8),
+            }} >
+              <Text
+                style={{
+                  color: "#F4F0E8",
+                  fontSize: scale(18),
+                  lineHeight: scale(32),
+                  fontWeight: "900",
+                  letterSpacing: scale(-0.5),
+                }}
+              >
+                Build your legacy 
+              </Text>
+              <View
+                style={{
+                  flex:1,
+                  height: "30%",
+                  backgroundColor: "rgba(255,255,255,0.3)",
+                  marginLeft: spacing(8),
+                }}
+              />
+          </View>
           {/* SECTION EYEBROW */}
 
           <View
@@ -475,7 +488,7 @@ export default function LegacyBuilder() {
                 letterSpacing: scale(2),
               }}
             >
-              YOUR JOURNEY STARTS HERE
+              SHOWCASE YOUR TALENT
             </Text>
           </View>
 
@@ -552,19 +565,34 @@ export default function LegacyBuilder() {
             }}
           >
             {/* TITLE */}
+            
+            <View
+            className="flex-row items-center justify-center"
+            style={{
+              gap: spacing(8),
+            }} >
+              <Text
+                style={{
+                  color: "#F4F0E8",
+                  fontSize: scale(18),
+                  lineHeight: scale(32),
+                  fontWeight: "900",
+                  letterSpacing: scale(-0.5),
+                }}
+              >
+                 Find Your Stage
+              </Text>
+              <View
+                style={{
+                  flex:1,
+                  height: "30%",
+                  backgroundColor: "rgba(255,255,255,0.3)",
+                  marginLeft: spacing(8),
+                }}
+              />
+            </View>
 
-            <Text
-              style={{
-                marginTop: spacing(15),
-                color: "#F4F0E8",
-                fontSize: scale(18),
-                lineHeight: scale(26),
-                fontWeight: "900",
-                letterSpacing: -0.4,
-              }}
-            >
-              Find Your Stage.
-            </Text>
+           
 
             {/* CARD TOP */}
 

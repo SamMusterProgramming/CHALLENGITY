@@ -260,9 +260,9 @@ export default function CountryFlag({ code, size = 32 }) {
       style={{
         width: size,
         height: size,
-        borderRadius: size / 2,
+        // borderRadius: size / 2,
       }}
-      resizeMode="cover"
+      resizeMode="contain"
     />
   );
 }

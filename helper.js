@@ -545,44 +545,454 @@ export const extractStageEntries = (
 
   export const talentAvatar = {
     singing: {
-      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/singingAvatar.jpg",
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/singingAvatar.webp",
       fileId: "4_z416b61472e3f671f90c50018_f115d68120db925e6_d20261023_m032508_c005_v0501050_t0013_u01792725908900",
       fileName: "singingAvatar.jpg",
     },
-  
-    magic: {
-      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/magicAvatar.jpg",
-      fileId: "4_z416b61472e3f671f90c50018_f10786fa5a6a80b54_d20261023_m034803_c005_v0501036_t0019_u01792727283574",
-      fileName: "magicAvatar.jpg",
+
+    rapping: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/rappingAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f10108a28e2efadc7_d20261112_m181937_c005_v0501022_t0048_u01794507577144",
+      fileName: "rappingAvatar.jpg",
     },
-  
-    comedy: {
-      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/comedyAvatar.jpg",
-      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
-      fileName: "comedyAvatar.jpg",
+
+    beatboxing: {
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/beatboxingAvatar.jpg",
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/beatboxingAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
     },
-  
-    fitness: {
-      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fitnessAvatar.webp",
-      fileId: "4_z416b61472e3f671f90c50018_f10112dfad7f433b3_d20261023_m040019_c005_v0501045_t0015_u01792728019183",
-      fileName: "fitnessAvatar.webp",
+
+    guitar: {
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/beatboxingAvatar.jpg",
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/guitarAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
     },
-  
+
+    piano: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/pianoAvatar.webp",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+    violin: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/violinAvatar.webp",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+     flute: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/fluteAvatar.webp",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+    drumming: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/drummingAvatar.webp",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+    djing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/music/djingAvatar.webp",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+    
+    // dancing , physical activities
+    
     dancing: {
-      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/dancingAvatar.avif",
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/physical/dancingAvatar.webp",
       fileId: "4_z416b61472e3f671f90c50018_f103c79a1285a8513_d20261023_m040640_c005_v0501012_t0036_u01792728400007",
       fileName: "dancingAvatar.avif",
     },
 
-    melody: {
-      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/instrumentAvatar.jpg",
-      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
-      fileName: "instrumentAvatar.jpg",
+    fitness: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/physical/fitnessAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f10112dfad7f433b3_d20261023_m040019_c005_v0501045_t0015_u01792728019183",
+      fileName: "fitnessAvatar.webp",
     },
+  
+
+    acrobatics: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/physical/acrobaticsAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    karate: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/physical/karateAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    parkour: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/physical/parkourAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    skating: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/physical/skatingAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    yoga: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/physical/yogaAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+
+  // magic and entertainment
+
+    magic: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/entertainment/magicAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f10786fa5a6a80b54_d20261023_m034803_c005_v0501036_t0019_u01792727283574",
+      fileName: "magicAvatar.jpg",
+    },
+
+    comedy: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/entertainment/comedyAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+  
+    mentalism: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/mentalismAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    ventriloquism: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/ventriloquismAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    juggling: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/jugglingAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    puppetry: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/puppetryAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    stunts: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/stuntsAvatar.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    talespin: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/talespinAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+   // art and visual talent
 
     art: {
       publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/artAvatar.jpg",
       fileId: "4_z416b61472e3f671f90c50018_f11805213be353ac2_d20261103_m192403_c005_v0521006_t0005_u01793733843268",
       fileName: "artAvatar.jpg",
     },
+    photography: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/photographyAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+    filmmaking: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/filmmakerAvatar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+    animation: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/animationAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+    design: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/designAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    fashion: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    //tech unfinished 
+
+    tech: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    // other talent
+
+    eating: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    cooking: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    speedcubing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    whistling: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+  };
+
+  export const arenaProfileAvatar = {
+    singing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/singing.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11756d5c1a3578d8_d20261110_m072121_c005_v0501005_t0005_u01794295281650",
+      fileName: "singingAvatar.jpg",
+    },
+
+    rapping: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/rapping.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f1025294304a0af92_d20261112_m181351_c005_v0501015_t0007_u01794507231401",
+      fileName: "rapping.jpg",
+    },
+
+    beatboxing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/beatboxing.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f1191e0d56fe04d25_d20261112_m182614_c005_v0501048_t0056_u01794507974550",
+      fileName: "rapping.jpg",
+    },
+
+    guitar: {
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/beatboxingAvatar.jpg",
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/guitar.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+    piano: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f10323767282dc6b7_d20261112_m194444_c005_v0501018_t0050_u01794512684470",
+      fileName: "piano.jpg",
+    },
+
+    violin: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/violin.webp",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f10323767282dc6b7_d20261112_m194444_c005_v0501018_t0050_u01794512684470",
+      fileName: "violin.webp",
+    },
+
+    flute: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/flute.jpg",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+    drumming: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/drum.jpg",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+    djing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/djing.webp",
+      // publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/piano.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f11255dccc619454f_d20261112_m182605_c005_v0501052_t0047_u01794507965305",
+      fileName: "beatboxingAvatar.jpg",
+    },
+
+    // dancing , physical activities
+
+    fitness: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fitness.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f113935f5974fa788_d20261110_m075552_c005_v0501051_t0048_u01794297352929",
+      fileName: "fitnessAvatar.webp",
+    },
+  
+    dancing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/dancing.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f111c973071fbed7d_d20261110_m074640_c005_v0501022_t0025_u01794296800053",
+      fileName: "dancingAvatar.avif",
+    },
+  
+
+    acrobatics: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/acrobatics.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    karate: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/karate.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    parkour: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/parkour.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    skating: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/skating.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    yoga: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/yoga.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+
+    //magic and entertainment
+
+    magic: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/magic.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f103078e75375de97_d20261110_m074140_c005_v0501052_t0028_u01794296500271",
+      fileName: "magicAvatar.jpg",
+    },
+  
+    comedy: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/comedy.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f1088798eff6a28d4_d20261110_m075149_c005_v0501053_t0049_u01794297109087",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    mentalism: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/mentalism.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+     
+    ventriloquism: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/ventriloquism.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    juggling: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/juggling.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    puppetry: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/puppetry.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+
+    stunts: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/stunts.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+    
+    talespin: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/talespin.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f1049249bead5a3ab_d20261023_m035320_c005_v0501038_t0018_u01792727600869",
+      fileName: "comedyAvatar.jpg",
+    },
+    
+
+      // CREATIVE & VISUAL ARTS
+
+    art: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/art.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f100222395ff647e6_d20261110_m071817_c005_v0501009_t0004_u01794295097605",
+      fileName: "artAvatar.jpg",
+    },
+    photography: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/photography.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+    filmmaking: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/filmmaker.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+    animation: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/animation.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+    design: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/design.jpeg",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+    fashion: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashion.jpg",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    //tech unfinished 
+
+    tech: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    // other talent
+
+    eating: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    cooking: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    speedcubing: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
+    whistling: {
+      publicUrl: "https://cdn.challenmemey.com/file/challengify-Images/avatar/fashionAvatar.webp",
+      fileId: "4_z416b61472e3f671f90c50018_f106e644e992d2d7a_d20261103_m191712_c005_v0501033_t0038_u01793733432117",
+      fileName: "instrumentAvatar.jpg",
+    },
+
   };

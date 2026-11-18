@@ -53,62 +53,19 @@ export default function CircleContent() {
       style={{
         paddingHorizontal: spacing(18),
         // paddingTop: spacing(26),
-        paddingBottom: spacing(32),
+        // paddingBottom: spacing(32),
         width,
       }}
       className="justify-center w- full items-center"
        >
 
-
-      <View
-        className="items-start justify-start"
-        style={{
-          // width: "100%",
-          // marginBottom: spacing(10),
-          gap: spacing(2),
-        }}  >
-
-        <View
-          className="flex-row items-center justify-center"
-          style={{
-            gap: spacing(8),
-            // marginBottom: spacing(12),
-          }}
-        >
-      
-          <Text
-            style={{
-              fontSize: scale(18),
-              fontWeight: "900",
-              letterSpacing: scale(2.2),
-              color: "#F5F5F5",
-              textAlign: "center",
-              textShadowColor: "rgba(232,185,90,0.14)",
-              textShadowOffset: { width: 0, height: 1 },
-              textShadowRadius: scale(8),
-            }}
-          >
-            PEOPLE
-          </Text>
-         
-
-          <View
-            style={{
-              height: scale(1),
-              backgroundColor: "rgba(232,185,90,0.35)",
-            }}
-            className = "flex-1"
-          />
-        </View>
-      </View>
-
-         <Friends data = {userFriends.users} title ="My Friends" textHeader = {`INNER CIRCLE`} 
+         <Friends data = {userFriends.users} title ="My Friends" textHeader = {`INNER CIRCLE`} type = "FRIENDS"
          description1={'Stay connected with the people who share your journey. Discover their latest milestones and celebrate the moments that make every connection meaningful.'}/>
         
-         <Friends data = {userFollowers.users} title ="My Followers" textHeader ={`JOURNEY FOLLOWERS`}
+         <Friends data = {userFollowers.users} title ="My Followers" textHeader ={`JOURNEY FOLLOWERS`} type = "FOLLOWERS"
          description1={`the people keeping up with your performances, following your competitive milestones, and watching your talent evolve.`} />
         
-         <Friends data = {userFollowings.users} title ="My Followings" textHeader = {`FOLLOWING JOURNEYS`}
+         <Friends data = {userFollowings.users} title ="My Followings" textHeader = {`FOLLOWING JOURNEYS`} type = "FOLLOWINGS"
          description1={`Keep track of the talent you follow, discover their latest performances, and follow their achievements, competition milestones, and growth along the way.`}/>
     </View>
     )}
@@ -128,8 +85,7 @@ export default function CircleContent() {
       <View
         className="items-center justify-center"
         style={{
-          // width: "100%",
-          // marginBottom: spacing(10),
+  
           gap: spacing(2),
         }}  >
 

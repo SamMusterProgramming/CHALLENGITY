@@ -16,7 +16,8 @@ import ArenaPortalIcon from "../../svgIcons/ArenaPortalIcon";
 import CountryFlag from "../../common/CountryFlag";
 import MagicIcon from "../../svgIcons/talent/MagicIcon";
 import TalentIcon from "../../custom/TalentIcon";
-import { formatCount } from "../../../helper";
+import { formatCount, talentAvatar } from "../../../helper";
+import TalentIconSelector from "../../common/talentIconSelector";
 
 const ArenaCard = ({
   entry,
@@ -223,28 +224,24 @@ const ArenaCard = ({
       }
       style={{
         width,
-        // height,
       }}
       className="self-center  "
     >
 
     
 
-      {/*
-       * =====================================================
-       * PERFORMANCE GALLERY
-       * =====================================================
-       */}
 
       <View
       style ={{
-        height : getArenaPerformanceThumbnailHeight(),
+        height : getArenaPerformanceThumbnailHeight() - scale(16),
         gap: spacing(6),
         paddingBottom: spacing(6),
 
       }}
       className=" p-1 rounded-t-3xl bg-black border-l-2 border-r-2 border-t-2 border-[#252424] justify-center    flex-row ">
-        {visiblePerformances.map(
+      
+      
+        {/* {visiblePerformances.map(
           renderPerformance
         )}
 
@@ -285,109 +282,203 @@ const ArenaCard = ({
               }}
               className ="rounded-full"
             />
-          </View>
+          </View> */}
 
-          <Text
-                className = "absolute bottom-4 right-10 uppercase"
-                style={{
-                // marginTop: spacing(3),
-                  color: "#c0c0c0",
-                  fontSize: scale(9),
-                  fontWeight: "700",
-                  // letterSpacing: scale(0.3),
-                  
-                }}  >
-                        {entry.region}
-          </Text>
-          <Text
-                           className = "absolute bottom-4 left-4 uppercase"
-                           style={{
-                           // marginTop: spacing(3),
-                             color: "#c0c0c0",
-                             fontSize: scale(9),
-                             fontWeight: "700",
-                             // letterSpacing: scale(0.3),
-                             
-                           }}  >
-                          {entry.talentType.toUpperCase()}
-          </Text>
+            <View
+                  className="flex-row flex-1"
+                  style={{
+                    gap: spacing(6),
+                    // paddingVertical: spacing(6),
+
+                  }}  >
+                    <Image
+                        source={{ uri:  talentAvatar[entry.talentType.toLowerCase()]?.publicUrl}}
+                        resizeMode="cover"
+                        style={{
+                          height : "100%"
+                        }}
+                        className="h- full w-full  rounded-xl"
+                        />  
+            </View>
+
+            <LinearGradient
+            pointerEvents="none"
+            colors={[
+              "rgba(0,0,0,0.04)",
+              "rgba(0,0,0,0.34)",
+              "#000",
+            ]}
+            locations={[0, 0.73, 1]}
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            }}
+          />
+
 
        </View>
 
-       {/* footer */}
 
-       
        <View
-          className="flex-row rounded-b-3xl border-x-2 border-b-2 border-[#252424]   justify-between w-full"
+          className="flex-col rounded-b-3xl border-x-2 border-b-2 border-[#252424]  items-start justify-start w-full"
           style={{
-              // marginTop: spacing(6),
-              height : scale(125)
+              height : scale(145),
+              paddingHorizontal : spacing(24)
           }}  >
 
-         
-            <View 
-             style = {{
-              paddingVertical: spacing(8),
-              paddingHorizontal: spacing(8),
-             }}
-             className = " justify-center absolute top-0 left-4 z-50 items-center bg-[#202021] round ed-bl-[10px] rounded-full  gap -4" >
-                      <TalentIcon talent={entry.talentType}  size={scale(27)} color={"gold"}/>
-            </View>
-
-
-
-             {/* METRICS */}
-             <View
-             className = "flex-1 justify-start bg- [#202021] items-center">
-                   
-                   <Pressable
-                    android_ripple={{
-                      color: "rgba(232,185,90,0.06)",
-                    }}
+            <View
+                  style={{
+                    // position: "absolute",
+                    // bottom: -40,
+                    // left: scale(15),
+                    // right: scale(15),
+                    // transform: [{ translateY: 38 }],
+                    flexDirection: "row",
+                    marginTop: -spacing(56),
+                  //   alignItems: "flex- end",
+                  }}
+                >
+                  <View
                     style={{
-         
+                      width: scale(90),
+                      height: scale(90),
+                      borderRadius: 26,
+                      padding: 3,
+                      backgroundColor: "#181713",
+                      borderWidth: 1,
+                      borderColor: "#B8943D",
+                      overflow: "hidden",
                     }}
-                    className = "justify-start b g-black  flex-1   items-center"
                   >
-                 
-                    <View
+                    { entry?.profileImage ? (
+                      <Image
+                        source={{ uri: entry.profileImage.publicUrl }}
+                        resizeMode="cover"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 22,
+                        }}
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          flex: 1,
+                          borderRadius: 22,
+                          backgroundColor: "#222019",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name="shield-star-outline"
+                          size={42}
+                          color={GOLD}
+                        />
+                      </View>
+                    )}
+                  </View>
+          
+                  {/* arena identity  */}
+                  <View
+                    style={{
+                      // borderRadius: 26,
+                      // padding: 3,
+                      overflow: "hidden",
+                      marginLeft : spacing(26)
+                    }}
+                    className = "items-start justify-between"
+                        >
+
+                      <Text
+                        style={{
+                          color: "#F5F3ED",
+                          fontSize: scale(16),
+                          // lineHeight: scale(33),
+                          fontWeight: "900",
+                          letterSpacing: -0.6,
+                        }}
+                      >
+                        {entry?.arenaName || "Arena"}
+                      </Text>
+
+                      <View
+                        style={{
+                          paddingTop: 7,
+                          // height: scale(80),
+                        }}
+                        className = "flex-row flex-1 items-end"
+                        >
+                          <View
+                          className = "flex-col gap-3 items-center ">
+                              <TalentIconSelector code={entry.talentType} size={scale(27)} />
+                              <Text
+                                style={{
+                                  color: "#fff",
+                                  fontSize: scale(9),
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {entry.talentType.toUpperCase() || "Talent type"}
+                              </Text>
+                          </View>
+                          <View
+                          className="justify-center h-full items-center">
+                            <View
+                            className ="mx-6 h-2 w-2 bg-[#c0c0c0] rounded-full "
+                              />
+                          </View>
+                          <View
+                          className = "flex-col gap-4 ml-3 items-center">
+                              
+                              <CountryFlag code={entry.region} size={scale(21)} />
+                              <Text
+                                style={{
+                                  color: "#fff",
+                                  fontSize: scale(9),
+                                  fontWeight: "600",
+                                  letterSpacing : 2.8
+                                }}
+                              >
+                                {entry.region || "US"}
+                              </Text>
+                          </View>
+                      </View>
+
+
+                  </View>
+
+                </View>
+               
+               <View
+               style = {{
+                // marginTop: "auto",
+                flex:1,
+                marginBottom : spacing(16),
+               }}
+               className = "justify-end"
+               >
+                  <Text
+                      numberOfLines={1}
                       style={{
-                        // marginBottom: spacing(4),
-                        paddingTop : scale(4)
+                        color: "#fff",
+                        fontSize: scale(11),
+                        lineHeight: scale(22),
                       }}
-                      className=" bg-black bord er-x-2 min-w-full flex-1 bord er-[#252424] items-center ">
-                       
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              color: "#F4F4F2",
-                              fontSize: scale(15),
-                              // lineHeight: spacing(16),
-                              fontWeight: "800",
-                              letterSpacing: scale(0.25),
-                            }}  >
-                              {entry.arenaName}
-                          </Text>
-
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              marginTop: spacing(12),
-                              color: "rgba(255,255,255,0.92)",
-                              fontSize: scale(11),
-                              lineHeight: spacing(12),
-                              fontWeight: "500",
-                            }}
-                          >
-                            {entry.biography}
-                          </Text>
-                    </View>
-
-                      {/* Statistics */}
-      
-                   <View
-                    className = "  min-w-[90%] rounded-xl mb-4 border-[1px] self-center py-3 px-4 b g-[gold]/5  bor der-[gold]/20 flex-row justify-between   "
                     >
+                      {entry.biography.trim() ||
+                        "Your biography will appear here. Introduce yourself and give visitors a sense of your arena."}
+                  </Text>
+
+                  <View
+                  style = {{
+                    marginTop : spacing(8),
+                  }}
+                    className = "  min-w -[90%] w-full rounded-xl border- [1px] sel f-start py-2  flex-row justify-start   "
+                      >
                     {[
                       {
                         label: "PERFORMANCES",
@@ -401,18 +492,18 @@ const ArenaCard = ({
                       },
                       {
                         label: "STARS",
-                        value: entry.starCount,
+                        value:entry.starCount,
                         icon: "star",
                       },
                     ].map((stat,index) => (
                       <View 
-                       className = " flex-row flex-1 justify-center between"
+                       className = " flex-row flex-1 justify-start  between"
                        key={stat.label}>
                         <View
                         // key={stat.label}
-                        className="flex-row flex-1 items-center gap-2 justify-center">
+                        className="flex-row flex-1 items-center gap-2 justify-between">
                       
-                        {/* Icon and number in one row */}
+
                         <View
                           style={{
                             flexDirection: "row",
@@ -458,7 +549,7 @@ const ArenaCard = ({
                       </View>
                       { index !==2 && (
                         <View
-                        className = "h-[90%] w-[1px] mx- 6 bg-gray-400 self-center rounded-full"
+                        className = "h-[90%] w-[1px] mr-[30%] bg-gray-400 self-center rounded-full"
                         />
                       )}
                       </View>
@@ -466,24 +557,9 @@ const ArenaCard = ({
                   </View>
 
 
-                  </Pressable>
-             
-              </View>
 
-              <View 
-                  style = {{
-                    paddingVertical: spacing(8),
-                    paddingHorizontal: spacing(8),
-                    // height : scale(60),
-                    // width : scale(60)
-                    }}
-                    className = "flex-row absolute top-0 right-4 justify-center items-center bg-[#202021]  rounded-full  gap -4" >
-                          <CountryFlag
-                              code={entry.region}
-                              size={scale(30)}
-                          />
-              </View>
-         
+               </View>
+               
         </View>
       
 

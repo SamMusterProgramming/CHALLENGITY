@@ -166,10 +166,10 @@ const Friends = ({data , title}) => {
       className="justify-center items -center"
     >
 
-
       {/* =========================================
           FRIENDS COLLECTION HEADER
        ========================================= */}
+      
 
       <View
         style={{

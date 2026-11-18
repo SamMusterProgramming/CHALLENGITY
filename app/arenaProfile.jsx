@@ -269,7 +269,7 @@ export default function ArenaPage() {
     setArenaActionModal,
     setSelectedArena,
     scale,
-    
+    spacing
   } = useGlobalContext();
 
   const { showLoading, hideLoading } = useLoading();

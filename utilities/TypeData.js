@@ -31,20 +31,336 @@ export const Audience =[
 ]
 
 
+// export const talentStages = [
+
+//   // MUSIC
+//   { id: "0", name: "Singing" },
+//   { id: "1", name: "Rapping" },
+//   { id: "2", name: "Beatboxing" },
+//   { id: "3", name: "Guitar" },
+//   { id: "4", name: "Piano" },
+//   { id: "5", name: "Violin" },
+//   { id: "6", name: "Drumming" },
+//   { id: "7", name: "DJing" },
+//   { id: "8", name: "Beatmaking" },
+
+//   // DANCE & PHYSICAL PERFORMANCE
+//   { id: "9", name: "Dancing" },
+//   { id: "10", name: "Fitness" },
+//   { id: "11", name: "Acrobatics" },
+//   { id: "12", name: "Karate" },
+//   { id: "13", name: "Parkour" },
+//   { id: "14", name: "Skating" },
+//   { id: "15", name: "Yoga" },
+
+//   // MAGIC & ENTERTAINMENT
+//   { id: "16", name: "Magic" },
+//   { id: "17", name: "Mentalism" },
+//   { id: "18", name: "Comedy" },
+//   { id: "19", name: "Acting" },
+//   { id: "20", name: "Ventriloquism" },
+//   { id: "21", name: "Juggling" },
+//   { id: "22", name: "Puppetry" },
+//   { id: "24", name: "Stunts" },
+//   { id: "25", name: "TaleSpin" },
+
+//   // CREATIVE & VISUAL ARTS
+//   { id: "26", name: "Art" },
+//   { id: "27", name: "Photography" },
+//   { id: "28", name: "Filmmaking" },
+//   { id: "29", name: "Animation" },
+//   { id: "30", name: "Design" },
+//   { id: "31", name: "Fashion" },
+//   { id: "32", name: "Makeup" },
+
+//   // TECHNOLOGY
+//   { id: "33", name: "Tech" },
+
+//   // OTHER TALENTS
+//   { id: "34", name: "Modeling" },
+//   { id: "35", name: "Eating" },
+//   { id: "36", name: "Cooking" },
+//   { id: "37", name: "Speedcubing" },
+//   { id: "38", name: "Whistling" },
+
+// ];
+
 export const talentStages = [
-  { id: "1", name: "Singing" },
-  { id: "2", name: "Dancing" },
-  { id: "3", name: "Fitness" },
-  { id: "4", name: "Magic" },
-  { id: "5", name: "Food" },
-  { id: "6", name: "Adventure" },
-  { id: "7", name: "Sport" },
-  { id: "8", name: "Melody" },
-  { id: "9", name: "Gaming" },
-  { id: "10", name: "Art" },
-  { id: "11", name: "Tech" },
-  { id: "12", name: "Comedy" },
+  // MUSIC
+  {
+    id: "0",
+    name: "Singing",
+    label: "Singing",
+    icon: "microphone-stage",
+    description: "Express melodies and emotions through vocal technique, pitch, tone and musical interpretation.",
+  },
+  {
+    id: "1",
+    name: "Rapping",
+    label: "Rapping",
+    icon: "microphone",
+    description: "Deliver rhythmic lyrics through creative flow, rhyme, wordplay and expressive vocal performance.",
+  },
+  {
+    id: "2",
+    name: "Beatboxing",
+    label: "Beatboxing",
+    icon: "mouth-sound",
+    description: "Create beats, basslines and rhythmic sounds using only your voice and mouth.",
+  },
+  {
+    id: "3",
+    name: "Guitar",
+    label: "Guitar",
+    icon: "guitar",
+    description: "Perform melodies, chords and rhythms using acoustic or electric guitar.",
+  },
+  {
+    id: "4",
+    name: "Piano",
+    label: "Piano",
+    icon: "piano-keys",
+    description: "Create expressive musical performances through melodies, harmonies and piano technique.",
+  },
+  {
+    id: "5",
+    name: "Violin",
+    label: "Violin",
+    icon: "violin",
+    description: "Perform expressive melodies using bowing techniques, musical phrasing and violin skills.",
+  },
+  {
+    id: "6",
+    name: "Flute",
+    label: "Flute",
+    icon: "flute",
+    description: "Perform expressive melodies and beautiful music using the flute, showcasing breath control, technique, tone and musical creativity.",
+  },
+  {
+    id: "7",
+    name: "Drumming",
+    label: "Drumming",
+    icon: "drum-kit",
+    description: "Create powerful rhythms and dynamic percussion through timing, coordination and technique.",
+  },
+  {
+    id: "8",
+    name: "DJing",
+    label: "DJing",
+    icon: "turntables",
+    description: "Mix tracks, control transitions and build energetic musical experiences for audiences.",
+  },
+
+  // DANCE & PHYSICAL PERFORMANCE
+  {
+    id: "9",
+    name: "Dancing",
+    label: "Dancing",
+    icon: "dancer",
+    description: "Express rhythm, creativity and emotion through choreography, movement and dance styles.",
+  },
+  {
+    id: "10",
+    name: "Fitness",
+    label: "Fitness",
+    icon: "dumbbell",
+    description: "Showcase physical strength, endurance and conditioning through fitness challenges and routines.",
+  },
+  {
+    id: "11",
+    name: "Acrobatics",
+    label: "Acrobatics",
+    icon: "acrobatics",
+    description: "Demonstrate flexibility, balance, strength and body control through impressive physical movements.",
+  },
+  {
+    id: "12",
+    name: "Karate",
+    label: "Karate",
+    icon: "karate",
+    description: "Showcase martial arts discipline through precise strikes, forms, techniques and controlled movement.",
+  },
+  {
+    id: "13",
+    name: "Parkour",
+    label: "Parkour",
+    icon: "parkour",
+    description: "Navigate obstacles through fluid movement, vaults, jumps, climbing and precision landings.",
+  },
+  {
+    id: "14",
+    name: "Skating",
+    label: "Skating",
+    icon: "skateboard",
+    description: "Perform creative tricks, technical maneuvers and fluid movement on skates or skateboards.",
+  },
+  {
+    id: "15",
+    name: "Yoga",
+    label: "Yoga",
+    icon: "lotus-pose",
+    description: "Demonstrate balance, flexibility, strength and mindful movement through yoga poses and flows.",
+  },
+
+  // MAGIC & ENTERTAINMENT
+  {
+    id: "16",
+    name: "Magic",
+    label: "Magic",
+    icon: "magic-wand",
+    description: "Amaze audiences with illusions, sleight of hand and astonishing magical demonstrations.",
+  },
+  {
+    id: "17",
+    name: "Mentalism",
+    label: "Mentalism",
+    icon: "mind-reading",
+    description: "Captivate audiences with mind-reading demonstrations, psychological illusions and thought experiments.",
+  },
+  {
+    id: "18",
+    name: "Comedy",
+    label: "Comedy",
+    icon: "comedy-mask",
+    description: "Make audiences laugh through jokes, characters, comic timing and humorous performances.",
+  },
+
+  {
+    id: "20",
+    name: "Ventriloquism",
+    label: "Ventriloquism",
+    icon: "ventriloquist-dummy",
+    description: "Create the illusion of talking characters through controlled voices and expressive puppet performances.",
+  },
+  {
+    id: "21",
+    name: "Juggling",
+    label: "Juggling",
+    icon: "juggling-balls",
+    description: "Keep objects moving through coordinated throws, catches, rhythm and impressive control.",
+  },
+  {
+    id: "22",
+    name: "Puppetry",
+    label: "Puppetry",
+    icon: "hand-puppet",
+    description: "Bring puppet characters to life through movement, storytelling and expressive manipulation.",
+  },
+  {
+    id: "24",
+    name: "Stunts",
+    label: "Stunts",
+    icon: "stunt-performer",
+    description: "Perform choreographed action sequences, dramatic physical moves and controlled stunt techniques.",
+  },
+  {
+    id: "25",
+    name: "TaleSpin",
+    label: "Talespin",
+    icon: "storytelling",
+    description: "Turn everyday moments into entertaining stories through humor, imagination and expressive narration.",
+  },
+
+  // CREATIVE & VISUAL ARTS
+  {
+    id: "26",
+    name: "Art",
+    label: "Art",
+    icon: "paint-palette",
+    description: "Create original visual artwork through drawing, painting, illustration and artistic expression.",
+  },
+  {
+    id: "27",
+    name: "Photography",
+    label: "Photography",
+    icon: "camera",
+    description: "Capture compelling moments, compositions and visual stories through photographic techniques.",
+  },
+  {
+    id: "28",
+    name: "Filmmaking",
+    label: "Filmmaking",
+    icon: "film-camera",
+    description: "Create films through visual storytelling, cinematography, direction and editing.",
+  },
+
+  {
+    id: "29",
+    name: "Animation",
+    label: "Animation",
+    icon: "animation-frames",
+    description: "Bring images and characters to life through motion, timing and visual storytelling.",
+  },
+
+  {
+    id: "30",
+    name: "Design",
+    label: "Design",
+    icon: "design-tools",
+    description: "Transform ideas into purposeful visual solutions through creativity, composition and design skills.",
+  },
+  {
+    id: "31",
+    name: "Fashion",
+    label: "Fashion",
+    icon: "fashion-hanger",
+    description: "Showcase personal style and creativity through clothing, styling and fashion design.",
+  },
+  // {
+  //   id: "32",
+  //   name: "Makeup",
+  //   label: "Makeup",
+  //   icon: "makeup-brush",
+  //   description: "Transform appearances through makeup artistry, color techniques and creative application.",
+  // },
+
+  // TECHNOLOGY
+  {
+    id: "33",
+    name: "Tech",
+    label: "Tech",
+    icon: "microchip",
+    description: "Showcase technical creativity through programming, electronics, inventions and digital innovation.",
+  },
+
+  // OTHER TALENTS
+  // {
+  //   id: "34",
+  //   name: "Modeling",
+  //   label: "Modeling",
+  //   icon: "runway",
+  //   description: "Present fashion, products and creative concepts through posing, movement and visual presence.",
+  // },
+  {
+    id: "35",
+    name: "Eating",
+    label: "Eating",
+    icon: "food",
+    description: "Showcase entertaining food challenges, tasting experiences and impressive eating performances.",
+  },
+  {
+    id: "36",
+    name: "Cooking",
+    label: "Cooking",
+    icon: "chef-hat",
+    description: "Prepare and present delicious dishes through culinary techniques, creativity and presentation.",
+  },
+  {
+    id: "37",
+    name: "Speedcubing",
+    label: "Speedcubing",
+    icon: "rubiks-cube",
+    description: "Solve twisty puzzles at remarkable speed through pattern recognition, algorithms and precision.",
+  },
+  {
+    id: "38",
+    name: "Whistling",
+    label: "Whistling",
+    icon: "whistle",
+    description: "Perform melodies and musical expressions using controlled whistling, pitch and breath.",
+  },
 ];
+
 
 export const stageOrderMap = {
   Singing: 1,

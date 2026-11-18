@@ -173,8 +173,8 @@ export default function Arenas({
     <View
       style={{
         paddingHorizontal: spacing(12),
-        paddingTop: spacing(20), 
-        paddingBottom: spacing(12),
+        paddingTop: spacing(40), 
+        // paddingBottom: spacing(12),
         width,
       }}
       className="justify-center items -center"
@@ -185,18 +185,69 @@ export default function Arenas({
       {/* =========================================
           ARENA COLLECTION HEADER
       ========================================= */}
+
+      <View
+          className="items-start justify-center"
+          style={{
+            gap : spacing(2)
+          }}  >
+
+            <View
+              className="flex-row text-start w-full items-center justify-start"
+              style={{
+                gap: spacing(8),
+               
+              }}   >
+
+                <View
+                  style={{
+                    // width: scale(18),
+                    flex:1 ,
+                    height: "50%",
+                    backgroundColor: "rgba(255,1255,255,0.35)",
+                  }}
+                  className = "flex-1"
+               />
+
+                <Text
+                  style={{
+                    fontSize: scale(16),
+                    fontWeight: "900",
+                    letterSpacing: scale(0.8),
+                    color: "#F5F5F5",
+                    textAlign: "center",
+                    textShadowColor: "rgba(232,185,90,0.14)",
+                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowRadius: scale(8),
+                  }}  >
+                   ARENAS
+                </Text>
+
+                <View
+                style={{
+                  width: scale(18),
+                  height: "60%",
+                  backgroundColor: "#FFF",
+                  marginLeft: spacing(8),
+                }}
+              />
+             
+            </View>
+
+      </View>
       
       <View style={{
-         marginBottom: spacing(8) ,
-        //  paddingHorizontal: scale(12),
+         marginBottom: spacing(16) ,
+         paddingTop: scale(16),
         }}>
         
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
-                marginBottom: spacing(5),
+                // alignItems: "center",
+                marginBottom: spacing(16),
               }}
+              className = "items-center"
             >
               <View
                 style={{
@@ -213,10 +264,20 @@ export default function Arenas({
                   fontSize: scale(11),
                   fontWeight: "900",
                   letterSpacing: scale(0.8),
+                  includeFontPadding : false
                 }}
               >
                 {textHeader}
               </Text>
+
+              <View
+                style={{
+                  flex: 1,
+                  height: "68%",
+                  backgroundColor: "rgba(255,1255,255,0.35)",
+                  marginLeft: spacing(8),
+                }}
+              />
             </View>
 
             <Text
@@ -249,7 +310,7 @@ export default function Arenas({
         style={{
           width: "100%",
           marginTop: scale(8),
-          marginBottom: scale(16),
+          marginBottom: scale(20),
           paddingVertical: scale(10),
           paddingHorizontal: scale(12),
           flexDirection: "row",
@@ -358,7 +419,7 @@ export default function Arenas({
             )
           }
           style={{
-            height: spacing(420),
+            height: spacing(430),
             width: "100%",
             overflow: "hidden",
           }}
@@ -449,7 +510,7 @@ export default function Arenas({
               flexDirection: "row",
               // alignItems: "end",
               justifyContent: "space-between",
-              marginTop: spacing(16),
+              marginTop: spacing(20),
               // gap: spacing(14),
               // height: scale(64)
             }}

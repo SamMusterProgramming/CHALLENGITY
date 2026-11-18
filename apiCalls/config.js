@@ -6,7 +6,7 @@ import axios from "axios";
 const BASE_URL_DEVELOPMENT = "http://localhost:8000";
 const BASE_URL_PRODUCTION = process.env.EXPO_PUBLIC_SERVER_URL;
 
-export const BASE_URL = BASE_URL_PRODUCTION
+export const BASE_URL = BASE_URL_DEVELOPMENT
   // ? BASE_URL_DEVELOPMENT
   // : BASE_URL_PRODUCTION || BASE_URL_DEVELOPMENT;
 

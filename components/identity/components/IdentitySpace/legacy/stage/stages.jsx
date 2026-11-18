@@ -151,8 +151,8 @@ export default function Stages({
     <View
       style={{
         paddingHorizontal: spacing(12),
-        paddingTop: spacing(20),
-        paddingBottom: spacing(12),
+        paddingTop: spacing(40),
+        // paddingBottom: spacing(12),
         width,
       }}
       className="justify-center items -center"
@@ -163,13 +163,67 @@ export default function Stages({
           stage COLLECTION HEADER
        ========================================= */}
 
-      <View style={{ marginBottom: spacing(8) }}>
+           
+      <View
+        className="items-start justify-center"
+        style={{
+          gap : spacing(2)
+           }}  >
+          <View
+            className="flex-row items-center justify-center"
+            style={{
+              gap: spacing(8),
+              }}   >
+
+              <View
+                  style={{
+                    marginRight: spacing(8),
+                    flex:1 ,
+                    height: "50%",
+                    backgroundColor: "rgba(255,1255,255,0.35)",
+                  }}
+                  className = "flex-1"
+               />
+
+              <Text
+                style={{
+                  fontSize: scale(16),
+                  fontWeight: "900",
+                  letterSpacing: scale(0.8),
+                  color: "#F5F5F5",
+                  textAlign: "center",
+                  textShadowColor: "rgba(232,185,90,0.14)",
+                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowRadius: scale(8),
+                }}
+              >
+                STAGES
+              </Text>
+
+              <View
+                style={{
+                  width: scale(18),
+                  height: "60%",
+                  backgroundColor: "#FFF",
+                  marginLeft: spacing(8),
+                }}
+              />
+          </View>
+
+      </View>
+
+
+
+      <View style={{
+         marginBottom: spacing(8),
+         paddingTop: scale(12),
+        }}>
       
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                marginBottom: spacing(5),
+                marginBottom: spacing(12),
               }}
             >
               <View
@@ -191,6 +245,16 @@ export default function Stages({
               >
                 {textHeader}
               </Text>
+
+
+              <View
+                style={{
+                  flex: 1,
+                  height: "68%",
+                  backgroundColor: "rgba(255,1255,255,0.35)",
+                  marginLeft: spacing(8),
+                }}
+              />
             </View>
 
             <Text

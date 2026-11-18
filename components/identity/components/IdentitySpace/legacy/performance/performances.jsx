@@ -183,8 +183,8 @@ export default function Performances({
     <View
         style={{
           paddingHorizontal: spacing(12),
-          paddingTop: spacing(20),
-          paddingBottom: spacing(12),
+          paddingTop: spacing(40),
+          // paddingBottom: spacing(12),
           width,
         }}
         className="justify-center items -center"
@@ -196,16 +196,64 @@ export default function Performances({
           SPOTLIGHTS COLLECTION HEADER
           ========================================= */}
 
+      <View
+        className="items-start justify-center"
+        style={{
+          gap : spacing(2)
+        }}  >
+          <View
+            className="flex-row items-center justify-center"
+            style={{
+              gap: spacing(8),
+            }} >
+    
+            <View
+                  style={{
+                    // width: scale(18),
+                    flex:1 ,
+                    height: "50%",
+                    backgroundColor: "rgba(255,1255,255,0.35)",
+                  }}
+                  className = "flex-1"
+               />
+
+            <Text
+              style={{
+                fontSize: scale(16),
+                fontWeight: "900",
+                letterSpacing: scale(0.8),
+                color: "#F5F5F5",
+                textAlign: "center",
+                textShadowColor: "rgba(232,185,90,0.14)",
+                textShadowOffset: { width: 0, height: 1 },
+                textShadowRadius: scale(8),
+                }}  >
+
+             {title == "My Performances"  ? "PERFORMANCES" : "SPOTLIGHTS"} 
+            </Text>
+
+            <View
+                style={{
+                  width: scale(18),
+                  height: "60%",
+                  backgroundColor: "#FFF",
+                  marginLeft: spacing(8),
+                }}
+              />
+          </View>
+        </View>
+
+
       <View style={{
          marginBottom: spacing(8) ,
-        //  paddingHorizontal: scale(12),
+         paddingTop: scale(12),
         }}>
         
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                marginBottom: spacing(5),
+                marginBottom: spacing(12),
               }}
             >
               <View
@@ -227,6 +275,15 @@ export default function Performances({
               >
                 {textHeader}
               </Text>
+              <View
+                style={{
+                  flex: 1,
+                  height: "68%",
+                  backgroundColor: "rgba(255,1255,255,0.35)",
+                  marginLeft: spacing(8),
+                }}
+              />
+
             </View>
 
             <Text
@@ -453,109 +510,6 @@ export default function Performances({
       {/* =========================================
           PERFORMANCE CAROUSEL PAGE CONTROLS
           ========================================= */}
-
-      {/* {totalPages > 1 && (
-       <View
-       style={{
-        width: "100%",
-        marginTop: scale(24),
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-  
-       }}
-     >
-  
-       <Pressable
-         onPress={() => goToPerformancePage(-1)}
-         disabled={activePerformanceIndex === 0}
-         hitSlop={scale(8)}
-         accessibilityRole="button"
-         accessibilityLabel="Previous arena page"
-         style={{
-           width: scale(42),
-
-           alignItems: "center",
-           justifyContent: "center",
-           borderRadius: scale(12),
-           opacity: activePerformanceIndex === 0 ? 0.28 : 1,
-         }}
-       >
-         <Ionicons
-           name="chevron-back"
-           size={scale(23)}
-           color={
-             activePerformanceIndex === 0
-               ? "rgba(255,255,255,0.65)"
-               : GOLD
-           }
-         />
-       </Pressable>
-     
-       <View
-         accessibilityRole="progressbar"
-         accessibilityLabel={`Arena page ${activePerformanceIndex + 1} of ${totalPages}`}
-         style={{
-           flex: 1,
-           flexDirection: "row",
-           alignItems: "center",
-           justifyContent: "center",
-           gap: scale(7),
-         }}
-       >
-         {Array.from({ length: totalPages }, (_, index) => {
-           const isActive = index === activePerformanceIndex;
-     
-           return (
-             <View
-               key={`arena-page-${index}`}
-               style={{
-                 width: !isActive ? scale(9) : scale(9),
-                 height: scale(9),
-                 borderRadius: scale(4),
-                 backgroundColor: isActive
-                    ? GOLD
-                    : "rgba(255,255,255,0.34)",
-                 shadowColor: "#E8B95A",
-                 shadowOffset: { width: 0, height: 0 },
-                 shadowOpacity: isActive ? 0.55 : 0,
-                 shadowRadius: isActive ? 5 : 0,
-                 elevation: isActive ? 2 : 0,
-               }}
-             />
-           );
-         })}
-       </View>
-     
-       <Pressable
-         onPress={() => goToPerformancePage(1)}
-         disabled={activePerformanceIndex === totalPages - 1}
-         hitSlop={scale(8)}
-         accessibilityRole="button"
-         accessibilityLabel="Next arena page"
-         style={{
-           width: scale(42),
-          //  height: scale(36),
-           alignItems: "center",
-           justifyContent: "center",
-           borderRadius: scale(12),
-           opacity: activePerformanceIndex === totalPages - 1 ? 0.28 : 1,
-         }}
-       >
-         <Ionicons
-           name="chevron-forward"
-           size={scale(23)}
-           color={
-             activePerformanceIndex === totalPages - 1
-               ? "rgba(255,255,255,0.65)"
-               : GOLD
-           }
-         />
-       </Pressable>
-     </View>
-      )} */}
-
-      
 
          {/* BOTTOM PAGE INDICATOR */}
          {totalPages > 1 && (

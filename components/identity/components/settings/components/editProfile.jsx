@@ -13,7 +13,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../../../../context/GlobalProvider";
-import { updateUserInfo } from "../../../../../apiCalls";
+import { updateUserInfo } from "../../../../../apiCalls/user";
+// import { updateUserInfo } from "../../../../../apiCalls";
 
 const COLORS = {
   background: "#08090B",
